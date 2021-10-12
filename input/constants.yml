@@ -1,0 +1,6 @@
+constants:
+  kgH2_to_kWh_HHV:  39.4        # source: https://www.nap.edu/read/10922/chapter/21
+  kgH2_to_kWh_LHV:  33.3
+  USD_to_EUR: 0.86
+  J_to_Wh: 0.000277778
+  NM3_to_kWh: 3.00

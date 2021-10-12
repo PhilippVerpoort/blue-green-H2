@@ -1,0 +1,103 @@
+fuels:
+  natural gas:
+    type: ng
+
+  grey:
+    type: blue
+    capture_rate: smr
+    include_capex: True
+
+  blue HEB:
+    type: blue
+    capture_rate: heb
+    include_capex: True
+
+  blue HEB woCAPEX:
+    type: blue
+    capture_rate: heb
+    include_capex: False
+
+  blue LEB:
+    type: blue
+    capture_rate: leb
+    include_capex: True
+
+  green RE:
+    type: green
+    elecsrc: RE only
+
+  green mix:
+    type: green
+    elecsrc: grid mix
+    
+
+
+params:
+  # ng parameters
+  ng_price:
+    type: const
+    value: 6.0
+    unit: €/GJ
+
+  ng_ci:
+    type: const
+    value: 55.0
+    unit: gCO2eq/MJ
+    
+  # blue parameters
+  cost_blue_capital_smr:
+    type: const
+    value: 222.89
+    unit: €
+
+  cost_blue_capital_heb:
+    type: const
+    value: 263.91
+    unit: €
+
+  cost_blue_capital_leb:
+    type: const
+    value: 398.48
+    unit: €
+
+  cost_blue_cts:
+    type: linear
+    value_2020: 10.0
+    value_2050: 40.0
+    unit: €/t
+    
+  # green parameters
+  cost_green_electrolyser:
+    type: linear
+    value_2020: 900.0
+    value_2050: 450.0
+    unit: US$/kW
+
+  cost_green_electricity_re:
+    type: linear
+    value_2020: 60.0
+    value_2050: 30.0
+    unit: US$/kWh
+
+  cost_green_electricity_mix:
+    type: linear
+    value_2020: 300.0
+    value_2050: 50.0
+    unit: US$/kWh
+
+  ci_green_electricity_re:
+    type: linear
+    value_2020: 50.0
+    value_2050: 30.0
+    unit: gCO2eq/kWh
+
+  ci_green_electricity_mix:
+    type: linear
+    value_2020: 70.0
+    value_2050: 35.0
+    unit: gCO2eq/kWh
+    
+  capacity_factor_re:
+    type: const
+    value: 40.0
+    unit: percent

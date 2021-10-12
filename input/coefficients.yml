@@ -1,0 +1,52 @@
+coeffs:
+  # blue cost regression
+  gamma_blue_smr:
+    type: const
+    value: 0.0135218
+    unit: null
+
+  gamma_blue_heb:
+    type: const
+    value: 0.0148494
+    unit: null
+
+  gamma_blue_leb:
+    type: const
+    value: 0.0160500
+    unit: null
+
+  alpha_blue:
+    type: const
+    value: 0.0001677
+    unit: null
+
+  delta_blue:
+    type: const
+    value: 0.0004785
+    unit: null
+    
+  # green regression
+  gamma_green:
+    type: const
+    value: 0.0577
+    unit: MWh/kg_H2
+
+  alpha_green:
+    type: const
+    value: 0.0017
+    unit: kW/kg_H2
+
+  delta_green:
+    type: const
+    value: 0.1000
+    unit: null
+
+  tau_green:
+    type: const
+    value: 64.0900
+    unit: 1/percent
+
+  theta_green:
+    type: const
+    value: 0.9972
+    unit: null

@@ -1,0 +1,20 @@
+names:
+  natural gas: 'Natural Gas'
+  grey: 'Grey Hydrogen (SMR w/o CCS)'
+  blue HEB: 'Blue Hydrogen (HEB)'
+  blue HEB woCAPEX: 'Blue Hydrogen (HEB, w/o CAPEX)'
+  blue LEB: 'Blue Hydrogen (LEB)'
+  green RE: 'Green Hydrogen (Only RE)'
+  green mix: 'Green Hydrogen (Electricity Mix)'
+
+colours:
+  natural gas: '#935947'
+  grey: '#bfbfbf'
+  blue HEB: '#345979'
+  blue HEB woCAPEX: '#35638a'
+  blue LEB: '#62b7fe'
+  green RE: '#00fe00'
+  green mix: '#708f70'
+
+other:
+  carb_price_max: 1200.0
