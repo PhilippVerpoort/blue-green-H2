@@ -2,27 +2,37 @@ coeffs:
   # blue cost regression
   gamma_blue_smr:
     type: const
-    value: 0.0135218
+    value: 0.013542
     unit: null
 
   gamma_blue_heb:
     type: const
-    value: 0.0148494
+    value: 0.0149418
     unit: null
 
   gamma_blue_leb:
     type: const
-    value: 0.0160500
+    value: 0.016019
     unit: null
 
   alpha_blue:
     type: const
-    value: 0.0001677
+    value: 0.0001666
     unit: null
 
-  delta_blue:
+  delta_blue_smr:
     type: const
-    value: 0.0004785
+    value: 0.0
+    unit: null
+
+  delta_blue_heb:
+    type: const
+    value: 0.0003565
+    unit: null
+
+  delta_blue_leb:
+    type: const
+    value: 0.0006114
     unit: null
     
   # green regression

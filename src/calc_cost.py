@@ -23,11 +23,11 @@ def __calcBlue(par: dict, const: dict, coef: dict, fuel: dict):
 
     FC = par['ng_price']
     CC = par['cost_blue_capital_'+CR] if fuel['include_capex'] else 0.0
-    CTS = par['cost_blue_cts'] if CR!='smr' else 0.0
+    CTS = par['cost_blue_cts']
 
     gamma = coef['gamma_blue_'+CR]
     alpha = coef['alpha_blue']
-    delta = coef['delta_blue']
+    delta = coef['delta_blue_'+CR]
 
     convFac1 = 1000.0  # from €/kWh to €/MWh
     convFac2 = const['NM3_to_kWh']  # from norm cubic meter to kWh_LHV
