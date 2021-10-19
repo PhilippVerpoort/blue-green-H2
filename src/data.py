@@ -22,9 +22,12 @@ def obtainScenarioData(times: list):
 
     # dump to output file
     with pd.ExcelWriter('output/data.xlsx') as writer:
-        fullParams.to_excel(writer, sheet_name='Parameters')
-        fullCoeffs.to_excel(writer, sheet_name='Coefficients')
-        fuelData.to_excel(writer, sheet_name='Fuel Data')
+        pd.DataFrame(fuels).T.to_excel(writer, sheet_name='Fuels list (input)')
+        pd.DataFrame(params).T.reindex(['type', 'value', 'value_2020', 'value_2050', 'unit'], axis=1).to_excel(writer, sheet_name='Parameters (input)')
+        pd.DataFrame(coeffs).T.to_excel(writer, sheet_name='Coefficients (input)')
+        fullParams.to_excel(writer, sheet_name='Parameters (full)')
+        fullCoeffs.to_excel(writer, sheet_name='Coefficients (full)')
+        fuelData.to_excel(writer, sheet_name='Fuel data (output)')
 
     return fuelData, FSCPData
 
