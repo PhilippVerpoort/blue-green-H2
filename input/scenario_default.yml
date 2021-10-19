@@ -1,32 +1,39 @@
 fuels:
   natural gas:
+    description: Natural Gas
     type: ng
 
   grey:
+    description: Grey Hydrogen (SMR w/o capture)
     type: blue
     capture_rate: smr
     include_capex: True
 
   blue HEB:
+    description: Blue Hydrogen (High-emissions Blue)
     type: blue
     capture_rate: heb
     include_capex: True
 
   blue HEB woCAPEX:
+    description: Blue Hydrogen (High-emissions Blue, w/o CAPEX)
     type: blue
     capture_rate: heb
     include_capex: False
 
   blue LEB:
+    description: Blue Hydrogen (Low-emissions Blue)
     type: blue
     capture_rate: leb
     include_capex: True
 
   green RE:
+    description: Green Hydrogen (Using Renewable Energy Only)
     type: green
     elecsrc: RE only
 
   green mix:
+    description: Green Hydrogen (Using Current Electricity Mix)
     type: green
     elecsrc: grid mix
     
@@ -35,69 +42,92 @@ fuels:
 params:
   # ng parameters
   ng_price:
+    description: Natural Gas Price
     type: const
     value: 6.0
     unit: €/GJ
+    source: based on IEAGHG - which contains sensitivity analysis using 2Euro to 18Euro - http://documents.ieaghg.org/index.php/s/HKtMncwfw2vaBxl
 
   ng_ci:
+    description: Natural Gas Carbon Intensity
     type: const
     value: 55.0
     unit: gCO2eq/MJ
     
   # blue parameters
   cost_blue_capital_smr:
+    description: Capital Cost of Pure SMR (w/o Capture)
     type: const
     value: 222.89
     unit: €
+    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
 
   cost_blue_capital_heb:
+    description: Capital Cost of SMR (Including HEB Capture Rate)
     type: const
     value: 263.91
     unit: €
+    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
 
   cost_blue_capital_leb:
+    description: Capital Cost of SMR (Including LEB Capture Rate)
     type: const
     value: 398.48
     unit: €
+    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
 
   cost_blue_cts:
+    description: Carbon Transport and Storage Cost (per tCO2, i.e. independent of capture rate)
     type: linear
     value_2020: 10.0
     value_2050: 40.0
-    unit: €/t
+    unit: €/tCO2
+    source: IEAGHG - 10Euro/t, which increases to 40Euro/t
     
   # green parameters
   cost_green_electrolyser:
+    description: Electrolyser Capital Cost
     type: linear
     value_2020: 900.0
     value_2050: 450.0
     unit: US$/kW
+    source: based on IEA (2019) https://www.iea.org/reports/the-future-of-hydrogen/data-and-assumptions
 
   cost_green_electricity_re:
+    description: Electricity Price (using renewable energy only)
     type: linear
     value_2020: 60.0
     value_2050: 30.0
     unit: US$/kWh
+    source: based on IRENA - solar PV https://www.irena.org/publications/2021/Jun/Renewable-Power-Costs-in-2020
 
   cost_green_electricity_mix:
+    description: Electricity Price (using current electricty mix)
     type: linear
     value_2020: 300.0
     value_2050: 50.0
     unit: US$/kWh
+    source: these numbers are guessed
 
   ci_green_electricity_re:
+    description: Electricity Carbon Intensity (using renewable energy only)
     type: linear
     value_2020: 50.0
     value_2050: 30.0
     unit: gCO2eq/kWh
+    source: these numbers are guessed
 
   ci_green_electricity_mix:
+    description: Electricity Carbon Intensity (using current electricty mix)
     type: linear
     value_2020: 70.0
     value_2050: 35.0
     unit: gCO2eq/kWh
+    source: these numbers are guessed
     
   capacity_factor_re:
+    description: Operational Capacity Factor
     type: const
     value: 40.0
     unit: percent
+    source: feasible ranges for combined wind and solar?
