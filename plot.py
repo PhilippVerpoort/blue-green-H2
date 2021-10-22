@@ -4,24 +4,23 @@ from src.plotting import plotFig1
 times = [2020, 2030, 2050]
 fuelData, FSCPData = obtainScenarioData(times)
 
-#print(fuelData.query("fuel == 'green RE' or fuel == 'green mix'"))
-#print(fuelData.query("fuel == 'blue HEB' or fuel == 'blue LEB'"))
-
-#print(fuelData)
-
-exit()
-
-showFuels = [(2020, 'natural gas'),
-             (2020, 'blue HEB'),
-             (2020, 'green RE'),
-             (2050, 'green RE'),
+showFuels = [
+    ([1, 2], 2020, 'natural gas'),
+    ([1, 2], 2020, 'green RE'),
+    ([1, 2], 2050, 'green RE'),
+    ([1], 2020, 'blue HEB'),
+    ([2], 2020, 'blue LEB'),
 ]
 
-showFSCPs = [(2020, 'natural gas', 2020, 'blue HEB'),
-             (2020, 'natural gas', 2020, 'green RE'),
-             (2020, 'natural gas', 2050, 'green RE'),
-             (2020, 'blue HEB',    2020, 'green RE'),
-             (2020, 'blue HEB',    2050, 'green RE'),
+showFSCPs = [
+    ([1, 2], 2020, 'natural gas', 2020, 'green RE'),
+    ([1, 2], 2020, 'natural gas', 2050, 'green RE'),
+    # ([1], 2020, 'natural gas', 2020, 'blue HEB'),
+    ([1], 2020, 'blue HEB',    2020, 'green RE'),
+    ([1], 2020, 'blue HEB',    2050, 'green RE'),
+    ([2], 2020, 'natural gas', 2020, 'blue LEB'),
+    ([2], 2020, 'blue LEB',    2020, 'green RE'),
+    ([2], 2020, 'blue LEB',    2050, 'green RE'),
 ]
 
 plotFig1(fuelData, FSCPData, showFuels=showFuels, showFSCPs=showFSCPs)

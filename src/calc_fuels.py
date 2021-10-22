@@ -6,17 +6,17 @@ from src.calc_cost import calcCost
 
 # calculate fuel data
 def calcFuelData(full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: dict, consts: dict, times: list):
-    fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'ci'])
+    fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_u', 'ci', 'ci_u'])
 
     for fuel_id, fuel in fuels.items():
         for t in times:
             currentParams = __getCurrentAsDict(full_params, t)
             currentCoeffs = __getCurrentAsDict(full_coeffs, t)
 
-            fuel_cost = calcCost(currentParams, currentCoeffs, fuel, consts)
-            fuel_ci = calcCI(currentParams, currentCoeffs, fuel, consts)
+            cost, cost_u = calcCost(currentParams, currentCoeffs, fuel, consts)
+            ci, ci_u = calcCI(currentParams, currentCoeffs, fuel, consts)
 
-            new_fuel = {'fuel': fuel_id, 'year': t, 'cost': fuel_cost, 'ci': fuel_ci}
+            new_fuel = {'fuel': fuel_id, 'year': t, 'cost': cost, 'cost_u': cost_u, 'ci': ci, 'ci_u': ci_u}
             fuelData = fuelData.append(new_fuel, ignore_index=True)
 
     return fuelData

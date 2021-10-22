@@ -14,7 +14,9 @@ def calcCost(params: dict, coeffs: dict, fuel: dict, consts: dict):
 
 def __calcNG(par: dict, const: dict, coef: dict, fuel: dict):
     # convert €/GJ to €/MWh
-    return par['ng_price'] / const['J_to_Wh'] / 1000
+    r = par['ng_price'] / const['J_to_Wh'] / 1000
+
+    return (r, 0.05*r)
 
 
 def __calcBlue(par: dict, const: dict, coef: dict, fuel: dict):
@@ -33,7 +35,9 @@ def __calcBlue(par: dict, const: dict, coef: dict, fuel: dict):
     convFac2 = const['NM3_to_kWh']  # from norm cubic meter to kWh_LHV
 
     # final output in €/MWh
-    return convFac1/convFac2 * ( gamma*FC + alpha*CC + delta*CTS )
+    r = convFac1/convFac2 * ( gamma*FC + alpha*CC + delta*CTS )
+
+    return (r, 0.05*r)
 
 
 def __calcGreen(par: dict, const: dict, coef: dict, fuel: dict):
@@ -58,4 +62,6 @@ def __calcGreen(par: dict, const: dict, coef: dict, fuel: dict):
     convFac2 = const['kgH2_to_kWh_HHV'] / 1000
 
     # final output in €/MWh
-    return convFac1/convFac2 * ( gamma*FC + (alpha*CC + delta)*(tau*math.pow(OCF, -theta)) )
+    r = convFac1/convFac2 * ( gamma*FC + (alpha*CC + delta)*(tau*math.pow(OCF, -theta)) )
+
+    return (r, 0.05*r)
