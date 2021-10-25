@@ -1,5 +1,5 @@
 from src.data import obtainScenarioData
-from src.plotting import plotFig1
+from src.plotting.plotFig1 import plotFig1
 
 times = [2020, 2030, 2050]
 fuelData, FSCPData = obtainScenarioData(times)

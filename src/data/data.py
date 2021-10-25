@@ -1,8 +1,8 @@
 import pandas as pd
 import yaml
 
-from src.calc_FSCPs import calcFSCPs
-from src.calc_fuels import calcFuelData
+from src.data.calc_FSCPs import calcFSCPs
+from src.data.calc_fuels import calcFuelData
 
 
 # obtain all required data for a scenario
@@ -37,14 +37,14 @@ def obtainScenarioData(times: list):
 
 # load data from yaml files
 def __loadDataFromFiles():
-    yamlData = yaml.load(open('input/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
+    yamlData = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
     params = yamlData['params']
     fuels = yamlData['fuels']
 
-    yamlData = yaml.load(open('input/coefficients.yml', 'r').read(), Loader=yaml.FullLoader)
+    yamlData = yaml.load(open('input/data/coefficients.yml', 'r').read(), Loader=yaml.FullLoader)
     coeffs = yamlData['coeffs']
 
-    yamlData = yaml.load(open('input/constants.yml', 'r').read(), Loader=yaml.FullLoader)
+    yamlData = yaml.load(open('input/data/constants.yml', 'r').read(), Loader=yaml.FullLoader)
     consts = yamlData['constants']
 
     return params, coeffs, fuels, consts

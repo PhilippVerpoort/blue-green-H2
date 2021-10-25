@@ -1,14 +1,14 @@
 import numpy as np
 import yaml
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
+
 def plotFig1(fuelsData: dict, FSCPData: pd.DataFrame, showFuels = None, showFSCPs = None, scenario_name = ""):
     # load config setting from YAML file
-    names, colours, plotting, labels = __getPlottingConfig()
+    config = __getPlottingConfig()
 
     # select which lines to plot based on function argument
     plotData, linesCols = __selectPlotData(fuelsData, showFuels)
@@ -17,10 +17,10 @@ def plotFig1(fuelsData: dict, FSCPData: pd.DataFrame, showFuels = None, showFSCP
     plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, showFSCPs)
 
     # add full names of fuels to plotting data
-    plotData = plotData.assign(name=lambda f: names[f.iloc[0].fuel])
+    plotData = plotData.assign(name=lambda f: config['names'][f.iloc[0].fuel])
 
     # produce figure
-    fig = __produceFigure(plotData, linesCols, plotFSCP, FSCPsCols, names, colours, plotting, labels)
+    fig = __produceFigure(plotData, linesCols, plotFSCP, FSCPsCols, config)
 
     # write figure to image file
     fig.write_image("output/fig1" + ("_"+scenario_name if scenario_name else "") + ".png")
@@ -29,13 +29,9 @@ def plotFig1(fuelsData: dict, FSCPData: pd.DataFrame, showFuels = None, showFSCP
 
 
 def __getPlottingConfig():
-    yamlData = yaml.load(open('input/config.yml', 'r').read(), Loader=yaml.FullLoader)
-    names = yamlData['names']
-    colours = yamlData['colours']
-    plotting = yamlData['plotting']
-    labels = yamlData['labels']
-
-    return names, colours, plotting, labels
+    configAll = yaml.load(open('input/plotting/config_all.yml', 'r').read(), Loader=yaml.FullLoader)
+    configThis = yaml.load(open('input/plotting/config_fig1.yml', 'r').read(), Loader=yaml.FullLoader)
+    return {**configAll, **configThis}
 
 
 def __selectPlotData(fuelsData: dict, showFuels: dict = None):
@@ -70,38 +66,36 @@ def __selectPlotFSCPs(FSCPData: dict, showFSCPs: dict = None):
     return plotFSCP, FSCPsCols
 
 
-def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFrame, FSCPsCols: dict,
-                    names: dict, colours: dict, plotting: dict, labels: dict):
-
+def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
     # plot
     fig = make_subplots(rows=1,
-                        cols=plotting['numb_cols'],
+                        cols=config['plotting']['numb_cols'],
                         shared_yaxes=True,
                         horizontal_spacing=0.05)
 
     # add line traces
-    traces = __addLineTraces(plotData, names, colours, plotting, labels)
+    traces = __addLineTraces(plotData, config)
     for id, trace in traces:
         for j, col in enumerate(linesCols[id]):
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
 
     # add FSCP traces
-    traces = __addFSCPTraces(plotFSCP, names, colours, plotting, labels)
+    traces = __addFSCPTraces(plotFSCP, config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
 
     # set plotting ranges
-    fig.update_layout(xaxis=dict(title=labels['CP'], range=[0.0, plotting['carb_price_max']]),
-                      xaxis2=dict(title=labels['CP'], range=[0.0, plotting['carb_price_max']]),
-                      yaxis=dict(title=labels['total_cost'], range=[-0.05*plotting['fuel_cost_max'], plotting['fuel_cost_max']]))
+    fig.update_layout(xaxis=dict(title=config['labels']['CP'], range=[0.0, config['plotting']['carb_price_max']]),
+                      xaxis2=dict(title=config['labels']['CP'], range=[0.0, config['plotting']['carb_price_max']]),
+                      yaxis=dict(title=config['labels']['total_cost'], range=[-0.05*config['plotting']['fuel_cost_max'], config['plotting']['fuel_cost_max']]))
 
     return fig
 
 
-def __addLineTraces(plotData: pd.DataFrame, names: dict, colours: dict, plotting: dict, labels: dict):
+def __addLineTraces(plotData: pd.DataFrame, config: dict):
     traces = []
 
     occurrence = {}
@@ -109,8 +103,8 @@ def __addLineTraces(plotData: pd.DataFrame, names: dict, colours: dict, plotting
     for index, row in plotData.iterrows():
         # line properties
         fuel = row['fuel']
-        name = names[fuel]
-        col = colours[fuel]
+        name = config['names'][fuel]
+        col = config['colours'][fuel]
         year = row['year']
 
         # update line type
@@ -118,7 +112,7 @@ def __addLineTraces(plotData: pd.DataFrame, names: dict, colours: dict, plotting
         else: occurrence[fuel] += 1
 
         # generate plotting data
-        x = np.linspace(0, plotting['carb_price_max'], 120)
+        x = np.linspace(0, config['plotting']['carb_price_max'], 120)
         y = row.cost + row.ci * x
         y_u = np.sqrt(row.cost_u**2 + row.ci_u**2 * x**2)
 
@@ -148,11 +142,11 @@ def __addLineTraces(plotData: pd.DataFrame, names: dict, colours: dict, plotting
     return traces
 
 
-def __addFSCPTraces(plotFSCP: pd.DataFrame, names: dict, colours: dict, plotting: dict, labels: dict):
+def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
     traces = []
 
     for index, row in plotFSCP.iterrows():
-        name = f"Switching from <b>{names[row['fuel_x']]}</b><br>to <b>{names[row['fuel_y']]}</b>"
+        name = f"Switching from <b>{config['names'][row.fuel_x]}</b><br>to <b>{config['names'][row.fuel_y]}</b>"
 
         # circle at intersection
         traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_u,), thickness=0.0),

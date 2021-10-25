@@ -1,7 +1,7 @@
 import pandas as pd
 
-from src.calc_ci import calcCI
-from src.calc_cost import calcCost
+from src.data.calc_ci import calcCI
+from src.data.calc_cost import calcCost
 
 
 # calculate fuel data
