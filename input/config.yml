@@ -4,7 +4,7 @@ names:
   blue HEB: 'Blue Hydrogen (HEB)'
   blue HEB woCAPEX: 'Blue Hydrogen (HEB, w/o CAPEX)'
   blue LEB: 'Blue Hydrogen (LEB)'
-  green RE: 'Green Hydrogen (Only RE)'
+  green RE: 'Green Hydrogen'
   green mix: 'Green Hydrogen (Electricity Mix)'
 
 colours:
@@ -24,5 +24,5 @@ plotting:
 labels:
   fuel: Fuel Type
   year: ''
-  CP: Carbon Pricing in €/t<sub>CO2eq</sub>
+  CP: Carbon Pricing in €/t<sub>CO<sub>2</sub>eq</sub>
   total_cost: Total cost in €/MWh<sub>LHV</sub>

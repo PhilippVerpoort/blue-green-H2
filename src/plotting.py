@@ -1,3 +1,4 @@
+import numpy as np
 import yaml
 import pandas as pd
 import plotly.express as px
@@ -93,57 +94,72 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
             fig.add_trace(trace, row=1, col=col)
 
     # set plotting ranges
-    fig.update_layout(xaxis=dict(range=[0.0, plotting['carb_price_max']]),
-                      xaxis2=dict(range=[0.0, plotting['carb_price_max']]),
-                      yaxis=dict(range=[-0.05*plotting['fuel_cost_max'], plotting['fuel_cost_max']]))
+    fig.update_layout(xaxis=dict(title=labels['CP'], range=[0.0, plotting['carb_price_max']]),
+                      xaxis2=dict(title=labels['CP'], range=[0.0, plotting['carb_price_max']]),
+                      yaxis=dict(title=labels['total_cost'], range=[-0.05*plotting['fuel_cost_max'], plotting['fuel_cost_max']]))
 
     return fig
 
 
 def __addLineTraces(plotData: pd.DataFrame, names: dict, colours: dict, plotting: dict, labels: dict):
-    # add carbon price to plotting data
-    plotData = __getFuelDataWithCP(plotData, plotting['carb_price_max'])
+    traces = []
 
-    # plot lines
-    fig = px.line(plotData, x="CP", y="total_cost", color="fuel", line_dash="year", line_group="year",
-                  color_discrete_map=colours,
-                  labels=labels)
+    occurrence = {}
 
-    # set names of lines in legend
-    legendYear = None
-    for trace in fig.data:
-        fuel = trace.name.split(",")[0]
-        year = trace.name.split(",")[1].strip()
+    for index, row in plotData.iterrows():
+        # line properties
+        fuel = row['fuel']
+        name = names[fuel]
+        col = colours[fuel]
+        year = row['year']
 
-        trace.name = names[fuel]
-        trace.hovertemplate = f"<b>{fuel}</b>"
+        # update line type
+        if fuel not in occurrence: occurrence[fuel] = 1
+        else: occurrence[fuel] += 1
 
-        if legendYear is None: legendYear = year
-        elif year != legendYear: trace.showlegend = False
+        # generate plotting data
+        x = np.linspace(0, plotting['carb_price_max'], 120)
+        y = row.cost + row.ci * x
+        y_u = np.sqrt(row.cost_u**2 + row.ci_u**2 * x**2)
 
-    return enumerate(fig.data)
+        # fuel line
+        traces.append((index, go.Scatter(x=x, y=y,
+            name=f"{name} ({year})",
+            legendgroup=f"{fuel}_{year}",
+            mode="lines",
+            line=dict(color=col, width=2, dash='dash' if occurrence[fuel]>1 else 'solid'),
+            hovertemplate=f"<b>{name}</b><br>Carbon price: %{{x:.2f}}<br>Total cost: %{{y:.2f}}<extra></extra>")))
 
+        # fuel uncertainty
+        traces.append((index, go.Scatter(
+            name='Uncertainty Range',
+            legendgroup=f"{fuel}_{year}",
+            x=np.concatenate((x, x[::-1])),
+            y=np.concatenate((y+y_u, (y-y_u)[::-1])),
+            mode='lines',
+            marker=dict(color=col),
+            fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .1)),
+            fill='toself',
+            line=dict(width=.3),
+            showlegend=False,
+            hoverinfo="none"
+        )))
 
-def __getFuelDataWithCP(fuelsData: dict, carb_price_max = 1000.0):
-    fuelsDatawCP = pd.concat([fuelsData.assign(CP = 0.0), fuelsData.assign(CP = carb_price_max)]).\
-                      assign(total_cost = lambda f: f['cost'] + f['CP'] * f['ci']).\
-                      reset_index(drop=True)
-
-    return fuelsDatawCP
+    return traces
 
 
 def __addFSCPTraces(plotFSCP: pd.DataFrame, names: dict, colours: dict, plotting: dict, labels: dict):
     traces = []
 
     for index, row in plotFSCP.iterrows():
-        name = f"Switching from <b>{names[row['fuel_x']]}</b> to <b>{names[row['fuel_y']]}</b>"
+        name = f"Switching from <b>{names[row['fuel_x']]}</b><br>to <b>{names[row['fuel_y']]}</b>"
 
         # circle at intersection
         traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_u,), thickness=0.0),
                                  mode="markers",
                                  marker=dict(symbol='circle-open', size=12, line={'width': 2}, color='Black'),
                                  showlegend=False,
-                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}")))
+                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
         # dashed line to x-axis
         traces.append((index, go.Scatter(x=(row.fscp, row.fscp), y = (0, row.fscp_tc),
@@ -155,6 +171,6 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, names: dict, colours: dict, plotting
         traces.append((index, go.Scatter(x=(row.fscp,), y = (0,), error_x=dict(type='data', array=(row.fscp_u,)),
                                  marker=dict(symbol=34, size=5, line={'width': 2}, color='Black'),
                                  showlegend=False,
-                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}")))
+                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
     return traces
