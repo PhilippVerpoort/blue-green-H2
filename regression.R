@@ -41,7 +41,7 @@ n <- 25
 epsilon <- i*(1+i)^n/((1+i)^n-1)
 
 # physics stuff
-ci_ng <- 0.198 # CI of NG: tCO2eq/kWh
+ci_ng <- 198/10^6 # CI of NG: 55 kgCO2eq/GJ = 198 gCO2eq/kWh = 198e-6 tCO2eq/kWh
 
 # variables of different production types
 eff <- c(smr = 0.7, heb = 0.6, leb = 0.5)
