@@ -22,8 +22,6 @@ greenData <- greenData %>% mutate(LCOH  = .[[1]] * USD_to_EUR/33.33,        # US
                                   c_L   = .[[3]] * USD_to_EUR,              # USD/kW to EUR/kW
                                   OCF   = .[[4]]/100                        # 100% to 1.0
                                  ) %>% select(LCOH, p_el, c_L, OCF)
-                                        
-print(greenData)
 
 model <- nls(LCOH ~ alpha * epsilon*c_L/(8760*(OCF*(1+(theta-1)*log(OCF)))) + gamma * p_el/eff, data=greenData, start=list(alpha=1.0, gamma=1.0, theta=1.0))
 coefs <- coef(model)
@@ -55,8 +53,6 @@ for(type in c('smr', 'heb', 'leb')) {
                                     C_pl  = .[[4]] * 10^6,          # MEUR to EUR
                                     P_pl  = 1 * 3*10^5              # Nm3/h to kW
                                    ) %>% select(LCOH, p_ng, c_CTS, C_pl, P_pl)
-                                         
-    print(blueData)
 
     if(type == 'smr') {
         model <- nls(LCOH ~ alpha * epsilon*C_pl/(P_pl*8760) + gamma * p_ng/eff[type], data=blueData, start=list(alpha=1.0, gamma=1.0))
