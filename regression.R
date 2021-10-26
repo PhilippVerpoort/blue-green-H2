@@ -21,7 +21,7 @@ greenData <- read.csv("./input/regression/regression_data_green.csv")
 greenData <- greenData %>% mutate(LCOH  = .[[1]] * USD_to_EUR/33.33,        # USD/kg to EUR/kWh
                                   p_el  = .[[2]] * USD_to_EUR/1000.0,       # USD/MWh to EUR/kWh
                                   c_L   = .[[3]] * USD_to_EUR,              # USD/kW to EUR/kW
-                                  OCF   = .[[4]]
+                                  OCF   = .[[4]]/100                        # 100% to 1.0
                                  ) %>% select(LCOH, p_el, c_L, OCF)
                                         
 print(greenData)
