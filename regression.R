@@ -20,7 +20,7 @@ greenData <- read.csv("./input/regression/regression_data_green.csv")
 greenData <- greenData %>% mutate(LCOH  = .[[1]] * USD_to_EUR/33.33,        # USD/kg to EUR/kWh
                                   p_el  = .[[2]] * USD_to_EUR/1000.0,       # USD/MWh to EUR/kWh
                                   c_L   = .[[3]] * USD_to_EUR,              # USD/kW to EUR/kW
-                                  OCF   = .[[4]]/100                        # 100% to 1.0
+                                  OCF   = .[[4]] * 1.0/100.0                # 100% to 1.0
                                  ) %>% select(LCOH, p_el, c_L, OCF)
 
 model <- nls(LCOH ~ alpha * epsilon*c_L/(8760*(OCF*(1+(theta-1)*log(OCF)))) + gamma * p_el/eff, data=greenData, start=list(alpha=1.0, gamma=1.0, theta=1.0))
@@ -59,7 +59,6 @@ for(type in c('smr', 'heb', 'leb')) {
     }
     else {
         model <- nls(LCOH ~ alpha * epsilon*C_pl/(P_pl*8760) + gamma * p_ng/eff[type] + mu * cr[type]*ci_ng*c_CTS/eff[type], data=blueData, start=list(alpha=1.0, gamma=1.0, mu=1.0))
-        #model <- nls(LCOH ~ alpha * epsilon*C_pl/8760 + gamma * p_ng/eff[type] + mu * ci_ng*c_CTS, data=blueData, start=list(alpha=1.0, gamma=1.0, mu=1.0))
     }
     coefs <- coef(model)
     print(summary(model))
