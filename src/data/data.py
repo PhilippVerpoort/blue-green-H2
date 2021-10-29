@@ -8,14 +8,16 @@ from src.data.calc_fuels import calcFuelData
 # obtain all required data for a scenario
 def obtainScenarioData(times: list):
     # load from yaml files
-    params, coeffs, fuels, consts = __loadDataFromFiles()
+    params, coeffs, fuels, consts, units = __loadDataFromFiles()
 
     # convert basic inputs to complete dataframes
-    fullParams = __getFullParamsCoeffs(params, times)
-    fullCoeffs = __getFullParamsCoeffs(coeffs, times)
+    fullParams = __getFullParamsCoeffs(params, units, times)
+    fullCoeffs = __getFullParamsCoeffs(coeffs, units, times)
 
     # calculate fuel data
     fuelData = calcFuelData(fullParams, fullCoeffs, fuels, consts, times)
+
+    print(fuelData)
 
     # calculate FSCPs
     FSCPData = calcFSCPs(fuelData)
@@ -47,30 +49,65 @@ def __loadDataFromFiles():
     yamlData = yaml.load(open('input/data/constants.yml', 'r').read(), Loader=yaml.FullLoader)
     consts = yamlData['constants']
 
-    return params, coeffs, fuels, consts
+    yamlData = yaml.load(open('input/data/units.yml', 'r').read(), Loader=yaml.FullLoader)
+    units = yamlData['units']
+
+    return params, coeffs, fuels, consts, units
 
 
 # calculate parameters/coefficients based at different times (using linear interpolation if needed)
-def __getFullParamsCoeffs(basicData: dict, times: list):
+def __getFullParamsCoeffs(basicData: dict, units: dict, times: list):
     fullDataFrame = pd.DataFrame(columns=['name', 'year', 'value', 'unit'])
 
-    for par_id, par in basicData.items():
-        if par['type'] == 'const':
-            for t in times:
-                new_par = {'name': par_id, 'year': t, 'value': par['value'], 'unit': par['unit']}
-                fullDataFrame = fullDataFrame.append(new_par, ignore_index=True)
-        elif par['type'] == 'linear':
-            points = [(int(key.lstrip('value_')), par[key]) for key in par.keys() if key.startswith('value_')]
-            points.sort(key=lambda x: x[0])
-
-            for t in times:
-                value = __linearInterpolate(t, points)
-                new_par = {'name': par_id, 'year': t, 'value': value, 'unit': par['unit']}
-                fullDataFrame = fullDataFrame.append(new_par, ignore_index=True)
-        else:
-            raise Exception("Unknown data type {}".format(par['type']))
+    for parId, par in basicData.items():
+        newPars = __calcValues(parId, par['value'], par['type'], times)
+        for newPar in newPars:
+            if 'unit' in par and par['unit'] is not None:
+                val, unit = __convertUnit(newPar['value'], par['unit'], units)
+                newPar['value'] = val
+                newPar['unit'] = unit
+            fullDataFrame = fullDataFrame.append(newPar, ignore_index=True)
 
     return fullDataFrame
+
+
+# calculate values for different times and other keys from dict
+def __calcValues(id:str, value, type: str, times: list):
+    if type == 'const':
+        if isinstance(value, dict):
+            r = []
+            for key, val in value.items():
+                r.extend(__calcValues(id+'_'+key, val, type, times))
+        else:
+            r = [{'name': id, 'year': t, 'value': value} for t in times]
+    elif type == 'linear':
+        if not isinstance(value, dict):
+            raise Exception(f"Value must be a dict for type linear: {value}")
+        elif isinstance(list(value.keys())[0], str):
+            r = []
+            for key, val in value.items():
+                r.extend(__calcValues(id+'_'+key, val, type, times))
+        else:
+            points = [(key, val) for key, val in value.items()]
+            points.sort(key=lambda x: x[0])
+            r = [{'name': id, 'year': t, 'value': __linearInterpolate(t, points)} for t in times]
+    else:
+        raise Exception("Unknown data type {}.".format(type))
+
+    return r
+
+
+# convert units
+def __convertUnit(val: float, unit: str, units: dict):
+    for unitType, unitOptions in units['types'].items():
+        if unit in unitOptions:
+            newUnit = unitOptions[0]
+            if unit == newUnit:
+                return val, unit
+            else:
+                return val * units['conversion'][f"{unit}__to__{newUnit}"], newUnit
+
+    raise Exception(f"Unit not found: {unit}")
 
 
 # linear interpolations

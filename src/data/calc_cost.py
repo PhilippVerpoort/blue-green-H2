@@ -14,7 +14,7 @@ def calcCost(params: dict, coeffs: dict, fuel: dict, consts: dict):
 
 def __calcNG(par: dict, const: dict, coef: dict, fuel: dict):
     # convert €/GJ to €/MWh
-    r = par['ng_price'] / const['J_to_Wh'] / 1000
+    r = par['cost_ng_price'] / const['J_to_Wh'] / 1000
 
     return (r, 0.05*r)
 
@@ -23,7 +23,7 @@ def __calcBlue(par: dict, const: dict, coef: dict, fuel: dict):
     CR = fuel['capture_rate']
     if CR not in ['smr', 'heb', 'leb']: raise Exception("Blue capture rate type unknown: {}".format(CR))
 
-    FC = par['ng_price']
+    FC = par['cost_ng_price']
     CC = par['cost_blue_capital_'+CR] if fuel['include_capex'] else 0.0
     CTS = par['cost_blue_cts']
 
@@ -45,7 +45,7 @@ def __calcGreen(par: dict, const: dict, coef: dict, fuel: dict):
 
     if fuel['elecsrc'] == 'RE only':
         FC = par['cost_green_electricity_re']
-        OCF = par['capacity_factor_re']
+        OCF = par['green_ocf']
     elif fuel['elecsrc'] == 'grid mix':
         FC = par['cost_green_electricity_mix']
         OCF = 100.0

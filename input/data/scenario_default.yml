@@ -7,24 +7,28 @@ fuels:
     description: Grey Hydrogen (SMR w/o capture)
     type: blue
     capture_rate: smr
+    methane_leakage: 0.02
     include_capex: True
 
   blue HEB:
     description: Blue Hydrogen (High-emissions Blue)
     type: blue
     capture_rate: heb
+    methane_leakage: 0.02
     include_capex: True
 
   blue HEB woCAPEX:
     description: Blue Hydrogen (High-emissions Blue, w/o CAPEX)
     type: blue
     capture_rate: heb
+    methane_leakage: 0.02
     include_capex: False
 
   blue LEB:
     description: Blue Hydrogen (Low-emissions Blue)
     type: blue
     capture_rate: leb
+    methane_leakage: 0.02
     include_capex: True
 
   green RE:
@@ -41,93 +45,126 @@ fuels:
 
 params:
   # ng parameters
-  ng_price:
-    description: Natural Gas Price
+  cost_ng_price:
+    description: Natural gas price (per LHV)
     type: const
     value: 6.0
-    unit: €/GJ
+    unit: EUR/GJ
     source: based on IEAGHG - which contains sensitivity analysis using 2Euro to 18Euro - http://documents.ieaghg.org/index.php/s/HKtMncwfw2vaBxl
 
-  ng_ci:
-    description: Natural Gas Carbon Intensity
+  ci_ng:
+    description: Natural gas carbon intensity (per LHV)
     type: const
     value: 55.0
     unit: gCO2eq/MJ
     
   # blue parameters
-  cost_blue_capital_smr:
-    description: Capital Cost of Pure SMR (w/o Capture)
+  cost_blue_capital:
+    description: Blue capital cost
     type: const
-    value: 222.89
-    unit: €
-    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
-
-  cost_blue_capital_heb:
-    description: Capital Cost of SMR (Including HEB Capture Rate)
-    type: const
-    value: 263.91
-    unit: €
-    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
-
-  cost_blue_capital_leb:
-    description: Capital Cost of SMR (Including LEB Capture Rate)
-    type: const
-    value: 398.48
-    unit: €
+    value:
+      smr: 222.89
+      heb: 263.91
+      leb: 398.48
+    unit: EUR
     source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
 
   cost_blue_cts:
-    description: Carbon Transport and Storage Cost (per tCO2, i.e. independent of capture rate)
+    description: Carbon transport and storage cost (per tCO2, i.e. independent of capture rate)
     type: linear
-    value_2020: 10.0
-    value_2050: 40.0
-    unit: €/tCO2
+    value:
+      2020: 10.0
+      2050: 40.0
+    unit: EUR/tCO2
     source: IEAGHG - 10Euro/t, which increases to 40Euro/t
+
+  ci_blue_base:
+    description: Base Emissions of Pure SMR (w/o Capture) (per LHV)
+    type: const
+    value:
+      smr:
+        gwp100: 87.2
+        gwp20: 89.7
+      heb:
+        gwp100: 46.3
+        gwp20: 46.6
+      leb:
+        gwp100: 20.8
+        gwp20: 21.5
+    unit: gCO2eq/MJ
+    source: Christians Excel Spreadsheet 29/10/2021
+
+  ci_blue_methaneleakage:
+    description: Methan leakage emissions per CH4 emission rate (per LHV)
+    type: const
+    value:
+      smr:
+        gwp100: 693.05
+        gwp20: 1974.1
+      heb:
+        gwp100: 706.1
+        gwp20: 2011.2
+      leb:
+        gwp100: 713.2
+        gwp20: 2031.5
+    unit: gCO2eq/MJ
+    source: Christians Excel Spreadsheet 29/10/2021
     
   # green parameters
   cost_green_electrolyser:
-    description: Electrolyser Capital Cost
+    description: Green CAPEX
     type: linear
-    value_2020: 900.0
-    value_2050: 450.0
-    unit: US$/kW
+    value:
+      2020: 1200.0
+      2050: 400.0
+    unit: USD/kW
     source: based on IEA (2019) https://www.iea.org/reports/the-future-of-hydrogen/data-and-assumptions
 
-  cost_green_electricity_re:
-    description: Electricity Price (using renewable energy only)
+  cost_green_electricity:
+    description: Electricity price
     type: linear
-    value_2020: 60.0
-    value_2050: 30.0
-    unit: US$/kWh
-    source: based on IRENA - solar PV https://www.irena.org/publications/2021/Jun/Renewable-Power-Costs-in-2020
+    value:
+      re: # renewables only
+        2020: 60.0
+        2050: 30.0
+      mix: # ee mix
+        2020: 300.0
+        2050: 50.0
+    unit: USD/kWh
+    source: RE numbers based on IRENA - solar PV https://www.irena.org/publications/2021/Jun/Renewable-Power-Costs-in-2020 // mix numbers are guessed
 
-  cost_green_electricity_mix:
-    description: Electricity Price (using current electricty mix)
-    type: linear
-    value_2020: 300.0
-    value_2050: 50.0
-    unit: US$/kWh
-    source: these numbers are guessed
+  ci_green_base:
+    description: Electricity carbon intensity
+    type: const
+    value:
+      gwp100: 0.12
+      gwp20: 0.14
+    unit: kgCO2eq/kgH2
+    source: Christians Excel Spreadsheet 29/10/2021
 
-  ci_green_electricity_re:
-    description: Electricity Carbon Intensity (using renewable energy only)
-    type: linear
-    value_2020: 50.0
-    value_2050: 30.0
-    unit: gCO2eq/kWh
-    source: these numbers are guessed
+  ci_green_eff:
+    description: Electricity carbon intensity
+    type: const
+    value: 55.0
+    unit: kWh/kgH2
+    source: Christians Excel Spreadsheet 29/10/2021
 
-  ci_green_electricity_mix:
-    description: Electricity Carbon Intensity (using current electricty mix)
-    type: linear
-    value_2020: 70.0
-    value_2050: 35.0
-    unit: gCO2eq/kWh
-    source: these numbers are guessed
+  ci_green_elec:
+    description: Electricity carbon intensity
+    type: const
+    value:
+      re: # renewables only -> using wind power onshore
+        gwp100: 0.013
+        gwp20: 0.015
+      mix: # ee mix -> using EU mix
+        gwp100: 0.397
+        gwp20: 0.434
+    unit: kgCO2eq/kWh
+    source: Christians Excel Spreadsheet 29/10/2021
     
-  capacity_factor_re:
-    description: Operational Capacity Factor
+  green_ocf:
+    description: Operational capacity factor
     type: const
     value: 40.0
-    unit: percent
+    unit: ~
     source: feasible ranges for combined wind and solar?
