@@ -6,7 +6,7 @@ from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 
-def plotFig1(fuelsData: dict, FSCPData: pd.DataFrame, showFuels = None, showFSCPs = None, scenario_name = ""):
+def plotFig1(fuelsData: pd.DataFrame, FSCPData: pd.DataFrame, showFuels = None, showFSCPs = None, scenario_name = ""):
     # load config setting from YAML file
     config = __getPlottingConfig()
 
@@ -15,9 +15,6 @@ def plotFig1(fuelsData: dict, FSCPData: pd.DataFrame, showFuels = None, showFSCP
 
     # select which FSCPs to plot based on function argument
     plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, showFSCPs)
-
-    # add full names of fuels to plotting data
-    plotData = plotData.assign(name=lambda f: config['names'][f.iloc[0].fuel])
 
     # produce figure
     fig = __produceFigure(plotData, linesCols, plotFSCP, FSCPsCols, config)
@@ -34,7 +31,7 @@ def __getPlottingConfig():
     return {**configAll, **configThis}
 
 
-def __selectPlotData(fuelsData: dict, showFuels: dict = None):
+def __selectPlotData(fuelsData: pd.DataFrame, showFuels: dict = None):
     linesCols = {}
 
     if showFuels is None:
@@ -50,7 +47,7 @@ def __selectPlotData(fuelsData: dict, showFuels: dict = None):
     return plotData, linesCols
 
 
-def __selectPlotFSCPs(FSCPData: dict, showFSCPs: dict = None):
+def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict = None):
     FSCPsCols = {}
 
     if showFSCPs is None:

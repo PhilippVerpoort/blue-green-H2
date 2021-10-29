@@ -1,0 +1,8 @@
+plotting:
+  ci_max: 0.15
+  cost_max: 230.0
+  n_samples: 51
+
+labels:
+  ci: Carbon Intensity in t<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
+  cost: Direct Cost in €/MWh<sub>LHV</sub>

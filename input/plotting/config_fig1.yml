@@ -4,7 +4,5 @@ plotting:
   numb_cols: 2
 
 labels:
-  fuel: Fuel Type
-  year: ''
   CP: Carbon Pricing in €/t<sub>CO<sub>2</sub>eq</sub>
   total_cost: Total cost in €/MWh<sub>LHV</sub>
