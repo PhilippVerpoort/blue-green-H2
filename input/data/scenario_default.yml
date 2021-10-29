@@ -34,12 +34,12 @@ fuels:
   green RE:
     description: Green Hydrogen (Using Renewable Energy Only)
     type: green
-    elecsrc: RE only
+    elecsrc: re # RE only
 
   green mix:
     description: Green Hydrogen (Using Current Electricity Mix)
     type: green
-    elecsrc: grid mix
+    elecsrc: mix # grid mix
     
 
 
@@ -59,15 +59,49 @@ params:
     unit: gCO2eq/MJ
     
   # blue parameters
-  cost_blue_capital:
-    description: Blue capital cost
+  cost_blue_capex:
+    description: Blue CAPEX
     type: const
     value:
-      smr: 222.89
-      heb: 263.91
-      leb: 398.48
-    unit: EUR
+      smr: 170.95
+      heb: 201.80
+      leb: 305.33
+    unit: MEUR
     source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
+
+  cost_blue_plantsize:
+    description: Plant size (i.e. production power)
+    type: const
+    value: 100000
+    unit: Nm3/h
+    source: IEAGHG
+
+  cost_blue_flh:
+    description: Full load hours of plant
+    type: const
+    value: 8322.0
+    unit: h
+    source: IEAGHG
+
+  cost_blue_eff:
+    description: Fuel efficiency of blue
+    type: const
+    value:
+      smr: 0.7592
+      heb: 0.7351
+      leb: 0.6910
+    unit: 1
+    source: IEAGHG, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream
+
+  cost_blue_emiForCTS:
+    description: Captured emissions for transport and storage
+    type: const
+    value:
+      smr: 0.0
+      heb: 0.4660
+      leb: 0.8004
+    unit: kgCO2/Nm3_H2
+    source: IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured
 
   cost_blue_cts:
     description: Carbon transport and storage cost (per tCO2, i.e. independent of capture rate)
@@ -111,7 +145,7 @@ params:
     source: Christians Excel Spreadsheet 29/10/2021
     
   # green parameters
-  cost_green_electrolyser:
+  cost_green_capex:
     description: Green CAPEX
     type: linear
     value:
@@ -120,7 +154,7 @@ params:
     unit: USD/kW
     source: based on IEA (2019) https://www.iea.org/reports/the-future-of-hydrogen/data-and-assumptions
 
-  cost_green_electricity:
+  cost_green_elec:
     description: Electricity price
     type: linear
     value:
@@ -130,7 +164,7 @@ params:
       mix: # ee mix
         2020: 300.0
         2050: 50.0
-    unit: USD/kWh
+    unit: USD/MWh
     source: RE numbers based on IRENA - solar PV https://www.irena.org/publications/2021/Jun/Renewable-Power-Costs-in-2020 // mix numbers are guessed
 
   ci_green_base:
@@ -165,6 +199,18 @@ params:
   green_ocf:
     description: Operational capacity factor
     type: const
-    value: 40.0
+    value: 0.4
     unit: ~
     source: feasible ranges for combined wind and solar?
+
+  lifetime:
+    description: lifetime
+    type: const
+    value: 25
+    unit: ~
+
+  irate:
+    description: Interest rate
+    type: const
+    value: 0.08
+    unit: ~

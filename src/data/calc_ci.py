@@ -26,14 +26,9 @@ def __calcBlue(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
 
 
 def __calcGreen(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
-    # convert gCO2eq/MWh to tCO2eq/kWh
-    if fuel['elecsrc'] == 'RE only':
-        ET = 're'
-    elif fuel['elecsrc'] == 'grid mix':
-        ET = 'mix'
-    else:
-        raise Exception("Unknown elecsrc type!")
+    ES = fuel['elecsrc']
+    if ES not in ['re', 'mix']: raise Exception(f"Unknown elecsrc type: {ES}")
 
-    r = par[f"ci_green_base_{GWP}"] + par[f"ci_green_eff"] * par[f"ci_green_elec_{ET}_{GWP}"]
+    r = par[f"ci_green_base_{GWP}"] + par[f"ci_green_eff"] * par[f"ci_green_elec_{ES}_{GWP}"]
 
     return (r, 0.05*r)
