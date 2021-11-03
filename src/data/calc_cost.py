@@ -1,6 +1,3 @@
-import math
-
-
 def calcCost(params: dict, coeffs: dict, fuel: dict, consts: dict):
     if fuel['type'] == 'ng':
         return __calcNG(params, consts, coeffs, fuel)
@@ -13,7 +10,6 @@ def calcCost(params: dict, coeffs: dict, fuel: dict, consts: dict):
 
 
 def __calcNG(par: dict, const: dict, coef: dict, fuel: dict):
-    # convert €/GJ to €/MWh
     r = par['cost_ng_price']
 
     return (r, 0.05*r)

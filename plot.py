@@ -1,8 +1,11 @@
-from src.data import obtainScenarioData
+import yaml
+
+from src.data.data import obtainScenarioData
 from src.plotting.plotFig1 import plotFig1
 
-times = [2020, 2030, 2050]
-fuelData, FSCPData = obtainScenarioData(times)
+scenarioData = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
+
+fuelData, FSCPData = obtainScenarioData(scenarioData)
 
 showFuels = [
     ([1, 2], 2020, 'natural gas'),

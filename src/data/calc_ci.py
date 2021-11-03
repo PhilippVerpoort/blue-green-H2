@@ -1,5 +1,5 @@
 def calcCI(params: dict, coeffs: dict, fuel: dict, consts: dict):
-    GWP = 'gwp20'
+    GWP = f"gwp{int(params['gwp'])}"
 
     if fuel['type'] == 'ng':
         return __calcNG(params, consts, coeffs, fuel, GWP)
@@ -12,7 +12,7 @@ def calcCI(params: dict, coeffs: dict, fuel: dict, consts: dict):
 
 
 def __calcNG(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
-    r = par['ci_ng']
+    r = par[f"ci_ng_base_{GWP}"] + fuel['methane_leakage'] * par[f"ci_ng_methaneleakage_{GWP}"]
 
     return (r, 0.05*r)
 

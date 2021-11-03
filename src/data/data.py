@@ -6,9 +6,11 @@ from src.data.calc_fuels import calcFuelData
 
 
 # obtain all required data for a scenario
-def obtainScenarioData(times: list):
+def obtainScenarioData(scenario: dict):
+    times, params, fuels = (scenario['times'], scenario['params'], scenario['fuels'])
+
     # load from yaml files
-    params, coeffs, fuels, consts, units = __loadDataFromFiles()
+    coeffs, consts, units = __loadDataFromFiles()
 
     # convert basic inputs to complete dataframes
     fullParams = __getFullParamsCoeffs(params, units, times)
@@ -16,8 +18,6 @@ def obtainScenarioData(times: list):
 
     # calculate fuel data
     fuelData = calcFuelData(fullParams, fullCoeffs, fuels, consts, times)
-
-    print(fuelData)
 
     # calculate FSCPs
     FSCPData = calcFSCPs(fuelData)
@@ -39,10 +39,6 @@ def obtainScenarioData(times: list):
 
 # load data from yaml files
 def __loadDataFromFiles():
-    yamlData = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
-    params = yamlData['params']
-    fuels = yamlData['fuels']
-
     yamlData = yaml.load(open('input/data/coefficients.yml', 'r').read(), Loader=yaml.FullLoader)
     coeffs = yamlData['coeffs']
 
@@ -52,7 +48,7 @@ def __loadDataFromFiles():
     yamlData = yaml.load(open('input/data/units.yml', 'r').read(), Loader=yaml.FullLoader)
     units = yamlData['units']
 
-    return params, coeffs, fuels, consts, units
+    return coeffs, consts, units
 
 
 # calculate parameters/coefficients based at different times (using linear interpolation if needed)

@@ -1,7 +1,10 @@
+times: [2020, 2030, 2050]
+
 fuels:
   natural gas:
     description: Natural Gas
     type: ng
+    methane_leakage: 0.02
 
   grey:
     description: Grey Hydrogen (SMR w/o capture)
@@ -52,11 +55,23 @@ params:
     unit: EUR/GJ
     source: based on IEAGHG - which contains sensitivity analysis using 2Euro to 18Euro - http://documents.ieaghg.org/index.php/s/HKtMncwfw2vaBxl
 
-  ci_ng:
-    description: Natural gas carbon intensity (per LHV)
+  ci_ng_base:
+    description: Base Emissions of NG (per LHV)
     type: const
-    value: 55.0
+    value:
+      gwp100: 65.0
+      gwp20: 66.0
     unit: gCO2eq/MJ
+    source: The second Excel Spreadsheet Christian sent on 03/11/2021
+
+  ci_ng_methaneleakage:
+    description: Methan leakage emissions per CH4 emission rate (per LHV)
+    type: const
+    value:
+      gwp100: 606.06
+      gwp20: 1727.27
+    unit: gCO2eq/MJ
+    source: The second Excel Spreadsheet Christian sent on 03/11/2021
     
   # blue parameters
   cost_blue_capex:
@@ -213,4 +228,10 @@ params:
     description: Interest rate
     type: const
     value: 0.08
+    unit: ~
+
+  gwp:
+    description: Global Warming Potential time assumption
+    type: const
+    value: 100
     unit: ~
