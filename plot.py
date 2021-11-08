@@ -18,7 +18,7 @@ showFuels = [
 showFSCPs = [
     ([1, 2], 2020, 'natural gas', 2020, 'green RE'),
     ([1, 2], 2020, 'natural gas', 2050, 'green RE'),
-    # ([1], 2020, 'natural gas', 2020, 'blue HEB'),
+    ([1], 2020, 'natural gas', 2020, 'blue HEB'),
     ([1], 2020, 'blue HEB',    2020, 'green RE'),
     ([1], 2020, 'blue HEB',    2050, 'green RE'),
     ([2], 2020, 'natural gas', 2020, 'blue LEB'),

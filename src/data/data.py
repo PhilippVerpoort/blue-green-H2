@@ -7,17 +7,17 @@ from src.data.calc_fuels import calcFuelData
 
 # obtain all required data for a scenario
 def obtainScenarioData(scenario: dict):
-    times, params, fuels = (scenario['times'], scenario['params'], scenario['fuels'])
+    options, params, fuels = (scenario['options'], scenario['params'], scenario['fuels'])
 
     # load from yaml files
     coeffs, consts, units = __loadDataFromFiles()
 
     # convert basic inputs to complete dataframes
-    fullParams = __getFullParamsCoeffs(params, units, times)
-    fullCoeffs = __getFullParamsCoeffs(coeffs, units, times)
+    fullParams = __getFullParamsCoeffs(params, units, options['times'])
+    fullCoeffs = __getFullParamsCoeffs(coeffs, units, options['times'])
 
     # calculate fuel data
-    fuelData = calcFuelData(fullParams, fullCoeffs, fuels, consts, times)
+    fuelData = calcFuelData(options['times'], fullParams, fullCoeffs, fuels, consts, options['gwp'])
 
     # calculate FSCPs
     FSCPData = calcFSCPs(fuelData)

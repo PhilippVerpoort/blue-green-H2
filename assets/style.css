@@ -12,7 +12,7 @@
     white-space: nowrap;
 }
 
-.card {
+.card, .tab-parent {
     margin: 1em 0 1em 0;
     min-width: auto;
 }
@@ -24,4 +24,29 @@ label {
 
 #transparent-loader-wrapper > div {
     visibility: visible !important;
+}
+
+.Select-menu-outer {
+  display : block !important;
+}
+
+#update-scenario, #save-scenario {
+  margin-right: 0.5em;
+}
+
+#control-tabs-parent .tab-content {
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+}
+
+#controls-container-simple, #controls-container-advanced {
+  margin-left: 0;
+  margin-right: 0;
+  max-width: unset;
+}
+
+label.display-inline-lhs {
+  display: inline-block;
 }

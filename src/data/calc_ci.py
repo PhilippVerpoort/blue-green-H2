@@ -1,12 +1,10 @@
-def calcCI(params: dict, coeffs: dict, fuel: dict, consts: dict):
-    GWP = f"gwp{int(params['gwp'])}"
-
+def calcCI(params: dict, coeffs: dict, fuel: dict, consts: dict, gwp: str):
     if fuel['type'] == 'ng':
-        return __calcNG(params, consts, coeffs, fuel, GWP)
+        return __calcNG(params, consts, coeffs, fuel, gwp)
     elif fuel['type'] == 'blue':
-        return __calcBlue(params, consts, coeffs, fuel, GWP)
+        return __calcBlue(params, consts, coeffs, fuel, gwp)
     elif fuel['type'] == 'green':
-        return __calcGreen(params, consts, coeffs, fuel, GWP)
+        return __calcGreen(params, consts, coeffs, fuel, gwp)
     else:
         raise Exception("Unknown fuel: {}".format(fuel['type']))
 

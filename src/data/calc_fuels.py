@@ -5,7 +5,7 @@ from src.data.calc_cost import calcCost
 
 
 # calculate fuel data
-def calcFuelData(full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: dict, consts: dict, times: list):
+def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: dict, consts: dict, gwp: str):
     fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_u', 'ci', 'ci_u'])
 
     for fuel_id, fuel in fuels.items():
@@ -14,7 +14,7 @@ def calcFuelData(full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: di
             currentCoeffs = __getCurrentAsDict(full_coeffs, t)
 
             cost, cost_u = calcCost(currentParams, currentCoeffs, fuel, consts)
-            ci, ci_u = calcCI(currentParams, currentCoeffs, fuel, consts)
+            ci, ci_u = calcCI(currentParams, currentCoeffs, fuel, consts, gwp)
 
             new_fuel = {'fuel': fuel_id, 'year': t, 'cost': cost, 'cost_u': cost_u, 'ci': ci, 'ci_u': ci_u}
             fuelData = fuelData.append(new_fuel, ignore_index=True)
