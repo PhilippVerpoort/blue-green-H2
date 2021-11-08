@@ -14,7 +14,7 @@ def setLayout(app, scenarioInputDefault):
     widget_advanced_options, widget_advanced_fuels = getAdvancedWidgets(scenarioInputDefault)
 
     # advanced scenario config
-    widget_simple_options, widget_simple_green = getSimpleWidgets(scenarioInputDefault)
+    widget_simple_options, widget_simple_green, widget_simple_blue = getSimpleWidgets(scenarioInputDefault)
 
     # plots
     fig1, fig2 = getPlots()
@@ -60,7 +60,8 @@ def setLayout(app, scenarioInputDefault):
                                                     dbc.Row(
                                                         children=[
                                                             dbc.Col(widget_simple_options, md=2),
-                                                            dbc.Col(widget_simple_green, md=3)
+                                                            dbc.Col(widget_simple_green, md=5),
+                                                            dbc.Col(widget_simple_blue, md=5),
                                                         ],
                                                     ),
                                                 ]

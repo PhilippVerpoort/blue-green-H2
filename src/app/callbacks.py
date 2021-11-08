@@ -13,6 +13,22 @@ from src.plotting.plotFig2 import plotFig2
      State('control-tabs', 'value'),
      State('simple-gwp', 'value'),
      State('simple-leakage', 'value'),
+     State('simple-ng-price', 'value'),
+     State('simple-lifetime', 'value'),
+     State('simple-irate', 'value'),
+     State('simple-cost-green-capex-2020', 'value'),
+     State('simple-cost-green-capex-2050', 'value'),
+     State('simple-cost-green-elec-2020', 'value'),
+     State('simple-cost-green-elec-2050', 'value'),
+     State('simple-green-ocf', 'value'),
+     State('simple-elecsrc', 'value'),
+     State('simple-elecsrc-custom', 'value'),
+     State('simple-cost-blue-capex-heb', 'value'),
+     State('simple-cost-blue-capex-leb', 'value'),
+     State('simple-cost-blue-cts-2020', 'value'),
+     State('simple-cost-blue-cts-2050', 'value'),
+     State('simple-cost-blue-eff-heb', 'value'),
+     State('simple-cost-blue-eff-leb', 'value'),
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data'),])
@@ -56,3 +72,12 @@ def callback1(n, c, *args):
                     showFuels = showFuels)
 
     return fig1, fig2
+
+@app.callback(
+   Output(component_id='wrapper-simple-elecsrc-custom', component_property='style'),
+   [Input(component_id='simple-elecsrc', component_property='value')])
+def callback2(elecsrc_selected):
+    if elecsrc_selected == 'custom':
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}

@@ -39,7 +39,7 @@ fuels:
   green RE:
     desc: Green Hydrogen (Using Renewable Energy Only)
     type: green
-    elecsrc: re # RE only
+    elecsrc: wind # RE only
 
   green mix:
     desc: Green Hydrogen (Using Current Electricity Mix)
@@ -111,7 +111,7 @@ params:
     source: IEAGHG
 
   cost_blue_eff:
-    desc: Fuel efficiency of blue
+    desc: Fuel efficiency
     type: const
     value:
       smr: 0.7592
@@ -131,9 +131,9 @@ params:
     source: IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured
 
   cost_blue_cts:
-    desc: Carbon transport and storage cost (per tCO2, i.e. independent of capture rate)
+    desc: Carbon transport and storage cost
     type: linear
-    value:
+    value: # (per tCO2, i.e. independent of capture rate)
       2020: 10.0
       2050: 40.0
     unit: EUR/tCO2
@@ -185,17 +185,26 @@ params:
     desc: Electricity price
     type: linear
     value:
-      re: # renewables only
+      hydro: # run-of-river hydro power
         2020: 60.0
         2050: 30.0
-      mix: # ee mix
+      wind: # wind power onshore
+        2020: 60.0
+        2050: 30.0
+      solar: # PV power
+        2020: 60.0
+        2050: 30.0
+      custom: # custom
+        2020: 60.0
+        2050: 30.0
+      mix: # EU mix
         2020: 300.0
         2050: 50.0
     unit: USD/MWh
     source: RE numbers based on IRENA - solar PV https://www.irena.org/publications/2021/Jun/Renewable-Power-Costs-in-2020 // mix numbers are guessed
 
   ci_green_base:
-    desc: Electricity carbon intensity
+    desc: CI of electrolysis
     type: const
     value:
       gwp100: 0.12
@@ -204,20 +213,29 @@ params:
     source: Christians Excel Spreadsheet 29/10/2021
 
   ci_green_eff:
-    desc: Electricity carbon intensity
+    desc: Elec. efficiency
     type: const
     value: 55.0
     unit: kWh/kgH2
     source: Christians Excel Spreadsheet 29/10/2021
 
   ci_green_elec:
-    desc: Electricity carbon intensity
+    desc: CI of electricity
     type: const
     value:
-      re: # renewables only -> using wind power onshore
+      hydro: # run-of-river hydro power
+        gwp100: 0.004
+        gwp20: 0.004
+      wind: # wind power onshore
         gwp100: 0.013
         gwp20: 0.015
-      mix: # ee mix -> using EU mix
+      solar: # PV power
+        gwp100: 0.04
+        gwp20: 0.05
+      custom: # custom
+        gwp100: 0.02
+        gwp20: 0.03
+      mix: # EU mix
         gwp100: 0.397
         gwp20: 0.434
     unit: kgCO2eq/kWh

@@ -1,3 +1,5 @@
+known_ESs = ['hydro', 'wind', 'solar', 'custom', 'mix']
+
 def calcCI(params: dict, coeffs: dict, fuel: dict, consts: dict, gwp: str):
     if fuel['type'] == 'ng':
         return __calcNG(params, consts, coeffs, fuel, gwp)
@@ -25,7 +27,7 @@ def __calcBlue(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
 
 def __calcGreen(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
     ES = fuel['elecsrc']
-    if ES not in ['re', 'mix']: raise Exception(f"Unknown elecsrc type: {ES}")
+    if ES not in known_ESs: raise Exception(f"Unknown elecsrc type: {ES}")
 
     r = par[f"ci_green_base_{GWP}"] + par[f"ci_green_eff"] * par[f"ci_green_elec_{ES}_{GWP}"]
 

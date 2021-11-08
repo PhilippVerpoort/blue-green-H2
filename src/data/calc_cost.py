@@ -1,3 +1,5 @@
+known_ESs = ['hydro', 'wind', 'solar', 'custom', 'mix']
+
 def calcCost(params: dict, coeffs: dict, fuel: dict, consts: dict):
     if fuel['type'] == 'ng':
         return __calcNG(params, consts, coeffs, fuel)
@@ -38,7 +40,7 @@ def __calcBlue(par: dict, const: dict, coef: dict, fuel: dict):
 
 def __calcGreen(par: dict, const: dict, coef: dict, fuel: dict):
     ES = fuel['elecsrc']
-    if ES not in ['re', 'mix']: raise Exception(f"Unknown elecsrc type: {ES}")
+    if ES not in known_ESs: raise Exception(f"Unknown elecsrc type: {ES}")
 
     c_pl = par['cost_green_capex']
     p_el = par[f"cost_green_elec_{ES}"]
