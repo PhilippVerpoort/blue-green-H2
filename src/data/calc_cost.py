@@ -42,7 +42,7 @@ def __calcGreen(par: dict, const: dict, coef: dict, fuel: dict):
     ES = fuel['elecsrc']
     if ES not in known_ESs: raise Exception(f"Unknown elecsrc type: {ES}")
 
-    c_pl = par['cost_green_capex']
+    c_pl = par['cost_green_capex'] if fuel['include_capex'] else 0.0
     p_el = par[f"cost_green_elec_{ES}"]
     eff = par['ci_green_eff']
     ocf = par['green_ocf'] if ES=='re' else 1.0

@@ -40,11 +40,13 @@ fuels:
     desc: Green Hydrogen (Using Renewable Energy Only)
     type: green
     elecsrc: wind # RE only
+    include_capex: True
 
   green mix:
     desc: Green Hydrogen (Using Current Electricity Mix)
     type: green
     elecsrc: mix # grid mix
+    include_capex: True
     
 
 
