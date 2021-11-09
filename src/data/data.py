@@ -1,3 +1,5 @@
+import io
+
 import pandas as pd
 import yaml
 
@@ -6,7 +8,7 @@ from src.data.calc_fuels import calcFuelData
 
 
 # obtain all required data for a scenario
-def obtainScenarioData(scenario: dict):
+def obtainScenarioData(scenario: dict, export_data = True):
     options, params, fuels = (scenario['options'], scenario['params'], scenario['fuels'])
 
     # load from yaml files
@@ -23,7 +25,9 @@ def obtainScenarioData(scenario: dict):
     FSCPData = calcFSCPs(fuelData)
 
     # dump to output file
-    with pd.ExcelWriter('output/data.xlsx') as writer:
+    if export_data:
+        writer = pd.ExcelWriter('output/data.xlsx')
+
         columnOrder = ['description', 'type', 'value', 'unit', 'source']
 
         pd.DataFrame(params).T.reindex(columnOrder, axis=1).to_excel(writer, sheet_name='Parameters (input)')
@@ -33,6 +37,8 @@ def obtainScenarioData(scenario: dict):
         fullParams.to_excel(writer, sheet_name='Parameters (full)')
         fullCoeffs.to_excel(writer, sheet_name='Coefficients (full)')
         fuelData.to_excel(writer, sheet_name='Fuel data (output)')
+
+        writer.save()
 
     return fuelData, fuelSpecs, FSCPData
 

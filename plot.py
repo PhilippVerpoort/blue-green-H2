@@ -5,7 +5,7 @@ from src.plotting.plotFig1 import plotFig1
 
 scenarioData = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
 
-fuelData, FSCPData = obtainScenarioData(scenarioData)
+fuelData, fuelSpecs, FSCPData, _ = obtainScenarioData(scenarioData)
 
 showFuels = [
     ([1, 2], 2020, 'natural gas'),
@@ -26,4 +26,4 @@ showFSCPs = [
     ([2], 2020, 'blue LEB',    2050, 'green RE'),
 ]
 
-plotFig1(fuelData, FSCPData, showFuels=showFuels, showFSCPs=showFSCPs)
+plotFig1(fuelData, fuelSpecs, FSCPData, showFuels=showFuels, showFSCPs=showFSCPs)

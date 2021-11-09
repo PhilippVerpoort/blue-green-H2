@@ -2,6 +2,7 @@ from dash import dcc, html
 import dash_bootstrap_components as dbc
 
 from src.app.elements.header import getHeader
+from src.app.elements.results import getResultsWidgets
 from src.app.elements.simple import getSimpleWidgets
 from src.app.elements.advanced import getAdvancedWidgets
 from src.app.elements.plots import getPlots
@@ -15,6 +16,9 @@ def setLayout(app, scenarioInputDefault):
 
     # advanced scenario config
     widget_advanced_options, widget_advanced_params, widget_advanced_fuels = getAdvancedWidgets(scenarioInputDefault)
+
+    # results
+    widget_results = getResultsWidgets()
 
     # plots
     fig1, fig2 = getPlots()
@@ -65,12 +69,9 @@ def setLayout(app, scenarioInputDefault):
                                                         ],
                                                     ),
                                                     dbc.Row(children=[
-                                                        dbc.Col(children=[
-                                                                dbc.Button(id='simple-update', n_clicks=0, children='Generate Data + Plot', className='scenario-buttons'),
-                                                                dbc.Button(id='simple-download', n_clicks=0, children='Download Config', className='scenario-buttons')
-                                                            ],
-                                                            md=4
-                                                        ),
+                                                        dbc.Button(id='simple-update', n_clicks=0, children='Generate Results + Plot', className='scenario-buttons'),
+                                                        dbc.Button(id='simple-download-config', n_clicks=0, children='Download Config', className='scenario-buttons'),
+                                                        dbc.Button(id='simple-download-results', n_clicks=0, children='Generate Results + Download', className='scenario-buttons')
                                                     ]),
                                                 ]
                                             )
@@ -93,15 +94,26 @@ def setLayout(app, scenarioInputDefault):
                                                         children=[dbc.Col(widget_advanced_params, md=12)],
                                                     ),
                                                     dbc.Row(children=[
-                                                        dbc.Col(children=[
-                                                                dbc.Button(id='advanced-update', n_clicks=0, children='Generate Data + Plot', className='scenario-buttons'),
-                                                                dbc.Button(id='advanced-download', n_clicks=0, children='Download Config', className='scenario-buttons')
-                                                            ],
-                                                            md=4
-                                                        ),
+                                                        dbc.Button(id='advanced-update', n_clicks=0, children='Generate Results + Plot', className='scenario-buttons'),
+                                                        dbc.Button(id='advanced-download-config', n_clicks=0, children='Download Config', className='scenario-buttons'),
+                                                        dbc.Button(id='advanced-download-results', n_clicks=0, children='Generate Results + Download', className='scenario-buttons')
                                                     ]),
                                                 ]
                                             )
+                                        ],
+                                    ),
+                                    dcc.Tab(
+                                        label='Results',
+                                        value='results',
+                                        children=[
+                                            dbc.Container(
+                                                children=[
+                                                    dbc.Row(widget_results),
+                                                    dbc.Row(dbc.Button(id='results-replot', n_clicks=0, children='Replot data', className='scenario-buttons')
+                                                    )
+                                                ]
+                                            ),
+                                            dcc.Store(id='fuel-specs', storage_type='session'),
                                         ],
                                     )
                                 ]
@@ -116,5 +128,6 @@ def setLayout(app, scenarioInputDefault):
                 fluid=True,
             ),
             dcc.Download(id="download-config-yaml"),
+            dcc.Download(id="download-results-xlsx"),
         ]
     )

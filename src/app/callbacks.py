@@ -1,19 +1,31 @@
+import io
+
+import pandas as pd
 import yaml
 
 import dash
 from dash.dependencies import Input, Output, State
+from flask import send_file
 
 from server import app, scenarioInputDefault
 from src.app.update import updateScenarioInputSimple, updateScenarioInputAdvanced
+from src.data.calc_FSCPs import calcFSCPs
 from src.data.data import obtainScenarioData
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 
+
+# general callback for (re-)generating plots
 @app.callback(
     [Output('fig1', 'figure'),
-     Output('fig2', 'figure')],
+     Output('fig2', 'figure'),
+     Output('table-results', 'data'),
+     Output('fuel-specs', 'data')],
     [Input('simple-update', 'n_clicks'),
      Input('advanced-update', 'n_clicks'),
+     Input('results-replot', 'n_clicks'),
+     State('table-results', 'data'),
+     State('fuel-specs', 'data'),
      State('simple-gwp', 'value'),
      State('simple-leakage', 'value'),
      State('simple-ng-price', 'value'),
@@ -34,22 +46,32 @@ from src.plotting.plotFig2 import plotFig2
      State('simple-cost-blue-eff-leb', 'value'),
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
-     State('advanced-fuels', 'data'),])
-def callbackUpdate(n1, n2, *args):
+     State('advanced-fuels', 'data')])
+def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
     ctx = dash.callback_context
 
     if not ctx.triggered:
         scenarioInputUpdated = scenarioInputDefault.copy()
+        fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioInputUpdated)
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
             scenarioInputUpdated = updateScenarioInputSimple(scenarioInputDefault.copy(), *args)
+            fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioInputUpdated)
         elif btnPressed == 'advanced-update':
             scenarioInputUpdated = updateScenarioInputAdvanced(scenarioInputDefault.copy(), *args)
+            fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioInputUpdated)
+        elif btnPressed == 'results-replot':
+            fuelData = pd.DataFrame(table_results_data)
+            fuelData['year'] = fuelData['year'].astype(int)
+            fuelData['cost'] = fuelData['cost'].astype(float)
+            fuelData['cost_u'] = fuelData['cost_u'].astype(float)
+            fuelData['ci'] = fuelData['ci'].astype(float)
+            fuelData['ci_u'] = fuelData['ci_u'].astype(float)
+            fuelSpecs = fuel_specs_data
+            FSCPData = calcFSCPs(fuelData)
         else:
             raise Exception("Unknown button pressed!")
-
-    fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioInputUpdated)
 
     showFuels = [
         ([1,2], 2020, 'natural gas'),
@@ -82,12 +104,13 @@ def callbackUpdate(n1, n2, *args):
                     refYear = 2020,
                     showFuels = showFuels)
 
-    return fig1, fig2
+    return fig1, fig2, fuelData.to_dict('records'), fuelSpecs
 
+# callback for YAML config download
 @app.callback(
     Output("download-config-yaml", "data"),
-    [Input('simple-download', 'n_clicks'),
-     Input('advanced-download', 'n_clicks'),
+    [Input('simple-download-config', 'n_clicks'),
+     Input('advanced-download-config', 'n_clicks'),
      State('simple-gwp', 'value'),
      State('simple-leakage', 'value'),
      State('simple-ng-price', 'value'),
@@ -110,22 +133,23 @@ def callbackUpdate(n1, n2, *args):
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data'),],
      prevent_initial_call=True,)
-def callbackDownload(n1, n2, *args):
+def callbackDownloadConfig(n1, n2, *args):
     ctx = dash.callback_context
 
     if not ctx.triggered:
-        raise Exception("Inital call not prevented!")
+        raise Exception("Initial call not prevented!")
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btnPressed == 'simple-download':
-            scenarioInputUpdated = updateScenarioInputAdvanced(scenarioInputDefault.copy(), *args)
-        elif btnPressed == 'advanced-download':
+        if btnPressed == 'simple-download-config':
+            scenarioInputUpdated = updateScenarioInputSimple(scenarioInputDefault.copy(), *args)
+        elif btnPressed == 'advanced-download-config':
             scenarioInputUpdated = updateScenarioInputAdvanced(scenarioInputDefault.copy(), *args)
         else:
             raise Exception("Unknown button pressed!")
 
     return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename="scenario.yml")
 
+# this callback shows/hides the custom elecsrc carbon intensity field
 @app.callback(
    Output(component_id='wrapper-simple-elecsrc-custom', component_property='style'),
    [Input(component_id='simple-elecsrc', component_property='value')])
@@ -135,6 +159,7 @@ def callbackWidget1(elecsrc_selected):
     else:
         return {'display': 'none'}
 
+# this callback sets the background colour of the rows in the fuel table in the advanced tab
 @app.callback(
    Output(component_id='advanced-fuels', component_property='style_data_conditional'),
    [Input(component_id='advanced-fuels', component_property='data')])
@@ -150,10 +175,12 @@ def callbackWidget2(data):
          'backgroundColor': '#DDDDDD'}
     ]
 
-    style = defaultCondStyle
-
     for i, row in enumerate(data):
-        append = {'if': {'row_index': i}, 'backgroundColor': row['colour']}
-        style.append(append)
+        defaultCondStyle.append({'if': {'row_index': i}, 'backgroundColor': row['colour']})
 
-    return style
+    return defaultCondStyle
+
+
+@app.server.route("/download/data.xlsx")
+def callbackDownloadExportdata():
+    return send_file("output/data.xlsx", as_attachment=True)
