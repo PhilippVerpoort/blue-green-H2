@@ -1,0 +1,11 @@
+plotting:
+  fscp_max: 500.0
+  numb_cols: 2
+
+labels:
+  time: ""
+  fscp: FSCP in EUR/MWh<sub>LHV</sub>
+
+fscp_colours:
+  blue LEB to green RE: '#8CAAAF'
+  blue HEB to green RE: '#8CAAAF'

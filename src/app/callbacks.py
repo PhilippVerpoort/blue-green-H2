@@ -13,12 +13,14 @@ from src.data.calc_FSCPs import calcFSCPs
 from src.data.data import obtainScenarioData
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
+from src.plotting.plotFig3 import plotFig3
 
 
 # general callback for (re-)generating plots
 @app.callback(
     [Output('fig1', 'figure'),
      Output('fig2', 'figure'),
+     Output('fig3', 'figure'),
      Output('table-results', 'data'),
      Output('fuel-specs', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -104,7 +106,17 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
                     refYear = 2020,
                     showFuels = showFuels)
 
-    return fig1, fig2, fuelData.to_dict('records'), fuelSpecs
+    showFSCPs = [
+        ([1, 2], 'natural gas', 'green RE'),
+        ([1], 'natural gas', 'blue HEB'),
+        ([2], 'natural gas', 'blue LEB'),
+        ([1], 'blue HEB', 'green RE'),
+        ([2], 'blue LEB', 'green RE'),
+    ]
+
+    fig3 = plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs)
+
+    return fig1, fig2, fig3, fuelData.to_dict('records'), fuelSpecs
 
 # callback for YAML config download
 @app.callback(
