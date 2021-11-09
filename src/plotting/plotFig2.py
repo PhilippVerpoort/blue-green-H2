@@ -48,13 +48,13 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str
 
     # add FSCP traces
     refData = plotData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
-    traces = __addFSCPTraces(refData, config)
+    traces, cost_ref = __addFSCPTraces(refData, config)
     for trace in traces:
         fig.add_trace(trace)
 
     # set plotting ranges
     fig.update_layout(xaxis=dict(title=config['labels']['ci'],   range=[0.0, config['plotting']['ci_max']]),
-                      yaxis=dict(title=config['labels']['cost'], range=[0.0, config['plotting']['cost_max']]))
+                      yaxis=dict(title=config['labels']['cost'], range=[cost_ref, config['plotting']['cost_max']]))
 
     return fig
 
@@ -96,47 +96,84 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
     fscp = (cost_v - cost_ref)/(ci_ref - ci_v)
 
     traces.append(go.Heatmap(x=ci_samples, y=cost_samples, z=fscp,
-                             zsmooth='best', showscale=False, hoverinfo='skip',
+                             zsmooth='best', showscale=True, hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#c6dbef'],
                                  [1.0, '#f7bba1'],
-                             ]))
+                             ],
+                             colorbar=dict(
+                                 x=1.0,
+                                 y=0.25,
+                                 len=0.5,
+                                 title='FSCP',
+                                 titleside='top',
+                             )))
 
     traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
                                  [1.0, '#000000'],
-                             ]))
+                             ],
+                             contours=dict(
+                                 showlabels=False,
+                                 start=50,
+                                 end=2000,
+                                 size=50,
+                             )))
 
-    return traces
+    traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             line=dict(width=1.5),
+                             contours=dict(
+                                 showlabels=True,
+                                 labelfont=dict(
+                                     size=10,
+                                     color='black',
+                                 ),
+                                 size=100,
+                                 start=100,
+                                 end=600,
+                             )))
 
-    nSamples = 960
-    swp_samples = pd.DataFrame(data={'i': list(range(0, nSamples + 1))}).assign(j=lambda x: x.i % 31,
-                                                                                k=lambda x: x.i // 31).assign(
-        e=lambda x: max_emis_xaxis * x.j / 30, c=lambda x: ref_c + (max_cost_yaxis - ref_c) * x.k / 30,
-        swp=lambda x: (x.c - ref_c) / (ref_e * 1.01 - x.e))
+    traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             line=dict(width=1.5),
+                             contours=dict(
+                                 showlabels=True,
+                                 labelfont=dict(
+                                     size=10,
+                                     color='black',
+                                 ),
+                                 size=250,
+                                 start=750,
+                                 end=1000,
+                             )))
 
-    for index, row in plotFSCP.iterrows():
-        name = f"Switching from <b>{config['names'][row.fuel_x]}</b><br>to <b>{config['names'][row.fuel_y]}</b>"
+    traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             line=dict(width=1.5),
+                             contours=dict(
+                                 showlabels=True,
+                                 labelfont=dict(
+                                     size=10,
+                                     color='black',
+                                 ),
+                                 size=300,
+                                 start=1200,
+                                 end=1500,
+                             )))
 
-        # circle at intersection
-        traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_u,), thickness=0.0),
-                                 mode="markers",
-                                 marker=dict(symbol='circle-open', size=12, line={'width': 2}, color='Black'),
-                                 showlegend=False,
-                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
-
-        # dashed line to x-axis
-        traces.append((index, go.Scatter(x=(row.fscp, row.fscp), y = (0, row.fscp_tc),
-                                 mode="lines",
-                                 line=dict(color='Black', width=1, dash='dot'),
-                                 showlegend=False, hoverinfo='none',)))
-
-        # error bar near x-axis
-        traces.append((index, go.Scatter(x=(row.fscp,), y = (0,), error_x=dict(type='data', array=(row.fscp_u,)),
-                                 marker=dict(symbol=34, size=5, line={'width': 2}, color='Black'),
-                                 showlegend=False,
-                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
-
-    return traces
+    return traces, cost_ref

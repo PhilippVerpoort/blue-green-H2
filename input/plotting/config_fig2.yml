@@ -1,6 +1,6 @@
 plotting:
-  ci_max: 0.15
-  cost_max: 230.0
+  ci_max: 0.23
+  cost_max: 110.0
   n_samples: 51
 
 labels:
