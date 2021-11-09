@@ -3,6 +3,7 @@ import yaml
 from src.data.data import obtainScenarioData
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig3 import plotFig3
+from src.plotting.plotFig4 import plotFig4
 
 scenarioData = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
 
@@ -38,3 +39,5 @@ showFSCPs = [
 ]
 
 plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs)
+
+plotFig4(scenarioData['params'])

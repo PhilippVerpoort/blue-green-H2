@@ -14,6 +14,7 @@ from src.data.data import obtainScenarioData
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3
+from src.plotting.plotFig4 import plotFig4
 
 
 # general callback for (re-)generating plots
@@ -21,6 +22,7 @@ from src.plotting.plotFig3 import plotFig3
     [Output('fig1', 'figure'),
      Output('fig2', 'figure'),
      Output('fig3', 'figure'),
+     Output('fig4', 'figure'),
      Output('table-results', 'data'),
      Output('fuel-specs', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -116,7 +118,9 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
 
     fig3 = plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs)
 
-    return fig1, fig2, fig3, fuelData.to_dict('records'), fuelSpecs
+    fig4 = plotFig4(scenarioInputUpdated['params'])
+
+    return fig1, fig2, fig3, fig4, fuelData.to_dict('records'), fuelSpecs
 
 # callback for YAML config download
 @app.callback(

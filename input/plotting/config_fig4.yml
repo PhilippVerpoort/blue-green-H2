@@ -1,0 +1,15 @@
+plotting:
+  ci_min: 0.01
+  ci_max: 0.20
+  cost_min: 3.0
+  cost_max: 20.0
+  n_samples: 51
+
+colours:
+  heatmap_high: '#345979'
+  heatmap_medium: '#62b7fe'
+  heatmap_low: '#00fe00'
+
+labels:
+  ci: Carbon intensity difference in t<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
+  cost: Cost difference in EUR/MWh<sub>LHV</sub>

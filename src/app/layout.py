@@ -21,7 +21,7 @@ def setLayout(app, scenarioInputDefault):
     widget_results = getResultsWidgets()
 
     # plots
-    fig1, fig2, fig3 = getPlots()
+    fig1, fig2, fig3, fig4 = getPlots()
 
     # explanation
     explanation = dbc.Col(
@@ -132,7 +132,7 @@ def setLayout(app, scenarioInputDefault):
                         children=[dbc.Col(fig1, md=7), dbc.Col(fig2, md=5)],
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig3, md=7)],
+                        children=[dbc.Col(fig3, md=7), dbc.Col(fig4, md=5)],
                     ),
                 ],
                 fluid=True,
