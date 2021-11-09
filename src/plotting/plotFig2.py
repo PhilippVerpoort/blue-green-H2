@@ -53,7 +53,7 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str
         fig.add_trace(trace)
 
     # set plotting ranges
-    fig.update_layout(xaxis=dict(title=config['labels']['ci'],   range=[0.0, config['plotting']['ci_max']]),
+    fig.update_layout(xaxis=dict(title=config['labels']['ci'],   range=[0.0, config['plotting']['ci_max']*1000]),
                       yaxis=dict(title=config['labels']['cost'], range=[cost_ref, config['plotting']['cost_max']]))
 
     return fig
@@ -71,8 +71,8 @@ def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: l
         thisData = plotData.query(f"fuel=='{fuel}'")
 
         # fuel line
-        traces.append(go.Scatter(x=thisData.ci, y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ci_u), error_y=dict(type='data', array=thisData.cost_u),
+        traces.append(go.Scatter(x=thisData.ci*1000, y=thisData.cost,
+            error_x=dict(type='data', array=thisData.ci_u*1000), error_y=dict(type='data', array=thisData.cost_u),
             name=name,
             legendgroup=fuel,
             mode="markers+lines",
@@ -95,7 +95,7 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
 
     fscp = (cost_v - cost_ref)/(ci_ref - ci_v)
 
-    traces.append(go.Heatmap(x=ci_samples, y=cost_samples, z=fscp,
+    traces.append(go.Heatmap(x=ci_samples*1000, y=cost_samples, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#c6dbef'],
@@ -109,7 +109,7 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                                  titleside='top',
                              )))
 
-    traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -122,7 +122,7 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                                  size=50,
                              )))
 
-    traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -140,7 +140,7 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                                  end=600,
                              )))
 
-    traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -158,7 +158,7 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                                  end=1000,
                              )))
 
-    traces.append(go.Contour(x=ci_samples, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],

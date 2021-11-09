@@ -34,7 +34,7 @@ def __produceFigure(params: dict, config: dict):
     delta_ci_v, delta_cost_v = np.meshgrid(delta_ci, delta_cost)
     fscp = delta_cost_v / delta_ci_v
 
-    fig.add_trace(go.Heatmap(x=delta_ci, y=delta_cost, z=fscp,
+    fig.add_trace(go.Heatmap(x=delta_ci*1000, y=delta_cost, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
                              colorscale=[
                                  [0.0, config['colours']['heatmap_low']],
@@ -49,7 +49,7 @@ def __produceFigure(params: dict, config: dict):
                                  titleside='top',
                              )))
 
-    fig.add_trace(go.Contour(x=delta_ci, y=delta_cost, z=fscp,
+    fig.add_trace(go.Contour(x=delta_ci*1000, y=delta_cost, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -63,7 +63,7 @@ def __produceFigure(params: dict, config: dict):
                              )))
 
     # set plotting ranges
-    fig.update_layout(xaxis=dict(title=config['labels']['ci'], range=[config['plotting']['ci_min'], config['plotting']['ci_max']]),
+    fig.update_layout(xaxis=dict(title=config['labels']['ci'], range=[config['plotting']['ci_min']*1000, config['plotting']['ci_max']*1000]),
                       yaxis=dict(title=config['labels']['cost'], range=[config['plotting']['cost_min'], config['plotting']['cost_max']]))
 
     return fig
