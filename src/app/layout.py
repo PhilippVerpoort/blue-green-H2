@@ -70,8 +70,7 @@ def setLayout(app, scenarioInputDefault):
                                                     ),
                                                     dbc.Row(children=[
                                                         dbc.Button(id='simple-update', n_clicks=0, children='Generate Results + Plot', className='scenario-buttons'),
-                                                        dbc.Button(id='simple-download-config', n_clicks=0, children='Download Config', className='scenario-buttons'),
-                                                        dbc.Button(id='simple-download-results', n_clicks=0, children='Generate Results + Download', className='scenario-buttons')
+                                                        dbc.Button(id='simple-download-config', n_clicks=0, children='Download Config', className='scenario-buttons')
                                                     ]),
                                                 ]
                                             )
@@ -95,8 +94,7 @@ def setLayout(app, scenarioInputDefault):
                                                     ),
                                                     dbc.Row(children=[
                                                         dbc.Button(id='advanced-update', n_clicks=0, children='Generate Results + Plot', className='scenario-buttons'),
-                                                        dbc.Button(id='advanced-download-config', n_clicks=0, children='Download Config', className='scenario-buttons'),
-                                                        dbc.Button(id='advanced-download-results', n_clicks=0, children='Generate Results + Download', className='scenario-buttons')
+                                                        dbc.Button(id='advanced-download-config', n_clicks=0, children='Download Config', className='scenario-buttons')
                                                     ]),
                                                 ]
                                             )
@@ -109,7 +107,16 @@ def setLayout(app, scenarioInputDefault):
                                             dbc.Container(
                                                 children=[
                                                     dbc.Row(widget_results),
-                                                    dbc.Row(dbc.Button(id='results-replot', n_clicks=0, children='Replot data', className='scenario-buttons')
+                                                    dbc.Row(children=[
+                                                            dbc.Button(id='results-replot', n_clicks=0, children='Replot data', className='scenario-buttons'),
+                                                            html.Form(
+                                                                action='/download/data.xlsx',
+                                                                method='get',
+                                                                children=[
+                                                                    dbc.Button(id='results-download', type='submit', children='Download data', className='scenario-buttons')
+                                                                ]
+                                                            )
+                                                        ]
                                                     )
                                                 ]
                                             ),
