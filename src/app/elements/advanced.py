@@ -1,3 +1,5 @@
+import yaml
+
 from dash import dcc, html, dash_table
 import dash_bootstrap_components as dbc
 
@@ -42,10 +44,57 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
             )
         ]
     )
+    
+    params = scenarioInputDefault['params']
+    params_data = [dict(param=param,
+                       desc=params[param]['desc'],
+                       type=params[param]['type'],
+                       value=yaml.dump(params[param]['value']),
+                       unit=params[param]['unit']
+                       ) for param in params]
+    
+
+    widget_advanced_params = dbc.Card(
+        [
+            html.Div(
+                children=[
+                    dbc.CardHeader("Parameters"),
+                    dbc.CardBody(
+                        className='no-padding',
+                        children=[
+                            dash_table.DataTable(
+                                id='advanced-params',
+                                columns=[
+                                    {'id': 'param', 'name': 'ID'},
+                                    {'id': 'desc', 'name': 'Name'},
+                                    {'id': 'type', 'name': 'Type', 'presentation': 'dropdown'},
+                                    {'id': 'value', 'name': 'Value'},
+                                    {'id': 'unit', 'name': 'Unit'},
+                                ],
+                                data=params_data,
+                                editable=True,
+                                dropdown={
+                                    'type': {
+                                        'options': [
+                                            {'value': 'const', 'label': 'Constant'},
+                                            {'value': 'linear', 'label': 'Linear'},
+                                        ]
+                                    }
+                                },
+                                style_cell={"whiteSpace": "pre-line"}
+                            ),
+                            html.Div(id='table-params-dropdown-container'),
+                        ]
+                    )
+                ]
+            )
+        ]
+    )
 
     fuels = scenarioInputDefault['fuels']
     fuels_data = [dict(fuel=fuel,
                        desc=fuels[fuel]['desc'],
+                       colour=fuels[fuel]['colour'],
                        type=fuels[fuel]['type'],
                        capture_rate=fuels[fuel]['capture_rate'] if 'capture_rate' in fuels[fuel] else None,
                        methane_leakage=fuels[fuel]['methane_leakage'] if 'methane_leakage' in fuels[fuel] else None,
@@ -59,16 +108,20 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                 children=[
                     dbc.CardHeader("Defined fuels"),
                     dbc.CardBody(
+                        className='no-padding',
                         children=[
                             dash_table.DataTable(
                                 id='advanced-fuels',
-                                columns=[{'id': 'fuel', 'name': 'Fuel ID'},
-                                         {'id': 'desc', 'name': 'Fuel name'},
-                                         {'id': 'type', 'name': 'Fuel type', 'presentation': 'dropdown'},
-                                         {'id': 'capture_rate', 'name': 'Blue type'},
-                                         {'id': 'methane_leakage', 'name': 'Methane leakage'},
-                                         {'id': 'include_capex', 'name': 'Include CAPEX'},
-                                         {'id': 'elecsrc', 'name': 'Electricity source'}, ],
+                                columns=[
+                                    {'id': 'fuel', 'name': 'Fuel ID'},
+                                    {'id': 'desc', 'name': 'Fuel name'},
+                                    {'id': 'colour', 'name': 'Colour'},
+                                    {'id': 'type', 'name': 'Fuel type', 'presentation': 'dropdown'},
+                                    {'id': 'capture_rate', 'name': 'Blue type', 'presentation': 'dropdown'},
+                                    {'id': 'methane_leakage', 'name': 'Methane leakage'},
+                                    {'id': 'include_capex', 'name': 'Include CAPEX', 'presentation': 'dropdown'},
+                                    {'id': 'elecsrc', 'name': 'Electricity source', 'presentation': 'dropdown'},
+                                ],
                                 data=fuels_data,
                                 editable=True,
                                 dropdown={
@@ -78,10 +131,32 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                             {'value': 'blue', 'label': 'Blue Hydrogen'},
                                             {'value': 'green', 'label': 'Green Hydrogen'},
                                         ]
+                                    },
+                                    'capture_rate': {
+                                        'options': [
+                                            {'value': 'smr', 'label': 'SMR only'},
+                                            {'value': 'heb', 'label': 'SMR+CCS'},
+                                            {'value': 'leb', 'label': 'ATR+CCS'},
+                                        ]
+                                    },
+                                    'include_capex': {
+                                        'options': [
+                                            {'value': True, 'label': 'True'},
+                                            {'value': False, 'label': 'False'},
+                                        ]
+                                    },
+                                    'elecsrc': {
+                                        'options': [
+                                            {'value': 'hydro', 'label': 'Hydro power'},
+                                            {'value': 'wind', 'label': 'Wind power onshore'},
+                                            {'value': 'solar', 'label': 'Solar PV'},
+                                            {'value': 'custom', 'label': 'Use custom numbers'},
+                                            {'value': 'mix', 'label': 'EU electricity mix'},
+                                        ]
                                     }
                                 }
                             ),
-                            html.Div(id='table-dropdown-container'),
+                            html.Div(id='table-fuels-dropdown-container'),
                         ]
                     )
                 ]
@@ -89,4 +164,4 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
         ]
     )
 
-    return widget_advanced_options, widget_advanced_fuels
+    return widget_advanced_options, widget_advanced_params, widget_advanced_fuels

@@ -49,8 +49,12 @@ def updateScenarioInputSimple(scenarioInput: dict,
 
 def updateScenarioInputAdvanced(scenarioInput: dict,
                                 simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
-                                simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float, simple_cost_green_elec_2020: float,
-                                simple_cost_green_elec_2050: float, simple_green_ocf: int,
+                                simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,
+                                simple_cost_green_elec_2020: float,  simple_cost_green_elec_2050: float,
+                                simple_green_ocf: int, simple_elecsrc: str, simple_elecsrc_custom: float,
+                                simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
+                                simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
+                                simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,
                                 advanced_gwp: str, advanced_times: list, advanced_fuels):
     # update GWP
     scenarioInput['options']['gwp'] = advanced_gwp
@@ -61,5 +65,19 @@ def updateScenarioInputAdvanced(scenarioInput: dict,
         t = item['i']
         if not isinstance(t, int): raise PreventUpdate()
         scenarioInput['options']['times'].append(t)
+
+    scenarioInput['fuels'] = {}
+    for row in advanced_fuels:
+        newFuel = {
+            'desc': row['desc'],
+            'type': row['type'],
+            'colour': row['colour'],
+            'capture_rate': row['capture_rate'],
+            'methane_leakage': row['methane_leakage'],
+            'include_capex': row['include_capex'],
+            'elecsrc': row['elecsrc']
+        }
+
+        scenarioInput['fuels'][row['fuel']] = newFuel
 
     return scenarioInput

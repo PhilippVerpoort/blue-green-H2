@@ -6,9 +6,9 @@ from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 
-def plotFig1(fuelsData: pd.DataFrame, FSCPData: pd.DataFrame, showFuels = None, showFSCPs = None, scenario_name = ""):
+def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, showFuels = None, showFSCPs = None, scenario_name = ""):
     # load config setting from YAML file
-    config = __getPlottingConfig()
+    config = {**fuelSpecs, **__getPlottingConfig()}
 
     # select which lines to plot based on function argument
     plotData, linesCols = __selectPlotData(fuelsData, showFuels)
@@ -26,9 +26,8 @@ def plotFig1(fuelsData: pd.DataFrame, FSCPData: pd.DataFrame, showFuels = None, 
 
 
 def __getPlottingConfig():
-    configAll = yaml.load(open('input/plotting/config_all.yml', 'r').read(), Loader=yaml.FullLoader)
     configThis = yaml.load(open('input/plotting/config_fig1.yml', 'r').read(), Loader=yaml.FullLoader)
-    return {**configAll, **configThis}
+    return configThis
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, showFuels: dict = None):

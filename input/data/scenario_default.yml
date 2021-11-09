@@ -2,49 +2,58 @@ options:
   gwp: gwp100
   times: [2020, 2030, 2050]
 
+
+
 fuels:
   natural gas:
     desc: Natural Gas
     type: ng
+    colour: '#935947'
     methane_leakage: 0.02
 
   grey:
-    desc: Grey Hydrogen (SMR w/o capture)
+    desc: Grey Hydrogen (SMR w/o CCS)
     type: blue
+    colour: '#bfbfbf'
     capture_rate: smr
     methane_leakage: 0.02
     include_capex: True
 
   blue HEB:
-    desc: Blue Hydrogen (High-emissions Blue)
+    desc: Blue Hydrogen (HEB)
     type: blue
+    colour: '#345979'
     capture_rate: heb
     methane_leakage: 0.02
     include_capex: True
 
   blue HEB woCAPEX:
-    desc: Blue Hydrogen (High-emissions Blue, w/o CAPEX)
+    desc: Blue Hydrogen (HEB, w/o CAPEX)
     type: blue
+    colour: '#35638a'
     capture_rate: heb
     methane_leakage: 0.02
     include_capex: False
 
   blue LEB:
-    desc: Blue Hydrogen (Low-emissions Blue)
+    desc: Blue Hydrogen (LEB)
     type: blue
+    colour: '#62b7fe'
     capture_rate: leb
     methane_leakage: 0.02
     include_capex: True
 
   green RE:
-    desc: Green Hydrogen (Using Renewable Energy Only)
+    desc: Green Hydrogen (using RE only)
     type: green
+    colour: '#00fe00'
     elecsrc: wind # RE only
     include_capex: True
 
   green mix:
-    desc: Green Hydrogen (Using Current Electricity Mix)
+    desc: Green Hydrogen (current elec mix)
     type: green
+    colour: '#708f70'
     elecsrc: mix # grid mix
     include_capex: True
     

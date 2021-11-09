@@ -4,9 +4,9 @@ import pandas as pd
 import plotly.graph_objects as go
 
 
-def plotFig2(fuelsData: pd.DataFrame, FSCPData: pd.DataFrame, refFuel: str = 'natural gas', refYear: int = 2020, showFuels = None, scenario_name = ""):
+def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, refFuel: str = 'natural gas', refYear: int = 2020, showFuels = None, scenario_name = ""):
     # load config setting from YAML file
-    config = __getPlottingConfig()
+    config = {**fuelSpecs, **__getPlottingConfig()}
 
     # select which lines to plot based on function argument
     plotData = __selectPlotData(fuelsData, refFuel, showFuels)
@@ -24,9 +24,8 @@ def plotFig2(fuelsData: pd.DataFrame, FSCPData: pd.DataFrame, refFuel: str = 'na
 
 
 def __getPlottingConfig():
-    configAll = yaml.load(open('input/plotting/config_all.yml', 'r').read(), Loader=yaml.FullLoader)
     configThis = yaml.load(open('input/plotting/config_fig2.yml', 'r').read(), Loader=yaml.FullLoader)
-    return {**configAll, **configThis}
+    return configThis
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, showFuels: list):

@@ -17,14 +17,14 @@ def obtainScenarioData(scenario: dict):
     fullCoeffs = __getFullParamsCoeffs(coeffs, units, options['times'])
 
     # calculate fuel data
-    fuelData = calcFuelData(options['times'], fullParams, fullCoeffs, fuels, consts, options['gwp'])
+    fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fullCoeffs, fuels, consts, options['gwp'])
 
     # calculate FSCPs
     FSCPData = calcFSCPs(fuelData)
 
     # dump to output file
     with pd.ExcelWriter('output/data.xlsx') as writer:
-        columnOrder = ['description', 'type', 'value', 'value_2020', 'value_2050', 'unit', 'source']
+        columnOrder = ['description', 'type', 'value', 'unit', 'source']
 
         pd.DataFrame(params).T.reindex(columnOrder, axis=1).to_excel(writer, sheet_name='Parameters (input)')
         pd.DataFrame(coeffs).T.to_excel(writer, sheet_name='Coefficients (input)')
@@ -34,7 +34,7 @@ def obtainScenarioData(scenario: dict):
         fullCoeffs.to_excel(writer, sheet_name='Coefficients (full)')
         fuelData.to_excel(writer, sheet_name='Fuel data (output)')
 
-    return fuelData, FSCPData
+    return fuelData, fuelSpecs, FSCPData
 
 
 # load data from yaml files

@@ -30,8 +30,9 @@ label {
   display : block !important;
 }
 
-#update-scenario, #save-scenario {
+.scenario-buttons {
   margin-right: 0.5em;
+  margin-bottom: 1em;
 }
 
 #control-tabs-parent .tab-content {
@@ -49,4 +50,16 @@ label {
 
 label.display-inline-lhs {
   display: inline-block;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+#advanced-params .column-3 {
+  max-width: 100pt;
+}
+
+#advanced-fuels .dash-cell {
+  white-space: unset;
 }

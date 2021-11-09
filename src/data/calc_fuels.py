@@ -8,7 +8,12 @@ from src.data.calc_cost import calcCost
 def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: dict, consts: dict, gwp: str):
     fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_u', 'ci', 'ci_u'])
 
+    fuelSpecs = {'names': {}, 'colours': {}}
+
     for fuel_id, fuel in fuels.items():
+        fuelSpecs['names'][fuel_id] = fuel['desc']
+        fuelSpecs['colours'][fuel_id] = fuel['colour']
+
         for t in times:
             currentParams = __getCurrentAsDict(full_params, t)
             currentCoeffs = __getCurrentAsDict(full_coeffs, t)
@@ -19,7 +24,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFra
             new_fuel = {'fuel': fuel_id, 'year': t, 'cost': cost, 'cost_u': cost_u, 'ci': ci, 'ci_u': ci_u}
             fuelData = fuelData.append(new_fuel, ignore_index=True)
 
-    return fuelData
+    return fuelData, fuelSpecs
 
 
 # convert dataframe of parameters/coefficients to a simple dict
