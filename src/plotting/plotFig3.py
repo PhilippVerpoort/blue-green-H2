@@ -73,8 +73,6 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
 def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
     traces = []
 
-    print(plotData)
-
     for index in range(n_lines):
         thisData = plotData.query(f"plotIndex=={index}").reset_index(drop=True)
 
