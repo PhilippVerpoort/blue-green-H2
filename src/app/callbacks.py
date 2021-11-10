@@ -18,11 +18,15 @@ from src.plotting.plotFig4 import plotFig4
 
 
 # general callback for (re-)generating plots
+from src.plotting.plotFig5 import plotFig5
+
+
 @app.callback(
     [Output('fig1', 'figure'),
      Output('fig2', 'figure'),
      Output('fig3', 'figure'),
      Output('fig4', 'figure'),
+     Output('fig5', 'figure'),
      Output('table-results', 'data'),
      Output('fuel-specs', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -56,15 +60,15 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
 
     if not ctx.triggered:
         scenarioInputUpdated = scenarioInputDefault.copy()
-        fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioInputUpdated)
+        fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
             scenarioInputUpdated = updateScenarioInputSimple(scenarioInputDefault.copy(), *args)
-            fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioInputUpdated)
+            fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
         elif btnPressed == 'advanced-update':
             scenarioInputUpdated = updateScenarioInputAdvanced(scenarioInputDefault.copy(), *args)
-            fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioInputUpdated)
+            fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
         elif btnPressed == 'results-replot':
             fuelData = pd.DataFrame(table_results_data)
             fuelData['year'] = fuelData['year'].astype(int)
@@ -120,7 +124,9 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
 
     fig4 = plotFig4(scenarioInputUpdated['params'], fuelData)
 
-    return fig1, fig2, fig3, fig4, fuelData.to_dict('records'), fuelSpecs
+    fig5 = plotFig5(fullParams, fuelData)
+
+    return fig1, fig2, fig3, fig4, fig5, fuelData.to_dict('records'), fuelSpecs
 
 # callback for YAML config download
 @app.callback(

@@ -94,4 +94,27 @@ def getPlots():
         ],
     )
 
-    return fig1, fig2, fig3, fig4
+    fig5 = dbc.Card(
+        id="card-fig-5",
+        children=[
+            dbc.CardHeader("Fig. 5"),
+            dbc.CardBody(
+                [
+                    html.Div(
+                        children=[
+                            dcc.Loading(
+                                type="circle",
+                                children=[
+                                    dcc.Graph(
+                                        id='fig5',
+                                    )
+                                ],
+                            )
+                        ],
+                    ),
+                ]
+            ),
+        ],
+    )
+
+    return fig1, fig2, fig3, fig4, fig5

@@ -40,7 +40,7 @@ def obtainScenarioData(scenario: dict, export_data = True):
 
         writer.save()
 
-    return fuelData, fuelSpecs, FSCPData
+    return fuelData, fuelSpecs, FSCPData, fullParams
 
 
 # load data from yaml files

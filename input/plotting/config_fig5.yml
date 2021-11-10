@@ -1,0 +1,15 @@
+plotting:
+  leakage_min: 0.00
+  leakage_max: 0.05
+  cost_min: 3.0
+  cost_max: 20.0
+  n_samples: 301
+
+colours:
+  heatmap_high: '#345979'
+  heatmap_medium: '#62b7fe'
+  heatmap_low: '#00fe00'
+
+labels:
+  ci: Methane leakage rate in %
+  cost: Cost difference in EUR/MWh<sub>LHV</sub>

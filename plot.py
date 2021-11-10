@@ -7,7 +7,7 @@ from src.plotting.plotFig4 import plotFig4
 
 scenarioData = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
 
-fuelData, fuelSpecs, FSCPData = obtainScenarioData(scenarioData)
+fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioData)
 
 showFuels = [
     ([1, 2], 2020, 'natural gas'),
