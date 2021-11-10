@@ -118,7 +118,7 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
 
     fig3 = plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs)
 
-    fig4 = plotFig4(scenarioInputUpdated['params'])
+    fig4 = plotFig4(scenarioInputUpdated['params'], fuelData)
 
     return fig1, fig2, fig3, fig4, fuelData.to_dict('records'), fuelSpecs
 

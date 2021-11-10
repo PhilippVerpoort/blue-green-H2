@@ -6,12 +6,12 @@ from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 
-def plotFig4(params: dict, scenario_name = ""):
+def plotFig4(params: dict, fuelData: pd.DataFrame, scenario_name = ""):
     # load config setting from YAML file
     config = __getPlottingConfig()
 
     # produce figure
-    fig = __produceFigure(params, config)
+    fig = __produceFigure(params, fuelData, config)
 
     # write figure to image file
     fig.write_image("output/fig4" + ("_"+scenario_name if scenario_name else "") + ".png")
@@ -24,7 +24,7 @@ def __getPlottingConfig():
     return configThis
 
 
-def __produceFigure(params: dict, config: dict):
+def __produceFigure(params: dict, fuelData: pd.DataFrame, config: dict):
     # plot
     fig = go.Figure()
 
@@ -62,8 +62,27 @@ def __produceFigure(params: dict, config: dict):
                                  size=50,
                              )))
 
+    thisData = __calcFSCP(fuelData)
+
+    fig.add_trace(go.Scatter(x=thisData.delta_ci*1000, y=thisData.delta_cost,
+        line=dict(color='black'),
+        mode='lines+markers',
+    ))
+
     # set plotting ranges
     fig.update_layout(xaxis=dict(title=config['labels']['ci'], range=[config['plotting']['ci_min']*1000, config['plotting']['ci_max']*1000]),
                       yaxis=dict(title=config['labels']['cost'], range=[config['plotting']['cost_min'], config['plotting']['cost_max']]))
 
     return fig
+
+def __calcFSCP(fuelData):
+    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).\
+                   query("fuel_x=='blue LEB' & fuel_y=='green RE' & year_x==year_y").\
+                   dropna()
+
+    tmp['delta_cost'] = tmp['cost_y'] - tmp['cost_x']
+    tmp['delta_ci'] = tmp['ci_x'] - tmp['ci_y']
+
+    FSCPData = tmp[['delta_cost', 'delta_ci']]
+
+    return FSCPData

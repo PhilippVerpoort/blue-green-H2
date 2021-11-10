@@ -40,4 +40,4 @@ showFSCPs = [
 
 plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs)
 
-plotFig4(scenarioData['params'])
+plotFig4(scenarioData['params'], fuelData)
