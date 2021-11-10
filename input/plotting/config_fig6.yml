@@ -1,0 +1,27 @@
+plotting:
+  x1_min: 30.0
+  x1_max: 50.0
+  x2_min: 500000.00
+  x2_max: 1000000.00
+  x3_min: 0.30
+  x3_max: 0.50
+  x4_min: 15.00
+  x4_max: 25.00
+  x5_min: 2.5e+08
+  x5_max: 3.5e+08
+  cost_min: 20.0
+  cost_max: 60.0
+  n_samples: 51
+
+colours:
+  heatmap_high: '#345979'
+  heatmap_medium: '#62b7fe'
+  heatmap_low: '#00fe00'
+
+labels:
+  x1: Electricity price in EUR/kWh
+  x2: Green GAPEX in EUR/kW
+  x3: OCF
+  x4: Natural gas price in EUR/MWh
+  x5: Blue CAPEX in EUR/10^5 Nm³/h
+  cost: Cost difference in EUR/MWh<sub>LHV</sub>

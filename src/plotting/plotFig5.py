@@ -14,7 +14,7 @@ def plotFig5(fullParams: pd.DataFrame, fuelData: pd.DataFrame, scenario_name = "
     fig = __produceFigure(fullParams, fuelData, config)
 
     # write figure to image file
-    #fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".png")
+    fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".png")
 
     return fig
 
@@ -43,10 +43,6 @@ def __produceFigure(fullParams: pd.DataFrame, fuelData: pd.DataFrame, config: di
     delta_cost = np.linspace(config['plotting']['cost_min'], config['plotting']['cost_max'], config['plotting']['n_samples'])
     leakage_v, delta_cost_v = np.meshgrid(leakage, delta_cost)
     fscp = delta_cost_v / (ci_blue_base + leakage_v * ci_blue_methaneleakage - greenData.ci)
-
-    print(leakage)
-    print(delta_cost)
-    print(fscp)
 
     fig.add_trace(go.Heatmap(x=leakage*100, y=delta_cost, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',

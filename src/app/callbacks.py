@@ -15,18 +15,18 @@ from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3
 from src.plotting.plotFig4 import plotFig4
+from src.plotting.plotFig5 import plotFig5
+from src.plotting.plotFig6 import plotFig6
 
 
 # general callback for (re-)generating plots
-from src.plotting.plotFig5 import plotFig5
-
-
 @app.callback(
     [Output('fig1', 'figure'),
      Output('fig2', 'figure'),
      Output('fig3', 'figure'),
      Output('fig4', 'figure'),
      Output('fig5', 'figure'),
+     Output('fig6', 'figure'),
      Output('table-results', 'data'),
      Output('fuel-specs', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -126,7 +126,9 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
 
     fig5 = plotFig5(fullParams, fuelData)
 
-    return fig1, fig2, fig3, fig4, fig5, fuelData.to_dict('records'), fuelSpecs
+    fig6 = plotFig6(fullParams, fuelData)
+
+    return fig1, fig2, fig3, fig4, fig5, fig6, fuelData.to_dict('records'), fuelSpecs
 
 # callback for YAML config download
 @app.callback(
