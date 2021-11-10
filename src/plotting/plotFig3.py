@@ -6,7 +6,8 @@ from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 
-def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, showFSCPs = None, scenario_name = ""):
+def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, showFSCPs = None,
+             scenario_name = "", export_img: bool = True):
     # load config setting from YAML file
     config = {**fuelSpecs, **__getPlottingConfig()}
 
@@ -17,7 +18,8 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, showFSCPs = None, scenario
     fig = __produceFigure(plotFSCP, FSCPsCols, config)
 
     # write figure to image file
-    fig.write_image("output/fig3" + ("_"+scenario_name if scenario_name else "") + ".png")
+    if export_img:
+        fig.write_image("output/fig3" + ("_"+scenario_name if scenario_name else "") + ".png")
 
     return fig
 

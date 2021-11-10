@@ -100,7 +100,7 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
         ([2], 2020, 'blue LEB',    2050, 'green RE'),
     ]
 
-    fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, showFuels=showFuels, showFSCPs=showFSCPs)
+    fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, showFuels=showFuels, showFSCPs=showFSCPs, export_img=False)
 
     showFuels = ['green RE',
                  'green mix',
@@ -110,7 +110,7 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
     fig2 = plotFig2(fuelData, fuelSpecs, FSCPData,
                     refFuel = 'natural gas',
                     refYear = 2020,
-                    showFuels = showFuels)
+                    showFuels = showFuels, export_img=False)
 
     showFSCPs = [
         ([1, 2], 'natural gas', 'green RE'),
@@ -120,13 +120,11 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
         ([2], 'blue LEB', 'green RE'),
     ]
 
-    fig3 = plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs)
+    fig3 = plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs, export_img=False)
 
-    fig4 = plotFig4(scenarioInputUpdated['params'], fuelData)
-
-    fig5 = plotFig5(fullParams, fuelData)
-
-    fig6 = plotFig6(fullParams, fuelData)
+    fig4 = plotFig4(fuelData, export_img=False)
+    fig5 = plotFig5(fullParams, fuelData, export_img=False)
+    fig6 = plotFig6(fullParams, fuelData, export_img=False)
 
     return fig1, fig2, fig3, fig4, fig5, fig6, fuelData.to_dict('records'), fuelSpecs
 
@@ -204,7 +202,7 @@ def callbackWidget2(data):
 
     return defaultCondStyle
 
-
+# path for downloading XLS data file
 @app.server.route("/download/data.xlsx")
 def callbackDownloadExportdata():
     return send_file("output/data.xlsx", as_attachment=True)

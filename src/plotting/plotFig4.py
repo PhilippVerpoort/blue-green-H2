@@ -6,15 +6,16 @@ from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 
-def plotFig4(params: dict, fuelData: pd.DataFrame, scenario_name = ""):
+def plotFig4(fuelData: pd.DataFrame, scenario_name = "", export_img: bool = True):
     # load config setting from YAML file
     config = __getPlottingConfig()
 
     # produce figure
-    fig = __produceFigure(params, fuelData, config)
+    fig = __produceFigure(fuelData, config)
 
     # write figure to image file
-    fig.write_image("output/fig4" + ("_"+scenario_name if scenario_name else "") + ".png")
+    if export_img:
+        fig.write_image("output/fig4" + ("_"+scenario_name if scenario_name else "") + ".png")
 
     return fig
 
@@ -24,7 +25,7 @@ def __getPlottingConfig():
     return configThis
 
 
-def __produceFigure(params: dict, fuelData: pd.DataFrame, config: dict):
+def __produceFigure(fuelData: pd.DataFrame, config: dict):
     # plot
     fig = go.Figure()
 

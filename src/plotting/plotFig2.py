@@ -4,7 +4,8 @@ import pandas as pd
 import plotly.graph_objects as go
 
 
-def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, refFuel: str = 'natural gas', refYear: int = 2020, showFuels = None, scenario_name = ""):
+def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, refFuel: str = 'natural gas',
+             refYear: int = 2020, showFuels = None, scenario_name = "", export_img: bool = True):
     # load config setting from YAML file
     config = {**fuelSpecs, **__getPlottingConfig()}
 
@@ -18,7 +19,8 @@ def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, r
     fig = __produceFigure(plotData, plotFSCP, refFuel, refYear, showFuels, config)
 
     # write figure to image file
-    fig.write_image("output/fig2" + ("_"+scenario_name if scenario_name else "") + ".png")
+    if export_img:
+        fig.write_image("output/fig2" + ("_"+scenario_name if scenario_name else "") + ".png")
 
     return fig
 
