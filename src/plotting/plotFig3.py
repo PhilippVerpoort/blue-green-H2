@@ -1,18 +1,17 @@
-import numpy as np
 import yaml
 import pandas as pd
+
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from plotly.colors import hex_to_rgb
 
 
-def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, showFSCPs = None,
-             scenario_name = "", export_img: bool = True):
+def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame,
+             plotConfig: dict, scenario_name = "", export_img: bool = True):
     # load config setting from YAML file
-    config = {**fuelSpecs, **__getPlottingConfig()}
+    config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument
-    plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, showFSCPs)
+    plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, config['showFSCPs'])
 
     # produce figure
     fig = __produceFigure(plotFSCP, FSCPsCols, config)

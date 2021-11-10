@@ -5,6 +5,13 @@ plotting:
 labels:
   time: ""
   fscp: FSCP in EUR/MWh<sub>LHV</sub>
+  
+showFSCPs:
+  - [[1, 2], 'natural gas', 'green RE']
+  - [[1], 'natural gas', 'blue HEB']
+  - [[2], 'natural gas', 'blue LEB']
+  - [[1], 'blue HEB', 'green RE']
+  - [[2], 'blue LEB', 'green RE']
 
 fscp_colours:
   blue LEB to green RE: '#8CAAAF'

@@ -6,3 +6,12 @@ plotting:
 labels:
   ci: Carbon Intensity in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
   cost: Direct Cost in EUR/MWh<sub>LHV</sub>
+
+refFuel: natural gas
+refYear: 2020
+
+showFuels:
+  - green RE
+  - green mix
+  - blue HEB
+  - blue LEB

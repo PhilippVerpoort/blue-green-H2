@@ -8,7 +8,7 @@ from plotly.colors import hex_to_rgb
 
 def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
              plotConfig: dict, scenario_name = "", export_img: bool = True):
-    # load config setting from YAML file
+    # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument

@@ -1,32 +1,26 @@
 import yaml
 
 from src.data.data import obtainScenarioData
+from src.plotting.loadcfg import loadInitialPlottingCfg
 from src.plotting.plotFig1 import plotFig1
+from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3
 from src.plotting.plotFig4 import plotFig4
 from src.plotting.plotFig5 import plotFig5
 from src.plotting.plotFig6 import plotFig6
 
 
-# obtain scenario input
+# load scenario and compute data
 scenario = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
 fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenario)
 
-configFig1 = yaml.load(open('input/plotting/config_fig1.yml', 'r').read(), Loader=yaml.FullLoader)
-plotFig1(fuelData, fuelSpecs, FSCPData, configFig1)
+# load plotting cfg
+plotting_cfg = loadInitialPlottingCfg()
 
-showFSCPs = [
-    ([1, 2], 'natural gas', 'green RE'),
-    ([1], 'natural gas', 'blue HEB'),
-    ([2], 'natural gas', 'blue LEB'),
-    ([1], 'blue HEB', 'green RE'),
-    ([2], 'blue LEB', 'green RE'),
-]
-
-plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs)
-
+# create plots (and automatically export to files)
+plotFig1(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig1'])
+plotFig2(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig2'])
+plotFig3(fuelSpecs, FSCPData, plotting_cfg['fig3'])
 plotFig4(fuelData)
-
 plotFig5(fullParams, fuelData)
-
 plotFig6(fullParams, fuelData)

@@ -4,30 +4,25 @@ import pandas as pd
 import plotly.graph_objects as go
 
 
-def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, refFuel: str = 'natural gas',
-             refYear: int = 2020, showFuels = None, scenario_name = "", export_img: bool = True):
-    # load config setting from YAML file
-    config = {**fuelSpecs, **__getPlottingConfig()}
+def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
+             plotConfig: dict, scenario_name = "", export_img: bool = True):
+    # combine fuel specs with plot config from YAML file
+    config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument
-    plotData = __selectPlotData(fuelsData, refFuel, showFuels)
+    plotData = __selectPlotData(fuelsData, config['refFuel'], config['showFuels'])
 
     # select which FSCPs to plot based on function argument
-    plotFSCP = __selectPlotFSCPs(FSCPData, refFuel, showFuels)
+    plotFSCP = __selectPlotFSCPs(FSCPData, config['refFuel'], config['showFuels'])
 
     # produce figure
-    fig = __produceFigure(plotData, plotFSCP, refFuel, refYear, showFuels, config)
+    fig = __produceFigure(plotData, plotFSCP, config['refFuel'], config['refYear'], config['showFuels'], config)
 
     # write figure to image file
     if export_img:
         fig.write_image("output/fig2" + ("_"+scenario_name if scenario_name else "") + ".png")
 
     return fig
-
-
-def __getPlottingConfig():
-    configThis = yaml.load(open('input/plotting/config_fig2.yml', 'r').read(), Loader=yaml.FullLoader)
-    return configThis
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, showFuels: list):

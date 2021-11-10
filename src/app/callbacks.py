@@ -9,6 +9,7 @@ from server import app, scenarioInputDefault
 from src.app.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.data import obtainScenarioData
+from src.plotting.loadcfg import loadInitialPlottingCfg
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3
@@ -32,9 +33,7 @@ from src.plotting.plotFig6 import plotFig6
 def callbackSettingsModal(n1: int, n_ok: int, n_cancel: int, is_open: bool, settings_modal_textfield: str, plotting_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
-        plotting_cfg = {
-            'fig1': yaml.load(open('input/plotting/config_fig1.yml', 'r').read(), Loader=yaml.FullLoader)
-        }
+        plotting_cfg = loadInitialPlottingCfg()
         return False, plotting_cfg, ""
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
@@ -112,26 +111,8 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, plotting_cfg
             raise Exception("Unknown button pressed!")
 
     fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig1'], export_img=False)
-
-    showFuels = ['green RE',
-                 'green mix',
-                 'blue HEB',
-                 'blue LEB']
-
-    fig2 = plotFig2(fuelData, fuelSpecs, FSCPData,
-                    refFuel = 'natural gas',
-                    refYear = 2020,
-                    showFuels = showFuels, export_img=False)
-
-    showFSCPs = [
-        ([1, 2], 'natural gas', 'green RE'),
-        ([1], 'natural gas', 'blue HEB'),
-        ([2], 'natural gas', 'blue LEB'),
-        ([1], 'blue HEB', 'green RE'),
-        ([2], 'blue LEB', 'green RE'),
-    ]
-
-    fig3 = plotFig3(fuelSpecs, FSCPData, showFSCPs=showFSCPs, export_img=False)
+    fig2 = plotFig2(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig2'], export_img=False)
+    fig3 = plotFig3(fuelSpecs, FSCPData, plotting_cfg['fig3'], export_img=False)
 
     fig4 = plotFig4(fuelData, export_img=False)
     fig5 = plotFig5(fullParams, fuelData, export_img=False)
