@@ -6,16 +6,16 @@ from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 
-def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, showFuels = None, showFSCPs = None,
-             scenario_name = "", export_img: bool = True):
+def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
+             plotConfig: dict, scenario_name = "", export_img: bool = True):
     # load config setting from YAML file
-    config = {**fuelSpecs, **__getPlottingConfig()}
+    config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument
-    plotData, linesCols = __selectPlotData(fuelsData, showFuels)
+    plotData, linesCols = __selectPlotData(fuelsData, config['showFuels'])
 
     # select which FSCPs to plot based on function argument
-    plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, showFSCPs)
+    plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, config['showFSCPs'])
 
     # produce figure
     fig = __produceFigure(plotData, linesCols, plotFSCP, FSCPsCols, config)
@@ -25,11 +25,6 @@ def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame, s
         fig.write_image("output/fig1" + ("_"+scenario_name if scenario_name else "") + ".png")
 
     return fig
-
-
-def __getPlottingConfig():
-    configThis = yaml.load(open('input/plotting/config_fig1.yml', 'r').read(), Loader=yaml.FullLoader)
-    return configThis
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, showFuels: dict = None):

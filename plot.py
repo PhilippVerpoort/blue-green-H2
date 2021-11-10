@@ -7,30 +7,13 @@ from src.plotting.plotFig4 import plotFig4
 from src.plotting.plotFig5 import plotFig5
 from src.plotting.plotFig6 import plotFig6
 
-scenarioData = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
 
-fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioData)
+# obtain scenario input
+scenario = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
+fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenario)
 
-showFuels = [
-    ([1, 2], 2020, 'natural gas'),
-    ([1, 2], 2020, 'green RE'),
-    ([1, 2], 2050, 'green RE'),
-    ([1], 2020, 'blue HEB'),
-    ([2], 2020, 'blue LEB'),
-]
-
-showFSCPs = [
-    ([1, 2], 2020, 'natural gas', 2020, 'green RE'),
-    ([1, 2], 2020, 'natural gas', 2050, 'green RE'),
-    ([1], 2020, 'natural gas', 2020, 'blue HEB'),
-    ([1], 2020, 'blue HEB',    2020, 'green RE'),
-    ([1], 2020, 'blue HEB',    2050, 'green RE'),
-    ([2], 2020, 'natural gas', 2020, 'blue LEB'),
-    ([2], 2020, 'blue LEB',    2020, 'green RE'),
-    ([2], 2020, 'blue LEB',    2050, 'green RE'),
-]
-
-plotFig1(fuelData, fuelSpecs, FSCPData, showFuels=showFuels, showFSCPs=showFSCPs)
+configFig1 = yaml.load(open('input/plotting/config_fig1.yml', 'r').read(), Loader=yaml.FullLoader)
+plotFig1(fuelData, fuelSpecs, FSCPData, configFig1)
 
 showFSCPs = [
     ([1, 2], 'natural gas', 'green RE'),

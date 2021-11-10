@@ -2,6 +2,7 @@ from dash import dcc, html
 import dash_bootstrap_components as dbc
 
 from src.app.elements.header import getHeader
+from src.app.elements.plot_settings_modal import getPlotSettingsModal
 from src.app.elements.results import getResultsWidgets
 from src.app.elements.simple import getSimpleWidgets
 from src.app.elements.advanced import getAdvancedWidgets
@@ -22,6 +23,9 @@ def setLayout(app, scenarioInputDefault):
 
     # plots
     fig1, fig2, fig3, fig4, fig5, fig6 = getPlots()
+
+    # plot settings modal
+    plot_settings_modal = getPlotSettingsModal()
 
     # explanation
     explanation = dbc.Col(
@@ -120,7 +124,6 @@ def setLayout(app, scenarioInputDefault):
                                                     )
                                                 ]
                                             ),
-                                            dcc.Store(id='fuel-specs', storage_type='session'),
                                         ],
                                     )
                                 ]
@@ -140,6 +143,9 @@ def setLayout(app, scenarioInputDefault):
                 ],
                 fluid=True,
             ),
+            plot_settings_modal,
+            dcc.Store(id='fuel-specs', storage_type='session'),
+            dcc.Store(id="plotting-config", storage_type='session'),
             dcc.Download(id="download-config-yaml"),
             dcc.Download(id="download-results-xlsx"),
         ]

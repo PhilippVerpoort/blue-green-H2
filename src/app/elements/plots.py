@@ -17,7 +17,8 @@ def getPlots():
                                         id='fig1',
                                     )
                                 ],
-                            )
+                            ),
+                            dbc.Button(id='fig1-settings', children='Settings', className='scenario-buttons'),
                         ],
                     ),
                 ]

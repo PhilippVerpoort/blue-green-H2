@@ -4,5 +4,22 @@ plotting:
   numb_cols: 2
 
 labels:
-  CP: Carbon Pricing in €/t<sub>CO<sub>2</sub>eq</sub>
+  CP: Carbon Pricing in EUR/t<sub>CO<sub>2</sub>eq</sub>
   total_cost: Total cost in €/MWh<sub>LHV</sub>
+
+showFuels:
+  - [[1, 2], 2020, natural gas]
+  - [[1, 2], 2020, green RE]
+  - [[1, 2], 2050, green RE]
+  - [[1], 2020, blue HEB]
+  - [[2], 2020, blue LEB]
+
+showFSCPs:
+  - [[1, 2], 2020, natural gas, 2020, green RE]
+  - [[1, 2], 2020, natural gas, 2050, green RE]
+  - [[1], 2020, natural gas, 2020, blue HEB]
+  - [[1], 2020, blue HEB,    2020, green RE]
+  - [[1], 2020, blue HEB,    2050, green RE]
+  - [[2], 2020, natural gas, 2020, blue LEB]
+  - [[2], 2020, blue LEB,    2020, green RE]
+  - [[2], 2020, blue LEB,    2050, green RE]

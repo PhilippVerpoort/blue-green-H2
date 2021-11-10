@@ -1,5 +1,3 @@
-import io
-
 import pandas as pd
 import yaml
 
@@ -19,6 +17,38 @@ from src.plotting.plotFig5 import plotFig5
 from src.plotting.plotFig6 import plotFig6
 
 
+# update figure plotting settings
+@app.callback(
+    [Output("settings-modal", "is_open"),
+     Output("plotting-config", "data"),
+     Output("settings-modal-textfield", "value"),],
+    [Input("fig1-settings", "n_clicks"),
+     Input("settings-modal-ok", "n_clicks"),
+     Input("settings-modal-cancel", "n_clicks"),],
+    [State("settings-modal", "is_open"),
+     State("settings-modal-textfield", "value"),
+     State("plotting-config", "data"),],
+)
+def callbackSettingsModal(n1: int, n_ok: int, n_cancel: int, is_open: bool, settings_modal_textfield: str, plotting_cfg: dict):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        plotting_cfg = {
+            'fig1': yaml.load(open('input/plotting/config_fig1.yml', 'r').read(), Loader=yaml.FullLoader)
+        }
+        return False, plotting_cfg, ""
+    else:
+        btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
+        if btnPressed in ['fig1-settings']:
+            return True, plotting_cfg, yaml.dump(plotting_cfg['fig1'], sort_keys=False)
+        elif btnPressed == 'settings-modal-cancel':
+            return False, plotting_cfg, ""
+        elif btnPressed == 'settings-modal-ok':
+            plotting_cfg['fig1'] = yaml.load(settings_modal_textfield, Loader=yaml.FullLoader)
+            return False, plotting_cfg, ""
+        else:
+            raise Exception("Unknown button pressed!")
+
+
 # general callback for (re-)generating plots
 @app.callback(
     [Output('fig1', 'figure'),
@@ -34,6 +64,7 @@ from src.plotting.plotFig6 import plotFig6
      Input('results-replot', 'n_clicks'),
      State('table-results', 'data'),
      State('fuel-specs', 'data'),
+     State("plotting-config", "data"),
      State('simple-gwp', 'value'),
      State('simple-leakage', 'value'),
      State('simple-ng-price', 'value'),
@@ -55,9 +86,8 @@ from src.plotting.plotFig6 import plotFig6
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data')])
-def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
+def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, plotting_cfg: dict, *args):
     ctx = dash.callback_context
-
     if not ctx.triggered:
         scenarioInputUpdated = scenarioInputDefault.copy()
         fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
@@ -81,26 +111,7 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
         else:
             raise Exception("Unknown button pressed!")
 
-    showFuels = [
-        ([1,2], 2020, 'natural gas'),
-        ([1,2], 2020, 'green RE'),
-        ([1,2], 2050, 'green RE'),
-        ([1], 2020, 'blue HEB'),
-        ([2], 2020, 'blue LEB'),
-    ]
-
-    showFSCPs = [
-        ([1, 2], 2020, 'natural gas', 2020, 'green RE'),
-        ([1, 2], 2020, 'natural gas', 2050, 'green RE'),
-        ([1], 2020, 'natural gas', 2020, 'blue HEB'),
-        ([1], 2020, 'blue HEB',    2020, 'green RE'),
-        ([1], 2020, 'blue HEB',    2050, 'green RE'),
-        ([2], 2020, 'natural gas', 2020, 'blue LEB'),
-        ([2], 2020, 'blue LEB',    2020, 'green RE'),
-        ([2], 2020, 'blue LEB',    2050, 'green RE'),
-    ]
-
-    fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, showFuels=showFuels, showFSCPs=showFSCPs, export_img=False)
+    fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig1'], export_img=False)
 
     showFuels = ['green RE',
                  'green mix',
@@ -127,6 +138,7 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
     fig6 = plotFig6(fullParams, fuelData, export_img=False)
 
     return fig1, fig2, fig3, fig4, fig5, fig6, fuelData.to_dict('records'), fuelSpecs
+
 
 # callback for YAML config download
 @app.callback(
@@ -157,7 +169,6 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, *args):
      prevent_initial_call=True,)
 def callbackDownloadConfig(n1, n2, *args):
     ctx = dash.callback_context
-
     if not ctx.triggered:
         raise Exception("Initial call not prevented!")
     else:
@@ -171,15 +182,6 @@ def callbackDownloadConfig(n1, n2, *args):
 
     return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename="scenario.yml")
 
-# this callback shows/hides the custom elecsrc carbon intensity field
-@app.callback(
-   Output(component_id='wrapper-simple-elecsrc-custom', component_property='style'),
-   [Input(component_id='simple-elecsrc', component_property='value')])
-def callbackWidget1(elecsrc_selected):
-    if elecsrc_selected == 'custom':
-        return {'display': 'block'}
-    else:
-        return {'display': 'none'}
 
 # this callback sets the background colour of the rows in the fuel table in the advanced tab
 @app.callback(
@@ -201,6 +203,18 @@ def callbackWidget2(data):
         defaultCondStyle.append({'if': {'row_index': i}, 'backgroundColor': row['colour']})
 
     return defaultCondStyle
+
+
+# this callback shows/hides the custom elecsrc carbon intensity field
+@app.callback(
+   Output(component_id='wrapper-simple-elecsrc-custom', component_property='style'),
+   [Input(component_id='simple-elecsrc', component_property='value')])
+def callbackWidget1(elecsrc_selected):
+    if elecsrc_selected == 'custom':
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+
 
 # path for downloading XLS data file
 @app.server.route("/download/data.xlsx")
