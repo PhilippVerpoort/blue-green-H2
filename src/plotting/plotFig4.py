@@ -38,15 +38,22 @@ def __produceFigure(fuelData: pd.DataFrame, config: dict):
             fig.add_trace(trace, row=1, col=j+1)
 
     # add rectangle
-    fig.add_hrect(y0=config['plotting']['cost_min2'],
-                  y1=config['plotting']['cost_max2'],
-                  line_color=config['rectcolour'])
+    for j in range(2):
+        fig.add_shape(x0=config['plotting']['ci_min2']*1000,
+                      x1=config['plotting']['ci_max2']*1000,
+                      y0=config['plotting']['cost_min2'],
+                      y1=config['plotting']['cost_max2'],
+                      line=dict(
+                          color=config['rectcolour'],
+                          width=2,
+                      ),
+                      row=1, col=j+1)
 
     # set plotting ranges
-    fig.update_layout(xaxis =dict(title=config['labels']['ci'], range=[config['plotting']['ci_min']*1000, config['plotting']['ci_max']*1000]),
-                      xaxis2=dict(title=config['labels']['ci'], range=[config['plotting']['ci_min']*1000, config['plotting']['ci_max']*1000]),
+    fig.update_layout(xaxis =dict(title=config['labels']['ci'], range=[config['plotting']['ci_min1']*1000, config['plotting']['ci_max1']*1000]),
+                      xaxis2=dict(title=config['labels']['ci'], range=[config['plotting']['ci_min2']*1000, config['plotting']['ci_max2']*1000]),
                       yaxis =dict(title=config['labels']['cost'], range=[config['plotting']['cost_min1'], config['plotting']['cost_max1']]),
-                      yaxis2=dict(title=config['labels']['cost'], range=[config['plotting']['cost_min2'], config['plotting']['cost_max2']]))
+                      yaxis2=dict(title="", range=[config['plotting']['cost_min2'], config['plotting']['cost_max2']]))
 
     # legend settings
     fig.update_layout(
@@ -90,7 +97,7 @@ def __addFSCPContours(fuelData: pd.DataFrame, config: dict):
     traces = []
 
     for col in range(2):
-        delta_ci = np.linspace(config['plotting']['ci_min'], config['plotting']['ci_max'], config['plotting']['n_samples'])
+        delta_ci = np.linspace(config['plotting'][f"ci_min{col+1}"], config['plotting'][f"ci_max{col+1}"], config['plotting']['n_samples'])
         delta_cost = np.linspace(config['plotting'][f"cost_min{col+1}"], config['plotting'][f"cost_max{col+1}"], config['plotting']['n_samples'])
         delta_ci_v, delta_cost_v = np.meshgrid(delta_ci, delta_cost)
         fscp = delta_cost_v / delta_ci_v
