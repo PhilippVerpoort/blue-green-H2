@@ -60,7 +60,7 @@ def getCostParamsGreen(par: dict, fuel: dict):
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
         c_pl=par['cost_green_capex'] if fuel['include_capex'] else 0.0,
-        ocf=par['green_ocf'] if ES == 're' else 1.0,
+        ocf=par['green_ocf'] if ES != 'mix' else 1.0,
         p_el=par[f"cost_green_elec_{ES}"],
         eff=par['ci_green_eff'],
     )

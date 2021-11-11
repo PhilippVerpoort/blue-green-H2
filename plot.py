@@ -23,7 +23,7 @@ plotFig1(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig1'])
 plotFig2(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig2'])
 plotFig3(fuelSpecs, FSCPData, plotting_cfg['fig3'])
 plotFig4(fuelSpecs, fuelData, plotting_cfg['fig4'])
-plotFig5(fullParams, fuelData, scenario['fuels'], 'gwp100', plotting_cfg['fig5'])
+plotFig5(fullParams, scenario['fuels'], 'gwp100', plotting_cfg['fig5'])
 plotFig6(fullParams, scenario['fuels'], plotting_cfg['fig6'])
 
 # levelised data

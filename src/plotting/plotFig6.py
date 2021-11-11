@@ -43,7 +43,12 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
                                      pGreenMod[par] + config['plotting'][f"delta_x{j}"],
                                      config['plotting']['n_samples'])
         delta, delta_u = __getCostDiff(pBlue, pGreenMod)
-        fig.add_trace(go.Scatter(x=pGreenMod[par], y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)
+        x = pGreenMod[par]
+        if par=='c_pl':
+            x = x/10**3
+        elif par=='ocf':
+            x = x*100
+        fig.add_trace(go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)
 
     # add blue traces
     varyBlueParams = ['p_ng', 'C_pl']
@@ -54,7 +59,10 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
                                     pBlueMod[par] + config['plotting'][f"delta_x{j}"],
                                     config['plotting']['n_samples'])
         delta, delta_u = __getCostDiff(pBlueMod, pGreen)
-        fig.add_trace(go.Scatter(x=pBlueMod[par], y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)
+        x = pBlueMod[par]
+        if par=='C_pl':
+            x = x/10**6
+        fig.add_trace(go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)
 
     # add horizontal line
     delta, _ = __getCostDiff(pBlue, pGreen)

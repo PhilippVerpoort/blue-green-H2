@@ -6,10 +6,10 @@ from src.data.calc_ci import getCIParamsBlue, getCIParamsGreen, getCIGreen, getC
 from src.data.calc_fuels import getCurrentAsDict
 
 
-def plotFig5(fullParams: pd.DataFrame, fuelData: pd.DataFrame, fuels: dict, gwp: str,
+def plotFig5(fullParams: pd.DataFrame, fuels: dict, gwp: str,
              config: dict, scenario_name = "", export_img: bool = True):
     # produce figure
-    fig = __produceFigure(fullParams, fuelData, fuels, gwp, config)
+    fig = __produceFigure(fullParams, fuels, gwp, config)
 
     # write figure to image file
     if export_img:
@@ -18,7 +18,7 @@ def plotFig5(fullParams: pd.DataFrame, fuelData: pd.DataFrame, fuels: dict, gwp:
     return fig
 
 
-def __produceFigure(fullParams: pd.DataFrame, fuelData: pd.DataFrame, fuels: dict, gwp: str, config: dict):
+def __produceFigure(fullParams: pd.DataFrame, fuels: dict, gwp: str, config: dict):
     # plot
     fig = go.Figure()
 
