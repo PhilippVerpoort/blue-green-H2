@@ -26,7 +26,7 @@ def __produceFigure(fuelData: pd.DataFrame, config: dict):
     fig = make_subplots(rows=1, cols=2, horizontal_spacing=0.05)
 
     # add FSCP traces
-    traces = __addFSCPContours(fuelData, config)
+    traces = __addFSCPContours(config)
     for col, trace in traces:
         fig.add_trace(trace, row=1, col=col)
 
@@ -93,7 +93,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
     return traces
 
 
-def __addFSCPContours(fuelData: pd.DataFrame, config: dict):
+def __addFSCPContours(config: dict):
     traces = []
 
     for col in range(2):

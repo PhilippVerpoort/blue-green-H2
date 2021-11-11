@@ -72,15 +72,3 @@ def __produceFigure(fullParams: pd.DataFrame, fuelData: pd.DataFrame, config: di
                       yaxis=dict(title=config['labels']['cost'], range=[config['plotting']['cost_min'], config['plotting']['cost_max']]))
 
     return fig
-
-def __calcFSCP(fuelData):
-    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).\
-                   query("fuel_x=='blue LEB' & fuel_y=='green RE' & year_x==year_y").\
-                   dropna()
-
-    tmp['delta_cost'] = tmp['cost_y'] - tmp['cost_x']
-    tmp['delta_ci'] = tmp['ci_x'] - tmp['ci_y']
-
-    FSCPData = tmp[['delta_cost', 'delta_ci']]
-
-    return FSCPData
