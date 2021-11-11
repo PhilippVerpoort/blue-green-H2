@@ -83,6 +83,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             error_x=dict(type='data', array=thisData.delta_ci_u*1000),
             error_y=dict(type='data', array=thisData.delta_cost_u),
             name=name,
+            legendgroup=f"{fuel_x}__{fuel_y}",
             line=dict(color=config['fscp_colours'][f"{fuel_x} to {fuel_y}"]),
             mode='lines+markers',
             customdata=thisData.year,
