@@ -32,13 +32,14 @@ from src.plotting.plotFig7 import plotFig7
      Input("fig4-settings", "n_clicks"),
      Input("fig5-settings", "n_clicks"),
      Input("fig6-settings", "n_clicks"),
+     Input("fig7-settings", "n_clicks"),
      Input("settings-modal-ok", "n_clicks"),
      Input("settings-modal-cancel", "n_clicks"),],
     [State("settings-modal", "is_open"),
      State("settings-modal-textfield", "value"),
      State("plotting-config", "data"),],
 )
-def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n_ok: int, n_cancel: int,
+def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n7: int, n_ok: int, n_cancel: int,
                           is_open: bool, settings_modal_textfield: str, plotting_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
