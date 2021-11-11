@@ -144,9 +144,9 @@ def setLayout(app, scenarioInputDefault):
                 fluid=True,
             ),
             plot_settings_modal,
-            dcc.Store(id='fuel-specs', storage_type='session'),
-            dcc.Store(id="plotting-config", storage_type='session'),
-            dcc.Download(id="download-config-yaml"),
-            dcc.Download(id="download-results-xlsx"),
+            dcc.Store(id='saved-plot-data', storage_type='session'),
+            dcc.Store(id='plotting-config', storage_type='session'),
+            dcc.Download(id='download-config-yaml'),
+            dcc.Download(id='download-results-xlsx'),
         ]
     )

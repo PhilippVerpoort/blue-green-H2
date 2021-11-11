@@ -24,25 +24,35 @@ from src.plotting.plotFig6 import plotFig6
      Output("plotting-config", "data"),
      Output("settings-modal-textfield", "value"),],
     [Input("fig1-settings", "n_clicks"),
+     Input("fig2-settings", "n_clicks"),
+     Input("fig3-settings", "n_clicks"),
+     Input("fig4-settings", "n_clicks"),
+     Input("fig5-settings", "n_clicks"),
+     Input("fig6-settings", "n_clicks"),
      Input("settings-modal-ok", "n_clicks"),
      Input("settings-modal-cancel", "n_clicks"),],
     [State("settings-modal", "is_open"),
      State("settings-modal-textfield", "value"),
      State("plotting-config", "data"),],
 )
-def callbackSettingsModal(n1: int, n_ok: int, n_cancel: int, is_open: bool, settings_modal_textfield: str, plotting_cfg: dict):
+def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n_ok: int, n_cancel: int,
+                          is_open: bool, settings_modal_textfield: str, plotting_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
         plotting_cfg = loadInitialPlottingCfg()
+        plotting_cfg['last_btn_pressed'] = None
         return False, plotting_cfg, ""
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btnPressed in ['fig1-settings']:
-            return True, plotting_cfg, yaml.dump(plotting_cfg['fig1'], sort_keys=False)
+        if btnPressed in [f"fig{f}-settings" for f in range(1,7)]:
+            fname = btnPressed.split("-")[0]
+            plotting_cfg['last_btn_pressed'] = fname
+            return True, plotting_cfg, yaml.dump(plotting_cfg[fname], sort_keys=False)
         elif btnPressed == 'settings-modal-cancel':
             return False, plotting_cfg, ""
         elif btnPressed == 'settings-modal-ok':
-            plotting_cfg['fig1'] = yaml.load(settings_modal_textfield, Loader=yaml.FullLoader)
+            fname = plotting_cfg['last_btn_pressed']
+            plotting_cfg[fname] = yaml.load(settings_modal_textfield, Loader=yaml.FullLoader)
             return False, plotting_cfg, ""
         else:
             raise Exception("Unknown button pressed!")
@@ -57,12 +67,12 @@ def callbackSettingsModal(n1: int, n_ok: int, n_cancel: int, is_open: bool, sett
      Output('fig5', 'figure'),
      Output('fig6', 'figure'),
      Output('table-results', 'data'),
-     Output('fuel-specs', 'data')],
+     Output('saved-plot-data', 'data')],
     [Input('simple-update', 'n_clicks'),
      Input('advanced-update', 'n_clicks'),
      Input('results-replot', 'n_clicks'),
      State('table-results', 'data'),
-     State('fuel-specs', 'data'),
+     State('saved-plot-data', 'data'),
      State("plotting-config", "data"),
      State('simple-gwp', 'value'),
      State('simple-leakage', 'value'),
@@ -85,7 +95,7 @@ def callbackSettingsModal(n1: int, n_ok: int, n_cancel: int, is_open: bool, sett
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data')])
-def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, plotting_cfg: dict, *args):
+def callbackUpdate(n1, n2, n3, table_results_data, saved_plot_data, plotting_cfg: dict, *args):
     ctx = dash.callback_context
     if not ctx.triggered:
         scenarioInputUpdated = scenarioInputDefault.copy()
@@ -99,26 +109,33 @@ def callbackUpdate(n1, n2, n3, table_results_data, fuel_specs_data, plotting_cfg
             scenarioInputUpdated = updateScenarioInputAdvanced(scenarioInputDefault.copy(), *args)
             fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
         elif btnPressed == 'results-replot':
+            # load fuelSpecs and fullParams from session
+            fuelSpecs = saved_plot_data['fuelSpecs']
+            fullParams = pd.DataFrame(saved_plot_data['fullParams'])
+            # convert relevant columns in fullParams Dataframe to int or float
+            fullParams['year'] = fullParams['year'].astype(int)
+            fullParams['value'] = fullParams['value'].astype(float)
+            # load fuel data from table
             fuelData = pd.DataFrame(table_results_data)
+            # convert relevant columns in fuelData DataFrame to int or float
             fuelData['year'] = fuelData['year'].astype(int)
-            fuelData['cost'] = fuelData['cost'].astype(float)
-            fuelData['cost_u'] = fuelData['cost_u'].astype(float)
-            fuelData['ci'] = fuelData['ci'].astype(float)
-            fuelData['ci_u'] = fuelData['ci_u'].astype(float)
-            fuelSpecs = fuel_specs_data
+            for col in ['cost', 'cost_u', 'ci', 'ci_u']:
+                fuelData[col] = fuelData[col].astype(float)
+            # recompute FSCPs
             FSCPData = calcFSCPs(fuelData)
         else:
             raise Exception("Unknown button pressed!")
 
+    saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
+
     fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig1'], export_img=False)
     fig2 = plotFig2(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig2'], export_img=False)
     fig3 = plotFig3(fuelSpecs, FSCPData, plotting_cfg['fig3'], export_img=False)
+    fig4 = plotFig4(fuelData, plotting_cfg['fig4'], export_img=False)
+    fig5 = plotFig5(fullParams, fuelData, plotting_cfg['fig5'], export_img=False)
+    fig6 = plotFig6(fullParams, fuelData, plotting_cfg['fig6'], export_img=False)
 
-    fig4 = plotFig4(fuelData, export_img=False)
-    fig5 = plotFig5(fullParams, fuelData, export_img=False)
-    fig6 = plotFig6(fullParams, fuelData, export_img=False)
-
-    return fig1, fig2, fig3, fig4, fig5, fig6, fuelData.to_dict('records'), fuelSpecs
+    return fig1, fig2, fig3, fig4, fig5, fig6, fuelData.to_dict('records'), saved_plot_data
 
 
 # callback for YAML config download
@@ -164,7 +181,7 @@ def callbackDownloadConfig(n1, n2, *args):
     return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename="scenario.yml")
 
 
-# this callback sets the background colour of the rows in the fuel table in the advanced tab
+# this callback sets the background colour of the rows in the fue table in the advanced tab
 @app.callback(
    Output(component_id='advanced-fuels', component_property='style_data_conditional'),
    [Input(component_id='advanced-fuels', component_property='data')])
