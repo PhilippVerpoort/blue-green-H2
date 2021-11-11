@@ -23,7 +23,7 @@ def __produceFigure(fullParams: pd.DataFrame, fuelData: pd.DataFrame, config: di
     fig = make_subplots(rows=1,
                         cols=5,
                         shared_yaxes=True,
-                        horizontal_spacing=0.05)
+                        horizontal_spacing=0.02)
 
     # get data
     fullParams = fullParams.query("year==2030")

@@ -7,7 +7,7 @@ from plotly.subplots import make_subplots
 
 def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame,
              plotConfig: dict, scenario_name = "", export_img: bool = True):
-    # load config setting from YAML file
+    # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument
@@ -21,11 +21,6 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame,
         fig.write_image("output/fig3" + ("_"+scenario_name if scenario_name else "") + ".png")
 
     return fig
-
-
-def __getPlottingConfig():
-    configThis = yaml.load(open('input/plotting/config_fig3.yml', 'r').read(), Loader=yaml.FullLoader)
-    return configThis
 
 
 def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict = None):
@@ -90,6 +85,6 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
             legendgroup=f"{fuel_x} {fuel_y}",
             mode="lines+markers",
             line=dict(color=col, width=2),
-            hovertemplate=f"<b>{name}</b><br>Year: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>")))
+            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
 
     return traces

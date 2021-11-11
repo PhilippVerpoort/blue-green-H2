@@ -13,15 +13,10 @@ plotting:
   cost_max: 60.0
   n_samples: 51
 
-colours:
-  heatmap_high: '#345979'
-  heatmap_medium: '#62b7fe'
-  heatmap_low: '#00fe00'
-
 labels:
-  x1: Electricity price in EUR/kWh
-  x2: Green GAPEX in EUR/kW
-  x3: OCF
-  x4: Natural gas price in EUR/MWh
-  x5: Blue CAPEX in EUR/10^5 Nm³/h
-  cost: Cost difference in EUR/MWh<sub>LHV</sub>
+  x1: Electricity price<br>in EUR/kWh
+  x2: Green GAPEX<br>in EUR/kW
+  x3: Op. capacity factor<br>in %
+  x4: Natural gas price<br>in EUR/MWh
+  x5: Blue CAPEX<br>in MEUR/10^5 Nm³/h
+  cost: Cost difference<br>in EUR/MWh<sub>LHV</sub>

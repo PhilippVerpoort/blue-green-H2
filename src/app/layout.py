@@ -135,10 +135,10 @@ def setLayout(app, scenarioInputDefault):
                         children=[dbc.Col(fig1, md=7), dbc.Col(fig2, md=5)],
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig3, md=8), dbc.Col(fig4, md=4)],
+                        children=[dbc.Col(fig3, md=8), dbc.Col(fig5, md=4)],
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig5, md=4), dbc.Col(fig6, md=8)],
+                        children=[dbc.Col(fig4, md=6), dbc.Col(fig6, md=6)],
                     ),
                 ],
                 fluid=True,

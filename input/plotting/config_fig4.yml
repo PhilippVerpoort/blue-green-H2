@@ -1,15 +1,32 @@
 plotting:
+  n_samples: 51
   ci_min: 0.01
   ci_max: 0.20
-  cost_min: 3.0
-  cost_max: 20.0
-  n_samples: 51
+  cost_min1: -15.0
+  cost_max1: 80.0
+  cost_min2: -15.0
+  cost_max2: 20.0
+
+labels:
+  ci: Carbon intensity difference in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
+  cost: Cost difference in EUR/MWh<sub>LHV</sub>
 
 colours:
   heatmap_high: '#345979'
   heatmap_medium: '#62b7fe'
   heatmap_low: '#00fe00'
 
-labels:
-  ci: Carbon intensity difference in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
-  cost: Cost difference in EUR/MWh<sub>LHV</sub>
+fscp_colours:
+  blue HEB to green RE: '#dac367'
+  blue LEB to green RE: '#ffdb4c'
+
+colourscale:
+  FSCPmin: -100.0
+  FSCPmax: 1000.0
+  FSCPmid: 400.0
+
+linedensity:
+  plot1: 100
+  plot2: 50
+
+rectcolour: 'red'

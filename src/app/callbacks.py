@@ -131,7 +131,7 @@ def callbackUpdate(n1, n2, n3, table_results_data, saved_plot_data, plotting_cfg
     fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig1'], export_img=False)
     fig2 = plotFig2(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig2'], export_img=False)
     fig3 = plotFig3(fuelSpecs, FSCPData, plotting_cfg['fig3'], export_img=False)
-    fig4 = plotFig4(fuelData, plotting_cfg['fig4'], export_img=False)
+    fig4 = plotFig4(fuelSpecs, fuelData, plotting_cfg['fig4'], export_img=False)
     fig5 = plotFig5(fullParams, fuelData, plotting_cfg['fig5'], export_img=False)
     fig6 = plotFig6(fullParams, fuelData, plotting_cfg['fig6'], export_img=False)
 

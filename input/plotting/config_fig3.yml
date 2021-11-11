@@ -14,5 +14,5 @@ showFSCPs:
   - [[2], 'blue LEB', 'green RE']
 
 fscp_colours:
-  blue LEB to green RE: '#8CAAAF'
-  blue HEB to green RE: '#8CAAAF'
+  blue HEB to green RE: '#dac367'
+  blue LEB to green RE: '#ffdb4c'
