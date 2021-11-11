@@ -25,8 +25,10 @@ def getCIParamsNG(par: dict, fuel: dict, GWP: str):
 
 def getCING(b, mlr, mci):
     return {
-        'base': (b, 0.05*b),
-        'mleakage': (mlr*mci, 0.05 * mlr*mci)
+        'base': (b,
+                 b * 0.05),
+        'mleakage': (mlr*mci,
+                     mlr*mci * 0.05)
     }
 
 
@@ -42,8 +44,10 @@ def getCIParamsBlue(par: dict, fuel: dict, GWP: str):
 
 def getCIBlue(b, mlr, mci):
     return {
-        'base': (b, 0.05*b),
-        'mleakage': (mlr*mci, 0.05 * mlr*mci)
+        'base': (b,
+                 b * 0.05),
+        'mleakage': (mlr*mci,
+                     mlr*mci * 0.05)
     }
 
 
@@ -60,6 +64,8 @@ def getCIParamsGreen(par: dict, fuel: dict, GWP: str):
 
 def getCIGreen(b, eff, eci):
     return {
-        'base': (b, 0.05 * b),
-        'elec': (eff*eci, 0.05 * eff*eci),
+        'base': (b,
+                 b * 0.05),
+        'elec': (eff*eci,
+                 eff*eci * 0.05),
     }
