@@ -7,7 +7,7 @@ from src.data.calc_cost import calcCost
 
 
 # calculate fuel data
-def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: dict, consts: dict, gwp: str = 'gwp100', levelised: bool = False):
+def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str = 'gwp100', levelised: bool = False):
     fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_u', 'ci', 'ci_u'])
 
     fuelSpecs = {'names': {}, 'colours': {}}
@@ -17,11 +17,10 @@ def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFra
         fuelSpecs['colours'][fuel_id] = fuel['colour']
 
         for t in times:
-            currentParams = __getCurrentAsDict(full_params, t)
-            currentCoeffs = __getCurrentAsDict(full_coeffs, t)
+            currentParams = getCurrentAsDict(full_params, t)
 
-            levelisedCost = calcCost(currentParams, currentCoeffs, fuel, consts)
-            levelisedCI = calcCI(currentParams, currentCoeffs, fuel, consts, gwp)
+            levelisedCost = calcCost(currentParams, fuel)
+            levelisedCI = calcCI(currentParams, fuel, gwp)
 
             cost = sum(levelisedCost[component][0] for component in levelisedCost)
             ci = sum(levelisedCI[component][0] for component in levelisedCI)
@@ -44,7 +43,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFra
 
 
 # convert dataframe of parameters/coefficients to a simple dict
-def __getCurrentAsDict(full_data: pd.DataFrame, t: int):
+def getCurrentAsDict(full_data: pd.DataFrame, t: int):
     currentData = {}
 
     for p in list(full_data.query("year == {}".format(t)).name):

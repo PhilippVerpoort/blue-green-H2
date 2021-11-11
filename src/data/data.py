@@ -12,14 +12,13 @@ def obtainScenarioData(scenario: dict, export_data = True):
     options, params, fuels = (scenario['options'], scenario['params'], scenario['fuels'])
 
     # load from yaml files
-    coeffs, consts, units = __loadDataFromFiles()
+    units = __loadDataFromFiles()
 
     # convert basic inputs to complete dataframes
-    fullParams = __getFullParamsCoeffs(params, units, options['times'])
-    fullCoeffs = __getFullParamsCoeffs(coeffs, units, options['times'])
+    fullParams = __getFullParams(params, units, options['times'])
 
     # calculate fuel data
-    fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fullCoeffs, fuels, consts, options['gwp'])
+    fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, options['gwp'])
 
     # calculate FSCPs
     FSCPData = calcFSCPs(fuelData)
@@ -31,11 +30,9 @@ def obtainScenarioData(scenario: dict, export_data = True):
         columnOrder = ['description', 'type', 'value', 'unit', 'source']
 
         pd.DataFrame(params).T.reindex(columnOrder, axis=1).to_excel(writer, sheet_name='Parameters (input)')
-        pd.DataFrame(coeffs).T.to_excel(writer, sheet_name='Coefficients (input)')
         pd.DataFrame(fuels).T.to_excel(writer, sheet_name='Fuel list (input)')
 
         fullParams.to_excel(writer, sheet_name='Parameters (full)')
-        fullCoeffs.to_excel(writer, sheet_name='Coefficients (full)')
         fuelData.to_excel(writer, sheet_name='Fuel data (output)')
 
         writer.save()
@@ -45,20 +42,14 @@ def obtainScenarioData(scenario: dict, export_data = True):
 
 # load data from yaml files
 def __loadDataFromFiles():
-    yamlData = yaml.load(open('input/data/coefficients.yml', 'r').read(), Loader=yaml.FullLoader)
-    coeffs = yamlData['coeffs']
-
-    yamlData = yaml.load(open('input/data/constants.yml', 'r').read(), Loader=yaml.FullLoader)
-    consts = yamlData['constants']
-
     yamlData = yaml.load(open('input/data/units.yml', 'r').read(), Loader=yaml.FullLoader)
     units = yamlData['units']
 
-    return coeffs, consts, units
+    return units
 
 
 # calculate parameters/coefficients based at different times (using linear interpolation if needed)
-def __getFullParamsCoeffs(basicData: dict, units: dict, times: list):
+def __getFullParams(basicData: dict, units: dict, times: list):
     fullDataFrame = pd.DataFrame(columns=['name', 'year', 'value', 'unit'])
 
     for parId, par in basicData.items():

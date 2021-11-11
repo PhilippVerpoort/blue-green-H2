@@ -1,16 +1,10 @@
 plotting:
-  x1_min: 30.0
-  x1_max: 50.0
-  x2_min: 500000.00
-  x2_max: 1000000.00
-  x3_min: 0.30
-  x3_max: 0.50
-  x4_min: 15.00
-  x4_max: 25.00
-  x5_min: 2.5e+08
-  x5_max: 3.5e+08
-  cost_min: 20.0
-  cost_max: 60.0
+  delta_x1: 15.0
+  delta_x2: 300000.00
+  delta_x3: 0.10
+  delta_x4: 5.0
+  delta_x5: 0.5e+8
+  delta_cost: 20.0
   n_samples: 51
 
 labels:
@@ -20,3 +14,7 @@ labels:
   x4: Natural gas price<br>in EUR/MWh
   x5: Blue CAPEX<br>in MEUR/10^5 Nm³/h
   cost: Cost difference<br>in EUR/MWh<sub>LHV</sub>
+
+fuelBlue: 'blue LEB'
+fuelGreen: 'green RE'
+fuelYear: 2030

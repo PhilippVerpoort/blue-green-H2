@@ -13,3 +13,7 @@ colours:
 labels:
   ci: Methane leakage rate in %
   cost: Cost difference in EUR/MWh<sub>LHV</sub>
+
+fuelBlue: 'blue LEB'
+fuelGreen: 'green RE'
+fuelYear: 2030

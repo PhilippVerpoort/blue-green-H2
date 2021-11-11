@@ -1,15 +1,15 @@
 import numpy as np
-import yaml
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-from plotly.colors import hex_to_rgb
+
+from src.data.calc_ci import getCIParamsBlue, getCIParamsGreen, getCIGreen, getCIBlue
+from src.data.calc_fuels import getCurrentAsDict
 
 
-def plotFig5(fullParams: pd.DataFrame, fuelData: pd.DataFrame,
+def plotFig5(fullParams: pd.DataFrame, fuelData: pd.DataFrame, fuels: dict, gwp: str,
              config: dict, scenario_name = "", export_img: bool = True):
     # produce figure
-    fig = __produceFigure(fullParams, fuelData, config)
+    fig = __produceFigure(fullParams, fuelData, fuels, gwp, config)
 
     # write figure to image file
     if export_img:
@@ -18,26 +18,28 @@ def plotFig5(fullParams: pd.DataFrame, fuelData: pd.DataFrame,
     return fig
 
 
-def __produceFigure(fullParams: pd.DataFrame, fuelData: pd.DataFrame, config: dict):
+def __produceFigure(fullParams: pd.DataFrame, fuelData: pd.DataFrame, fuels: dict, gwp: str, config: dict):
     # plot
     fig = go.Figure()
 
-    # get data
-    fullParams = fullParams.query("year==2050")
-    greenData = fuelData.query("year==2050 & fuel=='green RE'").reset_index(drop=True).iloc[0]
-
-    CR = 'leb'
-    GWP = 'gwp100'
-
-    ci_blue_base = fullParams.query(f"name=='ci_blue_base_{CR}_{GWP}'").iloc[0].value
-    ci_blue_methaneleakage = fullParams.query(f"name=='ci_blue_methaneleakage_{CR}_{GWP}'").iloc[0].value
-
-    # add traces
+    # define data for plot grid
     leakage = np.linspace(config['plotting']['leakage_min'], config['plotting']['leakage_max'], config['plotting']['n_samples'])
     delta_cost = np.linspace(config['plotting']['cost_min'], config['plotting']['cost_max'], config['plotting']['n_samples'])
-    leakage_v, delta_cost_v = np.meshgrid(leakage, delta_cost)
-    fscp = delta_cost_v / (ci_blue_base + leakage_v * ci_blue_methaneleakage - greenData.ci)
 
+    # calculate CI data from params
+    fuelBlue = fuels[config['fuelBlue']]
+    fuelGreen = fuels[config['fuelGreen']]
+
+    currentParams = getCurrentAsDict(fullParams, config['fuelYear'])
+    pBlue = getCIParamsBlue(currentParams, fuelBlue, gwp)
+    pGreen = getCIParamsGreen(currentParams, fuelGreen, gwp)
+
+    # calculate FSCPs for grid
+    leakage_v, delta_cost_v = np.meshgrid(leakage, delta_cost)
+    pBlue['mlr'] = leakage_v
+    fscp = delta_cost_v / __getCostDiff(pBlue, pGreen)
+
+    # add traces
     fig.add_trace(go.Heatmap(x=leakage*100, y=delta_cost, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
                              colorscale=[
@@ -72,3 +74,10 @@ def __produceFigure(fullParams: pd.DataFrame, fuelData: pd.DataFrame, config: di
                       yaxis=dict(title=config['labels']['cost'], range=[config['plotting']['cost_min'], config['plotting']['cost_max']]))
 
     return fig
+
+
+def __getCostDiff(pBlue, pGreen):
+    CIBlue = getCIBlue(**pBlue)
+    CIGreen = getCIGreen(**pGreen)
+
+    return sum(CIBlue[comp][0] for comp in CIBlue) - sum(CIGreen[comp][0] for comp in CIGreen)

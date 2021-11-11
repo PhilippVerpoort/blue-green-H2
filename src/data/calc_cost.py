@@ -1,26 +1,26 @@
 known_ESs = ['hydro', 'wind', 'solar', 'custom', 'mix']
 
 
-def calcCost(params: dict, coeffs: dict, fuel: dict, consts: dict):
+def calcCost(params: dict, fuel: dict):
     if fuel['type'] == 'ng':
-        return getCostNG(params, consts, coeffs, fuel)
+        return getCostNG(params, fuel)
     elif fuel['type'] == 'blue':
-        p = getParamsBlue(params, consts, coeffs, fuel)
+        p = getCostParamsBlue(params, fuel)
         return getCostBlue(**p)
     elif fuel['type'] == 'green':
-        p = getParamsGreen(params, consts, coeffs, fuel)
+        p = getCostParamsGreen(params, fuel)
         return getCostGreen(**p)
     else:
         raise Exception("Unknown fuel: {}".format(fuel['type']))
 
 
-def getCostNG(par: dict, const: dict, coef: dict, fuel: dict):
+def getCostNG(par: dict, fuel: dict):
     r = par['cost_ng_price']
 
     return {'fuel_cost': (r, 0.05*r)}
 
 
-def getParamsBlue(par: dict, const: dict, coef: dict, fuel: dict):
+def getCostParamsBlue(par: dict, fuel: dict):
     CR = fuel['capture_rate']
     if fuel['capture_rate'] not in ['smr', 'heb', 'leb']: raise Exception("Blue capture rate type unknown: {}".format(CR))
 
@@ -50,7 +50,7 @@ def getCostBlue(FCR, C_pl, P_pl, flh, p_ng, eff, c_CTS, emi):
     }
 
 
-def getParamsGreen(par: dict, const: dict, coef: dict, fuel: dict):
+def getCostParamsGreen(par: dict, fuel: dict):
     ES = fuel['elecsrc']
     if ES not in known_ESs: raise Exception(f"Unknown elecsrc type: {ES}")
 
@@ -64,6 +64,7 @@ def getParamsGreen(par: dict, const: dict, coef: dict, fuel: dict):
         p_el=par[f"cost_green_elec_{ES}"],
         eff=par['ci_green_eff'],
     )
+
 
 def getCostGreen(FCR, c_pl, ocf, p_el, eff):
     return {

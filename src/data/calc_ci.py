@@ -1,38 +1,65 @@
 known_ESs = ['hydro', 'wind', 'solar', 'custom', 'mix']
 
 
-def calcCI(params: dict, coeffs: dict, fuel: dict, consts: dict, gwp: str):
+def calcCI(params: dict, fuel: dict, gwp: str):
     if fuel['type'] == 'ng':
-        return getCING(params, consts, coeffs, fuel, gwp)
+        p = getCIParamsNG(params, fuel, gwp)
+        return getCING(**p)
     elif fuel['type'] == 'blue':
-        return getCIBlue(params, consts, coeffs, fuel, gwp)
+        p = getCIParamsBlue(params, fuel, gwp)
+        return getCIBlue(**p)
     elif fuel['type'] == 'green':
-        return getCIGreen(params, consts, coeffs, fuel, gwp)
+        p = getCIParamsGreen(params, fuel, gwp)
+        return getCIGreen(**p)
     else:
         raise Exception("Unknown fuel: {}".format(fuel['type']))
 
 
-def getCING(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
+def getCIParamsNG(par: dict, fuel: dict, GWP: str):
+    return dict(
+        b=par[f"ci_ng_base_{GWP}"],
+        mlr=fuel['methane_leakage'],
+        mci=par[f"ci_ng_methaneleakage_{GWP}"],
+    )
+
+
+def getCING(b, mlr, mci):
     return {
-        'base': (par[f"ci_ng_base_{GWP}"], 0.05*par[f"ci_ng_base_{GWP}"]),
-        'mleakage': (fuel['methane_leakage'] * par[f"ci_ng_methaneleakage_{GWP}"], 0.05 * fuel['methane_leakage'] * par[f"ci_ng_methaneleakage_{GWP}"])
+        'base': (b, 0.05*b),
+        'mleakage': (mlr*mci, 0.05 * mlr*mci)
     }
 
 
-def getCIBlue(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
+def getCIParamsBlue(par: dict, fuel: dict, GWP: str):
     CR = fuel['capture_rate']
 
+    return dict(
+        b=par[f"ci_blue_base_{CR}_{GWP}"],
+        mlr=fuel['methane_leakage'],
+        mci=par[f"ci_blue_methaneleakage_{CR}_{GWP}"],
+    )
+
+
+def getCIBlue(b, mlr, mci):
     return {
-        'base': (par[f"ci_blue_base_{CR}_{GWP}"], 0.05*par[f"ci_blue_base_{CR}_{GWP}"]),
-        'mleakage': (fuel['methane_leakage'] * par[f"ci_blue_methaneleakage_{CR}_{GWP}"], 0.05 * fuel['methane_leakage'] * par[f"ci_blue_methaneleakage_{CR}_{GWP}"])
+        'base': (b, 0.05*b),
+        'mleakage': (mlr*mci, 0.05 * mlr*mci)
     }
 
 
-def getCIGreen(par: dict, const: dict, coef: dict, fuel: dict, GWP: str):
+def getCIParamsGreen(par: dict, fuel: dict, GWP: str):
     ES = fuel['elecsrc']
     if ES not in known_ESs: raise Exception(f"Unknown elecsrc type: {ES}")
 
+    return dict(
+        b=par[f"ci_green_base_{GWP}"],
+        eff=par[f"ci_green_eff"],
+        eci=par[f"ci_green_elec_{ES}_{GWP}"],
+    )
+
+
+def getCIGreen(b, eff, eci):
     return {
-        'base': (par[f"ci_green_base_{GWP}"], 0.05*par[f"ci_green_base_{GWP}"]),
-        'elec': (par[f"ci_green_eff"] * par[f"ci_green_elec_{ES}_{GWP}"], 0.05 * par[f"ci_green_eff"] * par[f"ci_green_elec_{ES}_{GWP}"])
+        'base': (b, 0.05 * b),
+        'elec': (eff*eci, 0.05 * eff*eci),
     }
