@@ -9,6 +9,7 @@ from src.plotting.plotFig3 import plotFig3
 from src.plotting.plotFig4 import plotFig4
 from src.plotting.plotFig5 import plotFig5
 from src.plotting.plotFig6 import plotFig6
+from src.plotting.plotFig7 import plotFig7
 
 
 # load scenario and compute data
@@ -25,7 +26,4 @@ plotFig3(fuelSpecs, FSCPData, plotting_cfg['fig3'])
 plotFig4(fuelSpecs, fuelData, plotting_cfg['fig4'])
 plotFig5(fullParams, scenario['fuels'], 'gwp100', plotting_cfg['fig5'])
 plotFig6(fullParams, scenario['fuels'], plotting_cfg['fig6'])
-
-# levelised data
-levelisedFuelData, _ = calcFuelData(scenario['options']['times'], fullParams, scenario['fuels'], 'gwp100', levelised=True)
-print(levelisedFuelData.iloc[6])
+plotFig7(fuelSpecs, scenario, fullParams, plotting_cfg['fig7'])

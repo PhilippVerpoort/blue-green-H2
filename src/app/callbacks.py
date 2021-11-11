@@ -9,7 +9,7 @@ from server import app, scenarioInputDefault
 from src.app.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.data import obtainScenarioData
-from src.plotting.loadcfg import loadInitialPlottingCfg
+from src.plotting.loadcfg import loadInitialPlottingCfg, n_figs
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3
@@ -19,6 +19,9 @@ from src.plotting.plotFig6 import plotFig6
 
 
 # update figure plotting settings
+from src.plotting.plotFig7 import plotFig7
+
+
 @app.callback(
     [Output("settings-modal", "is_open"),
      Output("plotting-config", "data"),
@@ -44,7 +47,7 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
         return False, plotting_cfg, ""
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btnPressed in [f"fig{f}-settings" for f in range(1,7)]:
+        if btnPressed in [f"fig{f}-settings" for f in range(1, n_figs+1)]:
             fname = btnPressed.split("-")[0]
             plotting_cfg['last_btn_pressed'] = fname
             return True, plotting_cfg, yaml.dump(plotting_cfg[fname], sort_keys=False)
@@ -66,6 +69,7 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
      Output('fig4', 'figure'),
      Output('fig5', 'figure'),
      Output('fig6', 'figure'),
+     Output('fig7', 'figure'),
      Output('table-results', 'data'),
      Output('saved-plot-data', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -123,6 +127,7 @@ def callbackUpdate(n1, n2, n3, table_results_data, saved_plot_data, plotting_cfg
                 fuelData[col] = fuelData[col].astype(float)
             # recompute FSCPs
             FSCPData = calcFSCPs(fuelData)
+            # TODO: Make sure scenarioInputUpdated is initialised! Needs work & testing.
         else:
             raise Exception("Unknown button pressed!")
 
@@ -134,8 +139,10 @@ def callbackUpdate(n1, n2, n3, table_results_data, saved_plot_data, plotting_cfg
     fig4 = plotFig4(fuelSpecs, fuelData, plotting_cfg['fig4'], export_img=False)
     fig5 = plotFig5(fullParams, scenarioInputUpdated['fuels'], scenarioInputUpdated['options']['gwp'], plotting_cfg['fig5'], export_img=False)
     fig6 = plotFig6(fullParams, scenarioInputUpdated['fuels'], plotting_cfg['fig6'], export_img=False)
+    fig7 = plotFig7(fuelSpecs, scenarioInputUpdated, fullParams, plotting_cfg['fig7'], export_img=False)
 
-    return fig1, fig2, fig3, fig4, fig5, fig6, fuelData.to_dict('records'), saved_plot_data
+    return fig1, fig2, fig3, fig4, fig5, fig6, fig7,\
+           fuelData.to_dict('records'), saved_plot_data
 
 
 # callback for YAML config download

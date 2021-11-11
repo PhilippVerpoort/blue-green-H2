@@ -1,0 +1,24 @@
+yaxislabel: Levelised Cost of Hydrogen in EUR/MWh
+
+labels:
+  cost__cap_cost: Capital cost
+  cost__onm_cost: Operational and maintenance cost
+  cost__fuel_cost: Fuel cost
+  cost__cts_cost: Carbon transport and storage cost
+
+colours:
+  cost__cap_cost: '#CCC41E'
+  cost__onm_cost: '#4D5CAD'
+  cost__fuel_cost: '#d8593b'
+  cost__cts_cost: '#892F71'
+
+fuels:
+  - natural gas
+  - blue HEB
+  - blue LEB
+  - green RE
+
+years:
+  - 2020
+  - 2030
+  - 2050
