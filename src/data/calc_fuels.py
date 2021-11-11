@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 
 from src.data.calc_ci import calcCI
@@ -5,7 +7,7 @@ from src.data.calc_cost import calcCost
 
 
 # calculate fuel data
-def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: dict, consts: dict, gwp: str):
+def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFrame, fuels: dict, consts: dict, gwp: str = 'gwp100', levelised: bool = False):
     fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_u', 'ci', 'ci_u'])
 
     fuelSpecs = {'names': {}, 'colours': {}}
@@ -18,11 +20,25 @@ def calcFuelData(times: list, full_params: pd.DataFrame, full_coeffs: pd.DataFra
             currentParams = __getCurrentAsDict(full_params, t)
             currentCoeffs = __getCurrentAsDict(full_coeffs, t)
 
-            cost, cost_u = calcCost(currentParams, currentCoeffs, fuel, consts)
-            ci, ci_u = calcCI(currentParams, currentCoeffs, fuel, consts, gwp)
+            levelisedCost = calcCost(currentParams, currentCoeffs, fuel, consts)
+            levelisedCI = calcCI(currentParams, currentCoeffs, fuel, consts, gwp)
 
-            new_fuel = {'fuel': fuel_id, 'year': t, 'cost': cost, 'cost_u': cost_u, 'ci': ci, 'ci_u': ci_u}
-            fuelData = fuelData.append(new_fuel, ignore_index=True)
+            cost = sum(levelisedCost[component][0] for component in levelisedCost)
+            ci = sum(levelisedCI[component][0] for component in levelisedCI)
+            cost_u = math.sqrt(sum((levelisedCost[component][1])**2 for component in levelisedCost))
+            ci_u = math.sqrt(sum((levelisedCI[component][1])**2 for component in levelisedCI))
+
+            newFuel = {'fuel': fuel_id, 'year': t, 'cost': cost, 'cost_u': cost_u, 'ci': ci, 'ci_u': ci_u}
+
+            if levelised:
+                for component in levelisedCost:
+                    newFuel[f"cost__{component}"] = levelisedCost[component][0]
+                    newFuel[f"cost_u__{component}"] = levelisedCost[component][1]
+                for component in levelisedCI:
+                    newFuel[f"ci__{component}"] = levelisedCI[component][0]
+                    newFuel[f"ci_u__{component}"] = levelisedCI[component][1]
+
+            fuelData = fuelData.append(newFuel, ignore_index=True)
 
     return fuelData, fuelSpecs
 
