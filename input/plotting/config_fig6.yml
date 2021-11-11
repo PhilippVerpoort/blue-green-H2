@@ -15,6 +15,6 @@ labels:
   x5: Blue CAPEX<br>in EUR/10^5 Nm³/h
   cost: Cost difference in 2030<br>in EUR/MWh<sub>LHV</sub>
 
-fuelBlue: 'blue LEB'
-fuelGreen: 'green RE'
+fuelBlue: blue LEB
+fuelGreen: green RE
 fuelYear: 2030
