@@ -11,7 +11,7 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                     dbc.CardHeader("Options"),
                     dbc.CardBody(
                         children=[
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     dbc.Label(
                                         "Select GWP:",
@@ -24,7 +24,7 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                     ),
                                 ]
                             ),
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     dbc.Label(
                                         "Define time intervals:",

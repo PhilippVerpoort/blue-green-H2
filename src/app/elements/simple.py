@@ -9,7 +9,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                     dbc.CardHeader("General options"),
                     dbc.CardBody(
                         children=[
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     dbc.Label(
                                         "Select GWP:",
@@ -22,7 +22,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     ),
                                 ]
                             ),
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     dbc.Label(
                                         "Methane leakage in %:",
@@ -42,7 +42,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                             html.Div(
                                 className="clearfix"
                             ),
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     dbc.Label(
                                         f"{scenarioInputDefault['params']['cost_ng_price']['desc']} in {scenarioInputDefault['params']['cost_ng_price']['unit']}:",
@@ -62,7 +62,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                             html.Div(
                                 className="clearfix"
                             ),
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     dbc.Label(
                                         "Lifetime in years:",
@@ -82,7 +82,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                             html.Div(
                                 className="clearfix"
                             ),
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     dbc.Label(
                                         f"{scenarioInputDefault['params']['irate']['desc']} in %:",
@@ -143,7 +143,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
     # elec src (wind/solar/hydro/custom/mix)
 
     fields = [
-        dbc.FormGroup(
+        html.Div(
             [
                 dbc.Label(
                     f"{param_fields_green[param]['name']} in {param_fields_green[param]['unit']}:",
@@ -164,7 +164,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
         for param in param_fields_green
     ]
 
-    elecsrc_dropdown = dbc.FormGroup(
+    elecsrc_dropdown = html.Div(
         [
             dbc.Label(
                 "Carbon intensity of electricity:",
@@ -190,7 +190,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
     custom_ci = html.Div(
         id="wrapper-simple-elecsrc-custom",
         children=[
-            dbc.FormGroup(
+            html.Div(
                 [
                     dbc.Label(
                         f"Custom carbon intensity in {scenarioInputDefault['params']['ci_green_elec']['unit']}:",
@@ -266,7 +266,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
     }
 
     fields = [
-        dbc.FormGroup(
+        html.Div(
             [
                 dbc.Label(
                     f"{param_fields_blue[param]['name']} in {param_fields_blue[param]['unit']}:" if
