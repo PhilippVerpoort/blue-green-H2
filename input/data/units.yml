@@ -16,8 +16,8 @@ units:
     kgCO2eq/kgH2__to__tCO2eq/MWh: 0.03              # 0.001 / (33.33*0.001)
     kgCO2eq/kWh__to__tCO2eq/MWh: 1                  # 1000 / 1000
     EUR/GJ__to__EUR/MWh: 3.6                        # 1 / (1/3600) * 1000
-    USD/kW__to__EUR/MW: 860                         # €/$ (EZB) * 1000
-    USD/MWh__to__EUR/MWh: 0.86                      # €/$ (EZB) * 1000
+    USD/kW__to__EUR/MW: 860                         # EUR/USD (EZB) * 1000
+    USD/MWh__to__EUR/MWh: 0.86                      # EUR/USD (EZB) * 1000
     kWh/kgH2__to__1: 0.03                           # 1 / 33.33
     Nm3/h__to__MW: 0.003                            # 3 * 0.001
     kgCO2/Nm3_H2__to__tCO2/MWh: 0.333               # 0.001 / (3.00*0.001)

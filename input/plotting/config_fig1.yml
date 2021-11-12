@@ -5,7 +5,7 @@ plotting:
 
 labels:
   CP: Carbon Pricing in EUR/t<sub>CO<sub>2</sub>eq</sub>
-  total_cost: Total cost in €/MWh<sub>LHV</sub>
+  total_cost: Total cost in EUR/MWh<sub>LHV</sub>
 
 showFuels:
   - [[1, 2], 2020, natural gas]
