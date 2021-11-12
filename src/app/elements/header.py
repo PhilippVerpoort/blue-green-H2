@@ -18,7 +18,7 @@ def getHeader(app):
         "View Code on github",
         outline=True,
         color="primary",
-        href="https://github.com/PhilippVerpoort/",
+        href="https://github.com/PhilippVerpoort/blue-green-H2",
         id="gh-link",
         style={"text-transform": "none"},
     )
