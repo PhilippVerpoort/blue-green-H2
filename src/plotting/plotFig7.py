@@ -12,7 +12,7 @@ def plotFig7(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
     # filter data
     fuels = config['fuels']
     years = config['years']
-    plotData = levelisedFuelData.query(f"fuel.isin(@fuels) & year.isin(@years)")
+    plotData = levelisedFuelData.query("fuel in @fuels & year in @years")
 
     # produce figure
     fig = __produceFigure(plotData, fuelSpecs, config)

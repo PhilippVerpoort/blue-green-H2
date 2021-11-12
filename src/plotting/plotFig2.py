@@ -27,11 +27,11 @@ def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
 
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, showFuels: list):
     fuelsList = [refFuel] + showFuels
-    return fuelsData.query("fuel.isin(@fuelsList)")
+    return fuelsData.query("fuel in @fuelsList")
 
 
 def __selectPlotFSCPs(FSCPData: pd.DataFrame, refFuel: str, showFuels: list):
-    return FSCPData.query(f"fuel_x.isin(@showFuels) & fuel_y=='{refFuel}'")
+    return FSCPData.query(f"fuel_x in @showFuels & fuel_y=='{refFuel}'")
 
 
 def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, config: dict):
