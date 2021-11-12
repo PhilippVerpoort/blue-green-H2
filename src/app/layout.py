@@ -7,9 +7,14 @@ from src.app.elements.results import getResultsWidgets
 from src.app.elements.simple import getSimpleWidgets
 from src.app.elements.advanced import getAdvancedWidgets
 from src.app.elements.plots import getPlots
+from src.plotting.loadcfg import loadInitialPlottingCfg
 
 
 def setLayout(app, scenarioInputDefault):
+    # load inital plotting cfg
+    plotting_cfg = loadInitialPlottingCfg()
+
+    # define header
     header = getHeader(app)
 
     # simple config widgets
@@ -142,7 +147,7 @@ def setLayout(app, scenarioInputDefault):
             ),
             plot_settings_modal,
             dcc.Store(id='saved-plot-data', storage_type='session'),
-            dcc.Store(id='plotting-config', storage_type='session'),
+            dcc.Store(id='plotting-config', storage_type='session', data=plotting_cfg),
             dcc.Download(id='download-config-yaml'),
             dcc.Download(id='download-results-xlsx'),
         ]

@@ -42,7 +42,6 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
                           is_open: bool, settings_modal_textfield: str, plotting_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
-        plotting_cfg = loadInitialPlottingCfg()
         plotting_cfg['last_btn_pressed'] = None
         return False, plotting_cfg, ""
     else:
