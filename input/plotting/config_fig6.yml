@@ -12,7 +12,7 @@ labels:
   x2: Green GAPEX<br>in EUR/kW
   x3: Op. capacity factor<br>in %
   x4: Natural gas price<br>in EUR/MWh
-  x5: Blue CAPEX<br>in MEUR/10^5 Nm³/h
+  x5: Blue CAPEX<br>in MEUR/10^5 Nm^3/h
   cost: Cost difference in 2030<br>in EUR/MWh<sub>LHV</sub>
 
 fuelBlue: blue LEB
