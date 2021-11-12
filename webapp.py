@@ -16,6 +16,10 @@ from src.app.callbacks import callbackUpdate, callbackDownloadConfig, callbackWi
 callbackUpdate, callbackDownloadConfig, callbackWidget1, callbackWidget2, callbackDownloadExportdata
 
 
+# define server for wsgi
+server = app.server
+
+
 # for running as Python script in standalone
 if __name__ == '__main__':
     app.run_server(debug=True)
