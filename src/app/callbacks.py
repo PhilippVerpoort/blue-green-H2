@@ -5,10 +5,11 @@ import dash
 from dash.dependencies import Input, Output, State
 from flask import send_file
 
-from server import app, scenarioInputDefault
+from src.app.app import app
 from src.app.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.data import obtainScenarioData
+from src.data.scenario_input_default import scenarioInputDefault
 from src.plotting.loadcfg import loadInitialPlottingCfg, n_figs
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
@@ -16,12 +17,10 @@ from src.plotting.plotFig3 import plotFig3
 from src.plotting.plotFig4 import plotFig4
 from src.plotting.plotFig5 import plotFig5
 from src.plotting.plotFig6 import plotFig6
-
-
-# update figure plotting settings
 from src.plotting.plotFig7 import plotFig7
 
 
+# update figure plotting settings
 @app.callback(
     [Output("settings-modal", "is_open"),
      Output("plotting-config", "data"),
