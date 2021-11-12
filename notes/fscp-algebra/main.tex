@@ -1,0 +1,152 @@
+%% ****** Start of file aapmtemplate.tex ****** %
+%%
+%%   This file is part of the files in the distribution of AAPM substyles for REVTeX4.2.
+%%   Version 4.2a of January 28, 2015.
+%%
+%
+% This is a template for producing documents for use with 
+% the REVTEX 4.2 document class and the AAPM substyles.
+% 
+% Copy this file to another name and then work on that file.
+% That way, you always have this original template file to use.
+
+\documentclass[%
+ draft,
+ aapm,
+ mph,%
+ amsmath,amssymb,
+%preprint,%
+ reprint,%
+%author-year,%
+%author-numerical,%
+]{revtex4-2}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{upgreek}
+
+\usepackage{siunitx}
+
+\usepackage{mhchem}
+
+\usepackage{xspace}
+
+% Defining string as labels of certain blocks.
+
+\begin{document}
+
+% Use the \preprint command to place your local institutional report number 
+% on the title page in preprint mode.
+% Multiple \preprint commands are allowed.
+%\preprint{}
+
+\title{Fuel-switching carbon prices — a bit of algebra} %Title of paper
+
+% repeat the \author .. \affiliation  etc. as needed
+% \email, \thanks, \homepage, \altaffiliation all apply to the current author.
+% Explanatory text should go in the []'s, 
+% actual e-mail address or url should go in the {}'s for \email and \homepage.
+% Please use the appropriate macro for the type of information
+
+% \affiliation command applies to all authors since the last \affiliation command. 
+% The \affiliation command should follow the other information.
+
+\author{Philipp C. Verpoort}
+%\email[]{Your e-mail address}
+%\homepage[]{Your web page}
+%\thanks{}
+%\altaffiliation{}
+
+% Collaboration name, if desired (requires use of superscriptaddress option in \documentclass). 
+% \noaffiliation is required (may also be used with the \author command).
+%\collaboration{}
+%\noaffiliation
+
+%\date{\today}
+
+\input{cmds}
+
+\maketitle %\maketitle must follow title, authors, abstract
+
+% Body of paper goes here. Use proper sectioning commands. 
+% References should be done using the \cite, \ref, and \label commands
+\section{Formular for switching price}
+
+The total cost $C_X$ of a fuel $X$ is defined as
+\begin{equation}
+    C_X = C^0_X + \prc * e_X \punc,
+\end{equation}
+where $C^0_X$ is the direct cost (independent of carbon cost) in \si{\$}, $\prc$ is the carbon price in \si{\$\per\tonne_{\ce{CO2}}}, and $e_X$ are the emissions (or carbon intensity) in \si{\tonne_{\ce{CO2}}\per\kWh}. We define the $Y$-to-$X$ fuel-switching cost $\Delta C_{YX}$ (i.e.~the cost incurred in switching from fuel $Y$ to fuel $X$) as
+\begin{align}
+    \Delta C_{YX} &= C_X - C_Y \\
+                  &= C^0_X - C^0_Y + \prc * (e_X - e_Y) \punc.
+\end{align}
+The $Y$-to-$X$ fuel-switching carbon price $\prYX$ (i.e.~carbon price above which it is economically incentivised to switch from fuel $Y$ to fuel $X$) is defined as
+\begin{align}
+                    & \Delta C_{YX} (\prc = \prYX) = 0 \punc, \\
+\intertext{and hence it is}
+                    &~~~ C^0_X - C^0_Y + \prYX * (e_X - e_Y) = 0 \\
+  \Leftrightarrow   &~~~ \prYX = \frac{C^0_X - C^0_Y}{e_Y - e_X} \punc.
+\end{align}
+
+\section{Green-blue switching}
+
+We now consider the fuels $X$ and $Y$ to be one of $\{g, b, r\}$, which refer to green, blue, and reference (e.g.~natural gas). In that case we have three switching prices:
+\begin{align}
+    \prg    &=     \frac{C^0_g - C^0_r}{e_r - e_g} \punc,\\
+    \prb    &=     \frac{C^0_b - C^0_r}{e_r - e_b} \punc,\\
+    \prbg   &=     \frac{C^0_g - C^0_b}{e_b - e_g} \punc.
+\end{align}
+We can rewrite the equations for $\prg$ and $\prb$ as
+\begin{align}
+    C^0_g &= C^0_r + \prg * (e_r - e_g) \quad\text{and} \\
+    C^0_b &= C^0_r + \prg * (e_r - e_b) \punc,
+\end{align}
+and hence it is
+\begin{align}
+    C^0_g - C^0_b &= \prg (e_r - e_g) - \prb (e_r - e_b) \\
+                  &= \prb \, e_b - \prg \, e_g + (\prg - \prb) \, e_r \punc.
+\end{align}
+We can substitute that back into the equation from above for $\prbg$, which yields:
+\begin{align}
+    \prbg &= \frac{\prb \, e_b - \prg \, e_g + (\prg - \prb) \, e_r}{e_b - e_g} \\
+    &= \frac{\prb \, e_b + \prb \, e_g - \prb \, e_g - \prg \, e_g}{e_b - e_g}\\ &~~~~+ \frac{(\prg - \prb) \, e_r}{e_b - e_g} \\
+    &= \prb + (\prb - \prg) \frac{e_g}{e_b-e_g} \\ &~~~~+ (\prg - \prb) \frac{e_r}{e_b-e_g} \\
+    &= \prb + (\prg - \prb) \underbrace{\frac{e_r - e_g}{e_b - e_g}}_{=: \alpha} \\
+    &= \prb + \alpha * (\prg - \prb) \punc.
+\end{align}
+
+\section{Possible cases}
+Let us assume that green hydrogen is always cleaner than blue and that both are cleaner than the reference (e.g.~natural gas). Hence, it is $e_g < e_b < e_r$. From $e_r > e_b \Leftrightarrow e_r - e_g > e_b - e_g$ and with $e_b < e_g$ we find that $\alpha > 1$. We therefore find the follwing cases depending on the relative values of $\prg$ and $\prb$:
+
+\vspace{.2cm}
+\noindent\textbf{Case 1: $\prg > \prb$}
+\begin{align}
+    \prbg &~=~ \prb + \alpha * \underbrace{(\prg - \prb)}_{>\,0} \\
+            & \overset{\alpha>1}{>} \prb + \prg - \prb = \prg \punc.
+\end{align}
+Hence: $\prbg > \prg > \prb$.
+
+\vspace{.2cm}
+\noindent\textbf{Case 2: $\prg < \prb$}
+\begin{align}
+    \prbg &~=~ \prb + \alpha * \underbrace{(\prg - \prb)}_{<\,0} \\
+            & \overset{\alpha>1}{<} \prb + \prg - \prb = \prg \punc.
+\end{align}
+Hence: $\prbg < \prg < \prb$.
+
+\vspace{.2cm}
+\noindent\textbf{Case 3: $\prg = \prb$}
+\begin{align}
+    \prbg &~=~ \prb + \alpha * \underbrace{(\prg - \prb)}_{=\,0} = \prb\punc.
+\end{align}
+Hence: $\prbg = \prb = \prg$.
+
+
+
+\end{document}
+%
+% ****** End of file aapmtemplate.tex ******
