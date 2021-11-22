@@ -1,5 +1,3 @@
-import io
-
 import pandas as pd
 import yaml
 
@@ -8,6 +6,9 @@ from src.data.calc_fuels import calcFuelData
 
 
 # obtain all required data for a scenario
+from src.filepaths import getFilePathInputs
+
+
 def obtainScenarioData(scenario: dict, export_data = True):
     options, params, fuels = (scenario['options'], scenario['params'], scenario['fuels'])
 
@@ -42,7 +43,8 @@ def obtainScenarioData(scenario: dict, export_data = True):
 
 # load data from yaml files
 def __loadDataFromFiles():
-    yamlData = yaml.load(open('input/data/units.yml', 'r').read(), Loader=yaml.FullLoader)
+    filePath = getFilePathInputs('data/units.yml')
+    yamlData = yaml.load(open(filePath, 'r').read(), Loader=yaml.FullLoader)
     units = yamlData['units']
 
     return units

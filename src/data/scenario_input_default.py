@@ -1,4 +1,6 @@
 import yaml
 
+from src.filepaths import getFilePathInputs
 
-scenarioInputDefault = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
+filePath = getFilePathInputs('data/scenario_default.yml')
+scenarioInputDefault = yaml.load(open(filePath, 'r').read(), Loader=yaml.FullLoader)

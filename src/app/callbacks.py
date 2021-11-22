@@ -10,7 +10,8 @@ from src.app.update import updateScenarioInputSimple, updateScenarioInputAdvance
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.data import obtainScenarioData
 from src.data.scenario_input_default import scenarioInputDefault
-from src.plotting.loadcfg import loadInitialPlottingCfg, n_figs
+from src.filepaths import getFilePathAssets
+from src.plotting.loadcfg import n_figs
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3
@@ -221,6 +222,12 @@ def callbackWidget1(elecsrc_selected):
 
 
 # path for downloading XLS data file
-@app.server.route("/download/data.xlsx")
+@app.server.route('/download/data.xlsx')
 def callbackDownloadExportdata():
-    return send_file("output/data.xlsx", as_attachment=True)
+    return send_file(getFilePathAssets('output/', 'data.xlsx'), as_attachment=True)
+
+
+# serving asset files
+@app.server.route('/assets/<path>')
+def callbackServeAssets(path):
+    return send_file(getFilePathAssets(path), as_attachment=True)
