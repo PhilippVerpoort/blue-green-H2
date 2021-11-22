@@ -228,14 +228,14 @@ def getSimpleWidgets(scenarioInputDefault: dict):
 
     param_fields_blue = {
         'cost_blue_capex_heb': {
-            'name': f"{scenarioInputDefault['params']['cost_blue_capex']['desc']} of SMR+CCS",
-            'value': scenarioInputDefault['params']['cost_blue_capex']['value']['heb'],
+            'name': f"{scenarioInputDefault['params']['cost_blue_capex']['desc']} of SMR+LCRCCS",
+            'value': scenarioInputDefault['params']['cost_blue_capex']['value']['smr+lcrccs'][2050],
             'unit': f"{scenarioInputDefault['params']['cost_blue_capex']['unit']} per 10^5 Nm³/h",
             'step': 0.01,
         },
         'cost_blue_capex_leb': {
-            'name': f"{scenarioInputDefault['params']['cost_blue_capex']['desc']} of ATR+CCS",
-            'value': scenarioInputDefault['params']['cost_blue_capex']['value']['leb'],
+            'name': f"{scenarioInputDefault['params']['cost_blue_capex']['desc']} of ATR+HCRCCS",
+            'value': scenarioInputDefault['params']['cost_blue_capex']['value']['atr+hcrccs'][2050],
             'unit': f"{scenarioInputDefault['params']['cost_blue_capex']['unit']} per 10^5 Nm³/h",
             'step': 0.01,
         },
@@ -252,14 +252,14 @@ def getSimpleWidgets(scenarioInputDefault: dict):
             'step': 1,
         },
         'cost_blue_eff_heb': {
-            'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of SMR+CCS",
-            'value': scenarioInputDefault['params']['cost_blue_eff']['value']['heb'],
+            'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of SMR+LCRCCS",
+            'value': scenarioInputDefault['params']['cost_blue_eff']['value']['smr+lcrccs'],
             'unit': scenarioInputDefault['params']['cost_blue_eff']['unit'],
             'step': 0.0001,
         },
         'cost_blue_eff_leb': {
-            'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of ATR+CCS",
-            'value': scenarioInputDefault['params']['cost_blue_eff']['value']['leb'],
+            'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of ATR+HCRCCS",
+            'value': scenarioInputDefault['params']['cost_blue_eff']['value']['atr+hcrccs'],
             'unit': scenarioInputDefault['params']['cost_blue_eff']['unit'],
             'step': 0.0001,
         }

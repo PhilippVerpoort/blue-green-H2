@@ -1,4 +1,5 @@
-known_ESs = ['hydro', 'wind', 'solar', 'custom', 'mix']
+known_blue_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
+known_elec_srcs = ['hydro', 'wind', 'solar', 'custom', 'mix']
 
 
 def calcCI(params: dict, fuel: dict, gwp: str):
@@ -34,6 +35,8 @@ def getCING(b, mlr, mci):
 
 def getCIParamsBlue(par: dict, fuel: dict, GWP: str):
     CR = fuel['capture_rate']
+    if CR not in known_blue_types:
+        raise Exception("Blue capture rate type unknown: {}".format(CR))
 
     return dict(
         b=par[f"ci_blue_base_{CR}_{GWP}"],
@@ -53,7 +56,7 @@ def getCIBlue(b, mlr, mci):
 
 def getCIParamsGreen(par: dict, fuel: dict, GWP: str):
     ES = fuel['elecsrc']
-    if ES not in known_ESs: raise Exception(f"Unknown elecsrc type: {ES}")
+    if ES not in known_elec_srcs: raise Exception(f"Unknown elecsrc type: {ES}")
 
     return dict(
         b=par[f"ci_green_base_{GWP}"],

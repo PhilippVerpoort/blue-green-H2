@@ -23,7 +23,7 @@ fuels:
     desc: Blue Hydrogen (HEB)
     type: blue
     colour: '#345979'
-    capture_rate: heb
+    capture_rate: smr+lcrccs
     methane_leakage: 0.02
     include_capex: True
 
@@ -31,7 +31,7 @@ fuels:
     desc: Blue Hydrogen (HEB, w/o CAPEX)
     type: blue
     colour: '#35638a'
-    capture_rate: heb
+    capture_rate: smr+lcrccs
     methane_leakage: 0.02
     include_capex: False
 
@@ -39,7 +39,7 @@ fuels:
     desc: Blue Hydrogen (LEB)
     type: blue
     colour: '#62b7fe'
-    capture_rate: leb
+    capture_rate: atr+hcrccs
     methane_leakage: 0.02
     include_capex: True
 
@@ -89,21 +89,41 @@ params:
   # blue parameters
   cost_blue_capex:
     desc: Blue CAPEX
-    type: const
+    type: linear
     value:
-      smr: 170.95
-      heb: 201.80
-      leb: 305.33
+      smr:
+        2020: 170.95
+        2050: 170.95
+      smr+lcrccs:
+        2020: 201.80
+        2050: 201.80
+      smr+hcrccs:
+        2020: 305.33
+        2050: 305.33
+      atr+hcrccs:
+        2020: 240.00
+        2030: 210.00
+        2050: 210.00
     unit: MEUR
     source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
 
   cost_blue_OnM:
     desc: Operational and Maintenance cost (w/o fuel cost)
-    type: const
+    type: linear
     value:
-      smr:  8.06
-      heb:  9.28
-      leb: 12.03
+      smr:
+        2020: 8.06
+        2050: 8.06
+      smr+lcrccs:
+        2020: 9.28
+        2050: 9.28
+      smr+hcrccs:
+        2020: 12.03
+        2050: 12.03
+      atr+hcrccs:
+        2020: 12.0
+        2030: 6.9
+        2050: 6.9
     unit: MEUR
     source: IEAGHG, p. 18, Table 4
 
@@ -126,8 +146,9 @@ params:
     type: const
     value:
       smr: 0.7592
-      heb: 0.7351
-      leb: 0.6910
+      smr+lcrccs: 0.7351
+      smr+hcrccs: 0.6910
+      atr+hcrccs: 0.7353
     unit: 1
     source: IEAGHG, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream
 
@@ -136,8 +157,9 @@ params:
     type: const
     value:
       smr: 0.0
-      heb: 0.4660
-      leb: 0.8004
+      smr+lcrccs: 0.4660
+      smr+hcrccs: 0.8004
+      atr+hcrccs: 0.8004
     unit: kgCO2/Nm3_H2
     source: IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured
 
@@ -157,10 +179,13 @@ params:
       smr:
         gwp100: 87.2
         gwp20: 89.7
-      heb:
+      smr+lcrccs:
         gwp100: 46.3
         gwp20: 46.6
-      leb:
+      smr+hcrccs:
+        gwp100: 20.8
+        gwp20: 21.5
+      atr+hcrccs:
         gwp100: 20.8
         gwp20: 21.5
     unit: gCO2eq/MJ
@@ -173,10 +198,13 @@ params:
       smr:
         gwp100: 693.05
         gwp20: 1974.1
-      heb:
+      smr+lcrccs:
         gwp100: 706.1
         gwp20: 2011.2
-      leb:
+      smr+hcrccs:
+        gwp100: 713.2
+        gwp20: 2031.5
+      atr+hcrccs:
         gwp100: 713.2
         gwp20: 2031.5
     unit: gCO2eq/MJ

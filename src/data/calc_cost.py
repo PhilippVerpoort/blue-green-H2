@@ -1,4 +1,5 @@
-known_ESs = ['hydro', 'wind', 'solar', 'custom', 'mix']
+known_blue_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
+known_elec_srcs = ['hydro', 'wind', 'solar', 'custom', 'mix']
 
 
 def calcCost(params: dict, fuel: dict):
@@ -22,7 +23,8 @@ def getCostNG(par: dict, fuel: dict):
 
 def getCostParamsBlue(par: dict, fuel: dict):
     CR = fuel['capture_rate']
-    if fuel['capture_rate'] not in ['smr', 'heb', 'leb']: raise Exception("Blue capture rate type unknown: {}".format(CR))
+    if CR not in known_blue_types:
+        raise Exception("Blue capture rate type unknown: {}".format(CR))
 
     i = par['irate']
     n = par['lifetime']
@@ -52,7 +54,7 @@ def getCostBlue(FCR, C_pl, P_pl, flh, p_ng, eff, c_CTS, emi):
 
 def getCostParamsGreen(par: dict, fuel: dict):
     ES = fuel['elecsrc']
-    if ES not in known_ESs: raise Exception(f"Unknown elecsrc type: {ES}")
+    if ES not in known_elec_srcs: raise Exception(f"Unknown elecsrc type: {ES}")
 
     i = par['irate']
     n = par['lifetime']

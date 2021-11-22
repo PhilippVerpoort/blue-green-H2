@@ -115,10 +115,10 @@ def __linearInterpolate(t: int, points: list):
         if t_p == t:
             return val_p
         elif t_p < t:
-            if p_min is None or t_p > max(p_min, key = lambda x: x[0]):
+            if p_min is None or t_p > p_min[0]:
                 p_min = (t_p, val_p)
         elif t_p > t:
-            if p_max is None or t_p < max(p_max, key = lambda x: x[0]):
+            if p_max is None or t_p < p_max[0]:
                 p_max = (t_p, val_p)
         else:
             raise ValueError()
