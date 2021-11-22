@@ -6,7 +6,7 @@ from src.data.calc_fuels import calcFuelData
 
 
 # obtain all required data for a scenario
-from src.filepaths import getFilePathInputs
+from src.filepaths import getFilePathInputs, getFilePath
 
 
 def obtainScenarioData(scenario: dict, export_data = True):
@@ -26,7 +26,8 @@ def obtainScenarioData(scenario: dict, export_data = True):
 
     # dump to output file
     if export_data:
-        writer = pd.ExcelWriter('output/data.xlsx')
+        filePath = getFilePath('output/', 'data.xlsx')
+        writer = pd.ExcelWriter(filePath)
 
         columnOrder = ['description', 'type', 'value', 'unit', 'source']
 
