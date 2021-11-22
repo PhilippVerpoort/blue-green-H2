@@ -26,9 +26,9 @@ def plotFig7(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
 
 def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
     # add names
-    plotData['name'] = ""
+    plotData.insert(1, 'name', len(plotData)*[''])
     for i, row in plotData.iterrows():
-        plotData.loc[i, 'name'] = f"{fuelSpecs['names'][row['fuel']]} {row['year']}"
+        plotData.at[i, 'name'] = f"{fuelSpecs['names'][row['fuel']]} {row['year']}"
 
     # create figure
     fig = px.bar(plotData,

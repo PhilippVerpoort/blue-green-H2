@@ -29,14 +29,13 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict = None):
     if showFSCPs is None:
         plotFSCP = FSCPData.query("fuel_x=='green RE' & fuel_y=='natural gas' & year_x==year_y")
     else:
-        plotFSCP = pd.DataFrame(columns=FSCPData.keys())
-        plotFSCP['plotIndex'] = 0
+        plotFSCP = pd.DataFrame(columns=(FSCPData.keys().tolist() + ['plotIndex']))
         for index, args in enumerate(showFSCPs):
             cols, fuel_x, fuel_y = args
             addFSCP = FSCPData.query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}' & year_x==year_y")
-            addFSCP['plotIndex'] = index
+            addFSCP.insert(1, 'plotIndex', len(addFSCP)*[index])
             FSCPsCols[index] = cols
-            plotFSCP = pd.concat([plotFSCP, addFSCP], ignore_index = True)
+            plotFSCP = pd.concat([plotFSCP, addFSCP], ignore_index=True)
 
     plotFSCP['year'] = plotFSCP['year_x']
     plotFSCP = plotFSCP[['fuel_x', 'fuel_y', 'year', 'fscp', 'fscp_u', 'plotIndex']]
