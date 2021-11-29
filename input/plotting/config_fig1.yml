@@ -1,6 +1,6 @@
 plotting:
-  carb_price_max: 1200.0
-  fuel_cost_max: 260.0
+  carb_price_max: 800.0
+  fuel_cost_max: 150.0
   numb_cols: 2
 
 labels:
@@ -9,17 +9,13 @@ labels:
 
 showFuels:
   - [[1, 2], 2020, natural gas]
+  - [[1, 2], 2020, blue LEB]
   - [[1, 2], 2020, green RE]
-  - [[1, 2], 2050, green RE]
-  - [[1], 2020, blue HEB]
-  - [[2], 2020, blue LEB]
+  - [[2], 2050, green RE]
 
 showFSCPs:
+  - [[1, 2], 2020, natural gas, 2020, blue LEB]
   - [[1, 2], 2020, natural gas, 2020, green RE]
-  - [[1, 2], 2020, natural gas, 2050, green RE]
-  - [[1], 2020, natural gas, 2020, blue HEB]
-  - [[1], 2020, blue HEB,    2020, green RE]
-  - [[1], 2020, blue HEB,    2050, green RE]
-  - [[2], 2020, natural gas, 2020, blue LEB]
-  - [[2], 2020, blue LEB,    2020, green RE]
-  - [[2], 2020, blue LEB,    2050, green RE]
+  - [[1, 2], 2020, blue LEB,    2020, green RE]
+  - [[2],    2020, natural gas, 2050, green RE]
+  - [[2],    2020, blue LEB,    2050, green RE]
