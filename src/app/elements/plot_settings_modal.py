@@ -8,7 +8,7 @@ def getPlotSettingsModal():
             dbc.ModalBody(
                 [
                     dbc.Label("Settings:"),
-                    dcc.Textarea(id="settings-modal-textfield", style={'width': '100%', 'height': 200}),
+                    dcc.Textarea(id="settings-modal-textfield", style={'width': '100%', 'height': 500}),
                 ]
             ),
             dbc.ModalFooter(

@@ -63,3 +63,7 @@ label.display-inline-lhs {
 #advanced-fuels .dash-cell {
   white-space: unset;
 }
+
+.modal-dialog {
+  max-width: 700px;
+}

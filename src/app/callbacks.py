@@ -50,12 +50,12 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
         if btnPressed in [f"fig{f}-settings" for f in range(1, n_figs+1)]:
             fname = btnPressed.split("-")[0]
             plotting_cfg['last_btn_pressed'] = fname
-            return True, plotting_cfg, yaml.dump(plotting_cfg[fname], sort_keys=False)
+            return True, plotting_cfg, plotting_cfg[fname]
         elif btnPressed == 'settings-modal-cancel':
             return False, plotting_cfg, ""
         elif btnPressed == 'settings-modal-ok':
             fname = plotting_cfg['last_btn_pressed']
-            plotting_cfg[fname] = yaml.load(settings_modal_textfield, Loader=yaml.FullLoader)
+            plotting_cfg[fname] = settings_modal_textfield
             return False, plotting_cfg, ""
         else:
             raise Exception("Unknown button pressed!")
@@ -133,13 +133,13 @@ def callbackUpdate(n1, n2, n3, table_results_data, saved_plot_data, plotting_cfg
 
     saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
 
-    fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig1'], export_img=False)
-    fig2 = plotFig2(fuelData, fuelSpecs, FSCPData, plotting_cfg['fig2'], export_img=False)
-    fig3 = plotFig3(fuelSpecs, FSCPData, plotting_cfg['fig3'], export_img=False)
-    fig4 = plotFig4(fuelSpecs, fuelData, plotting_cfg['fig4'], export_img=False)
-    fig5 = plotFig5(fullParams, scenarioInputUpdated['fuels'], scenarioInputUpdated['options']['gwp'], plotting_cfg['fig5'], export_img=False)
-    fig6 = plotFig6(fullParams, scenarioInputUpdated['fuels'], plotting_cfg['fig6'], export_img=False)
-    fig7 = plotFig7(fuelSpecs, scenarioInputUpdated, fullParams, plotting_cfg['fig7'], export_img=False)
+    fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader), export_img=False)
+    fig2 = plotFig2(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader), export_img=False)
+    fig3 = plotFig3(fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader), export_img=False)
+    fig4 = plotFig4(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
+    fig5 = plotFig5(fullParams, scenarioInputUpdated['fuels'], scenarioInputUpdated['options']['gwp'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader), export_img=False)
+    fig6 = plotFig6(fullParams, scenarioInputUpdated['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader), export_img=False)
+    fig7 = plotFig7(fuelSpecs, scenarioInputUpdated, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)
 
     return fig1, fig2, fig3, fig4, fig5, fig6, fig7,\
            fuelData.to_dict('records'), saved_plot_data

@@ -1,9 +1,7 @@
 import numpy as np
-import yaml
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from plotly.colors import hex_to_rgb
 
 
 def plotFig4(fuelSpecs: dict, fuelData: pd.DataFrame, plotConfig: dict,
