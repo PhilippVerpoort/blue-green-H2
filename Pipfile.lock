@@ -85,11 +85,11 @@
         },
         "dash-bootstrap-components": {
             "hashes": [
-                "sha256:498164307c3a05b295fcf92cc4e39a91f6eed5be6d960b03081feb8f791adf94",
-                "sha256:786deaa433850076adb5266b7ba5bbb0f4bbbbc02698c3ddac5d900d505fb3b4"
+                "sha256:5b9b20c82b6aee7c9364d6ceab153067ea4f053dc3d64ec6b01b12552ce88db0",
+                "sha256:eb85f8abd43493cebbf351aef4441012672ba2fa1b40dc278080dabcc15a131a"
             ],
             "index": "pypi",
-            "version": "==1.0.0"
+            "version": "==1.0.1"
         },
         "dash-core-components": {
             "hashes": [
@@ -301,11 +301,11 @@
         },
         "plotly": {
             "hashes": [
-                "sha256:6598393e898a9c5ae78397f76f07002ec41fd92e5f746d3b9806248d53885643",
-                "sha256:c3da90d41cab36722048eaa5d0eee7a286a55982835980e5f183e5536b823f07"
+                "sha256:1e5c1a5c87caaf68ce0d9872d4636e3ce1f82c7f6988eb20905ff5b58e57525c",
+                "sha256:735d50738c760ecbf3a38e2336b8c1b119bff2d857096e4f68af31089b798161"
             ],
             "index": "pypi",
-            "version": "==5.3.1"
+            "version": "==5.4.0"
         },
         "python-dateutil": {
             "hashes": [
