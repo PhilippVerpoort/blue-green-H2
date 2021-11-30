@@ -1,3 +1,4 @@
+import yaml
 from dash.exceptions import PreventUpdate
 
 def updateScenarioInputSimple(scenarioInput: dict,
@@ -8,7 +9,7 @@ def updateScenarioInputSimple(scenarioInput: dict,
                               simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
                               simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
                               simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,
-                              advanced_gwp: str, advanced_times: list, advanced_fuels):
+                              advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
 
     # update options
     scenarioInput['options']['gwp'] = simple_gwp
@@ -59,7 +60,7 @@ def updateScenarioInputAdvanced(scenarioInput: dict,
                                 simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
                                 simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
                                 simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,
-                                advanced_gwp: str, advanced_times: list, advanced_fuels):
+                                advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
     # update GWP
     scenarioInput['options']['gwp'] = advanced_gwp
 
@@ -83,5 +84,21 @@ def updateScenarioInputAdvanced(scenarioInput: dict,
         }
 
         scenarioInput['fuels'][row['fuel']] = newFuel
+
+    scenarioInput['params'] = {}
+    for row in advanced_params:
+        newParam = {
+            'desc': row['desc'],
+            'type': row['type'],
+            'unit': row['unit'],
+        }
+
+        if isinstance(row['value'], str) and ':' in row['value']:
+            newParam['value'] = yaml.load(row['value'], Loader=yaml.FullLoader)
+        else:
+            newParam['value'] = row['value']
+
+        scenarioInput['params'][row['param']] = newParam
+
 
     return scenarioInput

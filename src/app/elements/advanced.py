@@ -49,7 +49,7 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
     params_data = [dict(param=param,
                        desc=params[param]['desc'],
                        type=params[param]['type'],
-                       value=yaml.dump(params[param]['value']),
+                       value=yaml.dump(params[param]['value']) if isinstance(params[param]['value'], dict) else params[param]['value'],
                        unit=params[param]['unit']
                        ) for param in params]
     
@@ -65,11 +65,11 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                             dash_table.DataTable(
                                 id='advanced-params',
                                 columns=[
-                                    {'id': 'param', 'name': 'ID'},
-                                    {'id': 'desc', 'name': 'Name'},
-                                    {'id': 'type', 'name': 'Type', 'presentation': 'dropdown'},
-                                    {'id': 'value', 'name': 'Value'},
-                                    {'id': 'unit', 'name': 'Unit'},
+                                    {'id': 'param', 'name': 'ID', 'editable': False},
+                                    {'id': 'desc', 'name': 'Name', 'editable': False},
+                                    {'id': 'type', 'name': 'Type', 'presentation': 'dropdown', 'editable': True},
+                                    {'id': 'value', 'name': 'Value', 'editable': False},
+                                    {'id': 'unit', 'name': 'Unit', 'editable': False},
                                 ],
                                 data=params_data,
                                 editable=True,

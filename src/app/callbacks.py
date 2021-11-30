@@ -35,12 +35,11 @@ from src.plotting.plotFig7 import plotFig7
      Input("fig7-settings", "n_clicks"),
      Input("settings-modal-ok", "n_clicks"),
      Input("settings-modal-cancel", "n_clicks"),],
-    [State("settings-modal", "is_open"),
-     State("settings-modal-textfield", "value"),
+    [State("settings-modal-textfield", "value"),
      State("plotting-config", "data"),],
 )
 def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n7: int, n_ok: int, n_cancel: int,
-                          is_open: bool, settings_modal_textfield: str, plotting_cfg: dict):
+                          settings_modal_textfield: str, plotting_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
         plotting_cfg['last_btn_pressed'] = None
@@ -98,8 +97,9 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
      State('simple-cost-blue-eff-leb', 'value'),
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
-     State('advanced-fuels', 'data')])
-def callbackUpdate(n1, n2, n3, table_results_data, saved_plot_data, plotting_cfg: dict, *args):
+     State('advanced-fuels', 'data'),
+     State('advanced-params', 'data'),])
+def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotting_cfg: dict, *args):
     ctx = dash.callback_context
     if not ctx.triggered:
         scenarioInputUpdated = scenarioInputDefault.copy()
@@ -170,7 +170,8 @@ def callbackUpdate(n1, n2, n3, table_results_data, saved_plot_data, plotting_cfg
      State('simple-cost-blue-eff-leb', 'value'),
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
-     State('advanced-fuels', 'data'),],
+     State('advanced-fuels', 'data'),
+     State('advanced-params', 'data'),],
      prevent_initial_call=True,)
 def callbackDownloadConfig(n1, n2, *args):
     ctx = dash.callback_context
@@ -192,7 +193,7 @@ def callbackDownloadConfig(n1, n2, *args):
 @app.callback(
    Output(component_id='advanced-fuels', component_property='style_data_conditional'),
    [Input(component_id='advanced-fuels', component_property='data')])
-def callbackWidget2(data):
+def callbackWidget2(data: list):
     defaultCondStyle = [
         {'if': {'state': 'active'},
          'backgroundColor': '#80d4ff'},
@@ -208,6 +209,36 @@ def callbackWidget2(data):
         defaultCondStyle.append({'if': {'row_index': i}, 'backgroundColor': row['colour']})
 
     return defaultCondStyle
+
+
+# update parameter values in advanced tab
+@app.callback(
+    [Output("advanced-modal", "is_open"),
+     Output("advanced-modal-textfield", "value"),
+     Output("advanced-params", "data"),],
+    [Input("advanced-modal-ok", "n_clicks"),
+     Input("advanced-modal-cancel", "n_clicks"),
+     Input("advanced-params", "active_cell")],
+    [State("advanced-modal-textfield", "value"),
+     State("advanced-params", "data"),],
+)
+def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_modal_textfield: str, data: list):
+    ctx = dash.callback_context
+
+    if not ctx.triggered or active_cell['column_id']!='value':
+        return False, "", data
+    else:
+        btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
+        row = active_cell['row']
+        if btnPressed == 'advanced-params':
+            return True, str(data[row]['value']), data
+        elif btnPressed == 'advanced-modal-cancel':
+            return False, "", data
+        elif btnPressed == 'advanced-modal-ok':
+            data[row]['value'] = advanced_modal_textfield
+            return False, "", data
+        else:
+            raise Exception("Unknown button pressed!")
 
 
 # this callback shows/hides the custom elecsrc carbon intensity field

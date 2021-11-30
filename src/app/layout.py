@@ -1,6 +1,7 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
+from src.app.elements.advanced_modal import getAdvancedModal
 from src.app.elements.header import getHeader
 from src.app.elements.plot_settings_modal import getPlotSettingsModal
 from src.app.elements.results import getResultsWidgets
@@ -22,6 +23,9 @@ def setLayout(app, scenarioInputDefault):
 
     # advanced scenario config
     widget_advanced_options, widget_advanced_params, widget_advanced_fuels = getAdvancedWidgets(scenarioInputDefault)
+
+    # advanced modal
+    advanced_modal = getAdvancedModal()
 
     # results
     widget_results = getResultsWidgets()
@@ -146,6 +150,7 @@ def setLayout(app, scenarioInputDefault):
                 fluid=True,
             ),
             plot_settings_modal,
+            advanced_modal,
             dcc.Store(id='saved-plot-data', storage_type='session'),
             dcc.Store(id='plotting-config', storage_type='session', data=plotting_cfg),
             dcc.Download(id='download-config-yaml'),
