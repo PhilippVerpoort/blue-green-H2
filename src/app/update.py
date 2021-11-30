@@ -37,8 +37,10 @@ def updateScenarioInputSimple(scenarioInput: dict,
     scenarioInput['params']['cost_green_elec']['value']['custom'][2050] = simple_cost_green_elec_2050
 
     # update blue data
+    scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2020] = simple_cost_blue_capex_heb
     scenarioInput['params']['cost_blue_capex']['value']['smr+lcrccs'][2030] = simple_cost_blue_capex_heb
     scenarioInput['params']['cost_blue_capex']['value']['smr+lcrccs'][2050] = simple_cost_blue_capex_heb
+    scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2020] = simple_cost_blue_capex_leb
     scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2030] = simple_cost_blue_capex_leb
     scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2050] = simple_cost_blue_capex_leb
     scenarioInput['params']['cost_blue_cts']['value'][2020] = simple_cost_blue_cts_2020
