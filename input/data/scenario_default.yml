@@ -9,38 +9,46 @@ fuels:
     desc: Natural Gas
     type: ng
     colour: '#935947'
-    methane_leakage: 0.02
+    methane_leakage: 0.005
 
   grey:
     desc: Grey Hydrogen (SMR w/o CCS)
     type: blue
     colour: '#bfbfbf'
     capture_rate: smr
-    methane_leakage: 0.02
+    methane_leakage: 0.005
     include_capex: True
 
   blue HEB:
-    desc: Blue Hydrogen (HEB)
+    desc: Blue Hydrogen (SMR+56%CCS)
     type: blue
     colour: '#345979'
     capture_rate: smr+lcrccs
-    methane_leakage: 0.02
+    methane_leakage: 0.005
     include_capex: True
 
   blue HEB woCAPEX:
-    desc: Blue Hydrogen (HEB, w/o CAPEX)
+    desc: Blue Hydrogen (SMR+56%CCS, w/o CAPEX)
     type: blue
     colour: '#35638a'
     capture_rate: smr+lcrccs
-    methane_leakage: 0.02
+    methane_leakage: 0.005
     include_capex: False
 
+  blue LEB retro:
+    desc: Blue Hydrogen (SMR+90%CCS)
+    type: blue
+    colour: '#62b7fe'
+    capture_rate: smr+hcrccs
+    methane_leakage: 0.005
+    include_capex: True
+
   blue LEB:
-    desc: Blue Hydrogen (LEB)
+    desc: Blue Hydrogen (ATR+93%CCS)
     type: blue
     colour: '#62b7fe'
     capture_rate: atr+hcrccs
-    methane_leakage: 0.02
+    methane_leakage: 0.005
     include_capex: True
 
   green RE:
@@ -168,7 +176,7 @@ params:
     type: linear
     value: # (per tCO2, i.e. independent of capture rate)
       2020: 10.0
-      2050: 40.0
+      2050: 10.0
     unit: EUR/tCO2
     source: IEAGHG - 10Euro/t, which increases to 40Euro/t
 
@@ -283,7 +291,7 @@ params:
   green_ocf:
     desc: Operational capacity factor
     type: const
-    value: 0.4
+    value: 0.5
     unit: ~
     source: feasible ranges for combined wind and solar?
 

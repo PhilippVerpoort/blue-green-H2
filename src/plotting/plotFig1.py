@@ -48,9 +48,10 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict = None):
     if showFSCPs is None:
         plotFSCP = FSCPData.query("year_x==2020 & year_y==2020")
     else:
-        plotFSCP = pd.DataFrame(columns=FSCPData.keys())
-        for cols, year_x, fuel_x, year_y, fuel_y in showFSCPs:
+        plotFSCP = pd.DataFrame(columns=(list(FSCPData.keys()) + ['symbol']))
+        for cols, year_x, fuel_x, year_y, fuel_y, symbol in showFSCPs:
             addFSCP = FSCPData.query("year_x=={} & fuel_x=='{}' & year_y=={} & fuel_y=='{}'".format(year_x, fuel_x, year_y, fuel_y))
+            addFSCP.insert(len(addFSCP.columns), 'symbol', symbol)
             addFSCP.index += len(plotFSCP)
             FSCPsCols[len(plotFSCP)] = cols
             plotFSCP = pd.concat([plotFSCP, addFSCP], ignore_index = True)
@@ -117,19 +118,20 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             hovertemplate=f"<b>{name}</b><br>Carbon price: %{{x:.2f}}<br>Total cost: %{{y:.2f}}<extra></extra>")))
 
         # fuel uncertainty
-        traces.append((index, go.Scatter(
-            name='Uncertainty Range',
-            legendgroup=f"{fuel}_{year}",
-            x=np.concatenate((x, x[::-1])),
-            y=np.concatenate((y+y_u, (y-y_u)[::-1])),
-            mode='lines',
-            marker=dict(color=col),
-            fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .1)),
-            fill='toself',
-            line=dict(width=.3),
-            showlegend=False,
-            hoverinfo="none"
-        )))
+        if config['plotting']['uncertainty']:
+            traces.append((index, go.Scatter(
+                name='Uncertainty Range',
+                legendgroup=f"{fuel}_{year}",
+                x=np.concatenate((x, x[::-1])),
+                y=np.concatenate((y+y_u, (y-y_u)[::-1])),
+                mode='lines',
+                marker=dict(color=col),
+                fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .1)),
+                fill='toself',
+                line=dict(width=.3),
+                showlegend=False,
+                hoverinfo="none"
+            )))
 
     return traces
 
@@ -143,7 +145,7 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
         # circle at intersection
         traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_u,), thickness=0.0),
                                  mode="markers",
-                                 marker=dict(symbol='circle-open', size=12, line={'width': 2}, color='Black'),
+                                 marker=dict(symbol=row.symbol, size=12, line={'width': 2}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
@@ -154,8 +156,9 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
                                  showlegend=False, hoverinfo='none',)))
 
         # error bar near x-axis
-        traces.append((index, go.Scatter(x=(row.fscp,), y = (0,), error_x=dict(type='data', array=(row.fscp_u,)),
-                                 marker=dict(symbol=34, size=5, line={'width': 2}, color='Black'),
+        traces.append((index, go.Scatter(x=(row.fscp,), y = (0,),
+                                 error_x=dict(type='data', array=(row.fscp_u,)) if config['plotting']['uncertainty'] else None,
+                                 marker=dict(symbol='x-thin', size=5, line={'width': 2}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
