@@ -135,8 +135,9 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                     'capture_rate': {
                                         'options': [
                                             {'value': 'smr', 'label': 'SMR only'},
-                                            {'value': 'heb', 'label': 'SMR+CCS'},
-                                            {'value': 'leb', 'label': 'ATR+CCS'},
+                                            {'value': 'smr+lcrccs', 'label': 'SMR+LCRCCS'},
+                                            {'value': 'smr+hcrccs', 'label': 'SMR+HCRCCS'},
+                                            {'value': 'atr+hcrccs', 'label': 'ATR+HCRCCS'},
                                         ]
                                     },
                                     'include_capex': {
