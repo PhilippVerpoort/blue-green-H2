@@ -1,5 +1,5 @@
 plotting:
-  ci_max: 0.23
+  ci_max: 0.2
   cost_max: 110.0
   n_samples: 51
 
