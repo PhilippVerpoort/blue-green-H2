@@ -1,6 +1,5 @@
 import yaml
 
-from src.data.calc_fuels import calcFuelData
 from src.data.data import obtainScenarioData
 from src.plotting.loadcfg import loadInitialPlottingCfg
 from src.plotting.plotFig1 import plotFig1
