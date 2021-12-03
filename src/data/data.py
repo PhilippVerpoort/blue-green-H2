@@ -1,14 +1,12 @@
 import pandas as pd
 import yaml
 
+from src.filepaths import getFilePathInputs, getFilePath
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.calc_fuels import calcFuelData
 
 
 # obtain all required data for a scenario
-from src.filepaths import getFilePathInputs, getFilePath
-
-
 def obtainScenarioData(scenario: dict, export_data = True):
     options, params, fuels = (scenario['options'], scenario['params'], scenario['fuels'])
 
