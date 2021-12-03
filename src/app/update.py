@@ -13,13 +13,10 @@ def updateScenarioInputSimple(scenarioInput: dict,
 
     # update options
     scenarioInput['options']['gwp'] = simple_gwp
+    scenarioInput['params']['ci_ng_methaneleakage']['value'] = simple_leakage
     scenarioInput['params']['cost_ng_price']['value'] = simple_ng_price
     scenarioInput['params']['lifetime']['value'] = simple_lifetime
     scenarioInput['params']['irate']['value'] = simple_irate
-
-    for fuel in scenarioInput['fuels']:
-        if scenarioInput['fuels'][fuel]['type'] not in ['ng', 'blue']: continue
-        scenarioInput['fuels'][fuel]['methane_leakage'] = simple_leakage
 
     # update green data
     scenarioInput['params']['cost_green_capex']['value'][2020] = simple_cost_green_capex_2020
@@ -80,7 +77,6 @@ def updateScenarioInputAdvanced(scenarioInput: dict,
             'type': row['type'],
             'colour': row['colour'],
             'blue_type': row['blue_type'],
-            'methane_leakage': row['methane_leakage'],
             'include_capex': row['include_capex'],
             'elecsrc': row['elecsrc']
         }

@@ -97,7 +97,6 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                        colour=fuels[fuel]['colour'],
                        type=fuels[fuel]['type'],
                        blue_type=fuels[fuel]['blue_type'] if 'blue_type' in fuels[fuel] else None,
-                       methane_leakage=fuels[fuel]['methane_leakage'] if 'methane_leakage' in fuels[fuel] else None,
                        include_capex=fuels[fuel]['include_capex'] if 'include_capex' in fuels[fuel] else None,
                        elecsrc=fuels[fuel]['elecsrc'] if 'elecsrc' in fuels[fuel] else None
                        ) for fuel in fuels]
@@ -118,7 +117,6 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                     {'id': 'colour', 'name': 'Colour'},
                                     {'id': 'type', 'name': 'Fuel type', 'presentation': 'dropdown'},
                                     {'id': 'blue_type', 'name': 'Blue type', 'presentation': 'dropdown'},
-                                    {'id': 'methane_leakage', 'name': 'Methane leakage'},
                                     {'id': 'include_capex', 'name': 'Include CAPEX', 'presentation': 'dropdown'},
                                     {'id': 'elecsrc', 'name': 'Electricity source', 'presentation': 'dropdown'},
                                 ],

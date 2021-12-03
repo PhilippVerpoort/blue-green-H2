@@ -31,7 +31,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-leakage',
                                         type='number',
-                                        value=scenarioInputDefault['fuels']['natural gas']['methane_leakage'],
+                                        value=scenarioInputDefault['params']['ci_ng_methaneleakage']['value'],
                                         step=0.05,
                                         style={'float': 'left'},
                                         placeholder='xx.x',

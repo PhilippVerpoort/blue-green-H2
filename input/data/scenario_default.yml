@@ -9,14 +9,12 @@ fuels:
     desc: Natural Gas
     type: ng
     colour: '#935947'
-    methane_leakage: 0.5
 
   grey:
     desc: Grey Hydrogen (SMR w/o CCS)
     type: blue
     colour: '#bfbfbf'
     blue_type: smr
-    methane_leakage: 0.5
     include_capex: True
 
   blue HEB:
@@ -24,7 +22,6 @@ fuels:
     type: blue
     colour: '#345979'
     blue_type: smr+lcrccs
-    methane_leakage: 0.5
     include_capex: True
 
   blue HEB woCAPEX:
@@ -32,7 +29,6 @@ fuels:
     type: blue
     colour: '#35638a'
     blue_type: smr+lcrccs
-    methane_leakage: 0.5
     include_capex: False
 
   blue LEB retro:
@@ -40,7 +36,6 @@ fuels:
     type: blue
     colour: '#62b7fe'
     blue_type: smr+hcrccs
-    methane_leakage: 0.5
     include_capex: True
 
   blue LEB:
@@ -48,7 +43,6 @@ fuels:
     type: blue
     colour: '#62b7fe'
     blue_type: atr+hcrccs
-    methane_leakage: 0.5
     include_capex: True
 
   green RE:
@@ -64,7 +58,7 @@ fuels:
     colour: '#708f70'
     elecsrc: mix # grid mix
     include_capex: True
-    
+
 
 
 params:
@@ -86,6 +80,12 @@ params:
     source: The second Excel Spreadsheet Christian sent on 03/11/2021
 
   ci_ng_methaneleakage:
+    desc: Amount of methan leakage in production chain (relative to total amount used)
+    type: const
+    value: 0.5
+    unit: percent
+
+  ci_ng_methaneleakage_perrate:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
     type: const
     value:
@@ -199,7 +199,7 @@ params:
     unit: gCO2eq/MJ
     source: Christians Excel Spreadsheet 29/10/2021
 
-  ci_blue_methaneleakage:
+  ci_blue_methaneleakage_perrate:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
     type: const
     value:
