@@ -15,7 +15,7 @@ fuels:
     desc: Grey Hydrogen (SMR w/o CCS)
     type: blue
     colour: '#bfbfbf'
-    capture_rate: smr
+    blue_type: smr
     methane_leakage: 0.005
     include_capex: True
 
@@ -23,7 +23,7 @@ fuels:
     desc: Blue Hydrogen (SMR+56%CCS)
     type: blue
     colour: '#345979'
-    capture_rate: smr+lcrccs
+    blue_type: smr+lcrccs
     methane_leakage: 0.005
     include_capex: True
 
@@ -31,7 +31,7 @@ fuels:
     desc: Blue Hydrogen (SMR+56%CCS, w/o CAPEX)
     type: blue
     colour: '#35638a'
-    capture_rate: smr+lcrccs
+    blue_type: smr+lcrccs
     methane_leakage: 0.005
     include_capex: False
 
@@ -39,7 +39,7 @@ fuels:
     desc: Blue Hydrogen (SMR+90%CCS)
     type: blue
     colour: '#62b7fe'
-    capture_rate: smr+hcrccs
+    blue_type: smr+hcrccs
     methane_leakage: 0.005
     include_capex: True
 
@@ -47,7 +47,7 @@ fuels:
     desc: Blue Hydrogen (ATR+93%CCS)
     type: blue
     colour: '#62b7fe'
-    capture_rate: atr+hcrccs
+    blue_type: atr+hcrccs
     methane_leakage: 0.005
     include_capex: True
 

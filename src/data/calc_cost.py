@@ -22,7 +22,7 @@ def getCostNG(par: dict, fuel: dict):
 
 
 def getCostParamsBlue(par: dict, fuel: dict):
-    CR = fuel['capture_rate']
+    CR = fuel['blue_type']
     if CR not in known_blue_types:
         raise Exception("Blue capture rate type unknown: {}".format(CR))
 

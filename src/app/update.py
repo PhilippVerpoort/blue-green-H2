@@ -77,7 +77,7 @@ def updateScenarioInputAdvanced(scenarioInput: dict,
             'desc': row['desc'],
             'type': row['type'],
             'colour': row['colour'],
-            'capture_rate': row['capture_rate'],
+            'blue_type': row['blue_type'],
             'methane_leakage': row['methane_leakage'],
             'include_capex': row['include_capex'],
             'elecsrc': row['elecsrc']

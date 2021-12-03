@@ -96,7 +96,7 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                        desc=fuels[fuel]['desc'],
                        colour=fuels[fuel]['colour'],
                        type=fuels[fuel]['type'],
-                       capture_rate=fuels[fuel]['capture_rate'] if 'capture_rate' in fuels[fuel] else None,
+                       blue_type=fuels[fuel]['blue_type'] if 'blue_type' in fuels[fuel] else None,
                        methane_leakage=fuels[fuel]['methane_leakage'] if 'methane_leakage' in fuels[fuel] else None,
                        include_capex=fuels[fuel]['include_capex'] if 'include_capex' in fuels[fuel] else None,
                        elecsrc=fuels[fuel]['elecsrc'] if 'elecsrc' in fuels[fuel] else None
@@ -117,7 +117,7 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                     {'id': 'desc', 'name': 'Fuel name'},
                                     {'id': 'colour', 'name': 'Colour'},
                                     {'id': 'type', 'name': 'Fuel type', 'presentation': 'dropdown'},
-                                    {'id': 'capture_rate', 'name': 'Blue type', 'presentation': 'dropdown'},
+                                    {'id': 'blue_type', 'name': 'Blue type', 'presentation': 'dropdown'},
                                     {'id': 'methane_leakage', 'name': 'Methane leakage'},
                                     {'id': 'include_capex', 'name': 'Include CAPEX', 'presentation': 'dropdown'},
                                     {'id': 'elecsrc', 'name': 'Electricity source', 'presentation': 'dropdown'},
@@ -132,7 +132,7 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                             {'value': 'green', 'label': 'Green Hydrogen'},
                                         ]
                                     },
-                                    'capture_rate': {
+                                    'blue_type': {
                                         'options': [
                                             {'value': 'smr', 'label': 'SMR only'},
                                             {'value': 'smr+lcrccs', 'label': 'SMR+LCRCCS'},
