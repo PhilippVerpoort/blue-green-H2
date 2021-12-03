@@ -18,7 +18,7 @@ def getPlots():
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig1-settings', children='Settings', className='scenario-buttons'),
+                            dbc.Button(id='fig1-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
@@ -42,7 +42,7 @@ def getPlots():
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig2-settings', children='Settings', className='scenario-buttons'),
+                            dbc.Button(id='fig2-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
@@ -66,7 +66,7 @@ def getPlots():
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig3-settings', children='Settings', className='scenario-buttons'),
+                            dbc.Button(id='fig3-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
@@ -90,7 +90,7 @@ def getPlots():
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig4-settings', children='Settings', className='scenario-buttons'),
+                            dbc.Button(id='fig4-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
@@ -114,7 +114,7 @@ def getPlots():
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig5-settings', children='Settings', className='scenario-buttons'),
+                            dbc.Button(id='fig5-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
@@ -138,7 +138,7 @@ def getPlots():
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig6-settings', children='Settings', className='scenario-buttons'),
+                            dbc.Button(id='fig6-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
@@ -162,7 +162,7 @@ def getPlots():
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig7-settings', children='Settings', className='scenario-buttons'),
+                            dbc.Button(id='fig7-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
