@@ -67,8 +67,10 @@ def updateScenarioInputAdvanced(scenarioInput: dict,
     # update times:
     scenarioInput['options']['times'] = []
     for item in advanced_times:
-        t = item['i']
-        if not isinstance(t, int): raise PreventUpdate()
+        try:
+            t = int(item['i'])
+        except Exception:
+            raise PreventUpdate()
         scenarioInput['options']['times'].append(t)
 
     scenarioInput['fuels'] = {}
