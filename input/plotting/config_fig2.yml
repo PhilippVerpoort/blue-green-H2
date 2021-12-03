@@ -8,7 +8,7 @@ labels:
   cost: Direct Cost in EUR/MWh<sub>LHV</sub>
 
 refFuel: natural gas
-refYear: 2020
+refYear: 2025
 
 showFuels:
   - green RE
