@@ -14,7 +14,7 @@ def getAdvancedModal():
             dbc.ModalFooter(
                 [
                     dbc.Button("OK", color="primary", id="advanced-modal-ok"),
-                    dbc.Button("Abbrechen", id="advanced-modal-cancel"),
+                    dbc.Button("Cancel", id="advanced-modal-cancel"),
                 ]
             ),
         ],

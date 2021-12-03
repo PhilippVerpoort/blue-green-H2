@@ -14,7 +14,7 @@ def getPlotSettingsModal():
             dbc.ModalFooter(
                 [
                     dbc.Button("OK", color="primary", id="settings-modal-ok"),
-                    dbc.Button("Abbrechen", id="settings-modal-cancel"),
+                    dbc.Button("Cancel", id="settings-modal-cancel"),
                 ]
             ),
         ],
