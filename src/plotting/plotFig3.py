@@ -1,7 +1,9 @@
+import numpy as np
 import pandas as pd
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from plotly.colors import hex_to_rgb
 
 
 def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame,
@@ -56,6 +58,17 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
 
+    # compute and plot carbon price tracjetory
+    cpTrajData = __computeCPTraj(config['carbon_price_trajectory'])
+    traces = __addCPTraces(cpTrajData, config)
+    for trace in traces:
+        for j in range(config['plotting']['numb_cols']):
+            if j: trace.showlegend = False
+            fig.add_trace(trace, row=1, col=j+1)
+
+
+
+
     # set plotting ranges
     fig.update_layout(xaxis=dict(title=config['labels']['time'], range=[2018, 2052]),
                       xaxis2=dict(title=config['labels']['time'], range=[2018, 2052]),
@@ -84,5 +97,76 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
             mode="lines+markers",
             line=dict(color=col, width=2),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
+
+    return traces
+
+
+# compute carbon price trajectories
+def __computeCPTraj(params: dict):
+    t = np.linspace(params['time'][0], 2050.0, 250)
+
+    # exp function
+    #b = math.log(v_later/v_today)/(t_later-t_today)
+    #cpData = pd.DataFrame({'year': t,
+    #                       'CP': v_today * np.exp(b * (t - t_today))})
+
+    # poly fit function
+    t_fit = np.array(params['time'])
+    p_fit = np.array(params['value'])
+    p_fit_u = np.array(params['value_upper'])
+    p_fit_l = np.array(params['value_lower'])
+    poly   = np.poly1d(np.polyfit(t_fit, p_fit, 2))
+    poly_u = np.poly1d(np.polyfit(t_fit, p_fit_u, 2))
+    poly_l = np.poly1d(np.polyfit(t_fit, p_fit_l, 2))
+
+    # create data frame with time and cp values
+    cpData = pd.DataFrame({
+        'year': t,
+        'CP': poly(t),
+        'CP_u':   poly_u(t)-poly(t),
+        'CP_l': -(poly_l(t)-poly(t)),
+    })
+
+    # add name to dataframe
+    cpData['name'] = 'cp'
+
+    return cpData
+
+
+# plot traces
+def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
+    traces = []
+
+    name = config['carbon_price_config']['name']
+    colour = config['carbon_price_config']['colour']
+
+    # add main graphs (FSCP and CP)
+    traces.append(go.Scatter(
+        name = name,
+        mode = 'lines',
+        x = cpTrajData['year'],
+        y = cpTrajData['CP'],
+        line_color = colour,
+        showlegend = True,
+        hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>"
+    ))
+
+    data_x = cpTrajData['year']
+    data_yu = cpTrajData['CP']+cpTrajData['CP_u']
+    data_yl = cpTrajData['CP']-cpTrajData['CP_l']
+
+    errorBand = go.Scatter(
+        name='Uncertainty Range',
+        x=pd.concat([data_x, data_x[::-1]], ignore_index=True),
+        y=pd.concat([data_yl, data_yu[::-1]], ignore_index=True),
+        mode='lines',
+        marker=dict(color=colour),
+        fillcolor=("rgba({}, {}, {}, 0.1)".format(*hex_to_rgb(colour))),
+        fill='toself',
+        line=dict(width=.3),
+        showlegend=False,
+        hoverinfo='skip'
+    )
+    traces.append(errorBand)
 
     return traces
