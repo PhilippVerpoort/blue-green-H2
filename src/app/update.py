@@ -15,16 +15,16 @@ def updateScenarioInputSimple(scenarioInput: dict,
     scenarioInput['options']['gwp'] = simple_gwp
     scenarioInput['params']['cost_ng_price']['value'] = simple_ng_price
     scenarioInput['params']['lifetime']['value'] = simple_lifetime
-    scenarioInput['params']['irate']['value'] = simple_irate/100
+    scenarioInput['params']['irate']['value'] = simple_irate
 
     for fuel in scenarioInput['fuels']:
         if scenarioInput['fuels'][fuel]['type'] not in ['ng', 'blue']: continue
-        scenarioInput['fuels'][fuel]['methane_leakage'] = simple_leakage / 100
+        scenarioInput['fuels'][fuel]['methane_leakage'] = simple_leakage
 
     # update green data
     scenarioInput['params']['cost_green_capex']['value'][2020] = simple_cost_green_capex_2020
     scenarioInput['params']['cost_green_capex']['value'][2050] = simple_cost_green_capex_2050
-    scenarioInput['params']['green_ocf']['value'] = simple_green_ocf/100
+    scenarioInput['params']['green_ocf']['value'] = simple_green_ocf
 
     for fuel in scenarioInput['fuels']:
         if scenarioInput['fuels'][fuel]['type'] == 'green' and scenarioInput['fuels'][fuel]['elecsrc'] != 'mix':

@@ -19,7 +19,7 @@ def calcCI(params: dict, fuel: dict, gwp: str):
 def getCIParamsNG(par: dict, fuel: dict, GWP: str):
     return dict(
         b=par[f"ci_ng_base_{GWP}"],
-        mlr=fuel['methane_leakage'],
+        mlr=fuel['methane_leakage']/100,
         mci=par[f"ci_ng_methaneleakage_{GWP}"],
     )
 
@@ -40,7 +40,7 @@ def getCIParamsBlue(par: dict, fuel: dict, GWP: str):
 
     return dict(
         b=par[f"ci_blue_base_{CR}_{GWP}"],
-        mlr=fuel['methane_leakage'],
+        mlr=fuel['methane_leakage']/100,
         mci=par[f"ci_blue_methaneleakage_{CR}_{GWP}"],
     )
 

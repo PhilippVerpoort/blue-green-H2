@@ -9,14 +9,14 @@ fuels:
     desc: Natural Gas
     type: ng
     colour: '#935947'
-    methane_leakage: 0.005
+    methane_leakage: 0.5
 
   grey:
     desc: Grey Hydrogen (SMR w/o CCS)
     type: blue
     colour: '#bfbfbf'
     blue_type: smr
-    methane_leakage: 0.005
+    methane_leakage: 0.5
     include_capex: True
 
   blue HEB:
@@ -24,7 +24,7 @@ fuels:
     type: blue
     colour: '#345979'
     blue_type: smr+lcrccs
-    methane_leakage: 0.005
+    methane_leakage: 0.5
     include_capex: True
 
   blue HEB woCAPEX:
@@ -32,7 +32,7 @@ fuels:
     type: blue
     colour: '#35638a'
     blue_type: smr+lcrccs
-    methane_leakage: 0.005
+    methane_leakage: 0.5
     include_capex: False
 
   blue LEB retro:
@@ -40,7 +40,7 @@ fuels:
     type: blue
     colour: '#62b7fe'
     blue_type: smr+hcrccs
-    methane_leakage: 0.005
+    methane_leakage: 0.5
     include_capex: True
 
   blue LEB:
@@ -48,7 +48,7 @@ fuels:
     type: blue
     colour: '#62b7fe'
     blue_type: atr+hcrccs
-    methane_leakage: 0.005
+    methane_leakage: 0.5
     include_capex: True
 
   green RE:
@@ -291,8 +291,8 @@ params:
   green_ocf:
     desc: Operational capacity factor
     type: const
-    value: 0.5
-    unit: ~
+    value: 50.0
+    unit: percent
     source: feasible ranges for combined wind and solar?
 
   lifetime:
@@ -304,5 +304,5 @@ params:
   irate:
     desc: Interest rate
     type: const
-    value: 0.08
-    unit: ~
+    value: 8.0
+    unit: percent

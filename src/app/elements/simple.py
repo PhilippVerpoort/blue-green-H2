@@ -31,7 +31,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-leakage',
                                         type='number',
-                                        value=scenarioInputDefault['fuels']['natural gas']['methane_leakage']*100,
+                                        value=scenarioInputDefault['fuels']['natural gas']['methane_leakage'],
                                         step=0.05,
                                         style={'float': 'left'},
                                         placeholder='xx.x',
@@ -91,7 +91,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-irate',
                                         type='number',
-                                        value=scenarioInputDefault['params']['irate']['value']*100,
+                                        value=scenarioInputDefault['params']['irate']['value'],
                                         step=0.1,
                                         style={'float': 'left'},
                                         placeholder='x.x',
@@ -133,7 +133,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
         },
         'green_ocf': {
             'name': scenarioInputDefault['params']['green_ocf']['desc'],
-            'value': scenarioInputDefault['params']['green_ocf']['value']*100,
+            'value': scenarioInputDefault['params']['green_ocf']['value'],
             'unit': "%",
             'step': 1,
         }

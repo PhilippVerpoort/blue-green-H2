@@ -9,6 +9,7 @@ units:
     efficiency: [1, kWh/kgH2]
     power: [MW, Nm3/h]
     time: [h]
+    ratio: [1, percent]
 
   conversion:
     gCO2eq/kWh__to__tCO2eq/MWh: 0.001               # 0.001*0.001 / 0.001
@@ -22,3 +23,4 @@ units:
     Nm3/h__to__MW: 0.003                            # 3 * 0.001
     kgCO2/Nm3_H2__to__tCO2/MWh: 0.333               # 0.001 / (3.00*0.001)
     MEUR__to__EUR: 1000000                          # 10^6
+    percent__to__1: 0.01                            # 1 / 100
