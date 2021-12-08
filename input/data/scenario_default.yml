@@ -109,13 +109,13 @@ params:
         2020: 305.33
         2050: 305.33
       atr+hcrccs:
-        2020: 240.00
-        2030: 210.00
+        2025: 360.00
+        2030: 240.00
         2050: 210.00
     unit: MEUR
-    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84
+    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84 / ATR from Simon
 
-  cost_blue_OnM:
+  cost_blue_OnM:  # this includes neither electricity cost, nor other variable O&M cost for ATR
     desc: Operational and Maintenance cost (w/o fuel cost)
     type: linear
     value:
@@ -129,9 +129,9 @@ params:
         2020: 12.03
         2050: 12.03
       atr+hcrccs:
-        2020: 12.0
-        2030: 6.9
-        2050: 6.9
+        2020: 9.6
+        2030: 7.2
+        2050: 6.3
     unit: MEUR
     source: IEAGHG, p. 18, Table 4
 
