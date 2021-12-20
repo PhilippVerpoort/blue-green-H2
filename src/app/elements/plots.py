@@ -111,6 +111,7 @@ def getPlots():
                                 children=[
                                     dcc.Graph(
                                         id='fig5',
+                                        style={'height': '700px'}
                                     )
                                 ],
                             ),

@@ -23,6 +23,6 @@ plotFig1(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=y
 plotFig2(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader))
 plotFig3(fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader))
 plotFig4(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader))
-plotFig5(fullParams, scenario['fuels'], 'gwp100', yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader))
+plotFig5(fuelSpecs, fuelData, fullParams, scenario['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader))
 plotFig6(fullParams, scenario['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader))
 plotFig7(fuelSpecs, scenario, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader))
