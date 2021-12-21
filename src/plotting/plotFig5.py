@@ -321,8 +321,6 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
     # p_2 = (b_1-b_2 + eff*(gci_1-gci_2) + eff*p_1*(eci_1-gci_1))/(eff*(eci_2-gci_2))
     range2  = [(pGreen['b']-pGreenOther['b'] + pGreen['eff']*(gridCI-gridCIOther) + pGreen['eff']*x*(pGreen['eci']-gridCI))/
                (pGreenOther['eff'] * (pGreenOther['eci']-gridCIOther)) for x in [xmin, xmax]]
-    print([xmin, xmax])
-    print(range2)
     range3 = [CIGreen[0][0], CIGreen[0][-1]]
 
     return traces, range2, range3
