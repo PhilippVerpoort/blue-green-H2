@@ -9,14 +9,14 @@ plotting:
   xaxis2_max: 0.05
   xaxis3_min: 0.00
   xaxis3_max: 0.05
-  xaxis4_min: 0.77
+  xaxis4_min: 0.80
   xaxis4_max: 1.00
-  xaxis5_min: 0.91
+  xaxis5_min: 0.80
   xaxis5_max: 1.00
 
   yaxis1_min: -10.0
   yaxis1_max: 70.0
-  yaxis2_min:  0.0
+  yaxis2_min: -5.0
   yaxis2_max: 25.0
 
 labels:
@@ -53,7 +53,9 @@ subplot_title_positions:
 linedensity:
   plot1: 100
   plot2: 25
+  plot3: 25
   plot4: 50
+  plot5: 100
 
 colours:
   heatmap_high: '#345979'

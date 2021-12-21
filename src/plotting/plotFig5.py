@@ -64,27 +64,29 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
 
     fuelBlue = fuels[config['fuelBlueLeft']]
     xmin, xmax = config['plotting']['xaxis2_min'], config['plotting']['xaxis2_max']
-    traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'] = __addFSCPSubplotContoursTop(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale)
+    traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'] = __addFSCPSubplotContoursTop(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot2"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[1])
 
     fuelBlue = fuels[config['fuelBlueRight']]
     xmin, xmax = config['plotting']['xaxis3_min'], config['plotting']['xaxis3_max']
-    traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'] = __addFSCPSubplotContoursTop(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale)
+    traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'] = __addFSCPSubplotContoursTop(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot3"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[2])
 
     fuelBlue = fuels[config['fuelBlueLeft']]
     xmin, xmax = config['plotting']['xaxis4_min'], config['plotting']['xaxis4_max']
-    traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'] = __addFSCPSubplotContoursBottom(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale)
+    traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'], xvline = __addFSCPSubplotContoursBottom(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot4"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[3])
+    fig.add_vline(x=xvline*100, line_width=3, line_color="black", **rowcol_mapping[3])
 
     fuelBlue = fuels[config['fuelBlueRight']]
     xmin, xmax = config['plotting']['xaxis5_min'], config['plotting']['xaxis5_max']
-    traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'] = __addFSCPSubplotContoursBottom(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale)
+    traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'], xvline = __addFSCPSubplotContoursBottom(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot5"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[4])
+    fig.add_vline(x=xvline*100, line_width=5, line_color="black", **rowcol_mapping[4])
 
 
     # add mock traces to make additional x axes show
@@ -92,10 +94,10 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
     fig['data'][-1]['xaxis'] = 'x7'
     fig.add_trace(go.Scatter(x=[2.0], y=[100], showlegend=False), row=1, col=4)
     fig['data'][-1]['xaxis'] = 'x8'
-    fig.add_trace(go.Scatter(x=[3.0], y=[100], showlegend=False), row=2, col=3)
-    fig['data'][-1]['xaxis'] = 'x9'
-    fig.add_trace(go.Scatter(x=[4.0], y=[100], showlegend=False), row=2, col=4)
-    fig['data'][-1]['xaxis'] = 'x10'
+    #fig.add_trace(go.Scatter(x=[3.0], y=[100], showlegend=False), row=2, col=3)
+    #fig['data'][-1]['xaxis'] = 'x9'
+    #fig.add_trace(go.Scatter(x=[4.0], y=[100], showlegend=False), row=2, col=4)
+    #fig['data'][-1]['xaxis'] = 'x10'
     fig.add_trace(go.Scatter(x=[5.0], y=[100], showlegend=False), row=1, col=3)
     fig['data'][-1]['xaxis'] = 'x12'
     fig.add_trace(go.Scatter(x=[6.0], y=[100], showlegend=False), row=1, col=4)
@@ -170,8 +172,8 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list)
                              contours=dict(
                                  showlabels=True,
                                  labelformat='.4',
-                                 start=-2000,
-                                 end=10000,
+                                 start=zmin,
+                                 end=zmax,
                                  size=config['linedensity'][f"plot1"],
                              )))
 
@@ -202,7 +204,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
     return traces
 
 
-def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float, config: dict, zmin: float, zmax: float, colourscale: list):
+def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float, config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float):
     traces = []
 
 
@@ -245,9 +247,9 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
                              ],
                              contours=dict(
                                  showlabels=True,
-                                 start=config['linedensity'][f"plot2"],
-                                 end=4000,
-                                 size=config['linedensity'][f"plot2"],
+                                 start=zmin,
+                                 end=zmax,
+                                 size=linedensity,
                              )))
 
     # determine other xaxis ranges
@@ -262,7 +264,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
     return traces, range2, range3
 
 
-def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float, config: dict, zmin: float, zmax: float, colourscale: list):
+def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float,
+                                   config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float):
     traces = []
 
     # turn this on to set methane leakage to zero in subplots (d) and (e)
@@ -285,11 +288,22 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
     gridCI = 0.397
     gridCIOther = 0.434
 
+    # calculate xvline
+    # 0 = CIGreen(x) - CIBlue =  CIGreen(1) + eff* ((x-1) * eci + (1-x) * gci) - CIBlue
+    # ((CIBlue - CIGreen)/eff + eci - gci) / (eci - gci) = x
+    CIBlue, CIGreen = __getCIs(pBlue, pGreen)
+    xvline = (CIBlue - CIGreen)/pGreen['eff']/(pGreen['eci'] - gridCI) + 1
+
     # calculate FSCPs for grid
     renewablesShare_v, delta_cost_v = np.meshgrid(renewablesShare, delta_cost)
     pGreen['eci'] = renewablesShare_v * pGreen['eci'] + (1-renewablesShare_v) * gridCI
     CIBlue, CIGreen = __getCIs(pBlue, pGreen)
     fscp = delta_cost_v / (CIBlue - CIGreen)
+
+    for x in range(len(renewablesShare)):
+        for y in range(len(delta_cost)):
+            if (CIBlue-CIGreen[x, y]) < 0:
+                fscp[x, y] = zmax+10.0
 
     # add traces
     traces.append(go.Heatmap(x=renewablesShare * 100, y=delta_cost, z=fscp,
@@ -312,9 +326,9 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
                              ],
                              contours=dict(
                                  showlabels=True,
-                                 start=config['linedensity'][f"plot4"],
-                                 end=4000,
-                                 size=config['linedensity'][f"plot4"],
+                                 start=zmin,
+                                 end=zmax,
+                                 size=linedensity,
                              )))
 
     # determine other xaxis ranges
@@ -327,7 +341,7 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
                (pGreenOther['eff'] * (pGreenOther['eci']-gridCIOther)) for x in [xmin, xmax]]
     range3 = [CIGreen[0][0], CIGreen[0][-1]]
 
-    return traces, range2, range3
+    return traces, range2, range3, xvline
 
 
 def __getXAxesStyle(calcedRanges: dict, config: dict):
@@ -393,8 +407,8 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
     newAxes['xaxis8']['tick0'] = 0.0
     newAxes['xaxis8']['dtick'] = 1.0
 
-    newAxes['xaxis9']['ticklen'] = 25.0
-    newAxes['xaxis10']['ticklen'] = 25.0
+    #newAxes['xaxis9']['ticklen'] = 25.0
+    #newAxes['xaxis10']['ticklen'] = 25.0
 
     return newAxes
 
