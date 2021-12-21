@@ -265,6 +265,10 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
 def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float, config: dict, zmin: float, zmax: float, colourscale: list):
     traces = []
 
+    # turn this on to set methane leakage to zero in subplots (d) and (e)
+    #fullParams = fullParams.copy()
+    #fullParams.loc[fullParams['name'] == 'ci_ng_methaneleakage', 'value'] = 0.0
+
     # define data for plot grid
     renewablesShare = np.linspace(xmin, xmax, config['plotting']['n_samples'])
     delta_cost = np.linspace(config['plotting'][f"yaxis1_min"], config['plotting'][f"yaxis1_max"], config['plotting']['n_samples'])
