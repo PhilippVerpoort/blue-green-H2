@@ -5,7 +5,7 @@ from plotly.subplots import make_subplots
 
 from src.data.calc_ci import getCIParamsBlue, getCIParamsGreen, getCIGreen, getCIBlue
 from src.data.calc_fuels import getCurrentAsDict
-from src.plotting.img_export_cfg import getImageSize, getFontSize
+from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
 def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dict,

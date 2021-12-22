@@ -4,6 +4,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
+from src.plotting.img_export_cfg import getFontSize, getImageSize
+
 
 def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
              plotConfig: dict, export_img: bool = True):
@@ -21,7 +23,19 @@ def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig1.png")
+        w_mm = 180.0
+        h_mm = 61.0
+
+        fs = getFontSize(6.0)
+
+        fig.update_layout(font_size=fs)
+        fig.update_annotations(font_size=fs)
+        fig.update_xaxes(title_font_size=fs,
+                         tickfont_size=fs)
+        fig.update_yaxes(title_font_size=fs,
+                         tickfont_size=fs)
+
+        fig.write_image("output/fig1.png", **getImageSize(w_mm, h_mm))
 
     return fig
 
@@ -64,7 +78,8 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
     fig = make_subplots(rows=1,
                         cols=config['plotting']['numb_cols'],
                         shared_yaxes=True,
-                        horizontal_spacing=0.05)
+                        horizontal_spacing=0.025)
+
 
     # add line traces
     traces = __addLineTraces(plotData, config)
@@ -73,6 +88,7 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
 
+
     # add FSCP traces
     traces = __addFSCPTraces(plotFSCP, config)
     for id, trace in traces:
@@ -80,10 +96,60 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
 
-    # set plotting ranges
-    fig.update_layout(xaxis=dict(title=config['labels']['CP'], range=[0.0, config['plotting']['carb_price_max']]),
-                      xaxis2=dict(title=config['labels']['CP'], range=[0.0, config['plotting']['carb_price_max']]),
-                      yaxis=dict(title=config['labels']['total_cost'], range=[-0.05*config['plotting']['fuel_cost_max'], config['plotting']['fuel_cost_max']]))
+
+    # set axes titles and ranges
+    fig.update_layout(
+        xaxis=dict(
+            title=config['labels']['CP'],
+            range=[0.0, config['plotting']['carb_price_max']],
+        ),
+        xaxis2=dict(
+            title=config['labels']['CP'],
+            range=[0.0, config['plotting']['carb_price_max']],
+        ),
+        yaxis=dict(
+            title=config['labels']['total_cost'],
+            range=[0.0, config['plotting']['fuel_cost_max']],
+        )
+    )
+
+
+    # update legend
+    fig.update_layout(
+        legend=dict(
+            yanchor="top",
+            y=0.965,
+            xanchor="right",
+            x=0.99,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'xaxis2', 'yaxis', 'yaxis2']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
 
     return fig
 
@@ -114,7 +180,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             name=f"{name} ({year})",
             legendgroup=f"{fuel}_{year}",
             mode="lines",
-            line=dict(color=col, width=2, dash='dash' if occurrence[fuel]>1 else 'solid'),
+            line=dict(color=col, width=5, dash='dash' if occurrence[fuel]>1 else 'solid'),
             hovertemplate=f"<b>{name}</b><br>Carbon price: %{{x:.2f}}<br>Total cost: %{{y:.2f}}<extra></extra>")))
 
         # fuel uncertainty
@@ -128,7 +194,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
                 marker=dict(color=col),
                 fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .1)),
                 fill='toself',
-                line=dict(width=.3),
+                line=dict(width=.6),
                 showlegend=False,
                 hoverinfo="none"
             )))
@@ -145,20 +211,20 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
         # circle at intersection
         traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_u,), thickness=0.0),
                                  mode="markers",
-                                 marker=dict(symbol=row.symbol, size=12, line={'width': 2}, color='Black'),
+                                 marker=dict(symbol=row.symbol, size=24, line={'width': 4}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
         # dashed line to x-axis
         traces.append((index, go.Scatter(x=(row.fscp, row.fscp), y = (0, row.fscp_tc),
                                  mode="lines",
-                                 line=dict(color='Black', width=1, dash='dot'),
+                                 line=dict(color='Black', width=3, dash='dot'),
                                  showlegend=False, hoverinfo='none',)))
 
         # error bar near x-axis
         traces.append((index, go.Scatter(x=(row.fscp,), y = (0,),
                                  error_x=dict(type='data', array=(row.fscp_u,)) if config['plotting']['uncertainty'] else None,
-                                 marker=dict(symbol='x-thin', size=5, line={'width': 2}, color='Black'),
+                                 marker=dict(symbol='x-thin', size=10, line={'width': 4}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
