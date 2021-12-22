@@ -1,5 +1,3 @@
-import yaml
-
 from src.filepaths import getFilePathInputs
 
 n_figs = 7

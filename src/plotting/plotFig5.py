@@ -5,6 +5,7 @@ from plotly.subplots import make_subplots
 
 from src.data.calc_ci import getCIParamsBlue, getCIParamsGreen, getCIGreen, getCIBlue
 from src.data.calc_fuels import getCurrentAsDict
+from src.plotting.img_export_cfg import getImageSize, getFontSize
 
 
 def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dict,
@@ -17,30 +18,19 @@ def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, 
 
     # write figure to image file
     if export_img:
-        dpi=300
         w_mm = 180.0
         h_mm = 81.0
-        f_pt_small = 5.0
-        f_pt_medium = 6.0
-        f_pt_large = 7.0
 
-        inch_per_mm = 0.03937
-        inch_per_pt = 1/72
+        fs_sm = getFontSize(5.0)
 
-        w_px = int(dpi * inch_per_mm * w_mm)
-        h_px = int(dpi * inch_per_mm * h_mm)
+        fig.update_layout(font_size=fs_sm, font_family = "Helvetica")
+        fig.update_annotations(font_size=fs_sm)
+        fig.update_xaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
+        fig.update_yaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
 
-        fig.update_layout(font_size=dpi * inch_per_pt * f_pt_small, font_family = "Helvetica")
-        fig.update_annotations(font_size=dpi * inch_per_pt * f_pt_medium)
-        fig.update_xaxes(title_font_size=dpi * inch_per_pt * f_pt_medium,
-                         tickfont_size=dpi * inch_per_pt * f_pt_small)
-        fig.update_yaxes(title_font_size=dpi * inch_per_pt * f_pt_medium,
-                         tickfont_size=dpi * inch_per_pt * f_pt_small)
-
-        fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".png",
-                        width=w_px, height=h_px)
-        #fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".pdf",
-        #                width=w_px, height=h_px)
+        fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".png", **getImageSize(w_mm, h_mm))
 
     return fig
 
