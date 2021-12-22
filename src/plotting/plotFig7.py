@@ -5,7 +5,7 @@ from src.data.calc_fuels import calcFuelData
 
 
 def plotFig7(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
-             config: dict, scenario_name = "", export_img: bool = True):
+             config: dict, export_img: bool = True):
     # obtain data
     levelisedFuelData, _ = calcFuelData(scenario['options']['times'], fullParams, scenario['fuels'], scenario['options']['gwp'], levelised=True)
 
@@ -19,7 +19,7 @@ def plotFig7(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig7" + ("_"+scenario_name if scenario_name else "") + ".png")
+        fig.write_image("output/fig7.png")
 
     return fig
 

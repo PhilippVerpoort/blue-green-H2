@@ -8,13 +8,13 @@ from src.data.calc_fuels import getCurrentAsDict
 
 
 def plotFig6(fullParams: pd.DataFrame, fuels: dict,
-             config: dict, scenario_name = "", export_img: bool = True):
+             config: dict, export_img: bool = True):
     # produce figure
     fig = __produceFigure(fullParams, fuels, config)
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig6" + ("_"+scenario_name if scenario_name else "") + ".png")
+        fig.write_image("output/fig6.png")
 
     return fig
 

@@ -9,7 +9,7 @@ from src.plotting.img_export_cfg import getImageSize, getFontSize
 
 
 def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dict,
-             plotConfig: dict, scenario_name = "", export_img: bool = True):
+             plotConfig: dict, export_img: bool = True):
     # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}
 
@@ -30,7 +30,7 @@ def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, 
         fig.update_yaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
 
-        fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".png", **getImageSize(w_mm, h_mm))
+        fig.write_image("output/fig5.png", **getImageSize(w_mm, h_mm))
 
     return fig
 

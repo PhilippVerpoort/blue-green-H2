@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 
 def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
-             plotConfig: dict, scenario_name = "", export_img: bool = True):
+             plotConfig: dict, export_img: bool = True):
     # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}
 
@@ -19,7 +19,7 @@ def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig4" + ("_"+scenario_name if scenario_name else "") + ".png")
+        fig.write_image("output/fig4.png")
 
     return fig
 

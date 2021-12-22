@@ -4,7 +4,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame, config: dict, scenario_name ="", export_img: bool = True):
+def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame,
+             config: dict, export_img: bool = True):
     # filter data
     plotData = pd.DataFrame()
     for fuel in config['fuels']:
@@ -17,7 +18,7 @@ def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame, config: dict, scenario_nam
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig2" + ("_"+scenario_name if scenario_name else "") + ".png")
+        fig.write_image("output/fig2.png")
 
 
     return fig
