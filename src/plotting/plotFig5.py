@@ -17,8 +17,30 @@ def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, 
 
     # write figure to image file
     if export_img:
+        dpi=300
+        w_mm = 180.0
+        h_mm = 81.0
+        f_pt_small = 5.0
+        f_pt_medium = 6.0
+        f_pt_large = 7.0
+
+        inch_per_mm = 0.03937
+        inch_per_pt = 1/72
+
+        w_px = int(dpi * inch_per_mm * w_mm)
+        h_px = int(dpi * inch_per_mm * h_mm)
+
+        fig.update_layout(font_size=dpi * inch_per_pt * f_pt_small, font_family = "Helvetica")
+        fig.update_annotations(font_size=dpi * inch_per_pt * f_pt_medium)
+        fig.update_xaxes(title_font_size=dpi * inch_per_pt * f_pt_medium,
+                         tickfont_size=dpi * inch_per_pt * f_pt_small)
+        fig.update_yaxes(title_font_size=dpi * inch_per_pt * f_pt_medium,
+                         tickfont_size=dpi * inch_per_pt * f_pt_small)
+
         fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".png",
-                        width=1550, height=700)
+                        width=w_px, height=h_px)
+        #fig.write_image("output/fig5" + ("_"+scenario_name if scenario_name else "") + ".pdf",
+        #                width=w_px, height=h_px)
 
     return fig
 
@@ -79,14 +101,14 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
     traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'], xvline = __addFSCPSubplotContoursBottom(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot4"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[3])
-    fig.add_vline(x=xvline*100, line_width=3, line_color="black", **rowcol_mapping[3])
+    #fig.add_vline(x=xvline*100, line_width=3, line_color="black", **rowcol_mapping[3])
 
     fuelBlue = fuels[config['fuelBlueRight']]
     xmin, xmax = config['plotting']['xaxis5_min'], config['plotting']['xaxis5_max']
     traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'], xvline = __addFSCPSubplotContoursBottom(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot5"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[4])
-    fig.add_vline(x=xvline*100, line_width=5, line_color="black", **rowcol_mapping[4])
+    #fig.add_vline(x=xvline*100, line_width=5, line_color="black", **rowcol_mapping[4])
 
 
     # add mock traces to make additional x axes show
@@ -126,9 +148,8 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
             yanchor="top",
             y=0.99,
             xanchor="center",
-            x=0.165,
+            x=0.197,
             bgcolor = 'rgba(255,255,255,0.6)',
-            font = dict(size = 12),
         ),
     )
 
@@ -139,6 +160,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
         annotation['x'] = x_pos
         annotation['y'] = y_pos
         annotation['text'] = "<b>{0}</b>".format(annotation['text'])
+        annotation.pop('font')
 
     return fig
 
@@ -352,8 +374,8 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
         (True, 1000, 'bottom', 'y', None, None, None),
         (True, 100, 'bottom', 'y2', None, None, 25.0),
         (True, 100, 'bottom', 'y3', None, None, 25.0),
-        (True, 100, 'bottom', 'y4', None, None, 25.0),
-        (True, 100, 'bottom', 'y5', None, None, 25.0),
+        (True, 100, 'bottom', 'y4', None, None, None),
+        (True, 100, 'bottom', 'y5', None, None, None),
         (False, None, None, None, None, None, None),
         (True, 100, 'bottom', 'free', 'x2', 0.5+vspace/2, None),
         (True, 100, 'bottom', 'free', 'x3', 0.5+vspace/2, None),
@@ -407,8 +429,8 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
     newAxes['xaxis8']['tick0'] = 0.0
     newAxes['xaxis8']['dtick'] = 1.0
 
-    #newAxes['xaxis9']['ticklen'] = 25.0
-    #newAxes['xaxis10']['ticklen'] = 25.0
+    newAxes['xaxis9']['ticklen'] = 25.0
+    newAxes['xaxis10']['ticklen'] = 25.0
 
     return newAxes
 

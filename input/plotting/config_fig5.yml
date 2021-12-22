@@ -16,7 +16,7 @@ plotting:
 
   yaxis1_min: -10.0
   yaxis1_max: 70.0
-  yaxis2_min: -5.0
+  yaxis2_min: -10.0
   yaxis2_max: 25.0
 
 labels:
