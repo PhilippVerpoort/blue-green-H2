@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
+from src.plotting.img_export_cfg import getFontSize, getImageSize
+
 
 def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
              plotConfig: dict, export_img: bool = True):
@@ -19,7 +21,19 @@ def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig4.png")
+        w_mm = 88.0
+        h_mm = 81.0
+
+        fs = getFontSize(5.0)
+
+        fig.update_layout(font_size=fs)
+        fig.update_annotations(font_size=fs)
+        fig.update_xaxes(title_font_size=fs,
+                         tickfont_size=fs)
+        fig.update_yaxes(title_font_size=fs,
+                         tickfont_size=fs)
+
+        fig.write_image("output/fig4.png", **getImageSize(w_mm, h_mm))
 
     return fig
 
@@ -37,10 +51,12 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str
     # plot
     fig = go.Figure()
 
+
     # add line traces
     traces = __addLineTraces(plotData, plotFSCP, showFuels, config)
     for trace in traces:
         fig.add_trace(trace)
+
 
     # add FSCP traces
     refData = plotData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
@@ -48,9 +64,56 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str
     for trace in traces:
         fig.add_trace(trace)
 
+
     # set plotting ranges
-    fig.update_layout(xaxis=dict(title=config['labels']['ci'],   range=[0.0, config['plotting']['ci_max']*1000]),
-                      yaxis=dict(title=config['labels']['cost'], range=[cost_ref, config['plotting']['cost_max']]))
+    fig.update_layout(
+        xaxis=dict(
+            title=config['labels']['ci'],
+            range=[0.0, config['plotting']['ci_max']*1000]
+        ),
+        yaxis=dict(
+            title=config['labels']['cost'],
+            range=[cost_ref, config['plotting']['cost_max']]
+        )
+    )
+
+
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="right",
+            x=0.99,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'yaxis']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
 
     return fig
 
@@ -68,11 +131,13 @@ def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: l
 
         # fuel line
         traces.append(go.Scatter(x=thisData.ci*1000, y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ci_u*1000), error_y=dict(type='data', array=thisData.cost_u),
+            error_x=dict(type='data', array=thisData.ci_u*1000, thickness=3),
+            error_y=dict(type='data', array=thisData.cost_u, thickness=3),
             name=name,
             legendgroup=fuel,
             mode="markers+lines",
-            line=dict(color=col, width=1),
+            line=dict(color=col, width=3),
+            marker_size=10,
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"))
 
@@ -128,7 +193,6 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                              contours=dict(
                                  showlabels=True,
                                  labelfont=dict(
-                                     size=10,
                                      color='black',
                                  ),
                                  size=100,
@@ -146,7 +210,6 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                              contours=dict(
                                  showlabels=True,
                                  labelfont=dict(
-                                     size=10,
                                      color='black',
                                  ),
                                  size=250,
@@ -164,7 +227,6 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                              contours=dict(
                                  showlabels=True,
                                  labelfont=dict(
-                                     size=10,
                                      color='black',
                                  ),
                                  size=300,

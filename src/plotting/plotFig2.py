@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+from src.plotting.img_export_cfg import getFontSize, getImageSize
+
 
 def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame,
              config: dict, export_img: bool = True):
@@ -18,7 +20,19 @@ def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame,
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig2.png")
+        w_mm = 88.0
+        h_mm = 81.0
+
+        fs = getFontSize(5.0)
+
+        fig.update_layout(font_size=fs)
+        fig.update_annotations(font_size=fs)
+        fig.update_xaxes(title_font_size=fs,
+                         tickfont_size=fs)
+        fig.update_yaxes(title_font_size=fs,
+                         tickfont_size=fs)
+
+        fig.write_image("output/fig2.png", **getImageSize(w_mm, h_mm))
 
 
     return fig
@@ -99,18 +113,48 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
         )
 
 
-    # set plotting ranges
+    # update axes titles
     fig.update_layout(
         xaxis_title='',
         yaxis_title=config['yaxislabel'],
+    )
+
+
+    # update legend style
+    fig.update_layout(
         legend=dict(
             title='',
             yanchor="top",
             y=0.99,
             xanchor="right",
             x=0.99,
-            bgcolor = 'rgba(255,255,255,0.7)',
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
         ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'yaxis']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
     )
 
 

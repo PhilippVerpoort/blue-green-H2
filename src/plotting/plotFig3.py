@@ -5,6 +5,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
+from src.plotting.img_export_cfg import getFontSize, getImageSize
+
 
 def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame,
              plotConfig: dict, export_img: bool = True):
@@ -19,7 +21,19 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame,
 
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig3.png")
+        w_mm = 180.0
+        h_mm = 61.0
+
+        fs = getFontSize(5.0)
+
+        fig.update_layout(font_size=fs)
+        fig.update_annotations(font_size=fs)
+        fig.update_xaxes(title_font_size=fs,
+                         tickfont_size=fs)
+        fig.update_yaxes(title_font_size=fs,
+                         tickfont_size=fs)
+
+        fig.write_image("output/fig3.png", **getImageSize(w_mm, h_mm))
 
     return fig
 
@@ -49,7 +63,8 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
     fig = make_subplots(rows=1,
                         cols=config['plotting']['numb_cols'],
                         shared_yaxes=True,
-                        horizontal_spacing=0.05)
+                        horizontal_spacing=0.025)
+
 
     # add FSCP traces
     traces = __addFSCPTraces(plotFSCP, len(FSCPsCols), config)
@@ -57,6 +72,7 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
         for j, col in enumerate(FSCPsCols[id]):
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
+
 
     # compute and plot carbon price tracjetory
     cpTrajData = __computeCPTraj(config['carbon_price_trajectory'])
@@ -67,12 +83,59 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
             fig.add_trace(trace, row=1, col=j+1)
 
 
+    # update axes titles and ranges
+    fig.update_layout(
+        xaxis=dict(
+            title=config['labels']['time'],
+            range=[2024, 2051]
+        ),
+        xaxis2=dict(
+            title=config['labels']['time'],
+            range=[2024, 2051]
+        ),
+        yaxis=dict(
+            title=config['labels']['fscp'],
+            range=[0.0, config['plotting']['fscp_max']]
+        )
+    )
 
 
-    # set plotting ranges
-    fig.update_layout(xaxis=dict(title=config['labels']['time'], range=[2018, 2052]),
-                      xaxis2=dict(title=config['labels']['time'], range=[2018, 2052]),
-                      yaxis=dict(title=config['labels']['fscp'], range=[0.0, config['plotting']['fscp_max']]))
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            yanchor="top",
+            y=1.2,
+            xanchor="center",
+            x=0.5,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'xaxis2', 'yaxis', 'yaxis2']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
 
     return fig
 
@@ -91,11 +154,11 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
 
         # fuel line
         traces.append((index, go.Scatter(x=thisData['year'], y=thisData['fscp'],
-            error_y=dict(type='data', array=thisData['fscp_u']),
+            error_y=dict(type='data', array=thisData['fscp_u'], thickness=3),
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
             mode="lines+markers",
-            line=dict(color=col, width=2),
+            line=dict(color=col, width=5),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
 
     return traces
@@ -147,6 +210,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         x = cpTrajData['year'],
         y = cpTrajData['CP'],
         line_color = colour,
+        line_width = 3,
         showlegend = True,
         hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>"
     ))
@@ -163,7 +227,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         marker=dict(color=colour),
         fillcolor=("rgba({}, {}, {}, 0.1)".format(*hex_to_rgb(colour))),
         fill='toself',
-        line=dict(width=.3),
+        line=dict(width=.6),
         showlegend=False,
         hoverinfo='skip'
     )

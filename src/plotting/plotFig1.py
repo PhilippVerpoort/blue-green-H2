@@ -97,7 +97,7 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
             fig.add_trace(trace, row=1, col=col)
 
 
-    # set axes titles and ranges
+    # update axes titles and ranges
     fig.update_layout(
         xaxis=dict(
             title=config['labels']['CP'],
@@ -114,7 +114,7 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
     )
 
 
-    # update legend
+    # update legend styling
     fig.update_layout(
         legend=dict(
             yanchor="top",
