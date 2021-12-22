@@ -58,13 +58,13 @@ linedensity:
   plot5: 100
 
 colours:
-  heatmap_high: '#345979'
-  heatmap_medium: '#62b7fe'
-  heatmap_low: '#00fe00'
+  heatmap_high: '#3647a3'
+  heatmap_medium: '#589ACE'
+  heatmap_low: '#6ac100'
 
 fscp_colours:
-  blue HEB to green RE: '#dac367'
-  blue LEB to green RE: '#ffdb4c'
+  blue HEB to green RE: '#db2a1a'
+  blue LEB to green RE: '#ff0000'
 
 colourscale:
   FSCPmin: -100.0

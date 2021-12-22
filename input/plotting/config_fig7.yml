@@ -7,10 +7,10 @@ labels:
   cost__cts_cost: Carbon transport and storage cost
 
 colours:
-  cost__cap_cost: '#CCC41E'
-  cost__onm_cost: '#4D5CAD'
-  cost__fuel_cost: '#d8593b'
-  cost__cts_cost: '#892F71'
+  cost__cap_cost: '#db2a1a'
+  cost__onm_cost: '#00813e'
+  cost__fuel_cost: '#3745a3'
+  cost__cts_cost: '#589ace'
 
 fuels:
   - natural gas

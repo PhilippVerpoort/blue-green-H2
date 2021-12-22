@@ -8,7 +8,7 @@ fuels:
   natural gas:
     desc: Natural Gas
     type: ng
-    colour: '#935947'
+    colour: '#ef7500'
 
   grey:
     desc: Grey Hydrogen (SMR w/o CCS)
@@ -20,7 +20,7 @@ fuels:
   blue HEB:
     desc: Blue Hydrogen (SMR+56%CCS)
     type: blue
-    colour: '#345979'
+    colour: '#3647a3'
     blue_type: smr+lcrccs
     include_capex: True
 
@@ -41,14 +41,14 @@ fuels:
   blue LEB:
     desc: Blue Hydrogen (ATR+93%CCS)
     type: blue
-    colour: '#62b7fe'
+    colour: '#589ACE'
     blue_type: atr+hcrccs
     include_capex: True
 
   green RE:
     desc: Green Hydrogen (using RE only)
     type: green
-    colour: '#00fe00'
+    colour: '#6ac100'
     elecsrc: wind # RE only
     include_capex: True
 
