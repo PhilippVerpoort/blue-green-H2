@@ -1,17 +1,8 @@
-plotting:
-  ci_max: 0.2
-  cost_max: 110.0
-  n_samples: 51
+yaxislabel: Carbon Intensity in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
 
-labels:
-  ci: Carbon Intensity in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
-  cost: Direct Cost in EUR/MWh<sub>LHV</sub>
-
-refFuel: natural gas
-refYear: 2025
-
-showFuels:
-  - green RE
-  - green mix
-  - blue HEB
+fuels:
+  - natural gas
   - blue LEB
+  - green RE
+
+year: 2025

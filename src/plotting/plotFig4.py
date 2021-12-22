@@ -1,16 +1,21 @@
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 
-def plotFig4(fuelSpecs: dict, fuelData: pd.DataFrame, plotConfig: dict,
-             scenario_name = "", export_img: bool = True):
+def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
+             plotConfig: dict, scenario_name = "", export_img: bool = True):
     # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}
 
+    # select which lines to plot based on function argument
+    plotData = __selectPlotData(fuelsData, config['refFuel'], config['showFuels'])
+
+    # select which FSCPs to plot based on function argument
+    plotFSCP = __selectPlotFSCPs(FSCPData, config['refFuel'], config['showFuels'])
+
     # produce figure
-    fig = __produceFigure(fuelData, config)
+    fig = __produceFigure(plotData, plotFSCP, config['refFuel'], config['refYear'], config['showFuels'], config)
 
     # write figure to image file
     if export_img:
@@ -19,139 +24,152 @@ def plotFig4(fuelSpecs: dict, fuelData: pd.DataFrame, plotConfig: dict,
     return fig
 
 
-def __produceFigure(fuelData: pd.DataFrame, config: dict):
+def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, showFuels: list):
+    fuelsList = [refFuel] + showFuels
+    return fuelsData.query("fuel in @fuelsList")
+
+
+def __selectPlotFSCPs(FSCPData: pd.DataFrame, refFuel: str, showFuels: list):
+    return FSCPData.query(f"fuel_x in @showFuels & fuel_y=='{refFuel}'")
+
+
+def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, config: dict):
     # plot
-    fig = make_subplots(rows=1, cols=2, horizontal_spacing=0.05)
+    fig = go.Figure()
+
+    # add line traces
+    traces = __addLineTraces(plotData, plotFSCP, showFuels, config)
+    for trace in traces:
+        fig.add_trace(trace)
 
     # add FSCP traces
-    traces = __addFSCPContours(config)
-    for col, trace in traces:
-        fig.add_trace(trace, row=1, col=col)
-
-    # add scatter curves
-    traces = __addFSCPScatterCurves(fuelData, config)
+    refData = plotData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
+    traces, cost_ref = __addFSCPTraces(refData, config)
     for trace in traces:
-        for j in range(2):
-            if j: trace.showlegend = False
-            fig.add_trace(trace, row=1, col=j+1)
-
-    # add rectangle
-    for j in range(2):
-        fig.add_shape(x0=config['plotting']['ci_min2']*1000,
-                      x1=config['plotting']['ci_max2']*1000,
-                      y0=config['plotting']['cost_min2'],
-                      y1=config['plotting']['cost_max2'],
-                      line=dict(
-                          color=config['rectcolour'],
-                          width=2,
-                      ),
-                      row=1, col=j+1)
+        fig.add_trace(trace)
 
     # set plotting ranges
-    fig.update_layout(xaxis =dict(title=config['labels']['ci'], range=[config['plotting']['ci_min1']*1000, config['plotting']['ci_max1']*1000]),
-                      xaxis2=dict(title=config['labels']['ci'], range=[config['plotting']['ci_min2']*1000, config['plotting']['ci_max2']*1000]),
-                      yaxis =dict(title=config['labels']['cost'], range=[config['plotting']['cost_min1'], config['plotting']['cost_max1']]),
-                      yaxis2=dict(title="", range=[config['plotting']['cost_min2'], config['plotting']['cost_max2']]))
-
-    # legend settings
-    fig.update_layout(
-        legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="center",
-            x=0.34,
-            bgcolor = 'rgba(255,255,255,0.6)',
-            font = dict(size = 12),
-        ),
-    )
+    fig.update_layout(xaxis=dict(title=config['labels']['ci'],   range=[0.0, config['plotting']['ci_max']*1000]),
+                      yaxis=dict(title=config['labels']['cost'], range=[cost_ref, config['plotting']['cost_max']]))
 
     return fig
 
 
-def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
+def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: list, config: dict):
     traces = []
 
-    for fuel_x in ['blue LEB', 'blue HEB']:
-        fuel_y = 'green RE'
-        thisData = __convertFuelData(fuelData, fuel_x, fuel_y)
+    for fuel in showFuels:
+        # line properties
+        name = config['names'][fuel]
+        col = config['colours'][fuel]
 
-        name = f"FSCP {config['names'][fuel_x]} to {config['names'][fuel_y]}"
+        # data
+        thisData = plotData.query(f"fuel=='{fuel}'")
 
-        traces.append(go.Scatter(x=thisData.delta_ci*1000, y=thisData.delta_cost,
-            error_x=dict(type='data', array=thisData.delta_ci_u*1000),
-            error_y=dict(type='data', array=thisData.delta_cost_u),
+        # fuel line
+        traces.append(go.Scatter(x=thisData.ci*1000, y=thisData.cost,
+            error_x=dict(type='data', array=thisData.ci_u*1000), error_y=dict(type='data', array=thisData.cost_u),
             name=name,
-            legendgroup=f"{fuel_x}__{fuel_y}",
-            line=dict(color=config['fscp_colours'][f"{fuel_x} to {fuel_y}"]),
-            mode='lines+markers',
+            legendgroup=fuel,
+            mode="markers+lines",
+            line=dict(color=col, width=1),
             customdata=thisData.year,
-            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}±%{{error_x.array:.2f}}<br>"
-                          f"Direct cost difference: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
-        ))
+            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"))
 
     return traces
 
 
-def __addFSCPContours(config: dict):
+def __addFSCPTraces(refData: pd.DataFrame, config: dict):
     traces = []
 
-    for col in range(2):
-        delta_ci = np.linspace(config['plotting'][f"ci_min{col+1}"], config['plotting'][f"ci_max{col+1}"], config['plotting']['n_samples'])
-        delta_cost = np.linspace(config['plotting'][f"cost_min{col+1}"], config['plotting'][f"cost_max{col+1}"], config['plotting']['n_samples'])
-        delta_ci_v, delta_cost_v = np.meshgrid(delta_ci, delta_cost)
-        fscp = delta_cost_v / delta_ci_v
+    ci_samples = np.linspace(0.0, config['plotting']['ci_max'], config['plotting']['n_samples'])
+    cost_samples = np.linspace(0.0, config['plotting']['cost_max'], config['plotting']['n_samples'])
+    ci_v, cost_v = np.meshgrid(ci_samples, cost_samples)
 
-        zmin=config['colourscale']['FSCPmin']
-        zmax=config['colourscale']['FSCPmax']
-        zran=config['colourscale']['FSCPmax']-config['colourscale']['FSCPmin']
-        csm=config['colourscale']['FSCPmid']/zran
+    ci_ref = refData.ci
+    cost_ref = refData.cost
 
-        colorscale = [
-            [0.0, config['colours']['heatmap_low']],
-            [csm, config['colours']['heatmap_medium']],
-            [1.0, config['colours']['heatmap_high']],
-        ]
+    fscp = (cost_v - cost_ref)/(ci_ref - ci_v)
 
-        traces.append((col+1, go.Heatmap(x=delta_ci * 1000, y=delta_cost, z=fscp,
-                                         zsmooth='best', showscale=True, hoverinfo='skip',
-                                         zmin=zmin, zmax=zmax,
-                                         colorscale=colorscale,
-                                         colorbar=dict(
-                                             x=1.0,
-                                             y=0.4,
-                                             len=0.8,
-                                             title='FSCP',
-                                             titleside='top',
-                                         ))))
+    traces.append(go.Heatmap(x=ci_samples*1000, y=cost_samples, z=fscp,
+                             zsmooth='best', showscale=True, hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#c6dbef'],
+                                 [1.0, '#f7bba1'],
+                             ],
+                             colorbar=dict(
+                                 x=1.0,
+                                 y=0.25,
+                                 len=0.5,
+                                 title='FSCP',
+                                 titleside='top',
+                             )))
 
-        traces.append((col+1, go.Contour(x=delta_ci * 1000, y=delta_cost, z=fscp,
-                                         showscale=False, contours_coloring='lines', hoverinfo='skip',
-                                         colorscale=[
-                                             [0.0, '#000000'],
-                                             [1.0, '#000000'],
-                                         ],
-                                         contours=dict(
-                                             showlabels=True,
-                                             labelformat='.4',
-                                             start=-2000,
-                                             end=10000,
-                                             size=config['linedensity'][f"plot{col+1}"],
-                                         ))))
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             contours=dict(
+                                 showlabels=False,
+                                 start=50,
+                                 end=2000,
+                                 size=50,
+                             )))
 
-    return traces
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             line=dict(width=1.5),
+                             contours=dict(
+                                 showlabels=True,
+                                 labelfont=dict(
+                                     size=10,
+                                     color='black',
+                                 ),
+                                 size=100,
+                                 start=100,
+                                 end=600,
+                             )))
 
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             line=dict(width=1.5),
+                             contours=dict(
+                                 showlabels=True,
+                                 labelfont=dict(
+                                     size=10,
+                                     color='black',
+                                 ),
+                                 size=250,
+                                 start=750,
+                                 end=1000,
+                             )))
 
-def __convertFuelData(fuelData: pd.DataFrame, fuel_x: str, fuel_y: str):
-    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).\
-                   query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}' & year_x==year_y").\
-                   dropna()
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             line=dict(width=1.5),
+                             contours=dict(
+                                 showlabels=True,
+                                 labelfont=dict(
+                                     size=10,
+                                     color='black',
+                                 ),
+                                 size=300,
+                                 start=1200,
+                                 end=1500,
+                             )))
 
-    tmp['year'] = tmp['year_x']
-    tmp['delta_cost'] = tmp['cost_y'] - tmp['cost_x']
-    tmp['delta_ci'] = tmp['ci_x'] - tmp['ci_y']
-    tmp['delta_cost_u'] = np.sqrt(tmp['cost_u_x']**2 + tmp['cost_u_y']**2)
-    tmp['delta_ci_u'] = np.sqrt(tmp['ci_u_x']**2 + tmp['ci_u_y']**2)
-
-    FSCPData = tmp[['fuel_x', 'delta_cost', 'delta_cost_u', 'delta_ci', 'delta_ci_u', 'year']]
-
-    return FSCPData
+    return traces, cost_ref

@@ -135,7 +135,7 @@ def setLayout(app, scenarioInputDefault):
                         )
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig1, md=7), dbc.Col(fig2, md=5)],
+                        children=[dbc.Col(fig1, md=8), dbc.Col(fig2, md=4)],
                     ),
                     dbc.Row(
                         children=[dbc.Col(fig3, md=8),],

@@ -2,7 +2,7 @@ import yaml
 
 from src.filepaths import getFilePathInputs
 
-n_figs = 8
+n_figs = 7
 
 def loadInitialPlottingCfg():
     cfg = {}

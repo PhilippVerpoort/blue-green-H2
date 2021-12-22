@@ -134,9 +134,9 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
     saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
 
     fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader), export_img=False)
-    fig2 = plotFig2(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader), export_img=False)
+    fig2 = plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader), export_img=False)
     fig3 = plotFig3(fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader), export_img=False)
-    fig4 = plotFig4(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
+    fig4 = plotFig4(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
     fig5 = plotFig5(fuelSpecs, fuelData, fullParams, scenarioInputUpdated['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader), export_img=False)
     fig6 = plotFig6(fullParams, scenarioInputUpdated['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader), export_img=False)
     fig7 = plotFig7(fuelSpecs, scenarioInputUpdated, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)

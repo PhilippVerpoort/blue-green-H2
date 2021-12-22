@@ -1,175 +1,116 @@
-import numpy as np
 import pandas as pd
+
+import plotly.express as px
 import plotly.graph_objects as go
 
 
-def plotFig2(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
-             plotConfig: dict, scenario_name = "", export_img: bool = True):
-    # combine fuel specs with plot config from YAML file
-    config = {**fuelSpecs, **plotConfig}
+def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame, config: dict, scenario_name ="", export_img: bool = True):
+    # filter data
+    plotData = pd.DataFrame()
+    for fuel in config['fuels']:
+        plotData = plotData.append(fuelData.query(f"fuel=='{fuel}' & year=={config['year']}"), ignore_index=True)
 
-    # select which lines to plot based on function argument
-    plotData = __selectPlotData(fuelsData, config['refFuel'], config['showFuels'])
-
-    # select which FSCPs to plot based on function argument
-    plotFSCP = __selectPlotFSCPs(FSCPData, config['refFuel'], config['showFuels'])
 
     # produce figure
-    fig = __produceFigure(plotData, plotFSCP, config['refFuel'], config['refYear'], config['showFuels'], config)
+    fig = __produceFigure(plotData, fuelSpecs, config)
+
 
     # write figure to image file
     if export_img:
         fig.write_image("output/fig2" + ("_"+scenario_name if scenario_name else "") + ".png")
 
+
     return fig
 
 
-def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, showFuels: list):
-    fuelsList = [refFuel] + showFuels
-    return fuelsData.query("fuel in @fuelsList")
+def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
+    # add full names to dataframe
+    plotData.insert(1, 'name', len(plotData)*[''])
+    for i, row in plotData.iterrows():
+        plotData.at[i, 'name'] = fuelSpecs['names'][row['fuel']]
 
 
-def __selectPlotFSCPs(FSCPData: pd.DataFrame, refFuel: str, showFuels: list):
-    return FSCPData.query(f"fuel_x in @showFuels & fuel_y=='{refFuel}'")
+    # create figure
+    fig = px.bar(
+        x=plotData.index,
+        y=plotData.ci,
+        color=plotData.fuel,
+        color_discrete_map=fuelSpecs['colours'],
+    )
 
 
-def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, config: dict):
-    # plot
-    fig = go.Figure()
+    # update traces (no legend, hover info)
+    for trace in fig.data:
+        fuel = trace['legendgroup']
+        trace['showlegend'] = False
+        trace['hovertemplate'] = f"<b>{fuelSpecs['names'][fuel]}</b><br>{config['yaxislabel']}: %{{y}}<extra></extra>"
 
-    # add line traces
-    traces = __addLineTraces(plotData, plotFSCP, showFuels, config)
-    for trace in traces:
-        fig.add_trace(trace)
 
-    # add FSCP traces
-    refData = plotData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
-    traces, cost_ref = __addFSCPTraces(refData, config)
-    for trace in traces:
-        fig.add_trace(trace)
+    # update axis ticks
+    fig.update_xaxes(tickvals=[float(i) for i in range(len(config['fuels']))],
+                     ticktext=[fuelSpecs['names'][fuel] for fuel in config['fuels']])
+
+
+    # add arrows
+    arrowList = [
+        ('natural gas', 'blue LEB'),
+        ('natural gas', 'green RE'),
+        ('blue LEB', 'green RE'),
+    ]
+
+    for i, arrow in enumerate(arrowList):
+        fuelA, fuelB = arrow
+
+        ciA = plotData[plotData['fuel'] == fuelA].iloc[0]['ci']
+        ciB = plotData[plotData['fuel'] == fuelB].iloc[0]['ci']
+        xA = config['fuels'].index(fuelA)
+        xB = config['fuels'].index(fuelB)
+
+        if i==1:
+            fig.add_trace(go.Scatter(x=[xA-0.4, xB+0.4], y=[ciA, ciA], mode='lines', showlegend=False, line=dict(color='black')))
+            xB -= 0.25
+        elif i==2:
+            fig.add_trace(go.Scatter(x=[xA-0.4, xB+0.4], y=[ciA, ciA], mode='lines', showlegend=False, line=dict(color='black')))
+            xB += 0.25
+
+        fig.add_annotation(
+            x=xB,         # arrows' head
+            y=ciB+0.01,   # arrows' head
+            ax=xB,        # arrows' tail
+            ay=ciA,       # arrows' tail
+            xref='x',
+            yref='y',
+            axref='x',
+            ayref='y',
+            showarrow=True,
+            arrowhead=3,
+            arrowsize=1,
+            arrowwidth=1,
+            arrowcolor='black',
+        )
+
+        fig.add_annotation(
+            x=xB+0.15,
+            y=ciB+(ciA-ciB)/2,
+            text=f"<b>{i+1}<br>P<sub>CO<sub>2</sub>, {i+1}</sub><br>Q<sub>CO<sub>2</sub>, {i+1}</sub></b>",
+            align='left',
+            showarrow=False,
+        )
+
 
     # set plotting ranges
-    fig.update_layout(xaxis=dict(title=config['labels']['ci'],   range=[0.0, config['plotting']['ci_max']*1000]),
-                      yaxis=dict(title=config['labels']['cost'], range=[cost_ref, config['plotting']['cost_max']]))
+    fig.update_layout(
+        xaxis_title='',
+        yaxis_title=config['yaxislabel'],
+        legend=dict(
+            title='',
+            yanchor="top",
+            y=0.99,
+            xanchor="right",
+            x=0.99,
+            bgcolor = 'rgba(255,255,255,0.7)',
+        ),
+    )
+
 
     return fig
-
-
-def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: list, config: dict):
-    traces = []
-
-    for fuel in showFuels:
-        # line properties
-        name = config['names'][fuel]
-        col = config['colours'][fuel]
-
-        # data
-        thisData = plotData.query(f"fuel=='{fuel}'")
-
-        # fuel line
-        traces.append(go.Scatter(x=thisData.ci*1000, y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ci_u*1000), error_y=dict(type='data', array=thisData.cost_u),
-            name=name,
-            legendgroup=fuel,
-            mode="markers+lines",
-            line=dict(color=col, width=1),
-            customdata=thisData.year,
-            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"))
-
-    return traces
-
-
-def __addFSCPTraces(refData: pd.DataFrame, config: dict):
-    traces = []
-
-    ci_samples = np.linspace(0.0, config['plotting']['ci_max'], config['plotting']['n_samples'])
-    cost_samples = np.linspace(0.0, config['plotting']['cost_max'], config['plotting']['n_samples'])
-    ci_v, cost_v = np.meshgrid(ci_samples, cost_samples)
-
-    ci_ref = refData.ci
-    cost_ref = refData.cost
-
-    fscp = (cost_v - cost_ref)/(ci_ref - ci_v)
-
-    traces.append(go.Heatmap(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             zsmooth='best', showscale=True, hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#c6dbef'],
-                                 [1.0, '#f7bba1'],
-                             ],
-                             colorbar=dict(
-                                 x=1.0,
-                                 y=0.25,
-                                 len=0.5,
-                                 title='FSCP',
-                                 titleside='top',
-                             )))
-
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             showscale=False, contours_coloring='lines', hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#000000'],
-                                 [1.0, '#000000'],
-                             ],
-                             contours=dict(
-                                 showlabels=False,
-                                 start=50,
-                                 end=2000,
-                                 size=50,
-                             )))
-
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             showscale=False, contours_coloring='lines', hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#000000'],
-                                 [1.0, '#000000'],
-                             ],
-                             line=dict(width=1.5),
-                             contours=dict(
-                                 showlabels=True,
-                                 labelfont=dict(
-                                     size=10,
-                                     color='black',
-                                 ),
-                                 size=100,
-                                 start=100,
-                                 end=600,
-                             )))
-
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             showscale=False, contours_coloring='lines', hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#000000'],
-                                 [1.0, '#000000'],
-                             ],
-                             line=dict(width=1.5),
-                             contours=dict(
-                                 showlabels=True,
-                                 labelfont=dict(
-                                     size=10,
-                                     color='black',
-                                 ),
-                                 size=250,
-                                 start=750,
-                                 end=1000,
-                             )))
-
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             showscale=False, contours_coloring='lines', hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#000000'],
-                                 [1.0, '#000000'],
-                             ],
-                             line=dict(width=1.5),
-                             contours=dict(
-                                 showlabels=True,
-                                 labelfont=dict(
-                                     size=10,
-                                     color='black',
-                                 ),
-                                 size=300,
-                                 start=1200,
-                                 end=1500,
-                             )))
-
-    return traces, cost_ref
