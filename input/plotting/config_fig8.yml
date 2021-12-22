@@ -1,0 +1,8 @@
+yaxislabel: Carbon Intensity in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
+
+fuels:
+  - natural gas
+  - blue LEB
+  - green RE
+
+year: 2025
