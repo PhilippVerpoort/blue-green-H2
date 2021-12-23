@@ -5,8 +5,8 @@ plotting:
   uncertainty: False
 
 labels:
-  CP: Carbon Pricing in EUR/t<sub>CO<sub>2</sub>eq</sub>
-  total_cost: Total cost in EUR/MWh<sub>LHV</sub>
+  CP: Carbon Pricing (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  total_cost: Total cost (EUR/MWh<sub>LHV</sub>)
 
 subplot_title_positions:
   - [0.0, 1.1]

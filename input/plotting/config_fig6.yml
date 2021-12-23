@@ -8,12 +8,12 @@ plotting:
   n_samples: 51
 
 labels:
-  x1: Electricity price<br>in EUR/kWh
-  x2: Green GAPEX<br>in EUR/kW
-  x3: Op. capacity factor<br>in %
-  x4: Natural gas price<br>in EUR/MWh
-  x5: Blue CAPEX<br>in MEUR/10^5 Nm^3/h
-  cost: Cost difference in 2030<br>in EUR/MWh<sub>LHV</sub>
+  x1: Electricity price<br>(EUR/kWh)
+  x2: Green GAPEX<br>(EUR/kW)
+  x3: Op. capacity factor<br>(%)
+  x4: Natural gas price<br>(EUR/MWh)
+  x5: Blue CAPEX<br>(MEUR per 10^5 Nm^3/h)
+  cost: Cost difference in 2030<br>(EUR/MWh<sub>LHV</sub>)
 
 fuelBlue: blue LEB
 fuelGreen: green RE

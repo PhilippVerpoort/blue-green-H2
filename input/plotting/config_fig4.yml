@@ -4,8 +4,8 @@ plotting:
   n_samples: 51
 
 labels:
-  ci: Carbon Intensity in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
-  cost: Direct Cost in EUR/MWh<sub>LHV</sub>
+  ci: Carbon Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+  cost: Direct Cost (EUR/MWh<sub>LHV</sub>)
 
 refFuel: natural gas
 refYear: 2025

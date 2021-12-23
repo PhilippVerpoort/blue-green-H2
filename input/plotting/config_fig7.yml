@@ -1,4 +1,4 @@
-yaxislabel: Levelised Cost of Hydrogen in EUR/MWh
+yaxislabel: Levelised Cost of Hydrogen (EUR/MWh)
 
 labels:
   cost__cap_cost: Capital cost

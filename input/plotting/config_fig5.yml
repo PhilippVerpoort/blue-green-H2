@@ -20,21 +20,21 @@ plotting:
   yaxis2_max: 25.0
 
 labels:
-  xaxis1: CI<sub>blue</sub> — CI<sub>green</sub> in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
-  xaxis2: Methane leakage rate in %
-  xaxis3: Methane leakage rate in %
-  xaxis4: Share of renewable electricity in %
-  xaxis5: Share of renewable electricity in %
+  xaxis1: CI<sub>blue</sub> — CI<sub>green</sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+  xaxis2: Methane leakage rate (%)
+  xaxis3: Methane leakage rate (%)
+  xaxis4: Share of renewable electricity (%)
+  xaxis5: Share of renewable electricity (%)
   xaxis7: ''
   xaxis8: ''
   xaxis9: ''
   xaxis10: ''
-  xaxis12: CI<sub>blue</sub> in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
-  xaxis13: CI<sub>blue</sub> in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
-  xaxis14: CI<sub>green</sub> in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
-  xaxis15: CI<sub>green</sub> in g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>
+  xaxis12: CI<sub>blue</sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+  xaxis13: CI<sub>blue</sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+  xaxis14: CI<sub>green</sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+  xaxis15: CI<sub>green</sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
-  yaxis1: Cost<sub>green</sub> — Cost<sub>blue</sub> in EUR/MWh<sub>LHV</sub>
+  yaxis1: Cost<sub>green</sub> — Cost<sub>blue</sub> (EUR/MWh<sub>LHV</sub>)
 
 subplot_title_positions:
   - [0.0  , 1.1]
