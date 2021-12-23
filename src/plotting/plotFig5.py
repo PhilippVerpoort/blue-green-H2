@@ -1,3 +1,5 @@
+from string import ascii_lowercase
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -22,9 +24,10 @@ def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, 
         h_mm = 81.0
 
         fs_sm = getFontSize(5.0)
+        fs_lg = getFontSize(7.0)
 
-        fig.update_layout(font_size=fs_sm, font_family = "Helvetica")
-        fig.update_annotations(font_size=fs_sm)
+        fig.update_layout(font_size=fs_sm)
+        fig.update_annotations(font_size=fs_lg)
         fig.update_xaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
         fig.update_yaxes(title_font_size=fs_sm,
@@ -43,7 +46,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
                             [{"rowspan": 2, "colspan": 2}, None, {}, {}],
                             [None, None, {}, {}],
                         ],
-                        subplot_titles=tuple(t for t in config['subplot_titles']),
+                        subplot_titles=ascii_lowercase,
                         horizontal_spacing=0.02,
                         vertical_spacing=config['vertical_spacing'],
                         shared_yaxes=True)
@@ -144,13 +147,42 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
     )
 
 
+    # update axis styling
+    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'xaxis5', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4', 'yaxis5']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
+
     # move title annotations
     for i, annotation in enumerate(fig['layout']['annotations']):
         x_pos, y_pos = config['subplot_title_positions'][i]
+        annotation['xanchor'] = 'left'
+        annotation['yanchor'] = 'top'
+        annotation['xref'] = 'paper'
+        annotation['yref'] = 'paper'
+
         annotation['x'] = x_pos
         annotation['y'] = y_pos
+
         annotation['text'] = "<b>{0}</b>".format(annotation['text'])
-        annotation.pop('font')
+
 
     return fig
 
@@ -395,12 +427,12 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
 
         title = config['labels'][axisName]
 
-        newAxes[axisName] = dict(title=title,
-                                 range=ran,
-                                 side=side,
-                                 anchor=anchor,
-                                 ticks='outside',
-                                 )
+        newAxes[axisName] = dict(
+            title=title,
+            range=ran,
+            side=side,
+            anchor=anchor,
+        )
 
         if overlay is not None:
             newAxes[axisName]['overlaying'] = overlay

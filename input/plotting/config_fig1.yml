@@ -8,6 +8,10 @@ labels:
   CP: Carbon Pricing in EUR/t<sub>CO<sub>2</sub>eq</sub>
   total_cost: Total cost in EUR/MWh<sub>LHV</sub>
 
+subplot_title_positions:
+  - [0.0, 1.1]
+  - [0.5, 1.1]
+
 showFuels:
   - [[1, 2], 2025, natural gas]
   - [[1, 2], 2025, green RE]

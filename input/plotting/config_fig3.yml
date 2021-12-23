@@ -5,6 +5,10 @@ plotting:
 labels:
   time: ""
   fscp: FSCP in EUR/MWh<sub>LHV</sub>
+
+subplot_title_positions:
+  - [0.0, 1.1]
+  - [0.5, 1.1]
   
 showFSCPs:
   - [[1, 2], natural gas, green RE]

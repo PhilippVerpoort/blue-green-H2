@@ -1,3 +1,5 @@
+from string import ascii_lowercase
+
 import numpy as np
 import pandas as pd
 
@@ -24,14 +26,15 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame,
         w_mm = 180.0
         h_mm = 61.0
 
-        fs = getFontSize(5.0)
+        fs_sm = getFontSize(5.0)
+        fs_lg = getFontSize(7.0)
 
-        fig.update_layout(font_size=fs)
-        fig.update_annotations(font_size=fs)
-        fig.update_xaxes(title_font_size=fs,
-                         tickfont_size=fs)
-        fig.update_yaxes(title_font_size=fs,
-                         tickfont_size=fs)
+        fig.update_layout(font_size=fs_sm)
+        fig.update_annotations(font_size=fs_lg)
+        fig.update_xaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
+        fig.update_yaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
 
         fig.write_image("output/fig3.png", **getImageSize(w_mm, h_mm))
 
@@ -62,6 +65,7 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
     # plot
     fig = make_subplots(rows=1,
                         cols=config['plotting']['numb_cols'],
+                        subplot_titles=ascii_lowercase,
                         shared_yaxes=True,
                         horizontal_spacing=0.025)
 
@@ -106,7 +110,7 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
             yanchor="top",
             y=1.2,
             xanchor="center",
-            x=0.5,
+            x=0.25,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
@@ -135,6 +139,20 @@ def __produceFigure(plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
         font_color='black',
         font_family='Helvetica',
     )
+
+
+    # move title annotations
+    for i, annotation in enumerate(fig['layout']['annotations']):
+        x_pos, y_pos = config['subplot_title_positions'][i]
+        annotation['xanchor'] = 'left'
+        annotation['yanchor'] = 'top'
+        annotation['xref'] = 'paper'
+        annotation['yref'] = 'paper'
+
+        annotation['x'] = x_pos
+        annotation['y'] = y_pos
+
+        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
 
 
     return fig
@@ -166,13 +184,6 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
 
 # compute carbon price trajectories
 def __computeCPTraj(params: dict):
-    t = np.linspace(params['time'][0], 2050.0, 250)
-
-    # exp function
-    #b = math.log(v_later/v_today)/(t_later-t_today)
-    #cpData = pd.DataFrame({'year': t,
-    #                       'CP': v_today * np.exp(b * (t - t_today))})
-
     # poly fit function
     t_fit = np.array(params['time'])
     p_fit = np.array(params['value'])
@@ -182,13 +193,16 @@ def __computeCPTraj(params: dict):
     poly_u = np.poly1d(np.polyfit(t_fit, p_fit_u, 2))
     poly_l = np.poly1d(np.polyfit(t_fit, p_fit_l, 2))
 
+
     # create data frame with time and cp values
+    t = np.linspace(params['time'][0]-5.0, params['time'][-1]+5.0, 300)
     cpData = pd.DataFrame({
         'year': t,
         'CP': poly(t),
         'CP_u':   poly_u(t)-poly(t),
         'CP_l': -(poly_l(t)-poly(t)),
     })
+
 
     # add name to dataframe
     cpData['name'] = 'cp'

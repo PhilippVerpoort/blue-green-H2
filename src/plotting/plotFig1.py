@@ -1,3 +1,5 @@
+from string import ascii_lowercase
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -26,14 +28,15 @@ def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
         w_mm = 180.0
         h_mm = 61.0
 
-        fs = getFontSize(6.0)
+        fs_sm = getFontSize(5.0)
+        fs_lg = getFontSize(7.0)
 
-        fig.update_layout(font_size=fs)
-        fig.update_annotations(font_size=fs)
-        fig.update_xaxes(title_font_size=fs,
-                         tickfont_size=fs)
-        fig.update_yaxes(title_font_size=fs,
-                         tickfont_size=fs)
+        fig.update_layout(font_size=fs_sm)
+        fig.update_annotations(font_size=fs_lg)
+        fig.update_xaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
+        fig.update_yaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
 
         fig.write_image("output/fig1.png", **getImageSize(w_mm, h_mm))
 
@@ -77,8 +80,9 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
     # plot
     fig = make_subplots(rows=1,
                         cols=config['plotting']['numb_cols'],
+                        subplot_titles=ascii_lowercase,
                         shared_yaxes=True,
-                        horizontal_spacing=0.025)
+                        horizontal_spacing=0.025,)
 
 
     # add line traces
@@ -149,6 +153,20 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
         font_color='black',
         font_family='Helvetica',
     )
+
+
+    # move title annotations
+    for i, annotation in enumerate(fig['layout']['annotations']):
+        x_pos, y_pos = config['subplot_title_positions'][i]
+        annotation['xanchor'] = 'left'
+        annotation['yanchor'] = 'top'
+        annotation['xref'] = 'paper'
+        annotation['yref'] = 'paper'
+
+        annotation['x'] = x_pos
+        annotation['y'] = y_pos
+
+        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
 
 
     return fig
