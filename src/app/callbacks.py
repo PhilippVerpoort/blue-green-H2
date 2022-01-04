@@ -10,7 +10,7 @@ from src.app.update import updateScenarioInputSimple, updateScenarioInputAdvance
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.data import obtainScenarioData
 from src.data.scenario_input_default import scenarioInputDefault
-from src.filepaths import getFilePathAssets
+from src.filepaths import getFilePathAssets, getFilePath
 from src.plotting.loadcfg import n_figs
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
@@ -242,7 +242,7 @@ def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_m
 # path for downloading XLS data file
 @app.server.route('/download/data.xlsx')
 def callbackDownloadExportdata():
-    return send_file(getFilePathAssets('output/', 'data.xlsx'), as_attachment=True)
+    return send_file(getFilePath('output/', 'data.xlsx'), as_attachment=True)
 
 
 # serving asset files
