@@ -86,9 +86,8 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
      State('simple-cost-green-capex-2050', 'value'),
      State('simple-cost-green-elec-2020', 'value'),
      State('simple-cost-green-elec-2050', 'value'),
+     State('simple-ci-green-elec', 'value'),
      State('simple-green-ocf', 'value'),
-     State('simple-elecsrc', 'value'),
-     State('simple-elecsrc-custom', 'value'),
      State('simple-cost-blue-capex-heb', 'value'),
      State('simple-cost-blue-capex-leb', 'value'),
      State('simple-cost-blue-cts-2020', 'value'),
@@ -159,9 +158,8 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
      State('simple-cost-green-capex-2050', 'value'),
      State('simple-cost-green-elec-2020', 'value'),
      State('simple-cost-green-elec-2050', 'value'),
+     State('simple-ci-green-elec', 'value'),
      State('simple-green-ocf', 'value'),
-     State('simple-elecsrc', 'value'),
-     State('simple-elecsrc-custom', 'value'),
      State('simple-cost-blue-capex-heb', 'value'),
      State('simple-cost-blue-capex-leb', 'value'),
      State('simple-cost-blue-cts-2020', 'value'),
@@ -193,7 +191,7 @@ def callbackDownloadConfig(n1, n2, *args):
 @app.callback(
    Output(component_id='advanced-fuels', component_property='style_data_conditional'),
    [Input(component_id='advanced-fuels', component_property='data')])
-def callbackWidget2(data: list):
+def callbackTableColour(data: list):
     defaultCondStyle = [
         {'if': {'state': 'active'},
          'backgroundColor': '#80d4ff'},
@@ -239,17 +237,6 @@ def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_m
             return False, "", data
         else:
             raise Exception("Unknown button pressed!")
-
-
-# this callback shows/hides the custom elecsrc carbon intensity field
-@app.callback(
-   Output(component_id='wrapper-simple-elecsrc-custom', component_property='style'),
-   [Input(component_id='simple-elecsrc', component_property='value')])
-def callbackWidget1(elecsrc_selected):
-    if elecsrc_selected == 'custom':
-        return {'display': 'block'}
-    else:
-        return {'display': 'none'}
 
 
 # path for downloading XLS data file

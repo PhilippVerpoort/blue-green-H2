@@ -121,26 +121,29 @@ def getSimpleWidgets(scenarioInputDefault: dict):
         },
         'cost_green_elec_2020': {
             'name': f"{scenarioInputDefault['params']['cost_green_elec']['desc']} in 2020",
-            'value': scenarioInputDefault['params']['cost_green_elec']['value']['custom'][2020],
+            'value': scenarioInputDefault['params']['cost_green_elec']['value']['RE'][2020],
             'unit': scenarioInputDefault['params']['cost_green_elec']['unit'],
             'step': 1,
         },
         'cost_green_elec_2050': {
             'name': f"{scenarioInputDefault['params']['cost_green_elec']['desc']} in 2050",
-            'value': scenarioInputDefault['params']['cost_green_elec']['value']['custom'][2050],
+            'value': scenarioInputDefault['params']['cost_green_elec']['value']['RE'][2050],
             'unit': scenarioInputDefault['params']['cost_green_elec']['unit'],
             'step': 1,
+        },
+        'ci_green_elec': {
+            'name': f"{scenarioInputDefault['params']['ci_green_elec']['desc']}",
+            'value': scenarioInputDefault['params']['ci_green_elec']['value']['RE']['gwp100'],
+            'unit': scenarioInputDefault['params']['ci_green_elec']['unit'],
+            'step': 0.001,
         },
         'green_ocf': {
             'name': scenarioInputDefault['params']['green_ocf']['desc'],
             'value': scenarioInputDefault['params']['green_ocf']['value'],
             'unit': "%",
             'step': 1,
-        }
+        },
     }
-
-    # green:
-    # elec src (wind/solar/hydro/custom/mix)
 
     fields = [
         html.Div(
@@ -163,56 +166,6 @@ def getSimpleWidgets(scenarioInputDefault: dict):
         )
         for param in param_fields_green
     ]
-
-    elecsrc_dropdown = html.Div(
-        [
-            dbc.Label(
-                "Carbon intensity of electricity:",
-                html_for=f"simple-elecsrc",
-                className='display-inline-lhs',
-            ),
-            dcc.Dropdown(
-                id='simple-elecsrc',
-                options=[
-                    {'label': 'Run-of-river Hydro Power', 'value': 'hydro'},
-                    {'label': 'Wind Power On-shore', 'value': 'wind'},
-                    {'label': 'PV power', 'value': 'solar'},
-                    {'label': 'Current EU mix', 'value': 'mix'},
-                    {'label': 'Custom', 'value': 'custom'}
-                ],
-                value='wind',
-                style={'float': 'right', 'width': '300px'},
-            ),
-        ]
-    )
-    fields.append(elecsrc_dropdown)
-
-    custom_ci = html.Div(
-        id="wrapper-simple-elecsrc-custom",
-        children=[
-            html.Div(
-                [
-                    dbc.Label(
-                        f"Custom carbon intensity in {scenarioInputDefault['params']['ci_green_elec']['unit']}:",
-                        html_for=f"simple-elecsrc-custom",
-                        className='display-inline-lhs',
-                    ),
-                    dcc.Input(
-                        id=f"simple-elecsrc-custom",
-                        type='number',
-                        value=scenarioInputDefault['params']['ci_green_elec']['value']['custom']['gwp100'],
-                        step=0.001,
-                        style={'float': 'right'},
-                        placeholder='xx',
-                        size="10",
-                    ),
-                ]
-            )
-        ],
-        style={'display': 'none'}
-    )
-    fields.append(custom_ci)
-
 
     widget_simple_green = dbc.Card(
         [

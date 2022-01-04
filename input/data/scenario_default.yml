@@ -46,17 +46,17 @@ fuels:
     include_capex: True
 
   green RE:
-    desc: Green Hydrogen (using RE only)
+    desc: Green Hydrogen (RE only)
     type: green
     colour: '#6ac100'
-    elecsrc: wind # RE only
+    elecsrc: RE
     include_capex: True
 
   green mix:
-    desc: Green Hydrogen (current elec mix)
+    desc: Green Hydrogen (elec. mix)
     type: green
     colour: '#708f70'
-    elecsrc: mix # grid mix
+    elecsrc: mix
     include_capex: True
 
 
@@ -232,19 +232,10 @@ params:
     desc: Electricity price
     type: linear
     value:
-      hydro: # run-of-river hydro power
+      RE:
         2020: 60.0
         2050: 30.0
-      wind: # wind power onshore
-        2020: 60.0
-        2050: 30.0
-      solar: # PV power
-        2020: 60.0
-        2050: 30.0
-      custom: # custom
-        2020: 60.0
-        2050: 30.0
-      mix: # EU mix
+      mix:
         2020: 300.0
         2050: 50.0
     unit: USD/MWh
@@ -270,19 +261,10 @@ params:
     desc: CI of electricity
     type: const
     value:
-      hydro: # run-of-river hydro power
-        gwp100: 0.004
-        gwp20: 0.004
-      wind: # wind power onshore
+      RE:
         gwp100: 0.013
         gwp20: 0.015
-      solar: # PV power
-        gwp100: 0.04
-        gwp20: 0.05
-      custom: # custom
-        gwp100: 0.02
-        gwp20: 0.03
-      mix: # EU mix
+      mix:
         gwp100: 0.397
         gwp20: 0.434
     unit: kgCO2eq/kWh

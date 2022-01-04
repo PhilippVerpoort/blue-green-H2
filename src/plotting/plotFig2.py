@@ -43,12 +43,13 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
     plotData.insert(1, 'name', len(plotData)*[''])
     for i, row in plotData.iterrows():
         plotData.at[i, 'name'] = fuelSpecs['names'][row['fuel']]
+    plotData['ci_gPkWh'] = plotData['ci']*1000
 
 
     # create figure
     fig = px.bar(
         x=plotData.index,
-        y=plotData.ci,
+        y=plotData.ci_gPkWh,
         color=plotData.fuel,
         color_discrete_map=fuelSpecs['colours'],
     )
@@ -76,8 +77,8 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
     for i, arrow in enumerate(arrowList):
         fuelA, fuelB = arrow
 
-        ciA = plotData[plotData['fuel'] == fuelA].iloc[0]['ci']
-        ciB = plotData[plotData['fuel'] == fuelB].iloc[0]['ci']
+        ciA = plotData[plotData['fuel'] == fuelA].iloc[0]['ci_gPkWh']
+        ciB = plotData[plotData['fuel'] == fuelB].iloc[0]['ci_gPkWh']
         xA = config['fuels'].index(fuelA)
         xB = config['fuels'].index(fuelB)
 

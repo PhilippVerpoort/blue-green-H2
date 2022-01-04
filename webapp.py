@@ -12,8 +12,8 @@ setLayout(app, scenarioInputDefault)
 
 
 # import and list callbacks (list so they don't get removed as unused imports)
-from src.app.callbacks import callbackUpdate, callbackDownloadConfig, callbackWidget1, callbackWidget2, callbackDownloadExportdata
-callbackUpdate, callbackDownloadConfig, callbackWidget1, callbackWidget2, callbackDownloadExportdata
+from src.app.callbacks import callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
+callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
 
 
 # define server for wsgi

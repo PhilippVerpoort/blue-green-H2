@@ -5,7 +5,7 @@ def updateScenarioInputSimple(scenarioInput: dict,
                               simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
                               simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,
                               simple_cost_green_elec_2020: float,  simple_cost_green_elec_2050: float,
-                              simple_green_ocf: int, simple_elecsrc: str, simple_elecsrc_custom: float,
+                              simple_ci_green_elec: str, simple_green_ocf: int,
                               simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
                               simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
                               simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,
@@ -21,18 +21,10 @@ def updateScenarioInputSimple(scenarioInput: dict,
     # update green data
     scenarioInput['params']['cost_green_capex']['value'][2020] = simple_cost_green_capex_2020
     scenarioInput['params']['cost_green_capex']['value'][2050] = simple_cost_green_capex_2050
+    scenarioInput['params']['cost_green_elec']['value']['RE'][2020] = simple_cost_green_elec_2020
+    scenarioInput['params']['cost_green_elec']['value']['RE'][2050] = simple_cost_green_elec_2050
+    scenarioInput['params']['ci_green_elec']['value']['RE'][simple_gwp] = simple_ci_green_elec
     scenarioInput['params']['green_ocf']['value'] = simple_green_ocf
-
-    for fuel in scenarioInput['fuels']:
-        if scenarioInput['fuels'][fuel]['type'] == 'green' and scenarioInput['fuels'][fuel]['elecsrc'] != 'mix':
-            scenarioInput['fuels'][fuel]['elecsrc'] = simple_elecsrc
-    if simple_elecsrc == 'custom':
-        scenarioInput['params']['ci_green_elec']['value']['custom'][simple_gwp] = simple_elecsrc_custom
-    else:
-        scenarioInput['params']['ci_green_elec']['value']['custom'][simple_gwp] = \
-            scenarioInput['params']['ci_green_elec']['value'][simple_elecsrc][simple_gwp]
-    scenarioInput['params']['cost_green_elec']['value']['custom'][2020] = simple_cost_green_elec_2020
-    scenarioInput['params']['cost_green_elec']['value']['custom'][2050] = simple_cost_green_elec_2050
 
     # update blue data
     scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2020] = simple_cost_blue_capex_heb
@@ -53,7 +45,7 @@ def updateScenarioInputAdvanced(scenarioInput: dict,
                                 simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
                                 simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,
                                 simple_cost_green_elec_2020: float,  simple_cost_green_elec_2050: float,
-                                simple_green_ocf: int, simple_elecsrc: str, simple_elecsrc_custom: float,
+                                simple_ci_green_elec: str, simple_green_ocf: int,
                                 simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
                                 simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
                                 simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,

@@ -1,5 +1,5 @@
 known_blue_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
-known_elec_srcs = ['hydro', 'wind', 'solar', 'custom', 'mix']
+known_elec_srcs = ['RE', 'mix']
 
 
 def calcCost(params: dict, fuel: dict):
