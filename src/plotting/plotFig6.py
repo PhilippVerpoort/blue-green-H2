@@ -31,8 +31,8 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
     fuelGreen = fuels[config['fuelGreen']]
 
     currentParams = getCurrentAsDict(fullParams, config['fuelYear'])
-    pBlue = getCostParamsBlue(currentParams, fuelBlue)
-    pGreen = getCostParamsGreen(currentParams, fuelGreen)
+    pBlue = getCostParamsBlue(*currentParams, fuelBlue)
+    pGreen = getCostParamsGreen(*currentParams, fuelGreen)
 
     # add green traces
     varyGreenParams = ['p_el', 'c_pl', 'ocf']

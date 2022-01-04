@@ -261,8 +261,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
     currentParams = getCurrentAsDict(fullParams, config['fuelYear'])
-    pBlue = getCIParamsBlue(currentParams, fuelBlue, gwp)
-    pGreen = getCIParamsGreen(currentParams, fuelGreen, gwp)
+    pBlue = getCIParamsBlue(*currentParams, fuelBlue, gwp)
+    pGreen = getCIParamsGreen(*currentParams, fuelGreen, gwp)
 
     # calculate FSCPs for grid
     leakage_v, delta_cost_v = np.meshgrid(leakage, delta_cost)
@@ -297,8 +297,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
                              )))
 
     # determine other xaxis ranges
-    pBlue = getCIParamsBlue(currentParams, fuelBlue, gwp)
-    pBlueOther = getCIParamsBlue(currentParams, fuelBlue, gwpOther)
+    pBlue = getCIParamsBlue(*currentParams, fuelBlue, gwp)
+    pBlueOther = getCIParamsBlue(*currentParams, fuelBlue, gwpOther)
     # ci0_1 + p_1 * cim_1 = ci0_2 + p_2 * cim_2
     # p_2 = (p_1*cim_1+ci0_1-ci0_2)/cim_2
     range2  = [(x*pBlue['mci']+pBlue['b']-pBlueOther['b']) / pBlueOther['mci']
@@ -325,8 +325,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
     currentParams = getCurrentAsDict(fullParams, config['fuelYear'])
-    pBlue = getCIParamsBlue(currentParams, fuelBlue, gwp)
-    pGreen = getCIParamsGreen(currentParams, fuelGreen, gwp)
+    pBlue = getCIParamsBlue(*currentParams, fuelBlue, gwp)
+    pGreen = getCIParamsGreen(*currentParams, fuelGreen, gwp)
 
     # carbon intensity of grid electricity (needs to be obtained from data file in future after green CI has been tidied up)
     gridCI = 0.397
@@ -376,8 +376,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
                              )))
 
     # determine other xaxis ranges
-    pGreen = getCIParamsGreen(currentParams, fuelGreen, gwp)
-    pGreenOther = getCIParamsGreen(currentParams, fuelGreen, gwpOther)
+    pGreen = getCIParamsGreen(*currentParams, fuelGreen, gwp)
+    pGreenOther = getCIParamsGreen(*currentParams, fuelGreen, gwpOther)
     # b_1 + eff*(p_1*eci_1 + (1-p_1)*gci_1) = b_2 + eff*(p_2*eci_2 + (1-p_2)*gci_2)
     # eff*p_2*(eci_2-gci_2) = b_1-b_2 + eff*(gci_1-gci_2) + eff*p_1*(eci_1-gci_1)
     # p_2 = (b_1-b_2 + eff*(gci_1-gci_2) + eff*p_1*(eci_1-gci_1))/(eff*(eci_2-gci_2))
@@ -465,8 +465,9 @@ def __convertFuelData(fuelData: pd.DataFrame, fuel_x: str, fuel_y: str):
     tmp['year'] = tmp['year_x']
     tmp['delta_cost'] = tmp['cost_y'] - tmp['cost_x']
     tmp['delta_ci'] = tmp['ci_x'] - tmp['ci_y']
-    tmp['delta_cost_u'] = np.sqrt(tmp['cost_u_x']**2 + tmp['cost_u_y']**2)
-    tmp['delta_ci_u'] = np.sqrt(tmp['ci_u_x']**2 + tmp['ci_u_y']**2)
+    tmp['delta_cost_u'] = np.sqrt(tmp['cost_uu_x']**2 + tmp['cost_uu_y']**2)
+    tmp['delta_ci_u'] = np.sqrt(tmp['ci_uu_x']**2 + tmp['ci_uu_y']**2)
+    # TODO: Computing the uncertainty of the difference will need to be corrected.
 
     FSCPData = tmp[['fuel_x', 'delta_cost', 'delta_cost_u', 'delta_ci', 'delta_ci_u', 'year']]
 

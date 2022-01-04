@@ -2,26 +2,28 @@ known_tech_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
 known_elec_srcs = ['RE', 'mix']
 
 
-def calcCost(params: dict, fuel: dict):
+def calcCost(params: tuple, fuel: dict):
     if fuel['type'] == 'ng':
-        return getCostNG(params, fuel)
+        return getCostNG(*params, fuel)
     elif fuel['type'] == 'blue':
-        p = getCostParamsBlue(params, fuel)
+        p = getCostParamsBlue(*params, fuel)
         return getCostBlue(**p)
     elif fuel['type'] == 'green':
-        p = getCostParamsGreen(params, fuel)
+        p = getCostParamsGreen(*params, fuel)
         return getCostGreen(**p)
     else:
         raise Exception("Unknown fuel: {}".format(fuel['type']))
 
 
-def getCostNG(par: dict, fuel: dict):
+def getCostNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     r = par['cost_ng_price']
+    r_uu = par_uu['cost_ng_price']
+    r_ul = par_ul['cost_ng_price']
 
-    return {'fuel_cost': (r, 0.05*r)}
+    return {'fuel_cost': (r, r_uu, r_ul)}
 
 
-def getCostParamsBlue(par: dict, fuel: dict):
+def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     tech_type = fuel['tech_type']
     if tech_type not in known_tech_types:
         raise Exception("Blue capture rate type unknown: {}".format(tech_type))
@@ -44,15 +46,18 @@ def getCostParamsBlue(par: dict, fuel: dict):
 def getCostBlue(FCR, C_pl, P_pl, flh, p_ng, eff, c_CTS, emi):
     return {
         'cap_cost': (FCR * C_pl/(P_pl*flh),
-                     FCR * C_pl/(P_pl*flh) * 0.05),
+                     FCR * C_pl/(P_pl*flh) * 0.05,
+                     FCR * C_pl/(P_pl*flh) * 0.05,),
         'fuel_cost': (p_ng/eff,
-                      p_ng/eff * 0.05),
+                      p_ng/eff * 0.05,
+                      p_ng/eff * 0.05,),
         'cts_cost': (c_CTS*emi,
-                     c_CTS*emi * 0.05),
+                     c_CTS*emi * 0.05,
+                     c_CTS*emi * 0.05,),
     }
 
 
-def getCostParamsGreen(par: dict, fuel: dict):
+def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     tech_type = fuel['tech_type']
     if tech_type not in known_elec_srcs:
         raise Exception(f"Green electricity source type unknown: {tech_type}")
@@ -72,7 +77,9 @@ def getCostParamsGreen(par: dict, fuel: dict):
 def getCostGreen(FCR, c_pl, ocf, p_el, eff):
     return {
         'cap_cost': (FCR * c_pl/(ocf*8760),
-                     FCR * c_pl/(ocf*8760) * 0.05),
+                     FCR * c_pl/(ocf*8760) * 0.05,
+                     FCR * c_pl/(ocf*8760) * 0.05,),
         'fuel_cost': (p_el*eff,
-                      p_el*eff * 0.05),
+                      p_el*eff * 0.05,
+                      p_el*eff * 0.05,),
     }

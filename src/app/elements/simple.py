@@ -1,5 +1,9 @@
-from dash import dcc, html, dash_table
+import re
+from typing import Union
+
+from dash import dcc, html
 import dash_bootstrap_components as dbc
+
 
 def getSimpleWidgets(scenarioInputDefault: dict):
     widget_simple_options = dbc.Card(
@@ -31,7 +35,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-leakage',
                                         type='number',
-                                        value=scenarioInputDefault['params']['ci_ng_methaneleakage']['value'],
+                                        value=__getValWOUnc(scenarioInputDefault['params']['ci_ng_methaneleakage']['value']),
                                         step=0.05,
                                         style={'float': 'left'},
                                         placeholder='xx.x',
@@ -51,7 +55,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-ng-price',
                                         type='number',
-                                        value=scenarioInputDefault['params']['cost_ng_price']['value'],
+                                        value=__getValWOUnc(scenarioInputDefault['params']['cost_ng_price']['value'][2025]),
                                         step=0.1,
                                         style={'float': 'left'},
                                         placeholder='xx.x',
@@ -71,7 +75,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-lifetime',
                                         type='number',
-                                        value=scenarioInputDefault['params']['lifetime']['value'],
+                                        value=__getValWOUnc(scenarioInputDefault['params']['lifetime']['value']),
                                         step=1,
                                         style={'float': 'left'},
                                         placeholder='xx',
@@ -91,7 +95,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-irate',
                                         type='number',
-                                        value=scenarioInputDefault['params']['irate']['value'],
+                                        value=__getValWOUnc(scenarioInputDefault['params']['irate']['value']),
                                         step=0.1,
                                         style={'float': 'left'},
                                         placeholder='x.x',
@@ -109,38 +113,38 @@ def getSimpleWidgets(scenarioInputDefault: dict):
     param_fields_green = {
         'cost_green_capex_2020': {
             'name': f"{scenarioInputDefault['params']['cost_green_capex']['desc']} in 2020",
-            'value': scenarioInputDefault['params']['cost_green_capex']['value'][2020],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_green_capex']['value'][2020]),
             'unit': scenarioInputDefault['params']['cost_green_capex']['unit'],
             'step': 10,
         },
         'cost_green_capex_2050': {
             'name': f"{scenarioInputDefault['params']['cost_green_capex']['desc']} in 2050",
-            'value': scenarioInputDefault['params']['cost_green_capex']['value'][2050],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_green_capex']['value'][2050]),
             'unit': scenarioInputDefault['params']['cost_green_capex']['unit'],
             'step': 10,
         },
         'cost_green_elec_2020': {
             'name': f"{scenarioInputDefault['params']['cost_green_elec']['desc']} in 2020",
-            'value': scenarioInputDefault['params']['cost_green_elec']['value']['RE'][2020],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_green_elec']['value']['RE'][2020]),
             'unit': scenarioInputDefault['params']['cost_green_elec']['unit'],
             'step': 1,
         },
         'cost_green_elec_2050': {
             'name': f"{scenarioInputDefault['params']['cost_green_elec']['desc']} in 2050",
-            'value': scenarioInputDefault['params']['cost_green_elec']['value']['RE'][2050],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_green_elec']['value']['RE'][2050]),
             'unit': scenarioInputDefault['params']['cost_green_elec']['unit'],
             'step': 1,
         },
         'ci_green_elec': {
             'name': f"{scenarioInputDefault['params']['ci_green_elec']['desc']}",
-            'value': scenarioInputDefault['params']['ci_green_elec']['value']['RE']['gwp100'],
+            'value': __getValWOUnc(scenarioInputDefault['params']['ci_green_elec']['value']['RE']['gwp100']),
             'unit': scenarioInputDefault['params']['ci_green_elec']['unit'],
             'step': 0.001,
         },
         'green_ocf': {
             'name': scenarioInputDefault['params']['green_ocf']['desc'],
-            'value': scenarioInputDefault['params']['green_ocf']['value'],
-            'unit': "%",
+            'value': __getValWOUnc(scenarioInputDefault['params']['green_ocf']['value']),
+            'unit': '%',
             'step': 1,
         },
     }
@@ -182,37 +186,37 @@ def getSimpleWidgets(scenarioInputDefault: dict):
     param_fields_blue = {
         'cost_blue_capex_heb': {
             'name': f"{scenarioInputDefault['params']['cost_blue_capex']['desc']} of SMR+LCRCCS",
-            'value': scenarioInputDefault['params']['cost_blue_capex']['value']['smr+lcrccs'][2050],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_capex']['value']['smr+lcrccs'][2050]),
             'unit': f"{scenarioInputDefault['params']['cost_blue_capex']['unit']} per 10^5 Nm³/h",
             'step': 0.01,
         },
         'cost_blue_capex_leb': {
             'name': f"{scenarioInputDefault['params']['cost_blue_capex']['desc']} of ATR+HCRCCS",
-            'value': scenarioInputDefault['params']['cost_blue_capex']['value']['atr+hcrccs'][2050],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_capex']['value']['atr+hcrccs'][2050]),
             'unit': f"{scenarioInputDefault['params']['cost_blue_capex']['unit']} per 10^5 Nm³/h",
             'step': 0.01,
         },
         'cost_blue_cts_2020': {
             'name': f"{scenarioInputDefault['params']['cost_blue_cts']['desc']} in 2020",
-            'value': scenarioInputDefault['params']['cost_blue_cts']['value'][2020],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_cts']['value'][2020]),
             'unit': scenarioInputDefault['params']['cost_blue_cts']['unit'],
             'step': 1,
         },
         'cost_blue_cts_2050': {
             'name': f"{scenarioInputDefault['params']['cost_blue_cts']['desc']} in 2050",
-            'value': scenarioInputDefault['params']['cost_blue_cts']['value'][2050],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_cts']['value'][2050]),
             'unit': scenarioInputDefault['params']['cost_blue_cts']['unit'],
             'step': 1,
         },
         'cost_blue_eff_heb': {
             'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of SMR+LCRCCS",
-            'value': scenarioInputDefault['params']['cost_blue_eff']['value']['smr+lcrccs'],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_eff']['value']['smr+lcrccs']),
             'unit': scenarioInputDefault['params']['cost_blue_eff']['unit'],
             'step': 0.0001,
         },
         'cost_blue_eff_leb': {
             'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of ATR+HCRCCS",
-            'value': scenarioInputDefault['params']['cost_blue_eff']['value']['atr+hcrccs'],
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_eff']['value']['atr+hcrccs']),
             'unit': scenarioInputDefault['params']['cost_blue_eff']['unit'],
             'step': 0.0001,
         }
@@ -254,3 +258,13 @@ def getSimpleWidgets(scenarioInputDefault: dict):
     )
 
     return widget_simple_options, widget_simple_green, widget_simple_blue
+
+
+# get value without uncertainty
+def __getValWOUnc(value: Union[int, float, str]):
+    if isinstance(value, float) or isinstance(value, int):
+        return value
+    elif isinstance(value, str):
+        return re.split(r" [+-][+-]? ", value)[0]
+    else:
+        raise Exception("Unknown variable type.")

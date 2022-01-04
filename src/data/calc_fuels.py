@@ -8,7 +8,7 @@ from src.data.calc_cost import calcCost
 
 # calculate fuel data
 def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str = 'gwp100', levelised: bool = False):
-    fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_u', 'ci', 'ci_u'])
+    fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_uu', 'cost_ul', 'ci', 'ci_uu', 'ci_ul'])
 
     fuelSpecs = {'names': {}, 'colours': {}}
 
@@ -22,20 +22,25 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
             levelisedCost = calcCost(currentParams, fuel)
             levelisedCI = calcCI(currentParams, fuel, gwp)
 
-            cost = sum(levelisedCost[component][0] for component in levelisedCost)
-            ci = sum(levelisedCI[component][0] for component in levelisedCI)
-            cost_u = math.sqrt(sum((levelisedCost[component][1])**2 for component in levelisedCost))
-            ci_u = math.sqrt(sum((levelisedCI[component][1])**2 for component in levelisedCI))
+            newFuel = {'fuel': fuel_id, 'year': t}
 
-            newFuel = {'fuel': fuel_id, 'year': t, 'cost': cost, 'cost_u': cost_u, 'ci': ci, 'ci_u': ci_u}
+            newFuel['cost'] = sum(levelisedCost[component][0] for component in levelisedCost)
+            newFuel['cost_uu'] = math.sqrt(sum((levelisedCost[component][1])**2 for component in levelisedCost))
+            newFuel['cost_ul'] = math.sqrt(sum((levelisedCost[component][2])**2 for component in levelisedCost))
+
+            newFuel['ci'] = sum(levelisedCI[component][0] for component in levelisedCI)
+            newFuel['ci_uu'] = math.sqrt(sum((levelisedCI[component][1])**2 for component in levelisedCI))
+            newFuel['ci_ul'] = math.sqrt(sum((levelisedCI[component][2])**2 for component in levelisedCI))
 
             if levelised:
                 for component in levelisedCost:
                     newFuel[f"cost__{component}"] = levelisedCost[component][0]
-                    newFuel[f"cost_u__{component}"] = levelisedCost[component][1]
+                    newFuel[f"cost_uu__{component}"] = levelisedCost[component][1]
+                    newFuel[f"cost_ul__{component}"] = levelisedCost[component][2]
                 for component in levelisedCI:
                     newFuel[f"ci__{component}"] = levelisedCI[component][0]
-                    newFuel[f"ci_u__{component}"] = levelisedCI[component][1]
+                    newFuel[f"ci_uu__{component}"] = levelisedCI[component][1]
+                    newFuel[f"ci_ul__{component}"] = levelisedCI[component][2]
 
             fuelData = fuelData.append(newFuel, ignore_index=True)
 
@@ -44,9 +49,15 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
 
 # convert dataframe of parameters/coefficients to a simple dict
 def getCurrentAsDict(full_data: pd.DataFrame, t: int):
-    currentData = {}
+    currentDataValue = {}
+    currentDataUncUp = {}
+    currentDataUncLo = {}
 
     for p in list(full_data.query("year == {}".format(t)).name):
-        currentData[p] = full_data.query("year == {} & name == '{}'".format(t, p)).iloc[0].value
+        datum = full_data.query("year == {} & name == '{}'".format(t, p)).iloc[0]
+        currentDataValue[p] = datum.value
+        currentDataUncUp[p] = datum.uncertainty if datum.isnull().uncertainty is not None else 0.0
+        currentDataUncLo[p] = datum.uncertainty_lower if not datum.isnull().uncertainty_lower else \
+                              datum.uncertainty if datum.isnull().uncertainty is not None else 0.0
 
-    return currentData
+    return currentDataValue, currentDataUncUp, currentDataUncLo

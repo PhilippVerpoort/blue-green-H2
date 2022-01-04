@@ -131,8 +131,8 @@ def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: l
 
         # fuel line
         traces.append(go.Scatter(x=thisData.ci*1000, y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ci_u*1000, thickness=3),
-            error_y=dict(type='data', array=thisData.cost_u, thickness=3),
+            error_x=dict(type='data', array=thisData.ci_uu*1000, arrayminus=thisData.ci_ul*1000, thickness=3),
+            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=3),
             name=name,
             legendgroup=fuel,
             mode="markers+lines",

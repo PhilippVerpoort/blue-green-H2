@@ -1,6 +1,11 @@
+import re
+from typing import Union
+
 import yaml
 from dash.exceptions import PreventUpdate
 
+
+# simple update
 def updateScenarioInputSimple(scenarioInput: dict,
                               simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
                               simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,
@@ -10,37 +15,84 @@ def updateScenarioInputSimple(scenarioInput: dict,
                               simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
                               simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,
                               advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
-
-    # update options
+    # update gwp option
     scenarioInput['options']['gwp'] = simple_gwp
-    scenarioInput['params']['ci_ng_methaneleakage']['value'] = simple_leakage
-    scenarioInput['params']['cost_ng_price']['value'] = simple_ng_price
-    scenarioInput['params']['lifetime']['value'] = simple_lifetime
-    scenarioInput['params']['irate']['value'] = simple_irate
 
-    # update green data
-    scenarioInput['params']['cost_green_capex']['value'][2020] = simple_cost_green_capex_2020
-    scenarioInput['params']['cost_green_capex']['value'][2050] = simple_cost_green_capex_2050
-    scenarioInput['params']['cost_green_elec']['value']['RE'][2020] = simple_cost_green_elec_2020
-    scenarioInput['params']['cost_green_elec']['value']['RE'][2050] = simple_cost_green_elec_2050
-    scenarioInput['params']['ci_green_elec']['value']['RE'][simple_gwp] = simple_ci_green_elec
-    scenarioInput['params']['green_ocf']['value'] = simple_green_ocf
+    # define dict containing all value updates
+    allUpdates = {
+        # general options
+        'ci_ng_methaneleakage': simple_leakage,
+        'cost_ng_price': {2025: simple_ng_price, 2050: simple_ng_price},
+        'lifetime': simple_lifetime,
+        'irate': simple_irate,
 
-    # update blue data
-    scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2020] = simple_cost_blue_capex_heb
-    scenarioInput['params']['cost_blue_capex']['value']['smr+lcrccs'][2030] = simple_cost_blue_capex_heb
-    scenarioInput['params']['cost_blue_capex']['value']['smr+lcrccs'][2050] = simple_cost_blue_capex_heb
-    scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2020] = simple_cost_blue_capex_leb
-    scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2030] = simple_cost_blue_capex_leb
-    scenarioInput['params']['cost_blue_capex']['value']['atr+hcrccs'][2050] = simple_cost_blue_capex_leb
-    scenarioInput['params']['cost_blue_cts']['value'][2020] = simple_cost_blue_cts_2020
-    scenarioInput['params']['cost_blue_cts']['value'][2050] = simple_cost_blue_cts_2050
-    scenarioInput['params']['cost_blue_eff']['value']['smr+lcrccs'] = simple_cost_blue_eff_heb
-    scenarioInput['params']['cost_blue_eff']['value']['atr+hcrccs'] = simple_cost_blue_eff_leb
+        # green data
+        'cost_green_capex': {2020: simple_cost_green_capex_2020, 2050: simple_cost_green_capex_2050},
+        'cost_green_elec': {'RE': {2020: simple_cost_green_elec_2020, 2050: simple_cost_green_elec_2050}},
+        'ci_green_elec': {'RE': {simple_gwp: simple_ci_green_elec}},
+        'green_ocf': simple_green_ocf,
+
+        # blue data
+        'cost_blue_capex': {
+            'smr+lcrccs': {
+                2020: simple_cost_blue_capex_heb,
+                2050: simple_cost_blue_capex_heb,
+            },
+            'atr+hcrccs': {
+                2025: simple_cost_blue_capex_leb,
+                2030: simple_cost_blue_capex_leb,
+                2050: simple_cost_blue_capex_leb,
+            },
+        },
+        'cost_blue_cts': {
+            2020: simple_cost_blue_cts_2020,
+            2050: simple_cost_blue_cts_2050,
+        },
+        'cost_blue_eff': {
+            'smr+lcrccs': simple_cost_blue_eff_heb,
+            'atr+hcrccs': simple_cost_blue_eff_leb,
+        },
+    }
+
+    # make updates accordingly
+    for paramKey, field in allUpdates.items():
+        __updateParameter(scenarioInput['params'][paramKey], {'value': field})
 
     return scenarioInput
 
 
+# function to update parameter value based on field from above
+def __updateParameter(param, field):
+    if not isinstance(param, dict):
+        raise Exception('Cannot update value. This should be a dict.')
+
+    for key, val in field.items():
+        if isinstance(param[key], dict):
+            __updateParameter(param[key], val)
+        elif isinstance(param[key], float) or isinstance(param[key], int):
+            param[key] = val
+        elif isinstance(param[key], str):
+            param[key] = __replaceValue(val, param[key])
+        else:
+            raise Exception('Unknown type of value variable.')
+
+
+# update parameter in case it's a string containing uncertainty values
+def __replaceValue(new_value: Union[int, float], param: str):
+    if ' +- ' in param:
+        nums = param.split(' +- ')
+        uncertainty = float(nums[1])
+        return f"{new_value} +- {uncertainty}"
+    elif ' + ' in param and ' - ' in param:
+        nums = re.split(r" [+-] ", param)
+        uncertainty = float(nums[1])
+        uncertainty_lower = float(nums[2])
+        return f"{new_value} + {uncertainty} - {uncertainty_lower}"
+    else:
+        raise Exception('Incorrect syntax for uncertainty.')
+
+
+# advanced update
 def updateScenarioInputAdvanced(scenarioInput: dict,
                                 simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
                                 simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,

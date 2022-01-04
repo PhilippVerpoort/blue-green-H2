@@ -9,13 +9,13 @@ from plotly.colors import hex_to_rgb
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
+def plotFig1(fuelData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
              plotConfig: dict, export_img: bool = True):
     # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument
-    plotData, linesCols = __selectPlotData(fuelsData, config['showFuels'])
+    plotData, linesCols = __selectPlotData(fuelData, config['showFuels'])
 
     # select which FSCPs to plot based on function argument
     plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, config['showFSCPs'])
@@ -43,15 +43,15 @@ def plotFig1(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
     return fig
 
 
-def __selectPlotData(fuelsData: pd.DataFrame, showFuels: dict = None):
+def __selectPlotData(fuelData: pd.DataFrame, showFuels: dict = None):
     linesCols = {}
 
     if showFuels is None:
-        plotData = fuelsData.query("year == 2020")
+        plotData = fuelData.query("year == 2020")
     else:
-        plotData = pd.DataFrame(columns=fuelsData.keys())
+        plotData = pd.DataFrame(columns=fuelData.keys())
         for cols, year, fuel in showFuels:
-            addFuel = fuelsData.query("year == {} & fuel == '{}'".format(year, fuel)).reset_index(drop=True)
+            addFuel = fuelData.query("year=={} & fuel=='{}'".format(year, fuel)).reset_index(drop=True)
             addFuel.index += len(plotData)
             linesCols[len(plotData)] = cols
             plotData = pd.concat([plotData, addFuel])
@@ -191,7 +191,8 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         # generate plotting data
         x = np.linspace(0, config['plotting']['carb_price_max'], 120)
         y = row.cost + row.ci * x
-        y_u = np.sqrt(row.cost_u**2 + row.ci_u**2 * x**2)
+        y_uu = np.sqrt(row.cost_uu**2 + row.ci_uu**2 * x**2)
+        y_ul = np.sqrt(row.cost_ul**2 + row.ci_ul**2 * x**2)
 
         # fuel line
         traces.append((index, go.Scatter(x=x, y=y,
@@ -207,7 +208,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
                 name='Uncertainty Range',
                 legendgroup=f"{fuel}_{year}",
                 x=np.concatenate((x, x[::-1])),
-                y=np.concatenate((y+y_u, (y-y_u)[::-1])),
+                y=np.concatenate((y+y_uu, (y-y_ul)[::-1])),
                 mode='lines',
                 marker=dict(color=col),
                 fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .1)),
@@ -227,7 +228,7 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
         name = f"Switching from <b>{config['names'][row.fuel_x]}</b><br>to <b>{config['names'][row.fuel_y]}</b>"
 
         # circle at intersection
-        traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_u,), thickness=0.0),
+        traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_uu,), arrayminus=(row.fscp_ul,), thickness=0.0),
                                  mode="markers",
                                  marker=dict(symbol=row.symbol, size=24, line={'width': 4}, color='Black'),
                                  showlegend=False,
@@ -241,7 +242,7 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
 
         # error bar near x-axis
         traces.append((index, go.Scatter(x=(row.fscp,), y = (0,),
-                                 error_x=dict(type='data', array=(row.fscp_u,)) if config['plotting']['uncertainty'] else None,
+                                 error_x=dict(type='data', array=(row.fscp_uu,), arrayminus=(row.fscp_ul,)) if config['plotting']['uncertainty'] else None,
                                  marker=dict(symbol='x-thin', size=10, line={'width': 4}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))

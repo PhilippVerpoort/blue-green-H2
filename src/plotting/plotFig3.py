@@ -56,7 +56,7 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict = None):
             plotFSCP = pd.concat([plotFSCP, addFSCP], ignore_index=True)
 
     plotFSCP['year'] = plotFSCP['year_x']
-    plotFSCP = plotFSCP[['fuel_x', 'fuel_y', 'year', 'fscp', 'fscp_u', 'plotIndex']]
+    plotFSCP = plotFSCP[['fuel_x', 'fuel_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul', 'plotIndex']]
 
     return plotFSCP, FSCPsCols
 
@@ -172,7 +172,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
 
         # fuel line
         traces.append((index, go.Scatter(x=thisData['year'], y=thisData['fscp'],
-            error_y=dict(type='data', array=thisData['fscp_u'], thickness=3),
+            error_y=dict(type='data', array=thisData['fscp_uu'], arrayminus=thisData['fscp_ul'], thickness=3),
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
             mode="lines+markers",

@@ -65,8 +65,10 @@ params:
   # ng parameters
   cost_ng_price:
     desc: Natural gas price (per LHV)
-    type: const
-    value: 6.0
+    type: linear
+    value:
+      2025: 6.0 +- 0.2
+      2050: 6.0 + 0.5 - 2.0
     unit: EUR/GJ
     source: based on IEAGHG - which contains sensitivity analysis using 2Euro to 18Euro - http://documents.ieaghg.org/index.php/s/HKtMncwfw2vaBxl
 
@@ -223,8 +225,8 @@ params:
     desc: Green CAPEX
     type: linear
     value:
-      2020: 1200.0
-      2050: 400.0
+      2020: 1200
+      2050: 400
     unit: USD/kW
     source: based on IEA (2019) https://www.iea.org/reports/the-future-of-hydrogen/data-and-assumptions
 
@@ -273,7 +275,7 @@ params:
   green_ocf:
     desc: Operational capacity factor
     type: const
-    value: 50.0
+    value: 50
     unit: percent
     source: feasible ranges for combined wind and solar?
 
@@ -286,5 +288,5 @@ params:
   irate:
     desc: Interest rate
     type: const
-    value: 8.0
+    value: 8
     unit: percent

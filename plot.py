@@ -15,6 +15,7 @@ from src.plotting.plotFig7 import plotFig7
 scenario = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
 fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenario)
 
+
 # load plotting cfg
 plotting_cfg = loadInitialPlottingCfg()
 
