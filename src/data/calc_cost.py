@@ -1,4 +1,4 @@
-known_blue_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
+known_tech_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
 known_elec_srcs = ['RE', 'mix']
 
 
@@ -22,22 +22,22 @@ def getCostNG(par: dict, fuel: dict):
 
 
 def getCostParamsBlue(par: dict, fuel: dict):
-    CR = fuel['blue_type']
-    if CR not in known_blue_types:
-        raise Exception("Blue capture rate type unknown: {}".format(CR))
+    tech_type = fuel['tech_type']
+    if tech_type not in known_tech_types:
+        raise Exception("Blue capture rate type unknown: {}".format(tech_type))
 
     i = par['irate']
     n = par['lifetime']
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        C_pl=par[f"cost_blue_capex_{CR}"] if fuel['include_capex'] else 0.0,
+        C_pl=par[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
         P_pl=par['cost_blue_plantsize'],
         flh=par['cost_blue_flh'],
         p_ng=par['cost_ng_price'],
-        eff=par[f"cost_blue_eff_{CR}"],
+        eff=par[f"cost_blue_eff_{tech_type}"],
         c_CTS=par['cost_blue_cts'],
-        emi=par[f"cost_blue_emiForCTS_{CR}"],
+        emi=par[f"cost_blue_emiForCTS_{tech_type}"],
     )
 
 
@@ -53,8 +53,9 @@ def getCostBlue(FCR, C_pl, P_pl, flh, p_ng, eff, c_CTS, emi):
 
 
 def getCostParamsGreen(par: dict, fuel: dict):
-    ES = fuel['elecsrc']
-    if ES not in known_elec_srcs: raise Exception(f"Unknown elecsrc type: {ES}")
+    tech_type = fuel['tech_type']
+    if tech_type not in known_elec_srcs:
+        raise Exception(f"Green electricity source type unknown: {tech_type}")
 
     i = par['irate']
     n = par['lifetime']
@@ -62,8 +63,8 @@ def getCostParamsGreen(par: dict, fuel: dict):
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
         c_pl=par['cost_green_capex'] if fuel['include_capex'] else 0.0,
-        ocf=par['green_ocf'] if ES != 'mix' else 1.0,
-        p_el=par[f"cost_green_elec_{ES}"],
+        ocf=par['green_ocf'] if tech_type != 'mix' else 1.0,
+        p_el=par[f"cost_green_elec_{tech_type}"],
         eff=par['ci_green_eff'],
     )
 

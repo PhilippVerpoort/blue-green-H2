@@ -96,9 +96,8 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                        desc=fuels[fuel]['desc'],
                        colour=fuels[fuel]['colour'],
                        type=fuels[fuel]['type'],
-                       blue_type=fuels[fuel]['blue_type'] if 'blue_type' in fuels[fuel] else None,
+                       tech_type=fuels[fuel]['tech_type'] if 'tech_type' in fuels[fuel] else None,
                        include_capex=fuels[fuel]['include_capex'] if 'include_capex' in fuels[fuel] else None,
-                       elecsrc=fuels[fuel]['elecsrc'] if 'elecsrc' in fuels[fuel] else None
                        ) for fuel in fuels]
 
     widget_advanced_fuels = dbc.Card(
@@ -116,9 +115,8 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                     {'id': 'desc', 'name': 'Fuel name'},
                                     {'id': 'colour', 'name': 'Colour'},
                                     {'id': 'type', 'name': 'Fuel type', 'presentation': 'dropdown'},
-                                    {'id': 'blue_type', 'name': 'Blue type', 'presentation': 'dropdown'},
+                                    {'id': 'tech_type', 'name': 'Tech type', 'presentation': 'dropdown'},
                                     {'id': 'include_capex', 'name': 'Include CAPEX', 'presentation': 'dropdown'},
-                                    {'id': 'elecsrc', 'name': 'Electricity source', 'presentation': 'dropdown'},
                                 ],
                                 data=fuels_data,
                                 editable=True,
@@ -130,12 +128,14 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                             {'value': 'green', 'label': 'Green Hydrogen'},
                                         ]
                                     },
-                                    'blue_type': {
+                                    'tech_type': {
                                         'options': [
                                             {'value': 'smr', 'label': 'SMR only'},
                                             {'value': 'smr+lcrccs', 'label': 'SMR+LCRCCS'},
                                             {'value': 'smr+hcrccs', 'label': 'SMR+HCRCCS'},
                                             {'value': 'atr+hcrccs', 'label': 'ATR+HCRCCS'},
+                                            {'value': 'RE', 'label': 'RE only'},
+                                            {'value': 'mix', 'label': 'Elec. mix'},
                                         ]
                                     },
                                     'include_capex': {
@@ -144,15 +144,6 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                             {'value': False, 'label': 'False'},
                                         ]
                                     },
-                                    'elecsrc': {
-                                        'options': [
-                                            {'value': 'hydro', 'label': 'Hydro power'},
-                                            {'value': 'wind', 'label': 'Wind power onshore'},
-                                            {'value': 'solar', 'label': 'Solar PV'},
-                                            {'value': 'custom', 'label': 'Use custom numbers'},
-                                            {'value': 'mix', 'label': 'EU electricity mix'},
-                                        ]
-                                    }
                                 }
                             ),
                             html.Div(id='table-fuels-dropdown-container'),

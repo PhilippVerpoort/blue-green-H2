@@ -14,49 +14,49 @@ fuels:
     desc: Grey Hydrogen (SMR w/o CCS)
     type: blue
     colour: '#bfbfbf'
-    blue_type: smr
+    tech_type: smr
     include_capex: True
 
   blue HEB:
     desc: Blue Hydrogen (SMR+56%CCS)
     type: blue
     colour: '#3647a3'
-    blue_type: smr+lcrccs
+    tech_type: smr+lcrccs
     include_capex: True
 
   blue HEB woCAPEX:
     desc: Blue Hydrogen (SMR+56%CCS, w/o CAPEX)
     type: blue
     colour: '#35638a'
-    blue_type: smr+lcrccs
+    tech_type: smr+lcrccs
     include_capex: False
 
   blue LEB retro:
     desc: Blue Hydrogen (SMR+90%CCS)
     type: blue
     colour: '#62b7fe'
-    blue_type: smr+hcrccs
+    tech_type: smr+hcrccs
     include_capex: True
 
   blue LEB:
     desc: Blue Hydrogen (ATR+93%CCS)
     type: blue
     colour: '#589ACE'
-    blue_type: atr+hcrccs
+    tech_type: atr+hcrccs
     include_capex: True
 
   green RE:
     desc: Green Hydrogen (RE only)
     type: green
     colour: '#6ac100'
-    elecsrc: RE
+    tech_type: RE
     include_capex: True
 
   green mix:
     desc: Green Hydrogen (elec. mix)
     type: green
     colour: '#708f70'
-    elecsrc: mix
+    tech_type: mix
     include_capex: True
 
 

@@ -1,4 +1,4 @@
-known_blue_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
+known_tech_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
 known_elec_srcs = ['RE', 'mix']
 
 
@@ -34,14 +34,14 @@ def getCING(b, mlr, mci):
 
 
 def getCIParamsBlue(par: dict, fuel: dict, GWP: str):
-    CR = fuel['blue_type']
-    if CR not in known_blue_types:
-        raise Exception("Blue capture rate type unknown: {}".format(CR))
+    tech_type = fuel['tech_type']
+    if tech_type not in known_tech_types:
+        raise Exception("Blue capture rate type unknown: {}".format(tech_type))
 
     return dict(
-        b=par[f"ci_blue_base_{CR}_{GWP}"],
+        b=par[f"ci_blue_base_{tech_type}_{GWP}"],
         mlr=par['ci_ng_methaneleakage'],
-        mci=par[f"ci_blue_methaneleakage_perrate_{CR}_{GWP}"],
+        mci=par[f"ci_blue_methaneleakage_perrate_{tech_type}_{GWP}"],
     )
 
 
@@ -55,13 +55,14 @@ def getCIBlue(b, mlr, mci):
 
 
 def getCIParamsGreen(par: dict, fuel: dict, GWP: str):
-    ES = fuel['elecsrc']
-    if ES not in known_elec_srcs: raise Exception(f"Unknown elecsrc type: {ES}")
+    tech_type = fuel['tech_type']
+    if tech_type not in known_elec_srcs:
+        raise Exception(f"Green electricity source type unknown: {tech_type}")
 
     return dict(
         b=par[f"ci_green_base_{GWP}"],
         eff=par[f"ci_green_eff"],
-        eci=par[f"ci_green_elec_{ES}_{GWP}"],
+        eci=par[f"ci_green_elec_{tech_type}_{GWP}"],
     )
 
 
