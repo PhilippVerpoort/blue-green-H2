@@ -171,7 +171,8 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
         col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"] if f"{fuel_x} to {fuel_y}" in config['fscp_colours'] else config['colours'][fuel_y]
 
         # fuel line
-        traces.append((index, go.Scatter(x=thisData['year'], y=thisData['fscp'],
+        shift = (index+1)//2*0.2
+        traces.append((index, go.Scatter(x=thisData['year']+shift, y=thisData['fscp'],
             error_y=dict(type='data', array=thisData['fscp_uu'], arrayminus=thisData['fscp_ul'], thickness=3),
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
