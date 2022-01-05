@@ -74,17 +74,23 @@ params:
 
   ci_ng_base:
     desc: Base Emissions of NG (per LHV)
-    type: const
+    type: linear
     value:
-      gwp100: 65.0
-      gwp20: 66.0
+      gwp100:
+        2025: 65.0 +- 0.0
+        2050: 65.0 +- 5.0
+      gwp20:
+        2025: 66.0 +- 0.0
+        2050: 66.0 +- 5.0
     unit: gCO2eq/MJ
     source: The second Excel Spreadsheet Christian sent on 03/11/2021
 
   ci_ng_methaneleakage:
     desc: Amount of methan leakage in production chain (relative to total amount used)
-    type: const
-    value: 0.5
+    type: linear
+    value:
+      2025: 1.0 + 1.0 - 0.5
+      2050: 0.5 +- 0.5
     unit: percent
 
   ci_ng_methaneleakage_perrate:
@@ -102,18 +108,18 @@ params:
     type: linear
     value:
       smr:
-        2020: 170.95
-        2050: 170.95
+        2020: 170.95 +- 20.0
+        2050: 170.95 +- 10.0
       smr+lcrccs:
-        2020: 201.80
-        2050: 201.80
+        2020: 201.80 +- 20.0
+        2050: 201.80 +- 10.0
       smr+hcrccs:
-        2020: 305.33
-        2050: 305.33
+        2020: 305.33 +- 20.0
+        2050: 305.33 +- 10.0
       atr+hcrccs:
-        2025: 360.00
-        2030: 240.00
-        2050: 210.00
+        2025: 360.00 +- 40.0
+        2030: 240.00 +- 30.0
+        2050: 210.00 +- 10.0
     unit: MEUR
     source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84 / ATR from Simon
 
@@ -122,18 +128,18 @@ params:
     type: linear
     value:
       smr:
-        2020: 8.06
-        2050: 8.06
+        2020: 8.06 +- 0.5
+        2050: 8.06 +- 0.5
       smr+lcrccs:
-        2020: 9.28
-        2050: 9.28
+        2020: 9.28 +- 0.5
+        2050: 9.28 +- 0.5
       smr+hcrccs:
-        2020: 12.03
-        2050: 12.03
+        2020: 12.03 +- 0.5
+        2050: 12.03 +- 0.5
       atr+hcrccs:
-        2020: 9.6
-        2030: 7.2
-        2050: 6.3
+        2020: 9.6 +- 0.5
+        2030: 7.2 +- 0.5
+        2050: 6.3 +- 0.5
     unit: MEUR
     source: IEAGHG, p. 18, Table 4
 
@@ -155,10 +161,10 @@ params:
     desc: Fuel efficiency
     type: const
     value:
-      smr: 0.7592
-      smr+lcrccs: 0.7351
-      smr+hcrccs: 0.6910
-      atr+hcrccs: 0.7353
+      smr: 0.7592 +- 0.05
+      smr+lcrccs: 0.7351 +- 0.05
+      smr+hcrccs: 0.6910 +- 0.05
+      atr+hcrccs: 0.7353 +- 0.05
     unit: 1
     source: IEAGHG, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream
 
@@ -167,9 +173,9 @@ params:
     type: const
     value:
       smr: 0.0
-      smr+lcrccs: 0.4660
-      smr+hcrccs: 0.8004
-      atr+hcrccs: 0.8004
+      smr+lcrccs: 0.4660 +- 0.05
+      smr+hcrccs: 0.8004 +- 0.05
+      atr+hcrccs: 0.8004 +- 0.05
     unit: kgCO2/Nm3_H2
     source: IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured
 
@@ -177,8 +183,8 @@ params:
     desc: Carbon transport and storage cost
     type: linear
     value: # (per tCO2, i.e. independent of capture rate)
-      2020: 10.0
-      2050: 10.0
+      2020: 10.0 +- 5.0
+      2050: 10.0 + 20.0 - 5.0
     unit: EUR/tCO2
     source: IEAGHG - 10Euro/t, which increases to 40Euro/t
 
@@ -187,17 +193,17 @@ params:
     type: const
     value:
       smr:
-        gwp100: 87.2
-        gwp20: 89.7
+        gwp100: 87.2 +- 10.0
+        gwp20: 89.7 +- 10.0
       smr+lcrccs:
-        gwp100: 46.3
-        gwp20: 46.6
+        gwp100: 46.3 +- 10.0
+        gwp20: 46.6 +- 10.0
       smr+hcrccs:
-        gwp100: 20.8
-        gwp20: 21.5
+        gwp100: 20.8 +- 10.0
+        gwp20: 21.5 +- 10.0
       atr+hcrccs:
-        gwp100: 20.8
-        gwp20: 21.5
+        gwp100: 20.8 +- 10.0
+        gwp20: 21.5 +- 10.0
     unit: gCO2eq/MJ
     source: Christians Excel Spreadsheet 29/10/2021
 
@@ -225,8 +231,8 @@ params:
     desc: Green CAPEX
     type: linear
     value:
-      2020: 1200
-      2050: 400
+      2020: 1200 +- 100
+      2050: 400 + 100 - 200
     unit: USD/kW
     source: based on IEA (2019) https://www.iea.org/reports/the-future-of-hydrogen/data-and-assumptions
 
@@ -235,20 +241,24 @@ params:
     type: linear
     value:
       RE:
-        2020: 60.0
-        2050: 30.0
+        2020: 60.0 +- 10.0
+        2050: 30.0 + 10.0 - 20.0
       mix:
-        2020: 300.0
-        2050: 50.0
+        2020: 300.0 +- 20.0
+        2050: 50.0 +- 30.0
     unit: USD/MWh
     source: RE numbers based on IRENA - solar PV https://www.irena.org/publications/2021/Jun/Renewable-Power-Costs-in-2020 // mix numbers are guessed
 
   ci_green_base:
     desc: CI of electrolysis
-    type: const
+    type: linear
     value:
-      gwp100: 0.12
-      gwp20: 0.14
+      gwp100:
+        2025: 0.12 +- 0.02
+        2050: 0.12 + 0.01 - 0.05
+      gwp20:
+        2025: 0.14 +- 0.02
+        2050: 0.14 + 0.01 - 0.05
     unit: kgCO2eq/kgH2
     source: Christians Excel Spreadsheet 29/10/2021
 
@@ -261,14 +271,22 @@ params:
 
   ci_green_elec:
     desc: CI of electricity
-    type: const
+    type: linear
     value:
       RE:
-        gwp100: 0.013
-        gwp20: 0.015
+        gwp100:
+          2025: 0.013 +- 0.02
+          2050: 0.013 + 0.011 - 0.009
+        gwp20:
+          2025: 0.015 +- 0.02
+          2050: 0.015 + 0.011 - 0.009
       mix:
-        gwp100: 0.397
-        gwp20: 0.434
+        gwp100:
+          2025: 0.397 +- 0.05
+          2050: 0.397 + 0.01 - 0.15
+        gwp20:
+          2025: 0.434 +- 0.05
+          2050: 0.434 + 0.01 - 0.15
     unit: kgCO2eq/kWh
     source: Christians Excel Spreadsheet 29/10/2021
     

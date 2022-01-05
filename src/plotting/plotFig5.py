@@ -266,7 +266,7 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
 
     # calculate FSCPs for grid
     leakage_v, delta_cost_v = np.meshgrid(leakage, delta_cost)
-    pBlue['mlr'] = leakage_v
+    pBlue['mlr'] = (leakage_v, 0, 0)
     CIBlue, CIGreen = __getCIs(pBlue, pGreen)
     fscp = delta_cost_v / (CIBlue - CIGreen)
 
@@ -301,7 +301,7 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
     pBlueOther = getCIParamsBlue(*currentParams, fuelBlue, gwpOther)
     # ci0_1 + p_1 * cim_1 = ci0_2 + p_2 * cim_2
     # p_2 = (p_1*cim_1+ci0_1-ci0_2)/cim_2
-    range2  = [(x*pBlue['mci']+pBlue['b']-pBlueOther['b']) / pBlueOther['mci']
+    range2  = [(x*pBlue['mci']+pBlue['b'][0]-pBlueOther['b'][0]) / pBlueOther['mci']
                for x in [xmin, xmax]]
     range3 = [CIBlue[0][0], CIBlue[0][-1]]
 
@@ -336,11 +336,11 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
     # 0 = CIGreen(x) - CIBlue =  CIGreen(1) + eff* ((x-1) * eci + (1-x) * gci) - CIBlue
     # ((CIBlue - CIGreen)/eff + eci - gci) / (eci - gci) = x
     CIBlue, CIGreen = __getCIs(pBlue, pGreen)
-    xvline = (CIBlue - CIGreen)/pGreen['eff']/(pGreen['eci'] - gridCI) + 1
+    xvline = (CIBlue - CIGreen)/pGreen['eff']/(pGreen['eci'][0] - gridCI) + 1
 
     # calculate FSCPs for grid
     renewablesShare_v, delta_cost_v = np.meshgrid(renewablesShare, delta_cost)
-    pGreen['eci'] = renewablesShare_v * pGreen['eci'] + (1-renewablesShare_v) * gridCI
+    pGreen['eci'] = (renewablesShare_v * pGreen['eci'][0] + (1-renewablesShare_v) * gridCI, 0, 0)
     CIBlue, CIGreen = __getCIs(pBlue, pGreen)
     fscp = delta_cost_v / (CIBlue - CIGreen)
 
@@ -381,8 +381,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
     # b_1 + eff*(p_1*eci_1 + (1-p_1)*gci_1) = b_2 + eff*(p_2*eci_2 + (1-p_2)*gci_2)
     # eff*p_2*(eci_2-gci_2) = b_1-b_2 + eff*(gci_1-gci_2) + eff*p_1*(eci_1-gci_1)
     # p_2 = (b_1-b_2 + eff*(gci_1-gci_2) + eff*p_1*(eci_1-gci_1))/(eff*(eci_2-gci_2))
-    range2  = [(pGreen['b']-pGreenOther['b'] + pGreen['eff']*(gridCI-gridCIOther) + pGreen['eff']*x*(pGreen['eci']-gridCI))/
-               (pGreenOther['eff'] * (pGreenOther['eci']-gridCIOther)) for x in [xmin, xmax]]
+    range2  = [(pGreen['b'][0]-pGreenOther['b'][0] + pGreen['eff']*(gridCI-gridCIOther) + pGreen['eff']*x*(pGreen['eci'][0]-gridCI))/
+               (pGreenOther['eff'] * (pGreenOther['eci'][0]-gridCIOther)) for x in [xmin, xmax]]
     range3 = [CIGreen[0][0], CIGreen[0][-1]]
 
     return traces, range2, range3, xvline

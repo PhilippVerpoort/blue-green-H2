@@ -39,11 +39,16 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
     for i, par in enumerate(varyGreenParams):
         j = i + 1
         pGreenMod = pGreen.copy()
+        hasUncertainty = isinstance(pGreenMod[par], tuple)
+        if hasUncertainty:
+            pGreenMod[par] = pGreenMod[par][0]
         pGreenMod[par] = np.linspace(pGreenMod[par] - config['plotting'][f"delta_x{j}"],
                                      pGreenMod[par] + config['plotting'][f"delta_x{j}"],
                                      config['plotting']['n_samples'])
-        delta, delta_u = __getCostDiff(pBlue, pGreenMod)
         x = pGreenMod[par]
+        if hasUncertainty:
+            pGreenMod[par] = (pGreenMod[par], 0.0, 0.0)
+        delta, delta_u = __getCostDiff(pBlue, pGreenMod)
         if par=='c_pl':
             x = x/10**3
         elif par=='ocf':
@@ -55,11 +60,16 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
     for i, par in enumerate(varyBlueParams):
         j = i + 1 + len(varyGreenParams)
         pBlueMod = pBlue.copy()
+        hasUncertainty = isinstance(pBlueMod[par], tuple)
+        if hasUncertainty:
+            pBlueMod[par] = pBlueMod[par][0]
         pBlueMod[par] = np.linspace(pBlueMod[par] - config['plotting'][f"delta_x{j}"],
                                     pBlueMod[par] + config['plotting'][f"delta_x{j}"],
                                     config['plotting']['n_samples'])
-        delta, delta_u = __getCostDiff(pBlueMod, pGreen)
         x = pBlueMod[par]
+        if hasUncertainty:
+            pBlueMod[par] = (pBlueMod[par], 0.0, 0.0)
+        delta, delta_u = __getCostDiff(pBlueMod, pGreen)
         if par=='C_pl':
             x = x/10**6
         fig.add_trace(go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)

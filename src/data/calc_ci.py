@@ -18,20 +18,25 @@ def calcCI(params: dict, fuel: dict, gwp: str):
 
 def getCIParamsNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str):
     return dict(
-        b=par[f"ci_ng_base_{GWP}"],
-        mlr=par['ci_ng_methaneleakage'],
+        b=(
+            par[f"ci_ng_base_{GWP}"],
+            par_uu[f"ci_ng_base_{GWP}"],
+            par_ul[f"ci_ng_base_{GWP}"],
+        ),
+        mlr=(
+            par['ci_ng_methaneleakage'],
+            par_uu['ci_ng_methaneleakage'],
+            par_ul['ci_ng_methaneleakage'],
+        ),
         mci=par[f"ci_ng_methaneleakage_perrate_{GWP}"],
     )
 
 
 def getCING(b, mlr, mci):
+
     return {
-        'base': (b,
-                 b * 0.05,
-                 b * 0.05,),
-        'mleakage': (mlr*mci,
-                     mlr*mci * 0.05,
-                     mlr*mci * 0.05,)
+        'base': b,
+        'mleakage': tuple(e*mci for e in mlr)
     }
 
 
@@ -41,20 +46,25 @@ def getCIParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str)
         raise Exception("Blue capture rate type unknown: {}".format(tech_type))
 
     return dict(
-        b=par[f"ci_blue_base_{tech_type}_{GWP}"],
-        mlr=par['ci_ng_methaneleakage'],
+        b=(
+            par[f"ci_blue_base_{tech_type}_{GWP}"],
+            par_uu[f"ci_blue_base_{tech_type}_{GWP}"],
+            par_ul[f"ci_blue_base_{tech_type}_{GWP}"],
+        ),
+        mlr=(
+            par['ci_ng_methaneleakage'],
+            par_uu['ci_ng_methaneleakage'],
+            par_ul['ci_ng_methaneleakage'],
+        ),
         mci=par[f"ci_blue_methaneleakage_perrate_{tech_type}_{GWP}"],
     )
 
 
 def getCIBlue(b, mlr, mci):
+
     return {
-        'base': (b,
-                 b * 0.05,
-                 b * 0.05,),
-        'mleakage': (mlr*mci,
-                     mlr*mci * 0.05,
-                     mlr*mci * 0.05,)
+        'base': b,
+        'mleakage': tuple(e*mci for e in mlr)
     }
 
 
@@ -64,18 +74,22 @@ def getCIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str
         raise Exception(f"Green electricity source type unknown: {tech_type}")
 
     return dict(
-        b=par[f"ci_green_base_{GWP}"],
+        b=(
+            par[f"ci_green_base_{GWP}"],
+            par_uu[f"ci_green_base_{GWP}"],
+            par_ul[f"ci_green_base_{GWP}"],
+        ),
         eff=par[f"ci_green_eff"],
-        eci=par[f"ci_green_elec_{tech_type}_{GWP}"],
+        eci=(
+            par[f"ci_green_elec_{tech_type}_{GWP}"],
+            par_uu[f"ci_green_elec_{tech_type}_{GWP}"],
+            par_ul[f"ci_green_elec_{tech_type}_{GWP}"],
+        ),
     )
 
 
 def getCIGreen(b, eff, eci):
     return {
-        'base': (b,
-                 b * 0.05,
-                 b * 0.05,),
-        'elec': (eff*eci,
-                 eff*eci * 0.05,
-                 eff*eci * 0.05,),
+        'base': b,
+        'elec': tuple(eff*e for e in eci)
     }
