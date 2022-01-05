@@ -134,15 +134,16 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
     newAxes = __getXAxesStyle(calcedRanges, config)
     fig.update_layout(**newAxes)
 
-
-    # legend settings
+    # update legend styling
     fig.update_layout(
         legend=dict(
             yanchor="top",
             y=0.99,
-            xanchor="center",
-            x=0.197,
-            bgcolor = 'rgba(255,255,255,0.6)',
+            xanchor="left",
+            x=0.005,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
         ),
     )
 
