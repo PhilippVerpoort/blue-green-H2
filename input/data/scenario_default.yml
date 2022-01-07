@@ -264,8 +264,10 @@ params:
 
   ci_green_eff:
     desc: Elec. efficiency
-    type: const
-    value: 55.0
+    type: linear
+    value:
+      2025: 55.0
+      2050: 50.0
     unit: kWh/kgH2
     source: Christians Excel Spreadsheet 29/10/2021
 
