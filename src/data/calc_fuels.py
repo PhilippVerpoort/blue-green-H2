@@ -25,12 +25,12 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
             newFuel = {'fuel': fuel_id, 'year': t}
 
             newFuel['cost'] = sum(levelisedCost[component][0] for component in levelisedCost)
-            newFuel['cost_uu'] = math.sqrt(sum((levelisedCost[component][1])**2 for component in levelisedCost))
-            newFuel['cost_ul'] = math.sqrt(sum((levelisedCost[component][2])**2 for component in levelisedCost))
+            newFuel['cost_uu'] = sum(levelisedCost[component][1] for component in levelisedCost)
+            newFuel['cost_ul'] = sum(levelisedCost[component][2] for component in levelisedCost)
 
             newFuel['ci'] = sum(levelisedCI[component][0] for component in levelisedCI)
-            newFuel['ci_uu'] = math.sqrt(sum((levelisedCI[component][1])**2 for component in levelisedCI))
-            newFuel['ci_ul'] = math.sqrt(sum((levelisedCI[component][2])**2 for component in levelisedCI))
+            newFuel['ci_uu'] = sum(levelisedCI[component][1] for component in levelisedCI)
+            newFuel['ci_ul'] = sum(levelisedCI[component][2] for component in levelisedCI)
 
             if levelised:
                 for component in levelisedCost:
