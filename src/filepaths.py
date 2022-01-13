@@ -8,5 +8,8 @@ def getFilePath(dname, fname):
 def getFilePathAssets(fname):
     return getFilePath('assets/', fname)
 
-def getFilePathInputs(fname):
+def getFilePathInput(fname):
     return getFilePath('input/', fname)
+
+def getFilePathOutput(fname):
+    return getFilePath('output/', fname)

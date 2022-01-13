@@ -1,6 +1,7 @@
 import yaml
 
 from src.data.data import obtainScenarioData
+from src.data.export_params import exportScenarioParams
 from src.plotting.loadcfg import loadInitialPlottingCfg
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
@@ -16,10 +17,12 @@ scenario = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader
 fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenario)
 
 
-# load plotting cfg
-plotting_cfg = loadInitialPlottingCfg()
+# export params to table for paper
+exportScenarioParams(scenario)
+
 
 # create plots (and automatically export to files)
+plotting_cfg = loadInitialPlottingCfg()
 plotFig1(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader))
 plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader))
 plotFig3(fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader))

@@ -4,7 +4,7 @@ from typing import Union
 import pandas as pd
 import yaml
 
-from src.filepaths import getFilePathInputs, getFilePath
+from src.filepaths import getFilePathInput, getFilePath
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.calc_fuels import calcFuelData
 
@@ -45,7 +45,7 @@ def obtainScenarioData(scenario: dict, export_data: bool = True):
 
 # load data from yaml files
 def __loadDataFromFiles():
-    filePath = getFilePathInputs('data/units.yml')
+    filePath = getFilePathInput('data/units.yml')
     yamlData = yaml.load(open(filePath, 'r').read(), Loader=yaml.FullLoader)
     units = yamlData['units']
 
