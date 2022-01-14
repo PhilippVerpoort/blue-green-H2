@@ -6,22 +6,23 @@ from src.filepaths import getFilePathOutput
 def exportScenarioParams(scenario: dict):
     params = []
 
-    for key, val in scenario['params'].items():
-        params.extend(__printScenarioValue(val['desc'], val['unit'], val['value']))
+    for paramKey, paramData in scenario['params'].items():
+        source = paramData['source'] if 'source' in paramData else ''
+        params.extend(__printScenarioValue(paramData['desc'], paramData['unit'], source, paramData['value']))
 
     __writeToFile(params, 'table_scenario_params.csv')
 
 
-def __printScenarioValue(name, unit, value):
+def __printScenarioValue(name, unit, source, value):
     if isinstance(value, dict) and isinstance(list(value.keys())[0], str):
         r = []
         for key, val in value.items():
-            r.extend(__printScenarioValue(f"{name} {key}", unit, val))
+            r.extend(__printScenarioValue(f"{name} {key}", unit, source, val))
         return r
     elif isinstance(value, dict):
-        return [(name, unit, "{0}: {1}".format(*list(value.items())[0]), "{0}: {1}".format(*list(value.items())[-1]))]
+        return [(name, unit, "{0}: {1}".format(*list(value.items())[0]), "{0}: {1}".format(*list(value.items())[-1]), source)]
     else:
-        return [(name, unit, f"2025: {value}", f"2050: {value}")]
+        return [(name, unit, f"2025: {value}", f"2050: {value}", source)]
 
 
 def exportFullParams(fullParams: dict):
