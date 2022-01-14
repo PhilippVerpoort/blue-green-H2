@@ -112,8 +112,8 @@ def getSimpleWidgets(scenarioInputDefault: dict):
 
     param_fields_green = {
         'cost_green_capex_2020': {
-            'name': f"{scenarioInputDefault['params']['cost_green_capex']['desc']} in 2020",
-            'value': __getValWOUnc(scenarioInputDefault['params']['cost_green_capex']['value'][2020]),
+            'name': f"{scenarioInputDefault['params']['cost_green_capex']['desc']} in 2025",
+            'value': __getValWOUnc(scenarioInputDefault['params']['cost_green_capex']['value'][2025]),
             'unit': scenarioInputDefault['params']['cost_green_capex']['unit'],
             'step': 10,
         },
@@ -208,18 +208,18 @@ def getSimpleWidgets(scenarioInputDefault: dict):
             'unit': scenarioInputDefault['params']['cost_blue_cts']['unit'],
             'step': 1,
         },
-        'cost_blue_eff_heb': {
-            'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of SMR+LCRCCS",
-            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_eff']['value']['smr+lcrccs']),
-            'unit': scenarioInputDefault['params']['cost_blue_eff']['unit'],
-            'step': 0.0001,
+        'blue_eff_heb': {
+            'name': f"{scenarioInputDefault['params']['blue_eff']['desc']} of SMR+LCRCCS",
+            'value': __getValWOUnc(scenarioInputDefault['params']['blue_eff']['value']['smr+lcrccs']),
+            'unit': scenarioInputDefault['params']['blue_eff']['unit'],
+            'step': 0.01,
         },
-        'cost_blue_eff_leb': {
-            'name': f"{scenarioInputDefault['params']['cost_blue_eff']['desc']} of ATR+HCRCCS",
-            'value': __getValWOUnc(scenarioInputDefault['params']['cost_blue_eff']['value']['atr+hcrccs']),
-            'unit': scenarioInputDefault['params']['cost_blue_eff']['unit'],
-            'step': 0.0001,
-        }
+        'blue_eff_leb': {
+            'name': f"{scenarioInputDefault['params']['blue_eff']['desc']} of ATR+HCRCCS",
+            'value': __getValWOUnc(scenarioInputDefault['params']['blue_eff']['value']['atr+hcrccs']),
+            'unit': scenarioInputDefault['params']['blue_eff']['unit'],
+            'step': 0.01,
+        },
     }
 
     fields = [

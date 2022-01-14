@@ -79,7 +79,7 @@ def getCIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str
             par_uu[f"ci_green_base_{GWP}"],
             par_ul[f"ci_green_base_{GWP}"],
         ),
-        eff=par[f"ci_green_eff"],
+        eff=par[f"green_eff"],
         eci=(
             par[f"ci_green_elec_{tech_type}_{GWP}"],
             par_uu[f"ci_green_elec_{tech_type}_{GWP}"],
@@ -91,5 +91,5 @@ def getCIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str
 def getCIGreen(b, eff, eci):
     return {
         'base': b,
-        'elec': tuple(eff*e for e in eci)
+        'elec': tuple(e/eff for e in eci)
     }

@@ -9,11 +9,11 @@ from dash.exceptions import PreventUpdate
 def updateScenarioInputSimple(scenarioInput: dict,
                               simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
                               simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,
-                              simple_cost_green_elec_2020: float,  simple_cost_green_elec_2050: float,
+                              simple_cost_green_elec_2020: float, simple_cost_green_elec_2050: float,
                               simple_ci_green_elec: str, simple_green_ocf: int,
                               simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
                               simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
-                              simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,
+                              simple_blue_eff_heb: float, simple_blue_eff_leb: float,
                               advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
     # update gwp option
     scenarioInput['options']['gwp'] = simple_gwp
@@ -49,8 +49,8 @@ def updateScenarioInputSimple(scenarioInput: dict,
             2050: simple_cost_blue_cts_2050,
         },
         'cost_blue_eff': {
-            'smr+lcrccs': simple_cost_blue_eff_heb,
-            'atr+hcrccs': simple_cost_blue_eff_leb,
+            'smr+lcrccs': simple_blue_eff_heb,
+            'atr+hcrccs': simple_blue_eff_leb,
         },
     }
 

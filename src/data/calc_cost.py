@@ -45,7 +45,7 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_uu['cost_ng_price'],
             par_ul['cost_ng_price'],
         ),
-        eff=par[f"cost_blue_eff_{tech_type}"],
+        eff=par[f"blue_eff_{tech_type}"],
         c_CTS=(
             par['cost_blue_cts'],
             par_uu['cost_blue_cts'],
@@ -84,12 +84,12 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_uu[f"cost_green_elec_{tech_type}"],
             par_ul[f"cost_green_elec_{tech_type}"],
         ),
-        eff=par['ci_green_eff'],
+        eff=par['green_eff'],
     )
 
 
 def getCostGreen(FCR, c_pl, ocf, p_el, eff):
     return {
         'cap_cost': tuple(FCR * c/(ocf*8760) for c in c_pl),
-        'fuel_cost': tuple(p*eff for p in p_el),
+        'fuel_cost': tuple(p/eff for p in p_el),
     }

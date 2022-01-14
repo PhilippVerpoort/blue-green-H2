@@ -178,20 +178,6 @@ params:
 
       ATR data - @Simon?
 
-  cost_blue_eff:
-    desc: Fuel efficiency
-    type: const
-    value:
-      smr: 0.7592
-      smr+lcrccs: 0.7351
-      smr+hcrccs: 0.6910
-      atr+hcrccs: 0.7353
-    unit: 1
-    source:
-      SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream (@Tom).
-    
-      ATR data from @Simon sent on 24/11/2011.
-
   cost_blue_emiForCTS:
     desc: Captured emissions for transport and storage
     type: const
@@ -256,7 +242,21 @@ params:
     unit: gCO2eq/MJ
     source:
       Based on first Excel Spreadsheet sent by @Christian on 29/10/2021. This stays constant by definition.
+
+  blue_eff:
+    desc: Fuel efficiency
+    type: const
+    value:
+      smr: 75.92
+      smr+lcrccs: 73.51
+      smr+hcrccs: 69.10
+      atr+hcrccs: 73.53
+    unit: percent
+    source:
+      SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream (@Tom).
     
+      ATR data from @Simon sent on 24/11/2011.
+
   # green parameters
   cost_green_capex:
     desc: Green CAPEX
@@ -301,16 +301,6 @@ params:
     unit: kgCO2eq/kgH2
     source: Based on Excel Spreadsheet sent by @Christian on 29/10/2021. Uncertainties guessed.
 
-  ci_green_eff:
-    desc: Elec. efficiency
-    type: linear
-    value:
-      2025: 55.0
-      2050: 50.0
-    unit: kWh/kgH2
-    source:
-      Based on Excel Spreadsheet sent by @Christian on 29/10/2021.
-
   ci_green_elec:
     desc: CI of electricity
     type: linear
@@ -341,6 +331,16 @@ params:
     value: 50
     unit: percent
     source: Feasible OCF for RE-only. @Falko
+
+  green_eff:
+    desc: Elec. efficiency
+    type: linear
+    value:
+      2025: 60.61
+      2050: 66.67
+    unit: percent
+    source:
+      Based on Excel Spreadsheet sent by @Christian on 29/10/2021.
 
   lifetime:
     desc: lifetime
