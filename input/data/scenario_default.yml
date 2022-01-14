@@ -70,10 +70,15 @@ params:
       2025: 6.0 +- 0.2
       2050: 6.0 + 0.5 - 2.0
     unit: EUR/GJ
-    source: based on IEAGHG - which contains sensitivity analysis using 2Euro to 18Euro - http://documents.ieaghg.org/index.php/s/HKtMncwfw2vaBxl
+    source:
+      Currently taken from IEA GHG report. 6 €/GJ = 21.6 €/MWh.
+      
+      Uncertainty small in 2025 (ignoring current strong fluctuations), and allowing for potentially strong decrease till 2050 due to decreasing demand.
+      
+      Number OK? Uncertainty OK? @Falko
 
   ci_ng_base:
-    desc: Base Emissions of NG (per LHV)
+    desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
     type: linear
     value:
       gwp100:
@@ -83,24 +88,31 @@ params:
         2025: 66.0 +- 0.0
         2050: 66.0 +- 5.0
     unit: gCO2eq/MJ
-    source: The second Excel Spreadsheet Christian sent on 03/11/2021
+    source:
+      Based on second Excel Spreadsheet @Christian sent on 03/11/2021.
+      
+      This stays constant, as outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section.
 
   ci_ng_methaneleakage:
-    desc: Amount of methan leakage in production chain (relative to total amount used)
+    desc: Amount of methane leakage in production chain (relative to total amount used)
     type: linear
     value:
-      2025: 1.0 + 1.0 - 0.5
-      2050: 0.5 +- 0.5
+      2025: 1.0 +- 1.0
+      2050: 0.1 + 0.9 - 0.1
     unit: percent
+    source:
+      Based on today's range of leakage rates and the ambition of the industry to lower it significantly along with substantial uncertainty on achieving this reduction.
+      
+      OK? @Falko
 
   ci_ng_methaneleakage_perrate:
-    desc: Methan leakage emissions per CH4 emission rate (per LHV)
+    desc: GHG emissions due to methane leakage per CH4 emission rate (per LHV)
     type: const
     value:
       gwp100: 606.06
       gwp20: 1727.27
     unit: gCO2eq/MJ
-    source: The second Excel Spreadsheet Christian sent on 03/11/2021
+    source: Based on second Excel Spreadsheet @Christian sent on 03/11/2021. This stays constant per defintion.
     
   # blue parameters
   cost_blue_capex:
@@ -121,7 +133,10 @@ params:
         2030: 240.00 +- 30.0
         2050: 210.00 +- 10.0
     unit: MEUR
-    source: IEAGHG, Sec. 8.1.3, Table 2, Sheet 84 / ATR from Simon
+    source:
+      SMR data from IEAGHG report, Sec. 8.1.3, Table 2, Sheet 84 (@Tom).
+      
+      ATR data from @Simon sent on 24/11/2021.
 
   cost_blue_OnM:  # this includes neither electricity cost, nor other variable O&M cost for ATR
     desc: Operational and Maintenance cost (w/o fuel cost)
@@ -141,7 +156,10 @@ params:
         2030: 7.2 +- 0.5
         2050: 6.3 +- 0.5
     unit: MEUR
-    source: IEAGHG, p. 18, Table 4
+    source:
+      SMR data from IEAGHG report, p. 18, Table 4 (@Tom).
+    
+      ATR data from @Simon sent on 24/11/2011.
 
   cost_blue_plantsize:
     desc: Plant size (i.e. production power)
@@ -151,33 +169,42 @@ params:
     source: IEAGHG
 
   cost_blue_flh:
-    desc: Full load hours of plant
+    desc: Full load hours of blue-hydrogen plant
     type: const
     value: 8322.0
     unit: h
     source: IEAGHG
+      SMR data from IEAGHG report, p. 18, Table 4 (@Tom).
+
+      ATR data - @Simon?
 
   cost_blue_eff:
     desc: Fuel efficiency
     type: const
     value:
-      smr: 0.7592 +- 0.05
-      smr+lcrccs: 0.7351 +- 0.05
-      smr+hcrccs: 0.6910 +- 0.05
-      atr+hcrccs: 0.7353 +- 0.05
+      smr: 0.7592
+      smr+lcrccs: 0.7351
+      smr+hcrccs: 0.6910
+      atr+hcrccs: 0.7353
     unit: 1
-    source: IEAGHG, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream
+    source:
+      SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream (@Tom).
+    
+      ATR data from @Simon sent on 24/11/2011.
 
   cost_blue_emiForCTS:
     desc: Captured emissions for transport and storage
     type: const
     value:
       smr: 0.0
-      smr+lcrccs: 0.4660 +- 0.05
-      smr+hcrccs: 0.8004 +- 0.05
-      atr+hcrccs: 0.8004 +- 0.05
+      smr+lcrccs: 0.4660
+      smr+hcrccs: 0.8004
+      atr+hcrccs: 0.8004
     unit: kgCO2/Nm3_H2
-    source: IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured
+    source:
+      SMR data from IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured (@Tom).
+    
+      ATR data - @Simon?
 
   cost_blue_cts:
     desc: Carbon transport and storage cost
@@ -186,10 +213,10 @@ params:
       2020: 10.0 +- 5.0
       2050: 10.0 + 20.0 - 5.0
     unit: EUR/tCO2
-    source: IEAGHG - 10Euro/t, which increases to 40Euro/t
+    source: IEAGHG - 10Euro/t, which increases to 40Euro/t (@Tom @Fiona @Falko)
 
   ci_blue_base:
-    desc: Base Emissions of Pure SMR (w/o Capture) (per LHV)
+    desc: Base emissions of blue hydrogen (per LHV)
     type: const
     value:
       smr:
@@ -205,7 +232,10 @@ params:
         gwp100: 20.8 +- 10.0
         gwp20: 21.5 +- 10.0
     unit: gCO2eq/MJ
-    source: Christians Excel Spreadsheet 29/10/2021
+    source:
+      Based on first Excel Spreadsheet sent by @Christian on 29/10/2021.
+    
+      Uncertainty??
 
   ci_blue_methaneleakage_perrate:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
@@ -224,30 +254,39 @@ params:
         gwp100: 713.2
         gwp20: 2031.5
     unit: gCO2eq/MJ
-    source: Christians Excel Spreadsheet 29/10/2021
+    source:
+      Based on first Excel Spreadsheet sent by @Christian on 29/10/2021. This stays constant by definition.
     
   # green parameters
   cost_green_capex:
     desc: Green CAPEX
     type: linear
     value:
-      2020: 1200 +- 100
-      2050: 400 + 50 - 100
+      2025: 900 +- 200
+      2030: 600 +- 100
+      2040: 400 +- 150
+      2050: 200 + 100 - 70
     unit: USD/kW
-    source: based on IEA (2019) https://www.iea.org/reports/the-future-of-hydrogen/data-and-assumptions
+    source:
+      Numbers provided by @Falko as spreadsheet on 13/01/2022.
+    
+      Does this include BoS, @Falko??
 
   cost_green_elec:
     desc: Electricity price
     type: linear
     value:
       RE:
-        2020: 60.0 +- 10.0
+        2020: 45.0 +- 10.0
         2050: 25.0 +- 10.0
       mix:
-        2020: 300.0 +- 20.0
-        2050: 50.0 +- 30.0
+        2025: 85.0 +- 10.0
+        2030: 80.0 +- 5.0
+        2050: 70.0 + 5.0 - 10.0
     unit: USD/MWh
-    source: RE numbers based on IRENA - solar PV https://www.irena.org/publications/2021/Jun/Renewable-Power-Costs-in-2020 // mix numbers are guessed
+    source:
+      RE numbers from @Falko. Uncertainty?
+      Mix numbers based on Agora/Bloomberg(2021) till 2030 and guess for 2050. Uncertainty? @Falko
 
   ci_green_base:
     desc: CI of electrolysis
@@ -260,7 +299,7 @@ params:
         2025: 0.14 +- 0.02
         2050: 0.07 +- 0.01
     unit: kgCO2eq/kgH2
-    source: Christians Excel Spreadsheet 29/10/2021
+    source: Based on Excel Spreadsheet sent by @Christian on 29/10/2021. Uncertainties guessed.
 
   ci_green_eff:
     desc: Elec. efficiency
@@ -269,7 +308,8 @@ params:
       2025: 55.0
       2050: 50.0
     unit: kWh/kgH2
-    source: Christians Excel Spreadsheet 29/10/2021
+    source:
+      Based on Excel Spreadsheet sent by @Christian on 29/10/2021.
 
   ci_green_elec:
     desc: CI of electricity
@@ -290,14 +330,17 @@ params:
           2025: 0.434 +- 0.05
           2050: 0.434 + 0.01 - 0.15
     unit: kgCO2eq/kWh
-    source: Christians Excel Spreadsheet 29/10/2021
+    source:
+      RE based on Excel Spreadsheet sent by @Christian on 29/10/2021. Uncertainty guessed.
     
+      Mix 2025 based on Christian's spreadsheet as well. 2050 currently unchanged??
+
   green_ocf:
     desc: Operational capacity factor
     type: const
     value: 50
     unit: percent
-    source: feasible ranges for combined wind and solar?
+    source: Feasible OCF for RE-only. @Falko
 
   lifetime:
     desc: lifetime
