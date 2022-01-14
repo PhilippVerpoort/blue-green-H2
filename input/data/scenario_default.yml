@@ -336,20 +336,23 @@ params:
     desc: Elec. efficiency
     type: linear
     value:
-      2025: 60.61
-      2050: 66.67
+      2025: 65.0
+      2030: 65.0
+      2040: 70.0
+      2050: 70.0
     unit: percent
-    source:
-      Based on Excel Spreadsheet sent by @Christian on 29/10/2021.
+    source: Own estimates by @Falko.
 
   lifetime:
     desc: lifetime
     type: const
-    value: 25
+    value: 20
     unit: ~
+    source: Stack lifetime is 95kh according to IEA Future of Hydrogen (2019) report. With 50% OCF that is ~21 years.
 
   irate:
     desc: Interest rate
     type: const
     value: 8
     unit: percent
+    source: Typical WACC for such an investment.
