@@ -163,8 +163,16 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
 
     for index in range(n_lines):
         thisData = plotData.query(f"plotIndex=={index}").reset_index(drop=True)
+
+        # styling of individual lines
         blueGreenSwitching = thisData.loc[0, 'fuel_x'] == 'blue LEB' and thisData.loc[0, 'fuel_y'] == 'green RE'
         dashed = thisData.loc[0, 'fuel_y'] == 'green pure RE'
+        shift = 0
+        if thisData.loc[0, 'fuel_y'] == 'green RE':
+            if thisData.loc[0, 'fuel_x'] == 'natural gas':
+                shift = -1
+            else:
+                shift = +1
 
         # line properties
         fuel_x = thisData.iloc[thisData.first_valid_index()]['fuel_x']
@@ -186,13 +194,12 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
 
         # confidence intervals
-        shift = (index+1)//2*0.1-0.1
         thisData = thisData.query(f"year==[2025,2030,2040,2050] & fuel_y != 'green pure RE'")
 
         if blueGreenSwitching:
             thisData = thisData.query(f"year>=2040")
 
-        traces.append((index, go.Scatter(x=thisData['year']+shift, y=thisData['fscp'],
+        traces.append((index, go.Scatter(x=thisData['year']+shift*0.1, y=thisData['fscp'],
             error_y=dict(type='data', array=thisData['fscp_uu'], arrayminus=thisData['fscp_ul'], thickness=3),
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
