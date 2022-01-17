@@ -235,18 +235,22 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         fuel_y = config['fuelGreen']
         thisData = __convertFuelData(fuelData, fuel_x, fuel_y)
 
-        name = f"FSCP {config['names'][fuel_x]} to {config['names'][fuel_y]}"
+        name = f"Comparing {config['names'][fuel_x]} with {config['names'][fuel_y]}"
+        col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"]
 
         traces.append(go.Scatter(x=thisData.delta_ci * 1000, y=thisData.delta_cost,
             error_x=dict(type='data', array=thisData.delta_ci_u*1000),
             error_y=dict(type='data', array=thisData.delta_cost_u),
+            text=thisData.year,
+            textposition="top right",
+            textfont=dict(color=col),
             name=name,
             legendgroup=f"{fuel_x}__{fuel_y}",
-            line=dict(color=config['fscp_colours'][f"{fuel_x} to {fuel_y}"]),
-            mode='lines+markers',
+            line=dict(color=col),
+            mode='lines+markers+text',
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}±%{{error_x.array:.2f}}<br>"
-                          f"Direct cost difference: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
+                          f"Direct cost difference (w/o CP): %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
         ))
 
     return traces
