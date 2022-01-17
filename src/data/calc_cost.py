@@ -33,12 +33,11 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        C_pl=(
+        c_pl=(
             par[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
             par_uu[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
             par_ul[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
         ),
-        P_pl=par['cost_blue_plantsize'],
         flh=par['cost_blue_flh'],
         p_ng=(
             par['cost_ng_price'],
@@ -55,9 +54,9 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     )
 
 
-def getCostBlue(FCR, C_pl, P_pl, flh, p_ng, eff, c_CTS, emi):
+def getCostBlue(FCR, c_pl, flh, p_ng, eff, c_CTS, emi):
     return {
-        'cap_cost': tuple(FCR * C/(P_pl*flh) for C in C_pl),
+        'cap_cost': tuple(FCR * c/flh for c in c_pl),
         'fuel_cost': tuple(p/eff for p in p_ng),
         'cts_cost': tuple(c*emi for c in c_CTS),
     }

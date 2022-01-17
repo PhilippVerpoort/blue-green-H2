@@ -3,8 +3,8 @@ vertical_spacing: 0.3
 plotting:
   n_samples: 301
 
-  xaxis1_min: 0.010
-  xaxis1_max: 0.200
+  xaxis1_min: 0.005
+  xaxis1_max: 0.215
   xaxis2_min: 0.00
   xaxis2_max: 0.05
   xaxis3_min: 0.00
@@ -14,8 +14,8 @@ plotting:
   xaxis5_min: 0.80
   xaxis5_max: 1.00
 
-  yaxis1_min: -10.0
-  yaxis1_max: 70.0
+  yaxis1_min: -20.0
+  yaxis1_max: 60.0
   yaxis2_min: -10.0
   yaxis2_max: 25.0
 
@@ -60,8 +60,8 @@ fscp_colours:
   blue LEB to green RE: '#ff0000'
 
 colourscale:
-  FSCPmin: -100.0
-  FSCPmax: 1000.0
+  FSCPmin: -200.0
+  FSCPmax: 1200.0
   FSCPmid: 400.0
 
 fuelGreen: green RE

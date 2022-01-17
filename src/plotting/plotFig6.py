@@ -56,7 +56,7 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
         fig.add_trace(go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)
 
     # add blue traces
-    varyBlueParams = ['p_ng', 'C_pl']
+    varyBlueParams = ['p_ng', 'c_pl']
     for i, par in enumerate(varyBlueParams):
         j = i + 1 + len(varyGreenParams)
         pBlueMod = pBlue.copy()
