@@ -12,14 +12,19 @@ subplot_title_positions:
   
 showFSCPs:
   - [[1, 2], natural gas, green RE]
+  - [[1, 2], natural gas, green pure RE]
   - [[1], natural gas, blue HEB]
   - [[2], natural gas, blue LEB]
   - [[1], blue HEB, green RE]
   - [[2], blue LEB, green RE]
+  - [[1], blue HEB, green pure RE]
+  - [[2], blue LEB, green pure RE]
 
 fscp_colours:
   blue HEB to green RE: '#db2a1a'
+  blue HEB to green pure RE: '#db2a1a'
   blue LEB to green RE: '#ff0000'
+  blue LEB to green pure RE: '#db2a1a'
 
 carbon_price_trajectory:
   time: [2020, 2030, 2050]

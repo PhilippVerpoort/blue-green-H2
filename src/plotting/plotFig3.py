@@ -164,6 +164,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
     for index in range(n_lines):
         thisData = plotData.query(f"plotIndex=={index}").reset_index(drop=True)
         blueGreenSwitching = thisData.loc[0, 'fuel_x'] == 'blue LEB' and thisData.loc[0, 'fuel_y'] == 'green RE'
+        dashed = thisData.loc[0, 'fuel_y'] == 'green pure RE'
 
         # line properties
         fuel_x = thisData.iloc[thisData.first_valid_index()]['fuel_x']
@@ -178,14 +179,15 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
         traces.append((index, go.Scatter(x=thisData['year'], y=thisData['fscp'],
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
+            showlegend=not dashed,
             mode="lines+markers",
-            line=dict(color=col, width=4),
+            line=dict(color=col, width=4, dash='dash' if dashed else 'solid'),
             marker=dict(symbol='x-thin', size=10, line={'width': 3, 'color': col},),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
 
         # confidence intervals
         shift = (index+1)//2*0.1-0.1
-        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
+        thisData = thisData.query(f"year==[2025,2030,2040,2050] & fuel_y != 'green pure RE'")
 
         if blueGreenSwitching:
             thisData = thisData.query(f"year>=2040")
