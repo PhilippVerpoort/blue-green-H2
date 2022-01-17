@@ -146,16 +146,16 @@ params:
     type: linear
     value:
       smr:
-        2020: 8.06 +- 0.5
+        2025: 8.06 +- 0.5
         2050: 8.06 +- 0.5
       smr+lcrccs:
-        2020: 9.28 +- 0.5
+        2025: 9.28 +- 0.5
         2050: 9.28 +- 0.5
       smr+hcrccs:
-        2020: 12.03 +- 0.5
+        2025: 12.03 +- 0.5
         2050: 12.03 +- 0.5
       atr+hcrccs:
-        2020: 9.6 +- 0.5
+        2025: 9.6 +- 0.5
         2030: 7.2 +- 0.5
         2050: 6.3 +- 0.5
     unit: MEUR
@@ -192,10 +192,11 @@ params:
     desc: Carbon transport and storage cost
     type: linear
     value: # (per tCO2, i.e. independent of capture rate)
-      2020: 10.0 +- 5.0
-      2050: 10.0 + 20.0 - 5.0
+      2025: 15.0 +- 5.0
+      2030: 10.0 + 10.0 - 5.0
+      2050: 10.0 + 10.0 - 5.0
     unit: EUR/tCO2
-    source: IEAGHG - 10Euro/t, which increases to 40Euro/t (@Tom @Fiona @Falko)
+    source: Falko's estimates -- @Tom @Fiona @Falko
 
   ci_blue_base:
     desc: Base emissions of blue hydrogen (per LHV)
@@ -273,7 +274,7 @@ params:
     type: linear
     value:
       RE:
-        2020: 45.0 +- 10.0
+        2025: 45.0 +- 10.0
         2050: 25.0 +- 10.0
       mix:
         2025: 85.0 +- 10.0
