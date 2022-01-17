@@ -22,7 +22,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
             levelisedCost = calcCost(currentParams, fuel)
             levelisedCI = calcCI(currentParams, fuel, gwp)
 
-            newFuel = {'fuel': fuel_id, 'year': t}
+            newFuel = {'fuel': fuel_id, 'year': t, 'type': fuels[fuel_id]['type']}
 
             newFuel['cost'] = sum(levelisedCost[component][0] for component in levelisedCost)
             newFuel['cost_uu'] = sum(levelisedCost[component][1] for component in levelisedCost)
