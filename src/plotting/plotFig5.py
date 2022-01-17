@@ -27,7 +27,9 @@ def plotFig5(fuelSpecs: dict, fuelData: pd.DataFrame, fullParams: pd.DataFrame, 
         fs_lg = getFontSize(7.0)
 
         fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_lg)
+        fig.update_annotations(font_size=fs_sm)
+        for annotation in fig['layout']['annotations'][:5]:
+            annotation['font']['size'] = fs_lg
         fig.update_xaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
         fig.update_yaxes(title_font_size=fs_sm,
@@ -75,6 +77,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
         fig.add_trace(trace, **rowcol_mapping[0])
 
     # add FSCP traces in subplots
+    annotationStyling = dict(xanchor='left', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
     fuelGreen = fuels[config['fuelGreen']]
 
     fuelBlue = fuels[config['fuelBlueLeft']]
@@ -82,12 +85,14 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
     traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'] = __addFSCPSubplotContoursTop(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot2"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[1])
+    fig.add_annotation(x=0.1, y=-9.0, xref="x2", yref="y2", text=fuelBlue['desc'], **annotationStyling)
 
     fuelBlue = fuels[config['fuelBlueRight']]
     xmin, xmax = config['plotting']['xaxis3_min'], config['plotting']['xaxis3_max']
     traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'] = __addFSCPSubplotContoursTop(fullParams, fuelGreen, fuelBlue, xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot3"])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[2])
+    fig.add_annotation(x=0.1, y=-9.0, xref="x3", yref="y3", text=fuelBlue['desc'], **annotationStyling)
 
     fuelBlue = fuels[config['fuelBlueLeft']]
     xmin, xmax = config['plotting']['xaxis4_min'], config['plotting']['xaxis4_max']
@@ -95,6 +100,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[3])
     #fig.add_vline(x=xvline*100, line_width=3, line_color="black", **rowcol_mapping[3])
+    fig.add_annotation(x=80.4, y=-9.0, xref="x4", yref="y4", text=fuelBlue['desc'], **annotationStyling)
 
     fuelBlue = fuels[config['fuelBlueRight']]
     xmin, xmax = config['plotting']['xaxis5_min'], config['plotting']['xaxis5_max']
@@ -102,6 +108,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[4])
     #fig.add_vline(x=xvline*100, line_width=5, line_color="black", **rowcol_mapping[4])
+    fig.add_annotation(x=80.4, y=-9.0, xref="x5", yref="y5", text=fuelBlue['desc'], **annotationStyling)
 
 
     # add mock traces to make additional x axes show
@@ -173,7 +180,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
 
 
     # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations']):
+    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
         x_pos, y_pos = config['subplot_title_positions'][i]
         annotation['xanchor'] = 'left'
         annotation['yanchor'] = 'top'
