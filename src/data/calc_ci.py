@@ -1,5 +1,5 @@
 known_tech_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
-known_elec_srcs = ['RE', 'mix']
+known_elec_srcs = ['RE', 'mix', 'share']
 
 
 def calcCI(params: dict, fuel: dict, gwp: str):
@@ -73,6 +73,29 @@ def getCIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str
     if tech_type not in known_elec_srcs:
         raise Exception(f"Green electricity source type unknown: {tech_type}")
 
+    sharemix = par['green_share']
+    if tech_type == 'mix':
+        sharemix = 1.0
+    elif tech_type == 'RE':
+        sharemix = 0.0
+    shareof = {
+        'RE': (1-sharemix),
+        'mix': sharemix,
+    }
+
+    if tech_type == 'share':
+        eci = (
+           sum(shareof[tech_type]*par[f"ci_green_elec_{tech_type}_{GWP}"] for tech_type in ['RE', 'mix']),
+           sum(shareof[tech_type]*par_uu[f"ci_green_elec_{tech_type}_{GWP}"] for tech_type in ['RE', 'mix']),
+           sum(shareof[tech_type]*par_ul[f"ci_green_elec_{tech_type}_{GWP}"] for tech_type in ['RE', 'mix']),
+        )
+    else:
+        eci = (
+            par[f"ci_green_elec_{tech_type}_{GWP}"],
+            par_uu[f"ci_green_elec_{tech_type}_{GWP}"],
+            par_ul[f"ci_green_elec_{tech_type}_{GWP}"],
+        )
+
     return dict(
         b=(
             par[f"ci_green_base_{GWP}"],
@@ -80,11 +103,7 @@ def getCIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str
             par_ul[f"ci_green_base_{GWP}"],
         ),
         eff=par[f"green_eff"],
-        eci=(
-            par[f"ci_green_elec_{tech_type}_{GWP}"],
-            par_uu[f"ci_green_elec_{tech_type}_{GWP}"],
-            par_ul[f"ci_green_elec_{tech_type}_{GWP}"],
-        ),
+        eci=eci,
     )
 
 

@@ -1,6 +1,6 @@
 plotting:
-  ci_max: 0.2
-  cost_max: 95.0
+  ci_max: 0.215
+  cost_max: 100.0
   n_samples: 51
 
 labels:
@@ -12,6 +12,5 @@ refYear: 2025
 
 showFuels:
   - green RE
-  - green mix
   - blue HEB
   - blue LEB

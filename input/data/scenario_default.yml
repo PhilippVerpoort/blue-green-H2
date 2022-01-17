@@ -1,6 +1,6 @@
 options:
   gwp: gwp100
-  times: [2025, 2030, 2040, 2050]
+  times: [2025, 2030, 2035, 2040, 2045, 2050]
 
 
 
@@ -46,6 +46,13 @@ fuels:
     include_capex: True
 
   green RE:
+    desc: Green Hydrogen
+    type: green
+    colour: '#6ac100'
+    tech_type: share
+    include_capex: True
+
+  green pure RE:
     desc: Green Hydrogen (RE only)
     type: green
     colour: '#6ac100'
@@ -312,10 +319,12 @@ params:
       mix:
         gwp100:
           2025: 0.397 +- 0.05
-          2050: 0.397 + 0.01 - 0.15
+          2035: 0.190 +- 0.10
+          2050: 0.190 +- 0.10
         gwp20:
           2025: 0.434 +- 0.05
-          2050: 0.434 + 0.01 - 0.15
+          2035: 0.190 +- 0.10
+          2050: 0.190 +- 0.10
     unit: kgCO2eq/kWh
     source:
       RE based on Excel Spreadsheet sent by @Christian on 29/10/2021. Uncertainty guessed.
@@ -339,6 +348,17 @@ params:
       2050: 70.0
     unit: percent
     source: Own estimates by @Falko.
+
+  green_share:
+    desc: Share of green and grey electricity
+    type: linear
+    value:
+      2025: 10.0
+      2035: 0.0
+      2050: 0.0
+    unit:
+      percent
+    source: Own estimates @Falko.
 
   lifetime:
     desc: lifetime

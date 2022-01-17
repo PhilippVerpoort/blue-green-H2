@@ -1,5 +1,5 @@
 known_tech_types = ['smr', 'smr+lcrccs', 'smr+hcrccs', 'atr+hcrccs']
-known_elec_srcs = ['RE', 'mix']
+known_elec_srcs = ['RE', 'mix', 'share']
 
 
 def calcCost(params: tuple, fuel: dict):
@@ -70,6 +70,31 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     i = par['irate']
     n = par['lifetime']
 
+    sharemix = par['green_share']
+    if tech_type == 'mix':
+        sharemix = 1.0
+    elif tech_type == 'RE':
+        sharemix = 0.0
+    shareof = {
+        'RE': (1-sharemix),
+        'mix': sharemix,
+    }
+
+    ocf = shareof['RE'] * par['green_ocf'] + shareof['mix'] * 1.0
+
+    if tech_type == 'share':
+        p_el = (
+           sum(shareof[tech_type]*par[f"cost_green_elec_{tech_type}"] for tech_type in ['RE', 'mix']),
+           sum(shareof[tech_type]*par_uu[f"cost_green_elec_{tech_type}"] for tech_type in ['RE', 'mix']),
+           sum(shareof[tech_type]*par_ul[f"cost_green_elec_{tech_type}"] for tech_type in ['RE', 'mix']),
+        )
+    else:
+        p_el = (
+            par[f"cost_green_elec_{tech_type}"],
+            par_uu[f"cost_green_elec_{tech_type}"],
+            par_ul[f"cost_green_elec_{tech_type}"],
+        )
+
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
         c_pl=(
@@ -77,12 +102,8 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_uu['cost_green_capex'] if fuel['include_capex'] else 0.0,
             par_ul['cost_green_capex'] if fuel['include_capex'] else 0.0,
         ),
-        ocf=par['green_ocf'] if tech_type != 'mix' else 1.0,
-        p_el=(
-            par[f"cost_green_elec_{tech_type}"],
-            par_uu[f"cost_green_elec_{tech_type}"],
-            par_ul[f"cost_green_elec_{tech_type}"],
-        ),
+        ocf=ocf,
+        p_el=p_el,
         eff=par['green_eff'],
     )
 

@@ -229,6 +229,8 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list)
 def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
     traces = []
 
+    fuelData = fuelData.query(f"year==[2025,2030,2040,2050]")
+
     for fuel_x in [config['fuelBlueLeft'], config['fuelBlueRight']]:
         fuel_y = config['fuelGreen']
         thisData = __convertFuelData(fuelData, fuel_x, fuel_y)

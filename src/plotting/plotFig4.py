@@ -128,6 +128,7 @@ def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: l
 
         # data
         thisData = plotData.query(f"fuel=='{fuel}'")
+        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
 
         # fuel line
         traces.append(go.Scatter(x=thisData.ci*1000, y=thisData.cost,

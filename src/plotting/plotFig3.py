@@ -163,6 +163,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
 
     for index in range(n_lines):
         thisData = plotData.query(f"plotIndex=={index}").reset_index(drop=True)
+        blueGreenSwitching = thisData.loc[0, 'fuel_x'] == 'blue LEB' and thisData.loc[0, 'fuel_y'] == 'green RE'
 
         # line properties
         fuel_x = thisData.iloc[thisData.first_valid_index()]['fuel_x']
@@ -171,13 +172,32 @@ def __addFSCPTraces(plotData: pd.DataFrame, n_lines: int, config: dict):
         col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"] if f"{fuel_x} to {fuel_y}" in config['fscp_colours'] else config['colours'][fuel_y]
 
         # fuel line
-        shift = (index+1)//2*0.2
+        if blueGreenSwitching:
+            thisData = thisData.query(f"year>=2030")
+
+        traces.append((index, go.Scatter(x=thisData['year'], y=thisData['fscp'],
+            name=name,
+            legendgroup=f"{fuel_x} {fuel_y}",
+            mode="lines+markers",
+            line=dict(color=col, width=4),
+            marker=dict(symbol='x-thin', size=10, line={'width': 3, 'color': col},),
+            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
+
+        # confidence intervals
+        shift = (index+1)//2*0.1-0.1
+        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
+
+        if blueGreenSwitching:
+            thisData = thisData.query(f"year>=2040")
+
         traces.append((index, go.Scatter(x=thisData['year']+shift, y=thisData['fscp'],
             error_y=dict(type='data', array=thisData['fscp_uu'], arrayminus=thisData['fscp_ul'], thickness=3),
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
-            mode="lines+markers",
-            line=dict(color=col, width=5),
+            showlegend=False,
+            mode="markers",
+            marker=dict(symbol='x-thin', size=0, line={'width': 0, 'color': col},),
+            line=dict(color=col, width=3),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
 
     return traces
