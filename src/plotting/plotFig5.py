@@ -246,8 +246,8 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"]
 
         traces.append(go.Scatter(x=thisData.delta_ci * 1000, y=thisData.delta_cost,
-            error_x=dict(type='data', array=thisData.delta_ci_u*1000),
-            error_y=dict(type='data', array=thisData.delta_cost_u),
+            error_x=dict(type='data', array=thisData.delta_ci_uu*1000, arrayminus=thisData.delta_ci_ul*1000, thickness=2),
+            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=2),
             text=thisData.year,
             textposition="top right",
             textfont=dict(color=col),
@@ -478,13 +478,17 @@ def __convertFuelData(fuelData: pd.DataFrame, fuel_x: str, fuel_y: str):
                    dropna()
 
     tmp['year'] = tmp['year_x']
-    tmp['delta_cost'] = tmp['cost_y'] - tmp['cost_x']
-    tmp['delta_ci'] = tmp['ci_x'] - tmp['ci_y']
-    tmp['delta_cost_u'] = np.sqrt(tmp['cost_uu_x']**2 + tmp['cost_uu_y']**2)
-    tmp['delta_ci_u'] = np.sqrt(tmp['ci_uu_x']**2 + tmp['ci_uu_y']**2)
-    # TODO: Computing the uncertainty of the difference will need to be corrected.
 
-    FSCPData = tmp[['fuel_x', 'delta_cost', 'delta_cost_u', 'delta_ci', 'delta_ci_u', 'year']]
+    tmp['delta_cost'] = tmp['cost_y'] - tmp['cost_x']
+    tmp['delta_cost_uu'] = tmp['cost_uu_y'] + tmp['cost_ul_x']
+    tmp['delta_cost_ul'] = tmp['cost_ul_y'] + tmp['cost_uu_x']
+
+    tmp['delta_ci'] = tmp['ci_x'] - tmp['ci_y']
+    tmp['delta_ci_uu'] = tmp['cost_uu_x'] + tmp['cost_ul_y']
+    tmp['delta_ci_ul'] = tmp['cost_ul_x'] + tmp['cost_uu_y']
+
+    FSCPData = tmp[['fuel_x', 'delta_cost', 'delta_cost_uu', 'delta_cost_ul',
+                    'delta_ci', 'delta_ci_uu', 'delta_ci_ul', 'year']]
 
     return FSCPData
 
