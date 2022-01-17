@@ -160,6 +160,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
             ticks='outside',
         )}
         fig.update_layout(**update)
+    fig.update_xaxes(ticks='outside')
 
 
     # update figure background colour and font colour and type
