@@ -1,8 +1,13 @@
+from string import ascii_lowercase
+
 import numpy as np
 import pandas as pd
+
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 from src.plotting.img_export_cfg import getFontSize, getImageSize
+from src.config_load import steel_data
 
 
 def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
@@ -11,27 +16,32 @@ def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
     config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument
-    plotData = __selectPlotData(fuelsData, config['refFuel'], config['showFuels'])
+    plotDataLeft = __selectPlotData(fuelsData, config['refFuel'], config['showFuels'])
 
-    # select which FSCPs to plot based on function argument
-    plotFSCP = __selectPlotFSCPs(FSCPData, config['refFuel'], config['showFuels'])
+    # convert hydrogen data (cost and ci) into steel data
+    plotDataRight = __convertDataSteel(fuelsData)
+
+    # load reference data
+    refDataLeft = plotDataLeft.query(f"fuel=='{config['refFuel']}' & year=={config['refYear']}").iloc[0]
+    refDataRight = pd.Series(data={'cost': steel_data['bf_cost'], 'ci': steel_data['bf_ci']})
 
     # produce figure
-    fig = __produceFigure(plotData, plotFSCP, config['refFuel'], config['refYear'], config['showFuels'], config)
+    fig = __produceFigure(plotDataLeft, refDataLeft, plotDataRight, refDataRight, config['showFuels'], config)
 
     # write figure to image file
     if export_img:
-        w_mm = 88.0
+        w_mm = 180.0
         h_mm = 81.0
 
-        fs = getFontSize(5.0)
+        fs_sm = getFontSize(5.0)
+        fs_lg = getFontSize(7.0)
 
-        fig.update_layout(font_size=fs)
-        fig.update_annotations(font_size=fs)
-        fig.update_xaxes(title_font_size=fs,
-                         tickfont_size=fs)
-        fig.update_yaxes(title_font_size=fs,
-                         tickfont_size=fs)
+        fig.update_layout(font_size=fs_sm)
+        fig.update_annotations(font_size=fs_lg)
+        fig.update_xaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
+        fig.update_yaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
 
         fig.write_image("output/fig4.png", **getImageSize(w_mm, h_mm))
 
@@ -43,38 +53,74 @@ def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, showFuels: list):
     return fuelsData.query("fuel in @fuelsList")
 
 
-def __selectPlotFSCPs(FSCPData: pd.DataFrame, refFuel: str, showFuels: list):
-    return FSCPData.query(f"fuel_x in @showFuels & fuel_y=='{refFuel}'")
+def __convertDataSteel(plotDataLeft: pd.DataFrame):
+    plotDataRight = plotDataLeft.copy()
+
+    plotDataRight['cost'] = plotDataRight['cost'] * steel_data['h2_demand'] + steel_data['other_cost']
+    plotDataRight['cost_uu'] = plotDataRight['cost_uu'] * steel_data['h2_demand']
+    plotDataRight['cost_ul'] = plotDataRight['cost_ul'] * steel_data['h2_demand']
+
+    plotDataRight['ci'] = plotDataRight['ci'] * steel_data['h2_demand'] + steel_data['other_ci']
+    plotDataRight['ci_uu'] = plotDataRight['ci_uu'] * steel_data['h2_demand']
+    plotDataRight['ci_ul'] = plotDataRight['ci_ul'] * steel_data['h2_demand']
+
+    return plotDataRight
 
 
-def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, config: dict):
+def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
+                    plotDataRight: pd.DataFrame, refDataRight: pd.Series,
+                    showFuels: list, config: dict):
     # plot
-    fig = go.Figure()
+    fig = make_subplots(rows=1,
+                        cols=2,
+                        subplot_titles=ascii_lowercase)
 
 
     # add line traces
-    traces = __addLineTraces(plotData, plotFSCP, showFuels, config)
+    traces = __addLineTraces(plotDataLeft, showFuels, config)
     for trace in traces:
-        fig.add_trace(trace)
+        fig.add_trace(trace, row=1, col=1)
 
 
     # add FSCP traces
-    refData = plotData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
-    traces, cost_ref = __addFSCPTraces(refData, config)
+    plotConf = (config['plotting']['ci_max_left'], config['plotting']['cost_max_left'], config['plotting']['n_samples'])
+    traces = __addFSCPTraces(refDataLeft, plotConf)
     for trace in traces:
-        fig.add_trace(trace)
+        fig.add_trace(trace, row=1, col=1)
+
+
+    # add line traces
+    traces = __addLineTraces(plotDataRight, showFuels, config)
+    for trace in traces:
+        trace.showlegend = False
+        fig.add_trace(trace, row=1, col=2)
+
+
+    # add FSCP traces
+    plotConf = (config['plotting']['ci_max_right'], config['plotting']['cost_max_right'], config['plotting']['n_samples'])
+    traces = __addFSCPTraces(refDataRight, plotConf)
+    for trace in traces:
+        fig.add_trace(trace, row=1, col=2)
 
 
     # set plotting ranges
     fig.update_layout(
         xaxis=dict(
-            title=config['labels']['ci'],
-            range=[0.0, config['plotting']['ci_max']*1000]
+            title=config['labels']['ciLeft'],
+            range=[0.0, config['plotting']['ci_max_left']*1000]
         ),
         yaxis=dict(
-            title=config['labels']['cost'],
-            range=[cost_ref, config['plotting']['cost_max']]
-        )
+            title=config['labels']['costLeft'],
+            range=[refDataLeft.cost, config['plotting']['cost_max_left']]
+        ),
+        xaxis2=dict(
+            title=config['labels']['ciRight'],
+            range=[0.0, config['plotting']['ci_max_right']*1000]
+        ),
+        yaxis2=dict(
+            title=config['labels']['costRight'],
+            range=[refDataRight.cost, config['plotting']['cost_max_right']]
+        ),
     )
 
 
@@ -93,7 +139,7 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str
 
 
     # update axis styling
-    for axis in ['xaxis', 'yaxis']:
+    for axis in ['xaxis', 'yaxis', 'xaxis2', 'yaxis2']:
         update = {axis: dict(
             showline=True,
             linewidth=2,
@@ -115,10 +161,24 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, refFuel: str
     )
 
 
+    # move title annotations
+    for i, annotation in enumerate(fig['layout']['annotations']):
+        x_pos, y_pos = config['subplot_title_positions'][i]
+        annotation['xanchor'] = 'left'
+        annotation['yanchor'] = 'top'
+        annotation['xref'] = 'paper'
+        annotation['yref'] = 'paper'
+
+        annotation['x'] = x_pos
+        annotation['y'] = y_pos
+
+        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
+
+
     return fig
 
 
-def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: list, config: dict):
+def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
     traces = []
 
     for fuel in showFuels:
@@ -148,11 +208,13 @@ def __addLineTraces(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, showFuels: l
     return traces
 
 
-def __addFSCPTraces(refData: pd.DataFrame, config: dict):
+def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
     traces = []
 
-    ci_samples = np.linspace(0.0, config['plotting']['ci_max'], config['plotting']['n_samples'])
-    cost_samples = np.linspace(0.0, config['plotting']['cost_max'], config['plotting']['n_samples'])
+    ci_max, cost_max, n_samples = plotConf
+
+    ci_samples = np.linspace(0.0, ci_max, n_samples)
+    cost_samples = np.linspace(0.0, cost_max, n_samples)
     ci_v, cost_v = np.meshgrid(ci_samples, cost_samples)
 
     ci_ref = refData.ci
@@ -160,8 +222,10 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
 
     fscp = (cost_v - cost_ref)/(ci_ref - ci_v)
 
+    # heatmap
     traces.append(go.Heatmap(x=ci_samples*1000, y=cost_samples, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
+                             zmin=0.0, zmax=500.0,
                              colorscale=[
                                  [0.0, '#c6dbef'],
                                  [1.0, '#f7bba1'],
@@ -174,6 +238,7 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                                  titleside='top',
                              )))
 
+    # thin lines every 50
     traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
@@ -183,59 +248,31 @@ def __addFSCPTraces(refData: pd.DataFrame, config: dict):
                              contours=dict(
                                  showlabels=False,
                                  start=50,
-                                 end=2000,
+                                 end=3000,
                                  size=50,
                              )))
 
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             showscale=False, contours_coloring='lines', hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#000000'],
-                                 [1.0, '#000000'],
-                             ],
-                             line=dict(width=1.5),
-                             contours=dict(
-                                 showlabels=True,
-                                 labelfont=dict(
-                                     color='black',
-                                 ),
-                                 size=100,
-                                 start=100,
-                                 end=600,
-                             )))
+    # thick lines
+    thickLines = [
+        {'size': 100, 'start': 100, 'end': 600},
+        {'size': 250, 'start': 750, 'end': 1000},
+        {'size': 300, 'start': 1200, 'end': 1500},
+    ]
+    for kwargs in thickLines:
+        traces.append(go.Contour(
+            x=ci_samples*1000, y=cost_samples, z=fscp,
+            showscale=False, contours_coloring='lines', hoverinfo='skip',
+            colorscale=[
+                [0.0, '#000000'],
+                [1.0, '#000000'],
+            ],
+            line=dict(width=1.5),
+            contours=dict(
+                showlabels=True,
+                labelfont=dict(
+                    color='black',
+                ),
+                **kwargs,
+            )))
 
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             showscale=False, contours_coloring='lines', hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#000000'],
-                                 [1.0, '#000000'],
-                             ],
-                             line=dict(width=1.5),
-                             contours=dict(
-                                 showlabels=True,
-                                 labelfont=dict(
-                                     color='black',
-                                 ),
-                                 size=250,
-                                 start=750,
-                                 end=1000,
-                             )))
-
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
-                             showscale=False, contours_coloring='lines', hoverinfo='skip',
-                             colorscale=[
-                                 [0.0, '#000000'],
-                                 [1.0, '#000000'],
-                             ],
-                             line=dict(width=1.5),
-                             contours=dict(
-                                 showlabels=True,
-                                 labelfont=dict(
-                                     color='black',
-                                 ),
-                                 size=300,
-                                 start=1200,
-                                 end=1500,
-                             )))
-
-    return traces, cost_ref
+    return traces
