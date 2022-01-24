@@ -20,5 +20,6 @@ refYear: 2025
 
 showFuels:
   - green RE
+  - green pure RE
   - blue HEB
   - blue LEB

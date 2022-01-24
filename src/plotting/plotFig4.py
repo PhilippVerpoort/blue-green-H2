@@ -37,7 +37,9 @@ def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
         fs_lg = getFontSize(7.0)
 
         fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_lg)
+        fig.update_annotations(font_size=fs_sm)
+        for annotation in fig['layout']['annotations'][:2]:
+            annotation['font']['size'] = fs_lg
         fig.update_xaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
         fig.update_yaxes(title_font_size=fs_sm,
@@ -87,6 +89,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     traces = __addFSCPTraces(refDataLeft, plotConf)
     for trace in traces:
         fig.add_trace(trace, row=1, col=1)
+    #fig.add_hline(refDataLeft.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=1)
 
 
     # add line traces
@@ -101,9 +104,11 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     traces = __addFSCPTraces(refDataRight, plotConf)
     for trace in traces:
         fig.add_trace(trace, row=1, col=2)
+    #fig.add_hline(refDataRight.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=2)
 
 
     # set plotting ranges
+    shift = 0.1
     fig.update_layout(
         xaxis=dict(
             title=config['labels']['ciLeft'],
@@ -111,7 +116,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
         ),
         yaxis=dict(
             title=config['labels']['costLeft'],
-            range=[refDataLeft.cost, config['plotting']['cost_max_left']]
+            range=[refDataLeft.cost-shift*(config['plotting']['cost_max_left']-refDataLeft.cost), config['plotting']['cost_max_left']]
         ),
         xaxis2=dict(
             title=config['labels']['ciRight'],
@@ -119,9 +124,27 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
         ),
         yaxis2=dict(
             title=config['labels']['costRight'],
-            range=[refDataRight.cost, config['plotting']['cost_max_right']]
+            range=[refDataRight.cost-shift*(config['plotting']['cost_max_right']-refDataRight.cost), config['plotting']['cost_max_right']]
         ),
     )
+
+
+    # add annotations
+    annotationStylingA = dict(xanchor='left', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+    fig.add_annotation(x=0.01*config['plotting']['ci_max_left']*1000,
+                       y=config['plotting']['cost_max_left']-0.01*(config['plotting']['cost_max_left']-refDataLeft.cost),
+                       xref="x", yref="y", text='Heating with natural gas', **annotationStylingA)
+    fig.add_annotation(x=0.01*config['plotting']['ci_max_right']*1000,
+                       y=config['plotting']['cost_max_right']-0.01*(config['plotting']['cost_max_right']-refDataRight.cost),
+                       xref="x2", yref="y2", text='Steel production (H<sub>2</sub> direct reduction)', **annotationStylingA)
+
+    annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
+    fig.add_annotation(x=0.01*config['plotting']['ci_max_left']*1000,
+                       y=refDataLeft.cost,
+                       xref="x", yref="y", text='Price of natural gas', **annotationStylingB)
+    fig.add_annotation(x=0.01*config['plotting']['ci_max_right']*1000,
+                       y=refDataRight.cost,
+                       xref="x2", yref="y2", text='Direct cost of conventional steel (BF/BOF)', **annotationStylingB)
 
 
     # update legend styling
@@ -162,7 +185,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
 
     # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations']):
+    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
         x_pos, y_pos = config['subplot_title_positions'][i]
         annotation['xanchor'] = 'left'
         annotation['yanchor'] = 'top'
@@ -185,6 +208,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
         # line properties
         name = config['names'][fuel]
         col = config['colours'][fuel]
+        dashed = fuel == 'green pure RE'
 
         # data
         thisData = plotData.query(f"fuel=='{fuel}'")
@@ -199,8 +223,9 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
             textfont=dict(color=col),
             name=name,
             legendgroup=fuel,
+            showlegend=not dashed,
             mode="markers+lines+text",
-            line=dict(color=col, width=3),
+            line=dict(color=col, width=3, dash='dash' if dashed else 'solid'),
             marker_size=10,
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"))
@@ -247,10 +272,25 @@ def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
                              ],
                              contours=dict(
                                  showlabels=False,
-                                 start=50,
+                                 start=0,
                                  end=3000,
                                  size=50,
                              )))
+
+    # zero line
+    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
+                             showscale=False, contours_coloring='lines', hoverinfo='skip',
+                             colorscale=[
+                                 [0.0, '#000000'],
+                                 [1.0, '#000000'],
+                             ],
+                             contours=dict(
+                                 showlabels=True,
+                                 start=0,
+                                 end=10,
+                                 size=100,
+                             ),
+                             line=dict(width=3, dash='dash')))
 
     # thick lines
     thickLines = [
