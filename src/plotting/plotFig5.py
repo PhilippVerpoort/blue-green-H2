@@ -238,7 +238,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
 
     fuelData = fuelData.query(f"year==[2025,2030,2040,2050]")
 
-    for fuel_x in [config['fuelBlueLeft'], config['fuelBlueRight']]:
+    for fuel_x in [config['fuelBlueRight']]:
         fuel_y = config['fuelGreen']
         thisData = __convertFuelData(fuelData, fuel_x, fuel_y)
 
