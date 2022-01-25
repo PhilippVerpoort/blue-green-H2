@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from src.data.calc_ci import getCIParamsBlue, getCIParamsGreen, getCIGreen, getCIBlue
+from src.data.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue
 from src.data.calc_fuels import getCurrentAsDict
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
@@ -199,12 +199,12 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
 def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list):
     traces = []
 
-    delta_ci = np.linspace(config['plotting'][f"xaxis1_min"], config['plotting'][f"xaxis1_max"], config['plotting']['n_samples'])
+    delta_ghgi = np.linspace(config['plotting'][f"xaxis1_min"], config['plotting'][f"xaxis1_max"], config['plotting']['n_samples'])
     delta_cost = np.linspace(config['plotting'][f"yaxis1_min"], config['plotting'][f"yaxis1_max"], config['plotting']['n_samples'])
-    delta_ci_v, delta_cost_v = np.meshgrid(delta_ci, delta_cost)
-    fscp = delta_cost_v / delta_ci_v
+    delta_ghgi_v, delta_cost_v = np.meshgrid(delta_ghgi, delta_cost)
+    fscp = delta_cost_v / delta_ghgi_v
 
-    traces.append(go.Heatmap(x=delta_ci * 1000, y=delta_cost, z=fscp,
+    traces.append(go.Heatmap(x=delta_ghgi * 1000, y=delta_cost, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
                              zmin=zmin, zmax=zmax,
                              colorscale=colourscale,
@@ -216,7 +216,7 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list)
                                  titleside='top',
                              )))
 
-    traces.append(go.Contour(x=delta_ci * 1000, y=delta_cost, z=fscp,
+    traces.append(go.Contour(x=delta_ghgi * 1000, y=delta_cost, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -245,8 +245,8 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         name = f"Comparing {config['names'][fuel_x]} with {config['names'][fuel_y]}"
         col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"]
 
-        traces.append(go.Scatter(x=thisData.delta_ci * 1000, y=thisData.delta_cost,
-            error_x=dict(type='data', array=thisData.delta_ci_uu*1000, arrayminus=thisData.delta_ci_ul*1000, thickness=2),
+        traces.append(go.Scatter(x=thisData.delta_ghgi * 1000, y=thisData.delta_cost,
+            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=2),
             error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=2),
             text=thisData.year,
             textposition="top right",
@@ -271,19 +271,19 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
     leakage = np.linspace(xmin, xmax, config['plotting']['n_samples'])
     delta_cost = np.linspace(config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max'], config['plotting']['n_samples'])
 
-    # calculate CI data from params
+    # calculate GHGI data from params
     gwp = 'gwp100'
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
     currentParams = getCurrentAsDict(fullParams, config['fuelYear'])
-    pBlue = getCIParamsBlue(*currentParams, fuelBlue, gwp)
-    pGreen = getCIParamsGreen(*currentParams, fuelGreen, gwp)
+    pBlue = getGHGIParamsBlue(*currentParams, fuelBlue, gwp)
+    pGreen = getGHGIParamsGreen(*currentParams, fuelGreen, gwp)
 
     # calculate FSCPs for grid
     leakage_v, delta_cost_v = np.meshgrid(leakage, delta_cost)
     pBlue['mlr'] = (leakage_v, 0, 0)
-    CIBlue, CIGreen = __getCIs(pBlue, pGreen)
-    fscp = delta_cost_v / (CIBlue - CIGreen)
+    GHGIBlue, GHGIGreen = __getGHGIs(pBlue, pGreen)
+    fscp = delta_cost_v / (GHGIBlue - GHGIGreen)
 
     # add traces
     traces.append(go.Heatmap(x=leakage * 100, y=delta_cost, z=fscp,
@@ -312,13 +312,13 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
                              )))
 
     # determine other xaxis ranges
-    pBlue = getCIParamsBlue(*currentParams, fuelBlue, gwp)
-    pBlueOther = getCIParamsBlue(*currentParams, fuelBlue, gwpOther)
-    # ci0_1 + p_1 * cim_1 = ci0_2 + p_2 * cim_2
-    # p_2 = (p_1*cim_1+ci0_1-ci0_2)/cim_2
-    range2  = [(x*pBlue['mci']+pBlue['b'][0]-pBlueOther['b'][0]) / pBlueOther['mci']
+    pBlue = getGHGIParamsBlue(*currentParams, fuelBlue, gwp)
+    pBlueOther = getGHGIParamsBlue(*currentParams, fuelBlue, gwpOther)
+    # ghgi0_1 + p_1 * ghgim_1 = ghgi0_2 + p_2 * ghgim_2
+    # p_2 = (p_1*ghgim_1+ghgi0_1-ghgi0_2)/ghgim_2
+    range2  = [(x*pBlue['mghgi']+pBlue['b'][0]-pBlueOther['b'][0]) / pBlueOther['mghgi']
                for x in [xmin, xmax]]
-    range3 = [CIBlue[0][0], CIBlue[0][-1]]
+    range3 = [GHGIBlue[0][0], GHGIBlue[0][-1]]
 
     return traces, range2, range3
 
@@ -329,39 +329,39 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
 
     # turn this on to set methane leakage to zero in subplots (d) and (e)
     #fullParams = fullParams.copy()
-    #fullParams.loc[fullParams['name'] == 'ci_ng_methaneleakage', 'value'] = 0.0
+    #fullParams.loc[fullParams['name'] == 'ghgi_ng_methaneleakage', 'value'] = 0.0
 
     # define data for plot grid
     renewablesShare = np.linspace(xmin, xmax, config['plotting']['n_samples'])
     delta_cost = np.linspace(config['plotting'][f"yaxis1_min"], config['plotting'][f"yaxis1_max"], config['plotting']['n_samples'])
 
-    # calculate CI data from params
+    # calculate GHGI data from params
     gwp = 'gwp100'
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
     currentParams = getCurrentAsDict(fullParams, config['fuelYear'])
-    pBlue = getCIParamsBlue(*currentParams, fuelBlue, gwp)
-    pGreen = getCIParamsGreen(*currentParams, fuelGreen, gwp)
+    pBlue = getGHGIParamsBlue(*currentParams, fuelBlue, gwp)
+    pGreen = getGHGIParamsGreen(*currentParams, fuelGreen, gwp)
 
-    # carbon intensity of grid electricity (needs to be obtained from data file in future after green CI has been tidied up)
-    gridCI = 0.397
-    gridCIOther = 0.434
+    # carbon intensity of grid electricity (needs to be obtained from data file in future after green GHGI has been tidied up)
+    gridGHGI = 0.397
+    gridGHGIOther = 0.434
 
     # calculate xvline
-    # 0 = CIGreen(x) - CIBlue =  CIGreen(1) + eff* ((x-1) * eci + (1-x) * gci) - CIBlue
-    # ((CIBlue - CIGreen)/eff + eci - gci) / (eci - gci) = x
-    CIBlue, CIGreen = __getCIs(pBlue, pGreen)
-    xvline = (CIBlue - CIGreen)/pGreen['eff']/(pGreen['eci'][0] - gridCI) + 1
+    # 0 = GHGIGreen(x) - GHGIBlue =  GHGIGreen(1) + eff* ((x-1) * eghgi + (1-x) * gghgi) - GHGIBlue
+    # ((GHGIBlue - GHGIGreen)/eff + eghgi - gghgi) / (eghgi - gghgi) = x
+    GHGIBlue, GHGIGreen = __getGHGIs(pBlue, pGreen)
+    xvline = (GHGIBlue - GHGIGreen)/pGreen['eff']/(pGreen['eghgi'][0] - gridGHGI) + 1
 
     # calculate FSCPs for grid
     renewablesShare_v, delta_cost_v = np.meshgrid(renewablesShare, delta_cost)
-    pGreen['eci'] = (renewablesShare_v * pGreen['eci'][0] + (1-renewablesShare_v) * gridCI, 0, 0)
-    CIBlue, CIGreen = __getCIs(pBlue, pGreen)
-    fscp = delta_cost_v / (CIBlue - CIGreen)
+    pGreen['eghgi'] = (renewablesShare_v * pGreen['eghgi'][0] + (1-renewablesShare_v) * gridGHGI, 0, 0)
+    GHGIBlue, GHGIGreen = __getGHGIs(pBlue, pGreen)
+    fscp = delta_cost_v / (GHGIBlue - GHGIGreen)
 
     for x in range(len(renewablesShare)):
         for y in range(len(delta_cost)):
-            if (CIBlue-CIGreen[x, y]) < 0:
+            if (GHGIBlue-GHGIGreen[x, y]) < 0:
                 fscp[x, y] = zmax+10.0
 
     # add traces
@@ -391,14 +391,14 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelGreen: dict, fu
                              )))
 
     # determine other xaxis ranges
-    pGreen = getCIParamsGreen(*currentParams, fuelGreen, gwp)
-    pGreenOther = getCIParamsGreen(*currentParams, fuelGreen, gwpOther)
-    # b_1 + eff*(p_1*eci_1 + (1-p_1)*gci_1) = b_2 + eff*(p_2*eci_2 + (1-p_2)*gci_2)
-    # eff*p_2*(eci_2-gci_2) = b_1-b_2 + eff*(gci_1-gci_2) + eff*p_1*(eci_1-gci_1)
-    # p_2 = (b_1-b_2 + eff*(gci_1-gci_2) + eff*p_1*(eci_1-gci_1))/(eff*(eci_2-gci_2))
-    range2  = [(pGreen['b'][0]-pGreenOther['b'][0] + pGreen['eff']*(gridCI-gridCIOther) + pGreen['eff']*x*(pGreen['eci'][0]-gridCI))/
-               (pGreenOther['eff'] * (pGreenOther['eci'][0]-gridCIOther)) for x in [xmin, xmax]]
-    range3 = [CIGreen[0][0], CIGreen[0][-1]]
+    pGreen = getGHGIParamsGreen(*currentParams, fuelGreen, gwp)
+    pGreenOther = getGHGIParamsGreen(*currentParams, fuelGreen, gwpOther)
+    # b_1 + eff*(p_1*eghgi_1 + (1-p_1)*gghgi_1) = b_2 + eff*(p_2*eghgi_2 + (1-p_2)*gghgi_2)
+    # eff*p_2*(eghgi_2-gghgi_2) = b_1-b_2 + eff*(gghgi_1-gghgi_2) + eff*p_1*(eghgi_1-gghgi_1)
+    # p_2 = (b_1-b_2 + eff*(gghgi_1-gghgi_2) + eff*p_1*(eghgi_1-gghgi_1))/(eff*(eghgi_2-gghgi_2))
+    range2  = [(pGreen['b'][0]-pGreenOther['b'][0] + pGreen['eff']*(gridGHGI-gridGHGIOther) + pGreen['eff']*x*(pGreen['eghgi'][0]-gridGHGI))/
+               (pGreenOther['eff'] * (pGreenOther['eghgi'][0]-gridGHGIOther)) for x in [xmin, xmax]]
+    range3 = [GHGIGreen[0][0], GHGIGreen[0][-1]]
 
     return traces, range2, range3, xvline
 
@@ -483,22 +483,22 @@ def __convertFuelData(fuelData: pd.DataFrame, fuel_x: str, fuel_y: str):
     tmp['delta_cost_uu'] = tmp['cost_uu_y'] + tmp['cost_ul_x']
     tmp['delta_cost_ul'] = tmp['cost_ul_y'] + tmp['cost_uu_x']
 
-    tmp['delta_ci'] = tmp['ci_x'] - tmp['ci_y']
-    tmp['delta_ci_uu'] = tmp['cost_uu_x'] + tmp['cost_ul_y']
-    tmp['delta_ci_ul'] = tmp['cost_ul_x'] + tmp['cost_uu_y']
+    tmp['delta_ghgi'] = tmp['ghgi_x'] - tmp['ghgi_y']
+    tmp['delta_ghgi_uu'] = tmp['cost_uu_x'] + tmp['cost_ul_y']
+    tmp['delta_ghgi_ul'] = tmp['cost_ul_x'] + tmp['cost_uu_y']
 
     FSCPData = tmp[['fuel_x', 'delta_cost', 'delta_cost_uu', 'delta_cost_ul',
-                    'delta_ci', 'delta_ci_uu', 'delta_ci_ul', 'year']]
+                    'delta_ghgi', 'delta_ghgi_uu', 'delta_ghgi_ul', 'year']]
 
     return FSCPData
 
 
-def __getCIs(pBlue, pGreen):
-    CIBlue = getCIBlue(**pBlue)
-    CIGreen = getCIGreen(**pGreen)
+def __getGHGIs(pBlue, pGreen):
+    GHGIBlue = getGHGIBlue(**pBlue)
+    GHGIGreen = getGHGIGreen(**pGreen)
 
-    return sum(CIBlue[comp][0] for comp in CIBlue),\
-           sum(CIGreen[comp][0] for comp in CIGreen)
+    return sum(GHGIBlue[comp][0] for comp in GHGIBlue),\
+           sum(GHGIGreen[comp][0] for comp in GHGIGreen)
 
 
 def __getColourScale(config: dict):

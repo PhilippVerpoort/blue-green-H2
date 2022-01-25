@@ -1,14 +1,14 @@
-yaxislabel: Levelised CI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+yaxislabel: Levelised GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
 labels:
-  ci__base: Base emissions
-  ci__mleakage: Methane leakage
-  ci__elec: Electricity
+  ghgi__base: Base emissions
+  ghgi__mleakage: Methane leakage
+  ghgi__elec: Electricity
 
 colours:
-  ci__base: '#db2a1a'
-  ci__mleakage: '#00813e'
-  ci__elec: '#3745a3'
+  ghgi__base: '#db2a1a'
+  ghgi__mleakage: '#00813e'
+  ghgi__elec: '#3745a3'
 
 fuels:
   - natural gas

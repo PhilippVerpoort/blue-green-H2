@@ -43,13 +43,13 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
     plotData.insert(1, 'name', len(plotData)*[''])
     for i, row in plotData.iterrows():
         plotData.at[i, 'name'] = fuelSpecs['names'][row['fuel']]
-    plotData['ci_gPkWh'] = plotData['ci']*1000
+    plotData['ghgi_gPkWh'] = plotData['ghgi']*1000
 
 
     # create figure
     fig = px.bar(
         x=plotData.index,
-        y=plotData.ci_gPkWh,
+        y=plotData.ghgi_gPkWh,
         color=plotData.fuel,
         color_discrete_map=fuelSpecs['colours'],
     )
@@ -77,23 +77,23 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
     for i, arrow in enumerate(arrowList):
         fuelA, fuelB = arrow
 
-        ciA = plotData[plotData['fuel'] == fuelA].iloc[0]['ci_gPkWh']
-        ciB = plotData[plotData['fuel'] == fuelB].iloc[0]['ci_gPkWh']
+        ghgiA = plotData[plotData['fuel'] == fuelA].iloc[0]['ghgi_gPkWh']
+        ghgiB = plotData[plotData['fuel'] == fuelB].iloc[0]['ghgi_gPkWh']
         xA = config['fuels'].index(fuelA)
         xB = config['fuels'].index(fuelB)
 
         if i==1:
-            fig.add_trace(go.Scatter(x=[xA-0.4, xB+0.4], y=[ciA, ciA], mode='lines', showlegend=False, line=dict(color='black')))
+            fig.add_trace(go.Scatter(x=[xA-0.4, xB+0.4], y=[ghgiA, ghgiA], mode='lines', showlegend=False, line=dict(color='black')))
             xB -= 0.25
         elif i==2:
-            fig.add_trace(go.Scatter(x=[xA-0.4, xB+0.4], y=[ciA, ciA], mode='lines', showlegend=False, line=dict(color='black')))
+            fig.add_trace(go.Scatter(x=[xA-0.4, xB+0.4], y=[ghgiA, ghgiA], mode='lines', showlegend=False, line=dict(color='black')))
             xB += 0.25
 
         fig.add_annotation(
             x=xB,         # arrows' head
-            y=ciB+0.01,   # arrows' head
+            y=ghgiB+0.01,   # arrows' head
             ax=xB,        # arrows' tail
-            ay=ciA,       # arrows' tail
+            ay=ghgiA,       # arrows' tail
             xref='x',
             yref='y',
             axref='x',
@@ -107,7 +107,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
 
         fig.add_annotation(
             x=xB+0.15,
-            y=ciB+(ciA-ciB)/2,
+            y=ghgiB+(ghgiA-ghgiB)/2,
             text=f"<b>{i+1}<br>P<sub>CO<sub>2</sub>, {i+1}</sub><br>Q<sub>CO<sub>2</sub>, {i+1}</sub></b>",
             align='left',
             showarrow=False,

@@ -1,4 +1,4 @@
-yaxislabel: Carbon Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+yaxislabel: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
 fuels:
   - natural gas

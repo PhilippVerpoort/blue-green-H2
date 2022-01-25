@@ -18,12 +18,12 @@ def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
     # select which lines to plot based on function argument
     plotDataLeft = __selectPlotData(fuelsData, config['refFuel'], config['showFuels'])
 
-    # convert hydrogen data (cost and ci) into steel data
+    # convert hydrogen data (cost and ghgi) into steel data
     plotDataRight = __convertDataSteel(fuelsData)
 
     # load reference data
     refDataLeft = plotDataLeft.query(f"fuel=='{config['refFuel']}' & year=={config['refYear']}").iloc[0]
-    refDataRight = pd.Series(data={'cost': steel_data['bf_cost'], 'ci': steel_data['bf_ci']})
+    refDataRight = pd.Series(data={'cost': steel_data['bf_cost'], 'ghgi': steel_data['bf_ghgi']})
 
     # produce figure
     fig = __produceFigure(plotDataLeft, refDataLeft, plotDataRight, refDataRight, config['showFuels'], config)
@@ -62,9 +62,9 @@ def __convertDataSteel(plotDataLeft: pd.DataFrame):
     plotDataRight['cost_uu'] = plotDataRight['cost_uu'] * steel_data['h2_demand']
     plotDataRight['cost_ul'] = plotDataRight['cost_ul'] * steel_data['h2_demand']
 
-    plotDataRight['ci'] = plotDataRight['ci'] * steel_data['h2_demand'] + steel_data['other_ci']
-    plotDataRight['ci_uu'] = plotDataRight['ci_uu'] * steel_data['h2_demand']
-    plotDataRight['ci_ul'] = plotDataRight['ci_ul'] * steel_data['h2_demand']
+    plotDataRight['ghgi'] = plotDataRight['ghgi'] * steel_data['h2_demand'] + steel_data['other_ghgi']
+    plotDataRight['ghgi_uu'] = plotDataRight['ghgi_uu'] * steel_data['h2_demand']
+    plotDataRight['ghgi_ul'] = plotDataRight['ghgi_ul'] * steel_data['h2_demand']
 
     return plotDataRight
 
@@ -85,7 +85,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
 
     # add FSCP traces
-    plotConf = (config['plotting']['ci_max_left'], config['plotting']['cost_max_left'], config['plotting']['n_samples'])
+    plotConf = (config['plotting']['ghgi_max_left'], config['plotting']['cost_max_left'], config['plotting']['n_samples'])
     traces = __addFSCPTraces(refDataLeft, plotConf)
     for trace in traces:
         fig.add_trace(trace, row=1, col=1)
@@ -100,7 +100,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
 
     # add FSCP traces
-    plotConf = (config['plotting']['ci_max_right'], config['plotting']['cost_max_right'], config['plotting']['n_samples'])
+    plotConf = (config['plotting']['ghgi_max_right'], config['plotting']['cost_max_right'], config['plotting']['n_samples'])
     traces = __addFSCPTraces(refDataRight, plotConf)
     for trace in traces:
         fig.add_trace(trace, row=1, col=2)
@@ -113,16 +113,16 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     y2low = refDataRight.cost-shift*(config['plotting']['cost_max_right']-refDataRight.cost)
     fig.update_layout(
         xaxis=dict(
-            title=config['labels']['ciLeft'],
-            range=[0.0, config['plotting']['ci_max_left']*1000]
+            title=config['labels']['ghgiLeft'],
+            range=[0.0, config['plotting']['ghgi_max_left']*1000]
         ),
         yaxis=dict(
             title=config['labels']['costLeft'],
             range=[y1low, config['plotting']['cost_max_left']]
         ),
         xaxis2=dict(
-            title=config['labels']['ciRight'],
-            range=[0.0, config['plotting']['ci_max_right']*1000]
+            title=config['labels']['ghgiRight'],
+            range=[0.0, config['plotting']['ghgi_max_right']*1000]
         ),
         yaxis2=dict(
             title=config['labels']['costRight'],
@@ -133,18 +133,18 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
     # add annotations
     annotationStylingA = dict(xanchor='right', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-    fig.add_annotation(x=0.99*config['plotting']['ci_max_left']*1000,
+    fig.add_annotation(x=0.99*config['plotting']['ghgi_max_left']*1000,
                        y=y1low+0.01*(config['plotting']['cost_max_left']-refDataLeft.cost),
                        xref="x", yref="y", text='Heating with natural gas', **annotationStylingA)
-    fig.add_annotation(x=0.99*config['plotting']['ci_max_right']*1000,
+    fig.add_annotation(x=0.99*config['plotting']['ghgi_max_right']*1000,
                        y=y2low+0.01*(config['plotting']['cost_max_right']-refDataRight.cost),
                        xref="x2", yref="y2", text='Steel production (H<sub>2</sub> direct reduction)', **annotationStylingA)
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
-    fig.add_annotation(x=0.01*config['plotting']['ci_max_left']*1000,
+    fig.add_annotation(x=0.01*config['plotting']['ghgi_max_left']*1000,
                        y=refDataLeft.cost,
                        xref="x", yref="y", text='Price of natural gas', **annotationStylingB)
-    fig.add_annotation(x=0.01*config['plotting']['ci_max_right']*1000,
+    fig.add_annotation(x=0.01*config['plotting']['ghgi_max_right']*1000,
                        y=refDataRight.cost,
                        xref="x2", yref="y2", text='Direct cost of conventional steel (BF/BOF)', **annotationStylingB)
 
@@ -217,8 +217,8 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
         thisData = thisData.query(f"year==[2025,2030,2040,2050]")
 
         # fuel line
-        traces.append(go.Scatter(x=thisData.ci*1000, y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ci_uu*1000, arrayminus=thisData.ci_ul*1000, thickness=2),
+        traces.append(go.Scatter(x=thisData.ghgi*1000, y=thisData.cost,
+            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=2),
             error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=2),
             text=thisData.year,
             textposition='top left',
@@ -238,19 +238,19 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
 def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
     traces = []
 
-    ci_max, cost_max, n_samples = plotConf
+    ghgi_max, cost_max, n_samples = plotConf
 
-    ci_samples = np.linspace(0.0, ci_max, n_samples)
+    ghgi_samples = np.linspace(0.0, ghgi_max, n_samples)
     cost_samples = np.linspace(0.0, cost_max, n_samples)
-    ci_v, cost_v = np.meshgrid(ci_samples, cost_samples)
+    ghgi_v, cost_v = np.meshgrid(ghgi_samples, cost_samples)
 
-    ci_ref = refData.ci
+    ghgi_ref = refData.ghgi
     cost_ref = refData.cost
 
-    fscp = (cost_v - cost_ref)/(ci_ref - ci_v)
+    fscp = (cost_v - cost_ref)/(ghgi_ref - ghgi_v)
 
     # heatmap
-    traces.append(go.Heatmap(x=ci_samples*1000, y=cost_samples, z=fscp,
+    traces.append(go.Heatmap(x=ghgi_samples*1000, y=cost_samples, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
                              zmin=0.0, zmax=500.0,
                              colorscale=[
@@ -266,7 +266,7 @@ def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
                              )))
 
     # thin lines every 50
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ghgi_samples*1000, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -280,7 +280,7 @@ def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
                              )))
 
     # zero line
-    traces.append(go.Contour(x=ci_samples*1000, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ghgi_samples*1000, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -302,7 +302,7 @@ def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
     ]
     for kwargs in thickLines:
         traces.append(go.Contour(
-            x=ci_samples*1000, y=cost_samples, z=fscp,
+            x=ghgi_samples*1000, y=cost_samples, z=fscp,
             showscale=False, contours_coloring='lines', hoverinfo='skip',
             colorscale=[
                 [0.0, '#000000'],

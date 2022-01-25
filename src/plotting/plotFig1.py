@@ -190,9 +190,9 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
         # generate plotting data
         x = np.linspace(0, config['plotting']['carb_price_max'], 120)
-        y = row.cost + row.ci * x
-        y_uu = np.sqrt(row.cost_uu**2 + row.ci_uu**2 * x**2)
-        y_ul = np.sqrt(row.cost_ul**2 + row.ci_ul**2 * x**2)
+        y = row.cost + row.ghgi * x
+        y_uu = np.sqrt(row.cost_uu**2 + row.ghgi_uu**2 * x**2)
+        y_ul = np.sqrt(row.cost_ul**2 + row.ghgi_ul**2 * x**2)
 
         # fuel line
         traces.append((index, go.Scatter(x=x, y=y,

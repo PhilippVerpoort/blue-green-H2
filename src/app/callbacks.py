@@ -122,7 +122,7 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
             fuelData = pd.DataFrame(table_results_data)
             # convert relevant columns in fuelData DataFrame to int or float
             fuelData['year'] = fuelData['year'].astype(int)
-            for col in ['cost', 'cost_u', 'ci', 'ci_u']:
+            for col in ['cost', 'cost_u', 'ghgi', 'ghgi_u']:
                 fuelData[col] = fuelData[col].astype(float)
             # recompute FSCPs
             FSCPData = calcFSCPs(fuelData)

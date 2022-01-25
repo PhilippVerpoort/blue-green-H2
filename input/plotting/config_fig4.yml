@@ -1,14 +1,14 @@
 plotting:
-  ci_max_left: 0.225
+  ghgi_max_left: 0.225
   cost_max_left: 120.0
-  ci_max_right: 0.700
+  ghgi_max_right: 0.700
   cost_max_right: 700.0
   n_samples: 301
 
 labels:
-  ciLeft: Carbon Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+  ghgiLeft: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
   costLeft: Direct Cost (EUR/MWh<sub>LHV</sub>)
-  ciRight: Carbon Intensity (g<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
+  ghgiRight: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
   costRight: Direct Cost (EUR/t<sub>LS</sub>)
 
 subplot_title_positions:

@@ -84,7 +84,7 @@ params:
       
       Number OK? Uncertainty OK? @Falko
 
-  ci_ng_base:
+  ghgi_ng_base:
     desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
     type: linear
     value:
@@ -100,7 +100,7 @@ params:
       
       This stays constant, as outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section.
 
-  ci_ng_methaneleakage:
+  ghgi_ng_methaneleakage:
     desc: Amount of methane leakage in production chain (relative to total amount used)
     type: linear
     value:
@@ -112,7 +112,7 @@ params:
       
       OK? @Falko
 
-  ci_ng_methaneleakage_perrate:
+  ghgi_ng_methaneleakage_perrate:
     desc: GHG emissions due to methane leakage per CH4 emission rate (per LHV)
     type: const
     value:
@@ -205,7 +205,7 @@ params:
     unit: EUR/tCO2
     source: Falko's estimates -- @Tom @Fiona @Falko
 
-  ci_blue_base:
+  ghgi_blue_base:
     desc: Base emissions of blue hydrogen (per LHV)
     type: const
     value:
@@ -227,7 +227,7 @@ params:
     
       Uncertainty??
 
-  ci_blue_methaneleakage_perrate:
+  ghgi_blue_methaneleakage_perrate:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
     type: const
     value:
@@ -292,7 +292,7 @@ params:
       RE numbers from @Falko. Uncertainty?
       Mix numbers based on Agora/Bloomberg(2021) till 2030 and guess for 2050. Uncertainty? @Falko
 
-  ci_green_base:
+  ghgi_green_base:
     desc: CI of electrolysis
     type: linear
     value:
@@ -305,7 +305,7 @@ params:
     unit: kgCO2eq/kgH2
     source: Based on Excel Spreadsheet sent by @Christian on 29/10/2021. Uncertainties guessed.
 
-  ci_green_elec:
+  ghgi_green_elec:
     desc: CI of electricity
     type: linear
     value:

@@ -1,14 +1,12 @@
-import math
-
 import pandas as pd
 
-from src.data.calc_ci import calcCI
+from src.data.calc_ghgi import calcGHGI
 from src.data.calc_cost import calcCost
 
 
 # calculate fuel data
 def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str = 'gwp100', levelised: bool = False):
-    fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_uu', 'cost_ul', 'ci', 'ci_uu', 'ci_ul'])
+    fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul'])
 
     fuelSpecs = {'names': {}, 'colours': {}}
 
@@ -20,7 +18,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
             currentParams = getCurrentAsDict(full_params, t)
 
             levelisedCost = calcCost(currentParams, fuel)
-            levelisedCI = calcCI(currentParams, fuel, gwp)
+            levelisedGHGI = calcGHGI(currentParams, fuel, gwp)
 
             newFuel = {'fuel': fuel_id, 'year': t, 'type': fuels[fuel_id]['type']}
 
@@ -28,19 +26,19 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
             newFuel['cost_uu'] = sum(levelisedCost[component][1] for component in levelisedCost)
             newFuel['cost_ul'] = sum(levelisedCost[component][2] for component in levelisedCost)
 
-            newFuel['ci'] = sum(levelisedCI[component][0] for component in levelisedCI)
-            newFuel['ci_uu'] = sum(levelisedCI[component][1] for component in levelisedCI)
-            newFuel['ci_ul'] = sum(levelisedCI[component][2] for component in levelisedCI)
+            newFuel['ghgi'] = sum(levelisedGHGI[component][0] for component in levelisedGHGI)
+            newFuel['ghgi_uu'] = sum(levelisedGHGI[component][1] for component in levelisedGHGI)
+            newFuel['ghgi_ul'] = sum(levelisedGHGI[component][2] for component in levelisedGHGI)
 
             if levelised:
                 for component in levelisedCost:
                     newFuel[f"cost__{component}"] = levelisedCost[component][0]
                     newFuel[f"cost_uu__{component}"] = levelisedCost[component][1]
                     newFuel[f"cost_ul__{component}"] = levelisedCost[component][2]
-                for component in levelisedCI:
-                    newFuel[f"ci__{component}"] = levelisedCI[component][0]
-                    newFuel[f"ci_uu__{component}"] = levelisedCI[component][1]
-                    newFuel[f"ci_ul__{component}"] = levelisedCI[component][2]
+                for component in levelisedGHGI:
+                    newFuel[f"ghgi__{component}"] = levelisedGHGI[component][0]
+                    newFuel[f"ghgi_uu__{component}"] = levelisedGHGI[component][1]
+                    newFuel[f"ghgi_ul__{component}"] = levelisedGHGI[component][2]
 
             fuelData = fuelData.append(newFuel, ignore_index=True)
 

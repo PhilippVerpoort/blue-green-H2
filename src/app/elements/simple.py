@@ -35,7 +35,7 @@ def getSimpleWidgets(scenarioInputDefault: dict):
                                     dcc.Input(
                                         id='simple-leakage',
                                         type='number',
-                                        value=__getValWOUnc(scenarioInputDefault['params']['ci_ng_methaneleakage']['value'][2025]),
+                                        value=__getValWOUnc(scenarioInputDefault['params']['ghgi_ng_methaneleakage']['value'][2025]),
                                         step=0.05,
                                         style={'float': 'left'},
                                         placeholder='xx.x',
@@ -135,10 +135,10 @@ def getSimpleWidgets(scenarioInputDefault: dict):
             'unit': scenarioInputDefault['params']['cost_green_elec']['unit'],
             'step': 1,
         },
-        'ci_green_elec': {
-            'name': f"{scenarioInputDefault['params']['ci_green_elec']['desc']}",
-            'value': __getValWOUnc(scenarioInputDefault['params']['ci_green_elec']['value']['RE']['gwp100'][2050]),
-            'unit': scenarioInputDefault['params']['ci_green_elec']['unit'],
+        'ghgi_green_elec': {
+            'name': f"{scenarioInputDefault['params']['ghgi_green_elec']['desc']}",
+            'value': __getValWOUnc(scenarioInputDefault['params']['ghgi_green_elec']['value']['RE']['gwp100'][2050]),
+            'unit': scenarioInputDefault['params']['ghgi_green_elec']['unit'],
             'step': 0.001,
         },
         'green_ocf': {
