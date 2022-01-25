@@ -51,14 +51,16 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_ul['cost_blue_cts'],
         ),
         emi=par[f"cost_blue_emiForCTS_{tech_type}"],
+        transp=par['cost_h2transp'],
     )
 
 
-def getCostBlue(FCR, c_pl, flh, p_ng, eff, c_CTS, emi):
+def getCostBlue(FCR, c_pl, flh, p_ng, eff, c_CTS, emi, transp):
     return {
         'cap_cost': tuple(FCR * c/flh for c in c_pl),
         'fuel_cost': tuple(p/eff for p in p_ng),
         'cts_cost': tuple(c*emi for c in c_CTS),
+        'tra_cost': (transp, 0.0, 0.0),
     }
 
 
@@ -105,11 +107,13 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
         ocf=ocf,
         p_el=p_el,
         eff=par['green_eff'],
+        transp=par['cost_h2transp'],
     )
 
 
-def getCostGreen(FCR, c_pl, ocf, p_el, eff):
+def getCostGreen(FCR, c_pl, ocf, p_el, eff, transp):
     return {
         'cap_cost': tuple(FCR * c/(ocf*8760) for c in c_pl),
         'fuel_cost': tuple(p/eff for p in p_el),
+        'tra_cost': (transp, 0.0, 0.0),
     }

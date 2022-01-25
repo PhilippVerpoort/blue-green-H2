@@ -122,9 +122,9 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
     fig.update_layout(
         legend=dict(
             yanchor="top",
-            y=0.965,
-            xanchor="right",
-            x=0.99,
+            y=0.98,
+            xanchor="left",
+            x=0.517,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,

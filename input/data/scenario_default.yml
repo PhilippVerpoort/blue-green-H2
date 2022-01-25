@@ -373,3 +373,12 @@ params:
     value: 8
     unit: percent
     source: Typical WACC for such an investment.
+
+  cost_h2transp:
+    desc: H2 transportation cost
+    type: linear
+    value:
+      2025: 20.0
+      2050: 10.0
+    unit: EUR/MWh
+    source: Numbers by @Falko.

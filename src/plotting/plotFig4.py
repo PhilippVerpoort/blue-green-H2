@@ -109,6 +109,8 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
     # set plotting ranges
     shift = 0.1
+    y1low = refDataLeft.cost-shift*(config['plotting']['cost_max_left']-refDataLeft.cost)
+    y2low = refDataRight.cost-shift*(config['plotting']['cost_max_right']-refDataRight.cost)
     fig.update_layout(
         xaxis=dict(
             title=config['labels']['ciLeft'],
@@ -116,7 +118,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
         ),
         yaxis=dict(
             title=config['labels']['costLeft'],
-            range=[refDataLeft.cost-shift*(config['plotting']['cost_max_left']-refDataLeft.cost), config['plotting']['cost_max_left']]
+            range=[y1low, config['plotting']['cost_max_left']]
         ),
         xaxis2=dict(
             title=config['labels']['ciRight'],
@@ -124,18 +126,18 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
         ),
         yaxis2=dict(
             title=config['labels']['costRight'],
-            range=[refDataRight.cost-shift*(config['plotting']['cost_max_right']-refDataRight.cost), config['plotting']['cost_max_right']]
+            range=[y2low, config['plotting']['cost_max_right']]
         ),
     )
 
 
     # add annotations
-    annotationStylingA = dict(xanchor='left', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-    fig.add_annotation(x=0.01*config['plotting']['ci_max_left']*1000,
-                       y=config['plotting']['cost_max_left']-0.01*(config['plotting']['cost_max_left']-refDataLeft.cost),
+    annotationStylingA = dict(xanchor='right', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+    fig.add_annotation(x=0.99*config['plotting']['ci_max_left']*1000,
+                       y=y1low+0.01*(config['plotting']['cost_max_left']-refDataLeft.cost),
                        xref="x", yref="y", text='Heating with natural gas', **annotationStylingA)
-    fig.add_annotation(x=0.01*config['plotting']['ci_max_right']*1000,
-                       y=config['plotting']['cost_max_right']-0.01*(config['plotting']['cost_max_right']-refDataRight.cost),
+    fig.add_annotation(x=0.99*config['plotting']['ci_max_right']*1000,
+                       y=y2low+0.01*(config['plotting']['cost_max_right']-refDataRight.cost),
                        xref="x2", yref="y2", text='Steel production (H<sub>2</sub> direct reduction)', **annotationStylingA)
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)

@@ -1,5 +1,5 @@
 plotting:
-  fscp_max: 600.0
+  fscp_max: 700.0
   numb_cols: 2
 
 labels:

@@ -1,8 +1,8 @@
 plotting:
   ci_max_left: 0.225
-  cost_max_left: 100.0
+  cost_max_left: 120.0
   ci_max_right: 0.700
-  cost_max_right: 650.0
+  cost_max_right: 700.0
   n_samples: 301
 
 labels:
