@@ -484,8 +484,8 @@ def __convertFuelData(fuelData: pd.DataFrame, fuel_x: str, fuel_y: str):
     tmp['delta_cost_ul'] = tmp['cost_ul_y'] + tmp['cost_uu_x']
 
     tmp['delta_ghgi'] = tmp['ghgi_x'] - tmp['ghgi_y']
-    tmp['delta_ghgi_uu'] = tmp['cost_uu_x'] + tmp['cost_ul_y']
-    tmp['delta_ghgi_ul'] = tmp['cost_ul_x'] + tmp['cost_uu_y']
+    tmp['delta_ghgi_uu'] = tmp['ghgi_uu_x'] + tmp['ghgi_ul_y']
+    tmp['delta_ghgi_ul'] = tmp['ghgi_ul_x'] + tmp['ghgi_uu_y']
 
     FSCPData = tmp[['fuel_x', 'delta_cost', 'delta_cost_uu', 'delta_cost_ul',
                     'delta_ghgi', 'delta_ghgi_uu', 'delta_ghgi_ul', 'year']]
