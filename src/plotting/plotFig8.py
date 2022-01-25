@@ -50,6 +50,10 @@ def __obtainData(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame, conf
     for i, row in plotData.iterrows():
         plotData.at[i, 'name'] = fuelSpecs['names'][row['fuel']]
 
+    # update name of green
+    plotData.loc[(plotData['fuel']=='green RE') & (plotData['year']==2025), 'name'] = 'Electrolysis-RE-90%'
+    plotData.loc[(plotData['fuel']=='green RE') & (plotData['year']==2050), 'name'] = 'Electrolysis-RE-100%'
+
     return plotData
 
 
