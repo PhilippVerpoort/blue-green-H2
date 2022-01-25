@@ -3,18 +3,18 @@ plotting:
   delta_x2: 300000.00
   delta_x3: 0.10
   delta_x4: 5.0
-  delta_x5: 0.3e+8
+  delta_x5: 300000.0
   delta_cost: 15.0
   n_samples: 51
 
 labels:
-  x1: Electricity price<br>(EUR/kWh)
+  x1: Electricity price<br>(EUR/MWh)
   x2: Green GAPEX<br>(EUR/kW)
-  x3: Op. capacity factor<br>(%)
-  x4: Natural gas price<br>(EUR/MWh)
-  x5: Blue CAPEX<br>(MEUR per 10^5 Nm^3/h)
-  cost: Cost difference in 2030<br>(EUR/MWh<sub>LHV</sub>)
+  x3: Green OCF<br>(%)
+  x4: Natural-gas price<br>(EUR/MWh)
+  x5: Blue CAPEX<br>(EUR/kW)
+  cost: Cost difference in 2035 (EUR/MWh<sub>LHV</sub>)
 
 fuelBlue: blue LEB
 fuelGreen: green RE
-fuelYear: 2030
+fuelYear: 2035

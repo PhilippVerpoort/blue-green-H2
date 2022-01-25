@@ -5,6 +5,7 @@ from plotly.subplots import make_subplots
 
 from src.data.calc_cost import getCostParamsBlue, getCostParamsGreen, getCostBlue, getCostGreen
 from src.data.calc_fuels import getCurrentAsDict
+from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
 def plotFig6(fullParams: pd.DataFrame, fuels: dict,
@@ -12,9 +13,25 @@ def plotFig6(fullParams: pd.DataFrame, fuels: dict,
     # produce figure
     fig = __produceFigure(fullParams, fuels, config)
 
+    # styling figure
+    __styling(fig)
+
     # write figure to image file
     if export_img:
-        fig.write_image("output/fig6.png")
+        w_mm = 88.0
+        h_mm = 61.0
+
+        fs_sm = getFontSize(5.0)
+        fs_lg = getFontSize(7.0)
+
+        fig.update_layout(font_size=fs_sm)
+        fig.update_annotations(font_size=fs_lg)
+        fig.update_xaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
+        fig.update_yaxes(title_font_size=fs_sm,
+                         tickfont_size=fs_sm)
+
+        fig.write_image('output/fig6.png', **getImageSize(w_mm, h_mm))
 
     return fig
 
@@ -53,7 +70,10 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
             x = x/10**3
         elif par=='ocf':
             x = x*100
-        fig.add_trace(go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)
+        fig.add_trace(
+            go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False, line_width=3.0,),
+            row=1, col=j
+        )
 
     # add blue traces
     varyBlueParams = ['p_ng', 'c_pl']
@@ -70,9 +90,12 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
         if hasUncertainty:
             pBlueMod[par] = (pBlueMod[par], 0.0, 0.0)
         delta, delta_u = __getCostDiff(pBlueMod, pGreen)
-        if par=='C_pl':
-            x = x/10**6
-        fig.add_trace(go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False), row=1, col=j)
+        if par=='c_pl':
+            x = x/10**3
+        fig.add_trace(
+            go.Scatter(x=x, y=delta, hoverinfo='skip', mode='lines', showlegend=False, line_width=3.0,),
+            row=1, col=j,
+        )
 
     # add horizontal line
     delta, _ = __getCostDiff(pBlue, pGreen)
@@ -99,3 +122,27 @@ def __getCostDiff(pBlue, pGreen):
     delta_u = np.sqrt(sum(costGreen[comp][1]**2 for comp in costGreen) + sum(costBlue[comp][1]**2 for comp in costBlue))
 
     return delta, delta_u
+
+
+def __styling(fig: go.Figure):
+    # update axis styling
+    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'xaxis5', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4', 'yaxis5']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
