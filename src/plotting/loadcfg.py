@@ -1,6 +1,6 @@
 from src.filepaths import getFilePathInput
 
-n_figs = 7
+n_figs = 8
 
 def loadInitialPlottingCfg():
     cfg = {}

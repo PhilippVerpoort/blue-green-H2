@@ -6,7 +6,7 @@ from src.data.calc_fuels import calcFuelData
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig7(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
+def plotFig8(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
              config: dict, export_img: bool = True):
     # obtain data
     levelisedFuelData, _ = calcFuelData(scenario['options']['times'], fullParams, scenario['fuels'], scenario['options']['gwp'], levelised=True)
@@ -42,7 +42,7 @@ def plotFig7(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
         fig.update_yaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
 
-        fig.write_image("output/fig7.png", **getImageSize(w_mm, h_mm))
+        fig.write_image("output/fig8.png", **getImageSize(w_mm, h_mm))
 
     return fig
 
@@ -51,16 +51,16 @@ def __produceFigure(plotData: pd.DataFrame, config: dict):
     # create figure
     fig = px.bar(plotData,
         x='name',
-        y=['cost__cap_cost',
-           'cost__fuel_cost',
-           'cost__cts_cost',
-           'cost__tra_cost',],
+        y=['ci__base',
+           'ci__mleakage',
+           'ci__elec',],
         color_discrete_map=config['colours'],
     )
 
     # make adjustments
     for trace in fig.data:
         trace['name'] = config['labels'][trace['name']]
+        trace['y'] *= 1000.0
         trace['hovertemplate'] = f"<b>{trace['name']}</b><br>{config['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>"
 
     # set plotting ranges
@@ -77,8 +77,8 @@ def __styling(fig: go.Figure):
         legend=dict(
             yanchor="top",
             y=0.98,
-            xanchor="left",
-            x=0.01,
+            xanchor="right",
+            x=0.99,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,

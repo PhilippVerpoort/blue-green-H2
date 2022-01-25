@@ -5,12 +5,14 @@ labels:
   cost__onm_cost: Operational and maintenance cost
   cost__fuel_cost: Fuel cost
   cost__cts_cost: Carbon transport and storage cost
+  cost__tra_cost: H<sub>2</sub> transport cost
 
 colours:
   cost__cap_cost: '#db2a1a'
   cost__onm_cost: '#00813e'
   cost__fuel_cost: '#3745a3'
   cost__cts_cost: '#589ace'
+  cost__tra_cost: '#7c1f8a'
 
 fuels:
   - natural gas

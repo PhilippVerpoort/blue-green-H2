@@ -10,6 +10,7 @@ from src.plotting.plotFig4 import plotFig4
 from src.plotting.plotFig5 import plotFig5
 from src.plotting.plotFig6 import plotFig6
 from src.plotting.plotFig7 import plotFig7
+from src.plotting.plotFig8 import plotFig8
 
 
 # load scenario and compute data
@@ -30,3 +31,4 @@ plotFig4(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig4'], Loader=y
 plotFig5(fuelSpecs, fuelData, fullParams, scenario['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader))
 plotFig6(fullParams, scenario['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader))
 plotFig7(fuelSpecs, scenario, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader))
+plotFig8(fuelSpecs, scenario, fullParams, yaml.load(plotting_cfg['fig8'], Loader=yaml.FullLoader))

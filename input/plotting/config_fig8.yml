@@ -1,0 +1,21 @@
+yaxislabel: Levelised CI of Hydrogen (g<sub>CO<sub>2</sub>eq</sub>/kWh)
+
+labels:
+  ci__base: Base emissions
+  ci__mleakage: Methane leakage
+  ci__elec: Electricity
+
+colours:
+  ci__base: '#db2a1a'
+  ci__mleakage: '#00813e'
+  ci__elec: '#3745a3'
+
+fuels:
+  - natural gas
+  - blue HEB
+  - blue LEB
+  - green RE
+
+years:
+  - 2025
+  - 2050
