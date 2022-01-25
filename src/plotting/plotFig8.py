@@ -1,5 +1,4 @@
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 
 from src.data.calc_fuels import calcFuelData
@@ -9,17 +8,7 @@ from src.plotting.img_export_cfg import getFontSize, getImageSize
 def plotFig8(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
              config: dict, export_img: bool = True):
     # obtain data
-    levelisedFuelData, _ = calcFuelData(scenario['options']['times'], fullParams, scenario['fuels'], scenario['options']['gwp'], levelised=True)
-
-    # filter data
-    fuels = config['fuels']
-    years = config['years']
-    plotData = levelisedFuelData.query('fuel in @fuels & year in @years')
-
-    # add names
-    plotData.insert(1, 'name', len(plotData)*[''])
-    for i, row in plotData.iterrows():
-        plotData.at[i, 'name'] = f"{fuelSpecs['names'][row['fuel']]} {row['year']}"
+    plotData = __obtainData(fuelSpecs, scenario, fullParams, config)
 
     # produce figure
     fig = __produceFigure(plotData, config)
@@ -42,28 +31,49 @@ def plotFig8(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
         fig.update_yaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
 
-        fig.write_image("output/fig8.png", **getImageSize(w_mm, h_mm))
+        fig.write_image('output/fig8.png', **getImageSize(w_mm, h_mm))
 
     return fig
 
 
+def __obtainData(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame, config: dict):
+    levelisedFuelData, _ = calcFuelData(scenario['options']['times'], fullParams, scenario['fuels'],
+                                        scenario['options']['gwp'], levelised=True)
+
+    # filter data
+    fuels = config['fuels']
+    years = config['years']
+    plotData = levelisedFuelData.query('fuel in @fuels & year in @years')
+
+    # add names
+    plotData.insert(1, 'name', len(plotData) * [''])
+    for i, row in plotData.iterrows():
+        plotData.at[i, 'name'] = fuelSpecs['names'][row['fuel']]
+
+    return plotData
+
+
 def __produceFigure(plotData: pd.DataFrame, config: dict):
     # create figure
-    fig = px.bar(plotData,
-        x='name',
-        y=['ci__base',
-           'ci__mleakage',
-           'ci__elec',],
-        color_discrete_map=config['colours'],
-    )
+    fig = go.Figure()
+    for stack in config['labels'].keys():
+        fig.add_bar(
+            x=[plotData.year, plotData.name],
+            y=plotData[stack],
+            marker_color=config['colours'][stack],
+            name=config['labels'][stack],
+            hovertemplate=f"<b>{config['labels'][stack]}</b><br>{config['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>",
+        )
+    fig.update_layout(barmode='stack')
 
-    # make adjustments
-    for trace in fig.data:
-        trace['name'] = config['labels'][trace['name']]
-        trace['y'] *= 1000.0
-        trace['hovertemplate'] = f"<b>{trace['name']}</b><br>{config['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>"
+    # add vertical line
+    nYears = plotData['year'].nunique()
+    nFuels = plotData['fuel'].nunique()
+    for i in range(nYears-1):
+        fig.add_vline(nFuels*(i+1)-0.5, line_width=0.5, line_color='black')
+        fig.add_vline(nFuels*(i+1)-0.5, line_width=0.5, line_color='black')
 
-    # set plotting ranges
+    # set axes labels
     fig.update_layout(xaxis=dict(title=''),
                       yaxis=dict(title=config['yaxislabel']),
                       legend_title='')
@@ -75,9 +85,9 @@ def __styling(fig: go.Figure):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            yanchor="top",
+            yanchor='top',
             y=0.98,
-            xanchor="right",
+            xanchor='right',
             x=0.99,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',

@@ -1,4 +1,4 @@
-yaxislabel: Levelised CI of Hydrogen (g<sub>CO<sub>2</sub>eq</sub>/kWh)
+yaxislabel: Levelised CI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
 labels:
   ci__base: Base emissions
