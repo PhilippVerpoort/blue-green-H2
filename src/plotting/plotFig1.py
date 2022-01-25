@@ -124,7 +124,7 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
             yanchor="top",
             y=0.98,
             xanchor="left",
-            x=0.517,
+            x=0.005,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,

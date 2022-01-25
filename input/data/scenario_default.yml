@@ -353,7 +353,7 @@ params:
     desc: Share of green and grey electricity
     type: linear
     value:
-      2025: 10.0
+      2025: 20.0
       2035: 0.0
       2050: 0.0
     unit:
