@@ -63,7 +63,7 @@ def __produceFigure(plotData: pd.DataFrame, config: dict):
     for stack in config['labels'].keys():
         fig.add_bar(
             x=[plotData.year, plotData.name],
-            y=plotData[stack],
+            y=plotData[stack]*1000,
             marker_color=config['colours'][stack],
             name=config['labels'][stack],
             hovertemplate=f"<b>{config['labels'][stack]}</b><br>{config['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>",
