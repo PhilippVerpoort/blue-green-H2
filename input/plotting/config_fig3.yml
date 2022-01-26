@@ -1,20 +1,33 @@
 plotting:
+  fscp_min: -10.0
   fscp_max: 700.0
-  numb_cols: 2
 
 labels:
-  time: ""
-  fscp: FSCP (EUR/MWh<sub>LHV</sub>)
+  time: ''
+  fscp: FSCP (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  fscp_steel: FSCP (EUR/t<sub>CO<sub>2</sub>eq</sub>)
 
 subplot_title_positions:
-  - [0.0, 1.15]
-  - [0.5, 1.15]
+  - [0.0, 1.05]
+  - [0.5, 1.05]
+  - [0.0, 0.5]
+  - [0.5, 0.5]
   
 showFSCPs:
   - [[1, 2], natural gas, green RE]
   - [[1, 2], natural gas, green pure RE]
   - [[1], natural gas, blue HEB]
   - [[2], natural gas, blue LEB]
+  - [[1], blue HEB, green RE]
+  - [[2], blue LEB, green RE]
+  - [[1], blue HEB, green pure RE]
+  - [[2], blue LEB, green pure RE]
+
+showFSCPsSteel:
+  - [[1, 2], blast furnace, green RE]
+  - [[1, 2], blast furnace, green pure RE]
+  - [[1], blast furnace, blue HEB]
+  - [[2], blast furnace, blue LEB]
   - [[1], blue HEB, green RE]
   - [[2], blue LEB, green RE]
   - [[1], blue HEB, green pure RE]
@@ -35,3 +48,6 @@ carbon_price_trajectory:
 carbon_price_config:
   name: 'CO<sub>2</sub>-Price'
   colour: '#7c2089'
+
+refFuelTop: natural gas
+refFuelBottom: blast furnace
