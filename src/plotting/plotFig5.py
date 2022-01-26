@@ -5,8 +5,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from src.data.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue
-from src.data.calc_fuels import getCurrentAsDict
+from src.data.fuels.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue
+from src.data.fuels.calc_fuels import getCurrentAsDict
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 

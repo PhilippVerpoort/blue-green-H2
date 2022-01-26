@@ -7,7 +7,7 @@ from flask import send_file
 
 from src.app.app import app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
-from src.data.calc_FSCPs import calcFSCPs
+from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
 from src.config_load import input_data
 from src.filepaths import getFilePathAssets, getFilePath

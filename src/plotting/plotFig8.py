@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from src.data.calc_fuels import calcFuelData
+from src.data.fuels.calc_fuels import calcFuelData
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 

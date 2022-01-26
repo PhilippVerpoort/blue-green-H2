@@ -3,10 +3,10 @@ import csv
 from src.filepaths import getFilePathOutput
 
 
-def exportInputData(scenario: dict):
+def exportInputData(input_data: dict):
     params = []
 
-    for paramKey, paramData in scenario['params'].items():
+    for paramKey, paramData in input_data['params'].items():
         source = paramData['source'] if 'source' in paramData else ''
         params.extend(__printScenarioValue(paramData['desc'], paramData['unit'], source, paramData['value']))
 
@@ -25,12 +25,12 @@ def __printScenarioValue(name, unit, source, value):
         return [(name, unit, f"2025: {value}", f"2050: {value}", source)]
 
 
-def exportFullParams(fullParams: dict):
+def exportFullParams(full_params: dict):
     yearInit = 2025
     yearFinal = 2050
 
-    fullParamsInit = fullParams.query(f"year == {yearInit}").drop(columns=['year'])
-    fullParamsFinal = fullParams.query(f"year == {yearFinal}").drop(columns=['year'])
+    fullParamsInit = full_params.query(f"year == {yearInit}").drop(columns=['year'])
+    fullParamsFinal = full_params.query(f"year == {yearFinal}").drop(columns=['year'])
 
     fullParamInitFinal = fullParamsInit.merge(fullParamsFinal, on=['name', 'unit'], how='outer', suffixes=('_init', '_final'))
 

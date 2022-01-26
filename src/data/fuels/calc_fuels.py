@@ -1,7 +1,7 @@
 import pandas as pd
 
-from src.data.calc_ghgi import calcGHGI
-from src.data.calc_cost import calcCost
+from src.data.fuels.calc_ghgi import calcGHGI
+from src.data.fuels.calc_cost import calcCost
 
 
 # calculate fuel data

@@ -2,7 +2,7 @@ import yaml
 
 from src.config_load import input_data
 from src.data.data import getFullData
-from src.data.export_params import exportInputData
+from src.data.params.export_params import exportInputData
 from src.plotting.loadcfg import loadInitialPlottingCfg
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
@@ -14,15 +14,15 @@ from src.plotting.plotFig7 import plotFig7
 from src.plotting.plotFig8 import plotFig8
 
 
-# load scenario and compute data
+# Get full parameter, fuel, FSCP, and steel data based on input data.
 fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data)
 
 
-# export params to table for paper
+# Export params to CSV table for presenting in the paper.
 exportInputData(input_data)
 
 
-# create plots (and automatically export to files)
+# Create plots and automatically export to image files.
 plotting_cfg = loadInitialPlottingCfg()
 plotFig1(fuelSpecs, fuelData, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader))
 plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader))

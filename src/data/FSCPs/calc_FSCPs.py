@@ -1,4 +1,7 @@
-def calcFSCPs(fuelData):
+import pandas as pd
+
+
+def calcFSCPs(fuelData: pd.DataFrame):
     tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).\
                    assign(fscp=lambda f: (f['cost_x'] - f['cost_y'])/(f['ghgi_y'] - f['ghgi_x'])).\
                    dropna()
