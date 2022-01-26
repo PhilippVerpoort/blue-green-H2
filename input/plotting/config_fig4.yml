@@ -15,8 +15,10 @@ subplot_title_positions:
   - [0.0, 1.1]
   - [0.5, 1.1]
 
-refFuel: natural gas
-refYear: 2025
+refFuelLeft: natural gas
+refYearLeft: 2025
+refFuelRight: blast furnace
+refYearRight: 2025
 
 showFuels:
   - green RE

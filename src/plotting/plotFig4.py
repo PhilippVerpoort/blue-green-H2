@@ -7,23 +7,16 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from src.plotting.img_export_cfg import getFontSize, getImageSize
-from src.config_load import steel_data
 
 
-def plotFig4(fuelSpecs: dict, fuelsData: pd.DataFrame,
+def plotFig4(fuelSpecs: dict, fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame,
              plotConfig: dict, export_img: bool = True):
     # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}
 
-    # select which lines to plot based on function argument
-    plotDataLeft = __selectPlotData(fuelsData, config['refFuel'], config['showFuels'])
-
-    # convert hydrogen data (cost and ghgi) into steel data
-    plotDataRight = __convertDataSteel(fuelsData)
-
-    # load reference data
-    refDataLeft = plotDataLeft.query(f"fuel=='{config['refFuel']}' & year=={config['refYear']}").iloc[0]
-    refDataRight = pd.Series(data={'cost': steel_data['bf_cost'], 'ghgi': steel_data['bf_ghgi']})
+    # Select which lines to plot based on function argument and
+    plotDataLeft, refDataLeft = __selectPlotData(fuelsData, config['refFuelLeft'], config['refYearLeft'], config['showFuels'])
+    plotDataRight, refDataRight = __selectPlotData(fuelsDataSteel, config['refFuelRight'], config['refYearRight'], config['showFuels'])
 
     # produce figure
     fig = __produceFigure(plotDataLeft, refDataLeft, plotDataRight, refDataRight, config['showFuels'], config)
@@ -50,23 +43,11 @@ def plotFig4(fuelSpecs: dict, fuelsData: pd.DataFrame,
     return fig
 
 
-def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, showFuels: list):
-    fuelsList = [refFuel] + showFuels
-    return fuelsData.query("fuel in @fuelsList")
+def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list):
+    plotData = fuelsData.query("fuel in @showFuels")
+    refData = fuelsData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
 
-
-def __convertDataSteel(plotDataLeft: pd.DataFrame):
-    plotDataRight = plotDataLeft.copy()
-
-    plotDataRight['cost'] = plotDataRight['cost'] * steel_data['h2_demand'] + steel_data['other_cost']
-    plotDataRight['cost_uu'] = plotDataRight['cost_uu'] * steel_data['h2_demand']
-    plotDataRight['cost_ul'] = plotDataRight['cost_ul'] * steel_data['h2_demand']
-
-    plotDataRight['ghgi'] = plotDataRight['ghgi'] * steel_data['h2_demand'] + steel_data['other_ghgi']
-    plotDataRight['ghgi_uu'] = plotDataRight['ghgi_uu'] * steel_data['h2_demand']
-    plotDataRight['ghgi_ul'] = plotDataRight['ghgi_ul'] * steel_data['h2_demand']
-
-    return plotDataRight
+    return plotData, refData
 
 
 def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
