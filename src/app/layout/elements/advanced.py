@@ -3,6 +3,7 @@ import yaml
 from dash import dcc, html, dash_table
 import dash_bootstrap_components as dbc
 
+
 def getAdvancedWidgets(scenarioInputDefault: dict):
     widget_advanced_options = dbc.Card(
         [

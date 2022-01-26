@@ -9,7 +9,7 @@ from plotly.colors import hex_to_rgb
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig1(fuelData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
+def plotFig1(fuelSpecs: dict, fuelData: pd.DataFrame, FSCPData: pd.DataFrame,
              plotConfig: dict, export_img: bool = True):
     # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}

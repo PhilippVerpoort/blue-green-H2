@@ -1,6 +1,7 @@
 from dash import dcc
 import dash_bootstrap_components as dbc
 
+
 def getAdvancedModal():
     modal = dbc.Modal(
         [

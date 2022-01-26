@@ -6,10 +6,10 @@ from dash.dependencies import Input, Output, State
 from flask import send_file
 
 from src.app.app import app
-from src.app.update import updateScenarioInputSimple, updateScenarioInputAdvanced
+from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.data.calc_FSCPs import calcFSCPs
-from src.data.data import obtainScenarioData
-from src.data.scenario_input_default import scenarioInputDefault
+from src.data.data import getFullData
+from src.config_load import input_data
 from src.filepaths import getFilePathAssets, getFilePath
 from src.plotting.loadcfg import n_figs
 from src.plotting.plotFig1 import plotFig1
@@ -82,15 +82,15 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
      State('simple-ng-price', 'value'),
      State('simple-lifetime', 'value'),
      State('simple-irate', 'value'),
-     State('simple-cost-green-capex-2020', 'value'),
+     State('simple-cost-green-capex-2025', 'value'),
      State('simple-cost-green-capex-2050', 'value'),
-     State('simple-cost-green-elec-2020', 'value'),
+     State('simple-cost-green-elec-2025', 'value'),
      State('simple-cost-green-elec-2050', 'value'),
-     State('simple-ci-green-elec', 'value'),
+     State('simple-ghgi-green-elec', 'value'),
      State('simple-green-ocf', 'value'),
      State('simple-cost-blue-capex-heb', 'value'),
      State('simple-cost-blue-capex-leb', 'value'),
-     State('simple-cost-blue-cts-2020', 'value'),
+     State('simple-cost-blue-cts-2025', 'value'),
      State('simple-cost-blue-cts-2050', 'value'),
      State('simple-blue-eff-heb', 'value'),
      State('simple-blue-eff-leb', 'value'),
@@ -101,16 +101,16 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
 def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotting_cfg: dict, *args):
     ctx = dash.callback_context
     if not ctx.triggered:
-        scenarioInputUpdated = scenarioInputDefault.copy()
-        fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
+        input_data_updated = input_data.copy()
+        fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data_updated)
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
-            scenarioInputUpdated = updateScenarioInputSimple(scenarioInputDefault.copy(), *args)
-            fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
+            input_data_updated = updateScenarioInputSimple(input_data.copy(), *args)
+            fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data_updated)
         elif btnPressed == 'advanced-update':
-            scenarioInputUpdated = updateScenarioInputAdvanced(scenarioInputDefault.copy(), *args)
-            fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenarioInputUpdated)
+            input_data_updated = updateScenarioInputAdvanced(input_data.copy(), *args)
+            fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data_updated)
         elif btnPressed == 'results-replot':
             # load fuelSpecs and fullParams from session
             fuelSpecs = saved_plot_data['fuelSpecs']
@@ -126,19 +126,19 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
                 fuelData[col] = fuelData[col].astype(float)
             # recompute FSCPs
             FSCPData = calcFSCPs(fuelData)
-            # TODO: Make sure scenarioInputUpdated is initialised! Needs work & testing.
+            # TODO: Make sure input_data_updated is initialised! Needs work & testing.
         else:
             raise Exception("Unknown button pressed!")
 
     saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
 
-    fig1 = plotFig1(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader), export_img=False)
+    fig1 = plotFig1(fuelSpecs, fuelData, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader), export_img=False)
     fig2 = plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader), export_img=False)
     fig3 = plotFig3(fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader), export_img=False)
-    fig4 = plotFig4(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
-    fig5 = plotFig5(fuelSpecs, fuelData, fullParams, scenarioInputUpdated['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader), export_img=False)
-    fig6 = plotFig6(fullParams, scenarioInputUpdated['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader), export_img=False)
-    fig7 = plotFig7(fuelSpecs, scenarioInputUpdated, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)
+    fig4 = plotFig4(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
+    fig5 = plotFig5(fuelSpecs, fuelData, fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader), export_img=False)
+    fig6 = plotFig6(fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader), export_img=False)
+    fig7 = plotFig7(fuelSpecs, input_data_updated, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)
 
     return fig1, fig2, fig3, fig4, fig5, fig6, fig7,\
            fuelData.to_dict('records'), saved_plot_data
@@ -154,15 +154,15 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
      State('simple-ng-price', 'value'),
      State('simple-lifetime', 'value'),
      State('simple-irate', 'value'),
-     State('simple-cost-green-capex-2020', 'value'),
+     State('simple-cost-green-capex-2025', 'value'),
      State('simple-cost-green-capex-2050', 'value'),
-     State('simple-cost-green-elec-2020', 'value'),
+     State('simple-cost-green-elec-2025', 'value'),
      State('simple-cost-green-elec-2050', 'value'),
-     State('simple-ci-green-elec', 'value'),
+     State('simple-ghgi-green-elec', 'value'),
      State('simple-green-ocf', 'value'),
      State('simple-cost-blue-capex-heb', 'value'),
      State('simple-cost-blue-capex-leb', 'value'),
-     State('simple-cost-blue-cts-2020', 'value'),
+     State('simple-cost-blue-cts-2025', 'value'),
      State('simple-cost-blue-cts-2050', 'value'),
      State('simple-blue-eff-heb', 'value'),
      State('simple-blue-eff-leb', 'value'),
@@ -178,9 +178,9 @@ def callbackDownloadConfig(n1, n2, *args):
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-download-config':
-            scenarioInputUpdated = updateScenarioInputSimple(scenarioInputDefault.copy(), *args)
+            scenarioInputUpdated = updateScenarioInputSimple(input_data.copy(), *args)
         elif btnPressed == 'advanced-download-config':
-            scenarioInputUpdated = updateScenarioInputAdvanced(scenarioInputDefault.copy(), *args)
+            scenarioInputUpdated = updateScenarioInputAdvanced(input_data.copy(), *args)
         else:
             raise Exception("Unknown button pressed!")
 

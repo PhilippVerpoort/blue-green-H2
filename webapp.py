@@ -3,16 +3,16 @@
 
 
 from src.app.app import app
-from src.data.scenario_input_default import scenarioInputDefault
-from src.app.layout import setLayout
+from src.config_load import input_data
+from src.app.layout.layout import initLayout
 
 
 # define layout
-setLayout(app, scenarioInputDefault)
+initLayout(app, input_data)
 
 
 # import and list callbacks (list so they don't get removed as unused imports)
-from src.app.callbacks import callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
+from src.app.callbacks.callbacks import callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
 callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
 
 

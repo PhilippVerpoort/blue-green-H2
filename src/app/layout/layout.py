@@ -1,17 +1,17 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
-from src.app.elements.advanced_modal import getAdvancedModal
-from src.app.elements.header import getHeader
-from src.app.elements.plot_settings_modal import getPlotSettingsModal
-from src.app.elements.results import getResultsWidgets
-from src.app.elements.simple import getSimpleWidgets
-from src.app.elements.advanced import getAdvancedWidgets
-from src.app.elements.plots import getPlots
+from src.app.layout.elements.advanced import getAdvancedWidgets
+from src.app.layout.elements.advanced_modal import getAdvancedModal
+from src.app.layout.elements.header import getHeader
+from src.app.layout.elements.plot_settings_modal import getPlotSettingsModal
+from src.app.layout.elements.plots import getPlots
+from src.app.layout.elements.results import getResultsWidgets
+from src.app.layout.elements.simple import getSimpleWidgets
 from src.plotting.loadcfg import loadInitialPlottingCfg
 
 
-def setLayout(app, scenarioInputDefault):
+def initLayout(app, input_data):
     # load inital plotting cfg
     plotting_cfg = loadInitialPlottingCfg()
 
@@ -19,10 +19,10 @@ def setLayout(app, scenarioInputDefault):
     header = getHeader(app)
 
     # simple config widgets
-    widget_simple_options, widget_simple_green, widget_simple_blue = getSimpleWidgets(scenarioInputDefault)
+    widget_simple_options, widget_simple_green, widget_simple_blue = getSimpleWidgets(input_data)
 
     # advanced scenario config
-    widget_advanced_options, widget_advanced_params, widget_advanced_fuels = getAdvancedWidgets(scenarioInputDefault)
+    widget_advanced_options, widget_advanced_params, widget_advanced_fuels = getAdvancedWidgets(input_data)
 
     # advanced modal
     advanced_modal = getAdvancedModal()

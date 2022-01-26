@@ -10,7 +10,7 @@ from src.plotting.img_export_cfg import getFontSize, getImageSize
 from src.config_load import steel_data
 
 
-def plotFig4(fuelsData: pd.DataFrame, fuelSpecs: dict, FSCPData: pd.DataFrame,
+def plotFig4(fuelSpecs: dict, fuelsData: pd.DataFrame,
              plotConfig: dict, export_img: bool = True):
     # combine fuel specs with plot config from YAML file
     config = {**fuelSpecs, **plotConfig}

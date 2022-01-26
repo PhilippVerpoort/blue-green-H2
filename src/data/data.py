@@ -2,19 +2,16 @@ import re
 from typing import Union
 
 import pandas as pd
-import yaml
 
-from src.filepaths import getFilePathInput, getFilePath
+from src.config_load import units
+from src.filepaths import getFilePath
 from src.data.calc_FSCPs import calcFSCPs
 from src.data.calc_fuels import calcFuelData
 
 
 # obtain all required data for a scenario
-def obtainScenarioData(scenario: dict, export_data: bool = True):
+def getFullData(scenario: dict, export_data: bool = True):
     options, params, fuels = (scenario['options'], scenario['params'], scenario['fuels'])
-
-    # load from yaml files
-    units = __loadDataFromFiles()
 
     # convert basic inputs to complete dataframes
     fullParams = __getFullParams(params, units, options['times'])
@@ -40,16 +37,7 @@ def obtainScenarioData(scenario: dict, export_data: bool = True):
 
         writer.save()
 
-    return fuelData, fuelSpecs, FSCPData, fullParams
-
-
-# load data from yaml files
-def __loadDataFromFiles():
-    filePath = getFilePathInput('data/units.yml')
-    yamlData = yaml.load(open(filePath, 'r').read(), Loader=yaml.FullLoader)
-    units = yamlData['units']
-
-    return units
+    return fuelSpecs, fuelData, FSCPData, fullParams
 
 
 # calculate parameters at different times (using linear interpolation if needed)

@@ -1,0 +1,61 @@
+fuels:
+  natural gas:
+    desc: Natural Gas
+    type: ng
+    colour: '#ef7500'
+
+  grey:
+    desc: SMR (w/o CCS)
+    type: blue
+    colour: '#bfbfbf'
+    tech_type: smr
+    include_capex: True
+
+  blue HEB:
+    desc: SMR-CCS-56%
+    type: blue
+    colour: '#3647a3'
+    tech_type: smr+lcrccs
+    include_capex: True
+
+  blue HEB woCAPEX:
+    desc: SMR-CCS-56% (w/o CAPEX)
+    type: blue
+    colour: '#35638a'
+    tech_type: smr+lcrccs
+    include_capex: False
+
+  blue LEB retro:
+    desc: SMR-CCS-90%
+    type: blue
+    colour: '#62b7fe'
+    tech_type: smr+hcrccs
+    include_capex: True
+
+  blue LEB:
+    desc: ATR-CCS-93%
+    type: blue
+    colour: '#589ACE'
+    tech_type: atr+hcrccs
+    include_capex: True
+
+  green RE:
+    desc: Green Hydrogen
+    type: green
+    colour: '#6ac100'
+    tech_type: share
+    include_capex: True
+
+  green pure RE:
+    desc: Green Hydrogen 100% RE
+    type: green
+    colour: '#6ac100'
+    tech_type: RE
+    include_capex: True
+
+  green mix:
+    desc: Grey elec. Hydrogen
+    type: green
+    colour: '#708f70'
+    tech_type: mix
+    include_capex: True

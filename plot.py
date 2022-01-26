@@ -1,7 +1,8 @@
 import yaml
 
-from src.data.data import obtainScenarioData
-from src.data.export_params import exportScenarioParams
+from src.config_load import input_data
+from src.data.data import getFullData
+from src.data.export_params import exportInputData
 from src.plotting.loadcfg import loadInitialPlottingCfg
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
@@ -14,21 +15,20 @@ from src.plotting.plotFig8 import plotFig8
 
 
 # load scenario and compute data
-scenario = yaml.load(open('input/data/scenario_default.yml', 'r').read(), Loader=yaml.FullLoader)
-fuelData, fuelSpecs, FSCPData, fullParams = obtainScenarioData(scenario)
+fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data)
 
 
 # export params to table for paper
-exportScenarioParams(scenario)
+exportInputData(input_data)
 
 
 # create plots (and automatically export to files)
 plotting_cfg = loadInitialPlottingCfg()
-plotFig1(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader))
+plotFig1(fuelSpecs, fuelData, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader))
 plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader))
 plotFig3(fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader))
-plotFig4(fuelData, fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader))
-plotFig5(fuelSpecs, fuelData, fullParams, scenario['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader))
-plotFig6(fullParams, scenario['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader))
-plotFig7(fuelSpecs, scenario, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader))
-plotFig8(fuelSpecs, scenario, fullParams, yaml.load(plotting_cfg['fig8'], Loader=yaml.FullLoader))
+plotFig4(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader))
+plotFig5(fuelSpecs, fuelData, fullParams, input_data['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader))
+plotFig6(fullParams, input_data['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader))
+plotFig7(fuelSpecs, input_data, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader))
+plotFig8(fuelSpecs, input_data, fullParams, yaml.load(plotting_cfg['fig8'], Loader=yaml.FullLoader))

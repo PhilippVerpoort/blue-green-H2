@@ -3,7 +3,7 @@ import csv
 from src.filepaths import getFilePathOutput
 
 
-def exportScenarioParams(scenario: dict):
+def exportInputData(scenario: dict):
     params = []
 
     for paramKey, paramData in scenario['params'].items():
