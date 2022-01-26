@@ -85,8 +85,14 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
 
     # add FSCP traces
+    thickLines = [
+        {'size': 100, 'start': 100, 'end': 600},
+        {'size': 250, 'start': 750, 'end': 1000},
+        {'size': 300, 'start': 1200, 'end': 1500},
+    ]
+
     plotConf = (config['plotting']['ghgi_max_left'], config['plotting']['cost_max_left'], config['plotting']['n_samples'])
-    traces = __addFSCPTraces(refDataLeft, plotConf)
+    traces = __addFSCPTraces(refDataLeft, thickLines, plotConf)
     for trace in traces:
         fig.add_trace(trace, row=1, col=1)
     #fig.add_hline(refDataLeft.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=1)
@@ -100,8 +106,12 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
 
     # add FSCP traces
+    thickLines = [
+        {'size': 50, 'start': 50, 'end': 200},
+    ]
+
     plotConf = (config['plotting']['ghgi_max_right'], config['plotting']['cost_max_right'], config['plotting']['n_samples'])
-    traces = __addFSCPTraces(refDataRight, plotConf)
+    traces = __addFSCPTraces(refDataRight, thickLines, plotConf)
     for trace in traces:
         fig.add_trace(trace, row=1, col=2)
     #fig.add_hline(refDataRight.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=2)
@@ -135,10 +145,10 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     annotationStylingA = dict(xanchor='right', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
     fig.add_annotation(x=0.99*config['plotting']['ghgi_max_left']*1000,
                        y=y1low+0.01*(config['plotting']['cost_max_left']-refDataLeft.cost),
-                       xref="x", yref="y", text='Heating with natural gas', **annotationStylingA)
+                       xref="x", yref="y", text='Heating (H2 vs. Natural Gas)', **annotationStylingA)
     fig.add_annotation(x=0.99*config['plotting']['ghgi_max_right']*1000,
                        y=y2low+0.01*(config['plotting']['cost_max_right']-refDataRight.cost),
-                       xref="x2", yref="y2", text='Steel production (H<sub>2</sub> direct reduction)', **annotationStylingA)
+                       xref="x2", yref="y2", text='Primary Steel Production (H2-DRI-EAF vs. Blast Furnace)', **annotationStylingA)
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
     fig.add_annotation(x=0.01*config['plotting']['ghgi_max_left']*1000,
@@ -235,7 +245,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
     return traces
 
 
-def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
+def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple):
     traces = []
 
     ghgi_max, cost_max, n_samples = plotConf
@@ -295,11 +305,6 @@ def __addFSCPTraces(refData: pd.Series, plotConf: tuple):
                              line=dict(width=3, dash='dash')))
 
     # thick lines
-    thickLines = [
-        {'size': 100, 'start': 100, 'end': 600},
-        {'size': 250, 'start': 750, 'end': 1000},
-        {'size': 300, 'start': 1200, 'end': 1500},
-    ]
     for kwargs in thickLines:
         traces.append(go.Contour(
             x=ghgi_samples*1000, y=cost_samples, z=fscp,
