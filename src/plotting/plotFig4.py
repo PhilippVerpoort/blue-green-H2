@@ -260,6 +260,9 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple):
     fscp = (cost_v - cost_ref)/(ghgi_ref - ghgi_v)
 
     # heatmap
+    tickvals = [100*i for i in range(6)]
+    ticktext = [str(v) for v in tickvals]
+    ticktext[-1] = '> 500'
     traces.append(go.Heatmap(x=ghgi_samples*1000, y=cost_samples, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
                              zmin=0.0, zmax=500.0,
@@ -273,6 +276,8 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple):
                                  len=0.5,
                                  title='FSCP',
                                  titleside='top',
+                                 tickvals=tickvals,
+                                 ticktext=ticktext,
                              )))
 
     # thin lines every 50
