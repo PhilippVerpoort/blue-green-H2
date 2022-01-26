@@ -210,17 +210,17 @@ params:
     type: const
     value:
       smr:
-        gwp100: 87.2 +- 10.0
-        gwp20: 89.7 +- 10.0
+        gwp100: 87.2 +- 4.4
+        gwp20: 89.7 +- 4.5
       smr+lcrccs:
-        gwp100: 46.3 +- 10.0
-        gwp20: 46.6 +- 10.0
+        gwp100: 46.3 +- 2.3
+        gwp20: 46.6 +- 2.3
       smr+hcrccs:
-        gwp100: 20.8 +- 10.0
-        gwp20: 21.5 +- 10.0
+        gwp100: 20.8 +- 1.0
+        gwp20: 21.5 +- 1.1
       atr+hcrccs:
-        gwp100: 20.8 +- 10.0
-        gwp20: 21.5 +- 10.0
+        gwp100: 20.8 +- 1.0
+        gwp20: 21.5 +- 1.1
     unit: gCO2eq/MJ
     source:
       Based on first Excel Spreadsheet sent by @Christian on 29/10/2021.
