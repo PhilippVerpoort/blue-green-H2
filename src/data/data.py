@@ -5,11 +5,12 @@ from src.filepaths import getFilePath
 from src.data.params.full_params import getFullParams
 from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.fuels.calc_fuels import calcFuelData
+from src.data.steel.calc_steel import calcSteelData
 
 
 # obtain all required data for a scenario
-def getFullData(scenario: dict, export_data: bool = True):
-    options, params, fuels = (scenario['options'], scenario['params'], scenario['fuels'])
+def getFullData(input_data: dict, steel_data: pd.DataFrame, export_data: bool = True):
+    options, params, fuels = (input_data['options'], input_data['params'], input_data['fuels'])
 
     # convert basic inputs to complete dataframes
     fullParams = getFullParams(params, units, options['times'])
@@ -17,8 +18,12 @@ def getFullData(scenario: dict, export_data: bool = True):
     # calculate fuel data
     fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, options['gwp'])
 
+    # calculate steel data
+    fuelDataSteel = calcSteelData(fuelData, steel_data)
+
     # calculate FSCPs
     FSCPData = calcFSCPs(fuelData)
+    FSCPDataSteel = calcFSCPs(fuelDataSteel)
 
     # dump to output file
     if export_data:
@@ -35,6 +40,6 @@ def getFullData(scenario: dict, export_data: bool = True):
 
         writer.save()
 
-    return fuelSpecs, fuelData, FSCPData, fullParams
+    return fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel
 
 

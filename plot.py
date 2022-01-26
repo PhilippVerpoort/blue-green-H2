@@ -1,6 +1,6 @@
 import yaml
 
-from src.config_load import input_data
+from src.config_load import input_data, steel_data
 from src.data.data import getFullData
 from src.data.params.export_params import exportInputData
 from src.plotting.loadcfg import loadInitialPlottingCfg
@@ -15,7 +15,7 @@ from src.plotting.plotFig8 import plotFig8
 
 
 # Get full parameter, fuel, FSCP, and steel data based on input data.
-fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data)
+fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data, steel_data)
 
 
 # Export params to CSV table for presenting in the paper.

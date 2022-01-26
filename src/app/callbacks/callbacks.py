@@ -9,7 +9,7 @@ from src.app.app import app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
-from src.config_load import input_data
+from src.config_load import input_data, steel_data
 from src.filepaths import getFilePathAssets, getFilePath
 from src.plotting.loadcfg import n_figs
 from src.plotting.plotFig1 import plotFig1
@@ -102,15 +102,15 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
     ctx = dash.callback_context
     if not ctx.triggered:
         input_data_updated = input_data.copy()
-        fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data_updated)
+        fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
             input_data_updated = updateScenarioInputSimple(input_data.copy(), *args)
-            fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data_updated)
+            fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
         elif btnPressed == 'advanced-update':
             input_data_updated = updateScenarioInputAdvanced(input_data.copy(), *args)
-            fuelSpecs, fuelData, FSCPData, fullParams = getFullData(input_data_updated)
+            fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
         elif btnPressed == 'results-replot':
             # load fuelSpecs and fullParams from session
             fuelSpecs = saved_plot_data['fuelSpecs']
