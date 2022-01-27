@@ -31,7 +31,7 @@ def plotFig4(fuelSpecs: dict, fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFr
 
         fig.update_layout(font_size=fs_sm)
         fig.update_annotations(font_size=fs_sm)
-        for annotation in fig['layout']['annotations'][:2]:
+        for annotation in fig['layout']['annotations'][:len(config['subplot_title_positions'])]:
             annotation['font']['size'] = fs_lg
         fig.update_xaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
@@ -145,8 +145,8 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
         legend=dict(
             yanchor="top",
             y=0.99,
-            xanchor="right",
-            x=0.99,
+            xanchor="left",
+            x=0.555,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,

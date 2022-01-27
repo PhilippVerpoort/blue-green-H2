@@ -1,7 +1,7 @@
 plotting:
-  ghgi_max_left: 0.225
-  cost_max_left: 120.0
-  ghgi_max_right: 0.700
+  ghgi_max_left: 0.205
+  cost_max_left: 125.0
+  ghgi_max_right: 0.580
   cost_max_right: 700.0
   n_samples: 301
 
