@@ -236,8 +236,6 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list)
 def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
     traces = []
 
-    fuelData = fuelData.query(f"year==[2025,2030,2040,2050]")
-
     for fuel_x in [config['fuelBlueRight']]:
         fuel_y = config['fuelGreen']
         thisData = __convertFuelData(fuelData, fuel_x, fuel_y)
@@ -246,18 +244,28 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"]
 
         traces.append(go.Scatter(x=thisData.delta_ghgi * 1000, y=thisData.delta_cost,
-            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=2),
-            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=2),
             text=thisData.year,
             textposition="top right",
             textfont=dict(color=col),
             name=name,
             legendgroup=f"{fuel_x}__{fuel_y}",
             line=dict(color=col),
+            marker_size=10,
             mode='lines+markers+text',
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}±%{{error_x.array:.2f}}<br>"
                           f"Direct cost difference (w/o CP): %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
+        ))
+
+        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
+
+        traces.append(go.Scatter(x=thisData.delta_ghgi * 1000, y=thisData.delta_cost,
+            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=2),
+            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=2),
+            line=dict(color=col),
+            marker_size=0.000001,
+            showlegend=False,
+            mode='markers',
         ))
 
     return traces
