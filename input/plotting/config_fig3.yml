@@ -43,3 +43,5 @@ carbon_price_config:
 
 refFuelTop: natural gas
 refFuelBottom: blast furnace
+
+n_samples: 1000

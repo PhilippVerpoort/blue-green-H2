@@ -16,11 +16,13 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFram
     config = {**fuelSpecs, **plotConfig}
 
     # select which lines to plot based on function argument
-    plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, config['showFSCPs'], config['refFuelTop'])
-    plotFSCPSteel, FSCPsCols = __selectPlotFSCPs(FSCPDataSteel, config['showFSCPs'], config['refFuelBottom'])
+    FSCPsCols, plotFSCP, plotLines = __selectPlotFSCPs(FSCPData, config['showFSCPs'], config['refFuelTop'],
+                                                       config['n_samples'])
+    FSCPsCols, plotFSCPSteel, plotLinesSteel = __selectPlotFSCPs(FSCPDataSteel, config['showFSCPs'],
+                                                                 config['refFuelBottom'], config['n_samples'])
 
     # produce figure
-    fig = __produceFigure(plotFSCP, plotFSCPSteel, FSCPsCols, config)
+    fig = __produceFigure(FSCPsCols, plotFSCP, plotFSCPSteel, plotLines, plotLinesSteel, config)
 
     # styling figure
     __styling(fig, config)
@@ -34,7 +36,9 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFram
         fs_lg = getFontSize(7.0)
 
         fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_lg)
+        fig.update_annotations(font_size=fs_sm)
+        for annotation in fig['layout']['annotations'][:len(config['subplot_title_positions'])]:
+            annotation['font']['size'] = fs_lg
         fig.update_xaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
         fig.update_yaxes(title_font_size=fs_sm,
@@ -45,63 +49,95 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFram
     return fig
 
 
-def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict, refFuel: str):
+def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict, refFuel: str, n_samples: int):
     FSCPsCols = [None] * len(showFSCPs)
 
-    plotFSCP = pd.DataFrame(columns=(FSCPData.keys().tolist() + ['plotIndex']))
+    listOfFSCPs = pd.DataFrame(columns=(FSCPData.keys().tolist() + ['plotIndex']))
     for index, args in enumerate(showFSCPs):
         cols, fuel_x, fuel_y = args
         if fuel_x == 'ref': fuel_x = refFuel
         addFSCP = FSCPData.query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}' & year_x==year_y")
         if fuel_x == refFuel: addFSCP['fuel_x'] = 'ref'
-        addFSCP.insert(1, 'plotIndex', len(addFSCP)*[index])
+        addFSCP.insert(1, 'plotIndex', len(addFSCP) * [index])
         FSCPsCols[index] = cols
-        plotFSCP = pd.concat([plotFSCP, addFSCP], ignore_index=True)
+        listOfFSCPs = pd.concat([listOfFSCPs, addFSCP], ignore_index=True)
 
-    plotFSCP['year'] = plotFSCP['year_x']
-    plotFSCP = plotFSCP[['fuel_x', 'fuel_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul', 'plotIndex']]
+    # year_x == year_y, so we only need one of them from now on
+    listOfFSCPs['year'] = listOfFSCPs['year_x']
 
-    return plotFSCP, FSCPsCols
+    # return FSCPs for scatter plots
+    plotFSCP = listOfFSCPs[['plotIndex', 'fuel_x', 'fuel_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul']]
+
+    # return costs and GHGIs for line plots
+    plotLines = listOfFSCPs[['plotIndex', 'fuel_x', 'fuel_y', 'year', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']]
+
+    # interpolation of plotLines
+    t = np.linspace(plotLines['year'].min(), plotLines['year'].max(), n_samples)
+    plotLinesInterpolated = pd.DataFrame(columns=(plotLines.keys()))
+    for index in plotLines['plotIndex'].unique():
+        interpolationEntries = plotLines.query(f"plotIndex=={index}").reset_index(drop=True)
+        fuel_x = interpolationEntries.fuel_x.iloc[0]
+        fuel_y = interpolationEntries.fuel_y.iloc[0]
+        new = dict(
+            plotIndex=n_samples * [int(index)],
+            fuel_x=n_samples * [fuel_x],
+            fuel_y=n_samples * [fuel_y],
+            year=t,
+        )
+        newEntries = pd.DataFrame(new)
+        newEntries = newEntries.merge(interpolationEntries, how='outer').sort_values(by=['year']).interpolate()
+        plotLinesInterpolated = plotLinesInterpolated.append(newEntries, ignore_index=True)
+    plotLinesInterpolated['fscp'] = (plotLinesInterpolated['cost_x'] - plotLinesInterpolated['cost_y']) / (
+                plotLinesInterpolated['ghgi_y'] - plotLinesInterpolated['ghgi_x'])
+
+    return FSCPsCols, plotFSCP, plotLinesInterpolated
 
 
-def __produceFigure(plotFSCP: pd.DataFrame, plotFSCPSteel: pd.DataFrame, FSCPsCols: list, config: dict):
+def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.DataFrame,
+                    plotLines: pd.DataFrame, plotLinesSteel: pd.DataFrame, config: dict):
     # plot
     fig = make_subplots(rows=2,
                         cols=2,
                         subplot_titles=ascii_lowercase,
                         shared_yaxes=True,
                         horizontal_spacing=0.025,
-                        vertical_spacing=0.1,)
+                        vertical_spacing=0.1, )
 
-
-    # add FSCP traces
-    traces = __addFSCPTracesHeating(plotFSCP, len(FSCPsCols), config['refFuelTop'], config)
+    # add FSCP traces for heating
+    traces = __addFSCPTraces(plotFSCP, plotLines, len(FSCPsCols), config['refFuelTop'], config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
 
-
-    # add FSCP traces
-    traces = __addFSCPTracesHeating(plotFSCPSteel, len(FSCPsCols), config['refFuelBottom'], config)
+    # add FSCP traces for steel
+    traces = __addFSCPTraces(plotFSCPSteel, plotLinesSteel, len(FSCPsCols), config['refFuelBottom'], config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
             trace.showlegend = False
             fig.add_trace(trace, row=2, col=col)
 
-
     # compute and plot carbon price tracjetory
-    cpTrajData = __computeCPTraj(config['carbon_price_trajectory'])
+    cpTrajData = __computeCPTraj(config['carbon_price_trajectory'], config['n_samples'])
     traces = __addCPTraces(cpTrajData, config)
     for trace in traces:
-        for i, j in [(0,0), (0,1), (1,0), (1,1)]:
+        for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
             if i or j: trace.showlegend = False
-            fig.add_trace(trace, row=i+1, col=j+1)
+            fig.add_trace(trace, row=i + 1, col=j + 1)
 
     # zero y line
     for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
-        fig.add_hline(0.0, line_width=4, line_dash="dash", line_color='black', row=i+1, col=j+1)
+        fig.add_hline(0.0, line_width=4, line_dash="dash", line_color='black', row=i + 1, col=j + 1)
 
+    # add annotations
+    annotationStylingA = dict(xanchor='center', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2,
+                              borderpad=3, bgcolor='white')
+    fig.add_annotation(x=0.5, xref="paper",
+                       y=0.98 * config['plotting']['fscp_max'], yref="y",
+                       text='Reference: Natural Gas in Heating', **annotationStylingA)
+    fig.add_annotation(x=0.5, xref="paper",
+                       y=0.98 * config['plotting']['fscp_max'], yref="y3",
+                       text='Reference: Blast Furnace in Steel', **annotationStylingA)
 
     # update axes titles and ranges
     fig.update_layout(
@@ -131,139 +167,106 @@ def __produceFigure(plotFSCP: pd.DataFrame, plotFSCPSteel: pd.DataFrame, FSCPsCo
         ),
     )
 
-
     return fig
 
 
-def __addFSCPTracesHeating(plotData: pd.DataFrame, n_lines: int, refFuel: str, config: dict):
+def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: int, refFuel: str, config: dict):
     traces = []
 
     for index in range(n_lines):
-        thisData = plotData.query(f"plotIndex=={index}").reset_index(drop=True)
+        thisDataScatter = plotData.query(f"plotIndex=={index}").reset_index(drop=True)
+        thisDataLine = plotLines.query(f"plotIndex=={index}").reset_index(drop=True)
 
         # styling of individual lines
-        blueGreenSwitching = thisData.loc[0, 'fuel_x'] == 'blue LEB' and thisData.loc[0, 'fuel_y'] == 'green RE'
-        dashed = thisData.loc[0, 'fuel_y'] == 'green pure RE'
+        blueGreenSwitching = thisDataScatter.loc[0, 'fuel_x'] == 'blue LEB' and thisDataScatter.loc[
+            0, 'fuel_y'] == 'green RE'
+        dashed = thisDataScatter.loc[0, 'fuel_y'] == 'green pure RE'
         shift = 0
-        if thisData.loc[0, 'fuel_y'] == 'green RE':
-            if thisData.loc[0, 'fuel_x'] == 'ref':
+        if thisDataScatter.loc[0, 'fuel_y'] == 'green RE':
+            if thisDataScatter.loc[0, 'fuel_x'] == 'ref':
                 shift = -1
             else:
                 shift = +1
+        elif thisDataScatter.loc[0, 'fuel_y'] == 'green pure RE':
+            shift = +2
+            thisDataScatter = thisDataScatter.query(f"year<=2035")
+            thisDataLine = thisDataLine.query(f"year<=2035")
 
         # line properties
-        fuel_x = thisData.iloc[thisData.first_valid_index()]['fuel_x']
-        fuel_y = thisData.iloc[0]['fuel_y']
+        fuel_x = thisDataScatter.iloc[thisDataScatter.first_valid_index()]['fuel_x']
+        fuel_y = thisDataScatter.iloc[0]['fuel_y']
         name = f"Reference to {config['names'][fuel_y]}" if fuel_x == 'ref' else f"{config['names'][fuel_x]} to {config['names'][fuel_y]}"
-        col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"] if f"{fuel_x} to {fuel_y}" in config['fscp_colours'] else config['colours'][fuel_y]
+        col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"] if f"{fuel_x} to {fuel_y}" in config['fscp_colours'] else \
+        config['colours'][fuel_y]
 
-        # fuel line
-        if blueGreenSwitching:
-            thisData = thisData.query(f"year>=2030")
-
-        traces.append((index, go.Scatter(x=thisData['year'], y=thisData['fscp'],
-            name=name,
-            legendgroup=f"{fuel_x} {fuel_y}",
-            showlegend=not dashed,
-            mode="lines+markers",
-            line=dict(color=col, width=4, dash='dash' if dashed else 'solid'),
-            marker=dict(symbol='x-thin', size=10, line={'width': 3, 'color': col},),
-            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
-
-        # confidence intervals
-        thisData = thisData.query(f"year==[2025,2030,2040,2050] & fuel_y != 'green pure RE'")
-
-        if blueGreenSwitching:
-            thisData = thisData.query(f"year>=2040")
-
-        traces.append((index, go.Scatter(x=thisData['year']+shift*0.1, y=thisData['fscp'],
-            error_y=dict(type='data', array=thisData['fscp_uu'], arrayminus=thisData['fscp_ul'], thickness=3),
+        # scatter plot
+        traces.append((index, go.Scatter(
+            x=thisDataScatter['year'],
+            y=thisDataScatter['fscp'],
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=False,
             mode="markers",
-            marker=dict(symbol='x-thin', size=0, line={'width': 0, 'color': col},),
-            line=dict(color=col, width=3),
-            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
+            line=dict(color=col, width=4, dash='dash' if dashed else 'solid'),
+            marker=dict(symbol='x-thin', size=10, line={'width': 3, 'color': col}, ),
+            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
+        )))
 
-    return traces
-
-
-def __addFSCPTracesSteel(plotData: pd.DataFrame, n_lines: int, config: dict):
-    traces = []
-
-    for index in range(n_lines):
-        thisData = plotData.query(f"plotIndex=={index}").reset_index(drop=True)
-
-        # styling of individual lines
-        blueGreenSwitching = thisData.loc[0, 'fuel_x'] == 'blue LEB' and thisData.loc[0, 'fuel_y'] == 'green RE'
-        dashed = thisData.loc[0, 'fuel_y'] == 'green pure RE'
-        shift = 0
-        if thisData.loc[0, 'fuel_y'] == 'green RE':
-            if thisData.loc[0, 'fuel_x'] == 'natural gas':
-                shift = -1
-            else:
-                shift = +1
-
-        # line properties
-        fuel_x = thisData.iloc[thisData.first_valid_index()]['fuel_x']
-        fuel_y = thisData.iloc[0]['fuel_y']
-        name = f"{config['names'][fuel_x]} to {config['names'][fuel_y]}"
-        col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"] if f"{fuel_x} to {fuel_y}" in config['fscp_colours'] else config['colours'][fuel_y]
-
-        # fuel line
+        # remove unphysical negative FSCPs
         if blueGreenSwitching:
-            thisData = thisData.query(f"year>=2030")
+            thisDataLine = thisDataLine.query(f"year>=2030")
 
-        traces.append((index, go.Scatter(x=thisData['year'], y=thisData['fscp'],
-            name=name,
+        # line plot
+        traces.append((index, go.Scatter(
+            x=thisDataLine['year'],
+            y=thisDataLine['fscp'],
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=not dashed,
-            mode="lines+markers",
+            name=name,
+            mode="lines",
             line=dict(color=col, width=4, dash='dash' if dashed else 'solid'),
-            marker=dict(symbol='x-thin', size=10, line={'width': 3, 'color': col},),
-            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
+        )))
 
-        # confidence intervals
-        thisData = thisData.query(f"year==[2025,2030,2040,2050] & fuel_y != 'green pure RE'")
+        # error bars
+        thisDataScatter = thisDataScatter.query(f"year==[2030,2040,2050]")
+        thisDataScatter = thisDataScatter.query(f"fscp<={config['plotting']['fscp_max']}")
 
-        if blueGreenSwitching:
-            thisData = thisData.query(f"year>=2040")
-
-        traces.append((index, go.Scatter(x=thisData['year']+shift*0.1, y=thisData['fscp'],
-            error_y=dict(type='data', array=thisData['fscp_uu'], arrayminus=thisData['fscp_ul'], thickness=3),
+        traces.append((index, go.Scatter(
+            x=thisDataScatter['year'] + shift * 0.1,
+            y=thisDataScatter['fscp'],
+            error_y=dict(type='data', array=thisDataScatter['fscp_uu'], arrayminus=thisDataScatter['fscp_ul'],
+                         thickness=3),
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=False,
             mode="markers",
-            marker=dict(symbol='x-thin', size=0, line={'width': 0, 'color': col},),
-            line=dict(color=col, width=3),
-            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>")))
+            marker=dict(symbol='x-thin', size=0.00001, ),
+            line=dict(color=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .4)), width=3),
+            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
+        )))
 
     return traces
 
 
 # compute carbon price trajectories
-def __computeCPTraj(params: dict):
+def __computeCPTraj(params: dict, n_samples: int):
     # poly fit function
     t_fit = np.array(params['time'])
     p_fit = np.array(params['value'])
     p_fit_u = np.array(params['value_upper'])
     p_fit_l = np.array(params['value_lower'])
-    poly   = np.poly1d(np.polyfit(t_fit, p_fit, 2))
+    poly = np.poly1d(np.polyfit(t_fit, p_fit, 2))
     poly_u = np.poly1d(np.polyfit(t_fit, p_fit_u, 2))
     poly_l = np.poly1d(np.polyfit(t_fit, p_fit_l, 2))
 
-
     # create data frame with time and cp values
-    t = np.linspace(params['time'][0]-5.0, params['time'][-1]+5.0, 300)
+    t = np.linspace(params['time'][0] - 5.0, params['time'][-1] + 5.0, n_samples)
     cpData = pd.DataFrame({
         'year': t,
         'CP': poly(t),
-        'CP_u':   poly_u(t)-poly(t),
-        'CP_l': -(poly_l(t)-poly(t)),
+        'CP_u': poly_u(t) - poly(t),
+        'CP_l': -(poly_l(t) - poly(t)),
     })
-
 
     # add name to dataframe
     cpData['name'] = 'cp'
@@ -280,19 +283,19 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
 
     # add main graphs (FSCP and CP)
     traces.append(go.Scatter(
-        name = name,
-        mode = 'lines',
-        x = cpTrajData['year'],
-        y = cpTrajData['CP'],
-        line_color = colour,
-        line_width = 3,
-        showlegend = True,
+        name=name,
+        mode='lines',
+        x=cpTrajData['year'],
+        y=cpTrajData['CP'],
+        line_color=colour,
+        line_width=3,
+        showlegend=True,
         hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>"
     ))
 
     data_x = cpTrajData['year']
-    data_yu = cpTrajData['CP']+cpTrajData['CP_u']
-    data_yl = cpTrajData['CP']-cpTrajData['CP_l']
+    data_yu = cpTrajData['CP'] + cpTrajData['CP_u']
+    data_yl = cpTrajData['CP'] - cpTrajData['CP_l']
 
     errorBand = go.Scatter(
         name='Uncertainty Range',
@@ -312,8 +315,6 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
 
 
 def __styling(fig: go.Figure, config: dict):
-
-
     # update legend styling
     fig.update_layout(
         legend=dict(
@@ -326,7 +327,6 @@ def __styling(fig: go.Figure, config: dict):
             borderwidth=2,
         ),
     )
-
 
     # update axis styling
     for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4']:
@@ -341,7 +341,6 @@ def __styling(fig: go.Figure, config: dict):
         )}
         fig.update_layout(**update)
 
-
     # update figure background colour and font colour and type
     fig.update_layout(
         paper_bgcolor='rgba(255, 255, 255, 1.0)',
@@ -349,7 +348,6 @@ def __styling(fig: go.Figure, config: dict):
         font_color='black',
         font_family='Helvetica',
     )
-
 
     # move title annotations
     for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
