@@ -1,6 +1,8 @@
 plotting:
-  fscp_min: -10.0
-  fscp_max: 700.0
+  t_min: 2023.5
+  t_max: 2051.5
+  fscp_min: -50.0
+  fscp_max: 1000.0
 
 labels:
   time: ''
@@ -14,20 +16,10 @@ subplot_title_positions:
   - [0.5, 0.5]
   
 showFSCPs:
-  - [[1, 2], natural gas, green RE]
-  - [[1, 2], natural gas, green pure RE]
-  - [[1], natural gas, blue HEB]
-  - [[2], natural gas, blue LEB]
-  - [[1], blue HEB, green RE]
-  - [[2], blue LEB, green RE]
-  - [[1], blue HEB, green pure RE]
-  - [[2], blue LEB, green pure RE]
-
-showFSCPsSteel:
-  - [[1, 2], blast furnace, green RE]
-  - [[1, 2], blast furnace, green pure RE]
-  - [[1], blast furnace, blue HEB]
-  - [[2], blast furnace, blue LEB]
+  - [[1, 2], ref, green RE]
+  - [[1, 2], ref, green pure RE]
+  - [[1], ref, blue HEB]
+  - [[2], ref, blue LEB]
   - [[1], blue HEB, green RE]
   - [[2], blue LEB, green RE]
   - [[1], blue HEB, green pure RE]

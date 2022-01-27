@@ -17,10 +17,13 @@ def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFram
 
     # select which lines to plot based on function argument
     plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, config['showFSCPs'], config['refFuelTop'])
-    plotFSCPSteel, FSCPsCols = __selectPlotFSCPs(FSCPDataSteel, config['showFSCPsSteel'], config['refFuelBottom'])
+    plotFSCPSteel, FSCPsCols = __selectPlotFSCPs(FSCPDataSteel, config['showFSCPs'], config['refFuelBottom'])
 
     # produce figure
     fig = __produceFigure(plotFSCP, plotFSCPSteel, FSCPsCols, config)
+
+    # styling figure
+    __styling(fig, config)
 
     # write figure to image file
     if export_img:
@@ -48,15 +51,15 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict, refFuel: str):
     plotFSCP = pd.DataFrame(columns=(FSCPData.keys().tolist() + ['plotIndex']))
     for index, args in enumerate(showFSCPs):
         cols, fuel_x, fuel_y = args
+        if fuel_x == 'ref': fuel_x = refFuel
         addFSCP = FSCPData.query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}' & year_x==year_y")
+        if fuel_x == refFuel: addFSCP['fuel_x'] = 'ref'
         addFSCP.insert(1, 'plotIndex', len(addFSCP)*[index])
         FSCPsCols[index] = cols
         plotFSCP = pd.concat([plotFSCP, addFSCP], ignore_index=True)
 
     plotFSCP['year'] = plotFSCP['year_x']
     plotFSCP = plotFSCP[['fuel_x', 'fuel_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul', 'plotIndex']]
-
-    plotFSCP.loc[plotFSCP['fuel_x'] == refFuel, 'fuel_x'] = 'ref'
 
     return plotFSCP, FSCPsCols
 
@@ -93,26 +96,30 @@ def __produceFigure(plotFSCP: pd.DataFrame, plotFSCPSteel: pd.DataFrame, FSCPsCo
     for trace in traces:
         for i, j in [(0,0), (0,1), (1,0), (1,1)]:
             if i or j: trace.showlegend = False
-            fig.add_trace(trace, row=1, col=j+1)
+            fig.add_trace(trace, row=i+1, col=j+1)
+
+    # zero y line
+    for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
+        fig.add_hline(0.0, line_width=4, line_dash="dash", line_color='black', row=i+1, col=j+1)
 
 
     # update axes titles and ranges
     fig.update_layout(
         xaxis=dict(
             title=config['labels']['time'],
-            range=[2024, 2051]
+            range=[config['plotting']['t_min'], config['plotting']['t_max']]
         ),
         xaxis2=dict(
             title=config['labels']['time'],
-            range=[2024, 2051]
+            range=[config['plotting']['t_min'], config['plotting']['t_max']]
         ),
         xaxis3=dict(
             title=config['labels']['time'],
-            range=[2024, 2051]
+            range=[config['plotting']['t_min'], config['plotting']['t_max']]
         ),
         xaxis4=dict(
             title=config['labels']['time'],
-            range=[2024, 2051]
+            range=[config['plotting']['t_min'], config['plotting']['t_max']]
         ),
         yaxis=dict(
             title=config['labels']['fscp'],
@@ -123,57 +130,6 @@ def __produceFigure(plotFSCP: pd.DataFrame, plotFSCPSteel: pd.DataFrame, FSCPsCo
             range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
         ),
     )
-
-
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            xanchor="right",
-            x=0.48,
-            yanchor="top",
-            y=0.44,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
-
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
 
 
     return fig
@@ -353,3 +309,57 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
     traces.append(errorBand)
 
     return traces
+
+
+def __styling(fig: go.Figure, config: dict):
+
+
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            xanchor="right",
+            x=0.9975,
+            yanchor="top",
+            y=0.445,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
+
+    # move title annotations
+    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
+        x_pos, y_pos = config['subplot_title_positions'][i]
+        annotation['xanchor'] = 'left'
+        annotation['yanchor'] = 'top'
+        annotation['xref'] = 'paper'
+        annotation['yref'] = 'paper'
+
+        annotation['x'] = x_pos
+        annotation['y'] = y_pos
+
+        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
