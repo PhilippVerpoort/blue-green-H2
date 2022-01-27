@@ -19,6 +19,7 @@ from src.plotting.plotFig4 import plotFig4
 from src.plotting.plotFig5 import plotFig5
 from src.plotting.plotFig6 import plotFig6
 from src.plotting.plotFig7 import plotFig7
+from src.plotting.plotFig8 import plotFig8
 
 
 # update figure plotting settings
@@ -33,12 +34,13 @@ from src.plotting.plotFig7 import plotFig7
      Input("fig5-settings", "n_clicks"),
      Input("fig6-settings", "n_clicks"),
      Input("fig7-settings", "n_clicks"),
+     Input("fig8-settings", "n_clicks"),
      Input("settings-modal-ok", "n_clicks"),
      Input("settings-modal-cancel", "n_clicks"),],
     [State("settings-modal-textfield", "value"),
      State("plotting-config", "data"),],
 )
-def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n7: int, n_ok: int, n_cancel: int,
+def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n7: int, n8: int, n_ok: int, n_cancel: int,
                           settings_modal_textfield: str, plotting_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -69,6 +71,7 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
      Output('fig5', 'figure'),
      Output('fig6', 'figure'),
      Output('fig7', 'figure'),
+     Output('fig8', 'figure'),
      Output('table-results', 'data'),
      Output('saved-plot-data', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -134,13 +137,14 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
 
     fig1 = plotFig1(fuelSpecs, fuelData, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader), export_img=False)
     fig2 = plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader), export_img=False)
-    fig3 = plotFig3(fuelSpecs, FSCPData, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader), export_img=False)
+    fig3 = plotFig3(fuelSpecs, FSCPData, FSCPDataSteel, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader), export_img=False)
     fig4 = plotFig4(fuelSpecs, fuelData, fuelDataSteel, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
     fig5 = plotFig5(fuelSpecs, fuelData, fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader), export_img=False)
     fig6 = plotFig6(fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader), export_img=False)
     fig7 = plotFig7(fuelSpecs, input_data_updated, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)
+    fig8 = plotFig8(fuelSpecs, input_data_updated, fullParams, yaml.load(plotting_cfg['fig8'], Loader=yaml.FullLoader), export_img=False)
 
-    return fig1, fig2, fig3, fig4, fig5, fig6, fig7,\
+    return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8,\
            fuelData.to_dict('records'), saved_plot_data
 
 

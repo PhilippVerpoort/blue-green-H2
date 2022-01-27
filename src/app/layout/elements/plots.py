@@ -171,4 +171,28 @@ def getPlots():
         ],
     )
 
-    return fig1, fig2, fig3, fig4, fig5, fig6, fig7
+    fig8 = dbc.Card(
+        id="card-fig-8",
+        children=[
+            dbc.CardHeader("Fig. 8"),
+            dbc.CardBody(
+                [
+                    html.Div(
+                        children=[
+                            dcc.Loading(
+                                type="circle",
+                                children=[
+                                    dcc.Graph(
+                                        id='fig8',
+                                    )
+                                ],
+                            ),
+                            dbc.Button(id='fig8-settings', children='Plot config', className='scenario-buttons'),
+                        ],
+                    ),
+                ]
+            ),
+        ],
+    )
+
+    return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8

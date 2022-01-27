@@ -31,7 +31,7 @@ def initLayout(app, input_data):
     widget_results = getResultsWidgets()
 
     # plots
-    fig1, fig2, fig3, fig4, fig5, fig6, fig7 = getPlots()
+    fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8 = getPlots()
 
     # plot settings modal
     plot_settings_modal = getPlotSettingsModal()
@@ -147,7 +147,10 @@ def initLayout(app, input_data):
                         children=[dbc.Col(fig5, md=12),],
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig6, md=6), dbc.Col(fig7, md=6),],
+                        children=[dbc.Col(fig6, md=9),],
+                    ),
+                    dbc.Row(
+                        children=[dbc.Col(fig7, md=6), dbc.Col(fig8, md=6),],
                     ),
                 ],
                 fluid=True,
