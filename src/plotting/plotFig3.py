@@ -127,7 +127,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
     # zero y line
     for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
-        fig.add_hline(0.0, line_width=4, line_dash="dash", line_color='black', row=i + 1, col=j + 1)
+        fig.add_hline(0.0, line_width=3, line_color='black', row=i + 1, col=j + 1)
 
     # add annotations
     annotationStylingA = dict(xanchor='center', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2,

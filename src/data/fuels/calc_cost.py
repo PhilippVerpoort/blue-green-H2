@@ -38,6 +38,16 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_uu[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
             par_ul[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
         ),
+        c_fonm=(
+            par[f"cost_blue_fixedonm_{tech_type}"],
+            par_uu[f"cost_blue_fixedonm_{tech_type}"],
+            par_ul[f"cost_blue_fixedonm_{tech_type}"],
+        ),
+        c_vonm=(
+            par[f"cost_blue_varonm_{tech_type}"],
+            par_uu[f"cost_blue_varonm_{tech_type}"],
+            par_ul[f"cost_blue_varonm_{tech_type}"],
+        ),
         flh=par['cost_blue_flh'],
         p_ng=(
             par['cost_ng_price'],
@@ -61,11 +71,13 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     )
 
 
-def getCostBlue(FCR, c_pl, flh, p_ng, eff, p_el, eff_el, c_CTS, emi, transp):
+def getCostBlue(FCR, c_pl, c_fonm, c_vonm, flh, p_ng, eff, p_el, eff_el, c_CTS, emi, transp):
     return {
         'cap_cost': tuple(FCR * c/flh for c in c_pl),
         'fuel_cost': tuple(p/eff for p in p_ng),
         'elec_cost': tuple(p/eff_el for p in p_el),
+        'fonm_cost': tuple(c/flh for c in c_fonm),
+        'vonm_cost': tuple(c for c in c_vonm),
         'cts_cost': tuple(c*emi for c in c_CTS),
         'tra_cost': (transp, 0.0, 0.0),
     }
@@ -111,6 +123,16 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_uu['cost_green_capex'] if fuel['include_capex'] else 0.0,
             par_ul['cost_green_capex'] if fuel['include_capex'] else 0.0,
         ),
+        c_fonm=(
+            par['cost_green_fixedonm'],
+            par_uu['cost_green_fixedonm'],
+            par_ul['cost_green_fixedonm'],
+        ),
+        c_vonm=(
+            par['cost_green_varonm'],
+            par_uu['cost_green_varonm'],
+            par_ul['cost_green_varonm'],
+        ),
         ocf=ocf,
         p_el=p_el,
         eff=par['green_eff'],
@@ -118,9 +140,11 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     )
 
 
-def getCostGreen(FCR, c_pl, ocf, p_el, eff, transp):
+def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, p_el, eff, transp):
     return {
         'cap_cost': tuple(FCR * c/(ocf*8760) for c in c_pl),
         'elec_cost': tuple(p/eff for p in p_el),
+        'fonm_cost': tuple(c/(ocf*8760) for c in c_fonm),
+        'vonm_cost': tuple(c for c in c_vonm),
         'tra_cost': (transp, 0.0, 0.0),
     }

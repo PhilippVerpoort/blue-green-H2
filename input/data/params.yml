@@ -82,28 +82,56 @@ params:
       
       Assuming uncertainty +- 10%.
 
-  cost_blue_OnM:  # this includes neither electricity cost, nor other variable O&M cost for ATR
-    desc: Operational and Maintenance cost (w/o fuel cost)
+  cost_blue_fixedonm:
+    desc: Fixed Operation and Maintenance Cost
     type: linear
     value:
       smr:
-        2025: 8.06 +- 0.5
-        2050: 8.06 +- 0.5
+        2025: 25.0 +- 2.5
+        2050: 25.0 +- 2.5
       smr+lcrccs:
-        2025: 9.28 +- 0.5
-        2050: 9.28 +- 0.5
+        2025: 29.0 +- 2.9
+        2050: 29.0 +- 2.9
       smr+hcrccs:
-        2025: 12.03 +- 0.5
-        2050: 12.03 +- 0.5
+        2025: 38.0 +- 3.8
+        2050: 38.0 +- 3.8
       atr+hcrccs:
-        2025: 9.6 +- 0.5
-        2030: 7.2 +- 0.5
-        2050: 6.3 +- 0.5
-    unit: MEUR
+        2025: 32.0 +- 3.2
+        2030: 24.0 +- 2.4
+        2040: 21.0 +- 2.1
+        2050: 21.0 +- 2.1
+    unit: EUR/kW
     source:
       SMR data from IEAGHG report, p. 18, Table 4 (@Tom).
     
       ATR data from @Simon sent on 24/11/2011.
+    
+      Uncertainty is 10%.
+
+  cost_blue_varonm:
+    desc: Variable Operation and Maintenance Cost (w/o fuel cost)
+    type: linear
+    value:
+      smr:
+        2025: 0.208
+        2050: 0.208
+      smr+lcrccs:
+        2025: 0.209
+        2050: 0.209
+      smr+hcrccs:
+        2025: 0.196
+        2050: 0.196
+      atr+hcrccs:
+        2025: 1.908 +- 0.19
+        2030: 0.252 +- 0.025
+        2050: 0.252 +- 0.025
+    unit: EUR/MWh
+    source:
+      SMR data from IEAGHG report, p. 18, Table 4 (@Tom).
+    
+      ATR data from @Simon sent on 24/11/2011.
+    
+      Uncertainty is 10%.
 
   cost_blue_flh:
     desc: Full load hours of blue-hydrogen plant
@@ -199,9 +227,9 @@ params:
     desc: Fuel efficiency (grid electricity)
     type: const
     value:
-      smr: -303.0
-      smr+lcrccs: -2000.0
-      smr+hcrccs: -7140.0
+      smr: -30.30
+      smr+lcrccs: -200.0
+      smr+hcrccs: -714.0
       atr+hcrccs: 25.0
     unit: ~
     source:
@@ -215,7 +243,7 @@ params:
     type: linear
     value:
       2025: 900 +- 200
-      2030: 600 +- 100
+      2030: 600 +- 200
       2040: 400 +- 150
       2050: 200 + 100 - 70
     unit: USD/kW
@@ -223,6 +251,28 @@ params:
       Numbers provided by @Falko as spreadsheet on 13/01/2022.
     
       Does this include BoS, @Falko??
+
+  cost_green_fixedonm:
+    desc: Fixed Operation and Maintenance Cost
+    type: linear
+    value:
+      2025: 50.0
+      2030: 30.0
+      2040: 25.0
+      2050: 20.0
+    unit: EUR/kW
+    source:
+      ???
+
+  cost_green_varonm:
+    desc: Variable Operation and Maintenance Cost (w/o fuel cost)
+    type: linear
+    value:
+      2025: 1.0
+      2050: 0.2
+    unit: EUR/MWh
+    source:
+      ???
 
   cost_green_elec:
     desc: Electricity price

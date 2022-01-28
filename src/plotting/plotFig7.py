@@ -90,9 +90,9 @@ def __styling(fig: go.Figure):
     fig.update_layout(
         legend=dict(
             yanchor='top',
-            y=0.98,
+            y=1.40,
             xanchor='right',
-            x=0.99,
+            x=1.10,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,

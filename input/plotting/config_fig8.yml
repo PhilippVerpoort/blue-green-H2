@@ -6,7 +6,7 @@ labels:
   ghgi__elec: Electricity
 
 colours:
-  ghgi__base: '#db2a1a'
+  ghgi__base: '#f36f21'
   ghgi__mleakage: '#00813e'
   ghgi__elec: '#3745a3'
 
