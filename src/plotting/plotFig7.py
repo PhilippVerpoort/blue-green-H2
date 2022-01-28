@@ -79,7 +79,7 @@ def __produceFigure(plotData: pd.DataFrame, config: dict):
 
     # set axes labels
     fig.update_layout(xaxis=dict(title=''),
-                      yaxis=dict(title=config['yaxislabel']),
+                      yaxis=dict(title=config['yaxislabel'], range=[0.0, config['ymax']]),
                       legend_title='')
 
     return fig

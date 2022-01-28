@@ -58,16 +58,20 @@ params:
     value:
       smr:
         2025: 570.0 +- 57.0
-        2050: 444.6 +- 44.5
+        #2050: 444.6 +- 44.5
+        2050: 502.9 +- 50.3
       smr+lcrccs:
         2025: 673.0 +- 67.3
-        2050: 524.9 +- 52.5
+        #2050: 524.9 +- 52.5
+        2050: 593.7 +- 59.4
       smr+hcrccs:
         2025: 1018.0 +- 101.8
-        2050: 794.0 +- 79.4
+        #2050: 794.0 +- 79.4
+        2050: 898.1 +- 89.8
       atr+hcrccs:
         2025: 1200.0 +- 120.0
         2030: 800.0 +- 80.0
+        2040: 700.0 +- 70.0
         2050: 700.0 +- 70.0
     unit: EUR/kW
     source:
@@ -178,7 +182,7 @@ params:
       Based on first Excel Spreadsheet sent by @Christian on 29/10/2021. This stays constant by definition.
 
   blue_eff:
-    desc: Fuel efficiency
+    desc: Fuel efficiency (natural gas)
     type: const
     value:
       smr: 75.92
@@ -188,6 +192,20 @@ params:
     unit: percent
     source:
       SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream (@Tom).
+    
+      ATR data from @Simon sent on 24/11/2011.
+
+  blue_eff_elec:
+    desc: Fuel efficiency (grid electricity)
+    type: const
+    value:
+      smr: -303.0
+      smr+lcrccs: -2000.0
+      smr+hcrccs: -7140.0
+      atr+hcrccs: 25.0
+    unit: ~
+    source:
+      SMR data from IEAGHG report, p.16, Table 4 (Plant Performance Summary), total energy of inlet & outlet stream (@Tom).
     
       ATR data from @Simon sent on 24/11/2011.
 
