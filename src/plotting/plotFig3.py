@@ -129,6 +129,10 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
     for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
         fig.add_hline(0.0, line_width=3, line_color='black', row=i + 1, col=j + 1)
 
+    # annotations
+    __addAnnotations(fig, cpTrajData, plotLines, plotLinesSteel, config)
+
+
     # add annotations
     annotationStylingA = dict(xanchor='center', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2,
                               borderpad=3, bgcolor='white')
@@ -168,6 +172,58 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
     )
 
     return fig
+
+
+def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, plotLinesSteel: pd.DataFrame, config: dict):
+    traceArgs = [
+        dict(row=1, col=1, lines=plotLines, anno=config['showAnnotations']['left']),
+        dict(row=1, col=2, lines=plotLines, anno=config['showAnnotations']['right']),
+        dict(row=2, col=1, lines=plotLinesSteel, anno=config['showAnnotations']['left']),
+        dict(row=2, col=2, lines=plotLinesSteel, anno=config['showAnnotations']['right']),
+    ]
+
+    for args in traceArgs:
+        points = __calcPoints(cpTrajData, args['lines'], args['anno'])
+        data = pd.DataFrame(points).T
+
+        fig.add_trace(go.Scatter(
+            x=data.year,
+            y=data.fscp,
+            text=data.index,
+            mode='markers+text',
+            marker=dict(symbol='circle-open', size=24, line={'width': 4}, color='Black'),
+            textposition="bottom center",
+            showlegend=False,
+            # hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>",
+        ), row=args['row'], col=args['col'])
+
+
+
+def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, showAnnotations: list) -> dict:
+    points = {}
+
+    fuelRef, fuelGreen, fuelBlue = showAnnotations
+
+    dropCols = ['plotIndex', 'fuel_x', 'fuel_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
+    greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
+    blueLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)
+    redLine = plotLines.query(f"fuel_x=='{fuelBlue}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
+
+    purpleLine = cpTrajData.drop(columns=['name', 'CP_u', 'CP_l'])
+
+    diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
+    diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
+    points[2] = diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right', 'delta']).iloc[0]
+
+    for i, line in enumerate([blueLine, greenLine, redLine]):
+        diffLines = pd.merge(line, purpleLine, on=['year'])
+        print(diffLines)
+        diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
+        points[i+3] = diffLines.nsmallest(1, 'delta').drop(columns=['CP', 'delta']).iloc[0]
+
+    points[6] = redLine.abs().nsmallest(1, 'fscp').iloc[0]
+
+    return points
 
 
 def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: int, refFuel: str, config: dict):

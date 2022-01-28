@@ -25,6 +25,16 @@ showFSCPs:
   - [[1], blue HEB, green pure RE]
   - [[2], blue LEB, green pure RE]
 
+showAnnotations:
+  left:
+    - ref
+    - green RE
+    - blue HEB
+  right:
+    - ref
+    - green RE
+    - blue LEB
+
 fscp_colours:
   blue HEB to green RE: '#db2a1a'
   blue HEB to green pure RE: '#db2a1a'
