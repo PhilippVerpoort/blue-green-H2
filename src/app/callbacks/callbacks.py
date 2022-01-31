@@ -141,8 +141,8 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
     fig4 = plotFig4(fuelSpecs, fuelData, fuelDataSteel, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
     fig5 = plotFig5(fuelSpecs, fuelData, fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader), export_img=False)
     fig6 = plotFig6(fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader), export_img=False)
-    fig7 = plotFig7(fuelSpecs, input_data_updated, fullParams, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)
-    fig8 = plotFig8(fuelSpecs, input_data_updated, fullParams, yaml.load(plotting_cfg['fig8'], Loader=yaml.FullLoader), export_img=False)
+    fig7 = plotFig7(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)
+    fig8 = plotFig8(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig8'], Loader=yaml.FullLoader), export_img=False)
 
     return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8,\
            fuelData.to_dict('records'), saved_plot_data
