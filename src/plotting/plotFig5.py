@@ -481,6 +481,8 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
 
 
 def __convertFuelData(fuelData: pd.DataFrame, fuel_x: str, fuel_y: str):
+    fuelData = fuelData[['fuel', 'type', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul']]
+
     tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).\
                    query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}' & year_x==year_y").\
                    dropna()

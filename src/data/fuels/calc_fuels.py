@@ -22,23 +22,22 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
 
             newFuel = {'fuel': fuel_id, 'year': t, 'type': fuels[fuel_id]['type']}
 
-            newFuel['cost'] = sum(levelisedCost[component][0] for component in levelisedCost)
-            newFuel['cost_uu'] = sum(levelisedCost[component][1] for component in levelisedCost)
-            newFuel['cost_ul'] = sum(levelisedCost[component][2] for component in levelisedCost)
+            for component in levelisedCost:
+                newFuel[f"cost__{component}"] = levelisedCost[component][0]
+                newFuel[f"cost_uu__{component}"] = levelisedCost[component][1]
+                newFuel[f"cost_ul__{component}"] = levelisedCost[component][2]
+            for component in levelisedGHGI:
+                newFuel[f"ghgi__{component}"] = levelisedGHGI[component][0]
+                newFuel[f"ghgi_uu__{component}"] = levelisedGHGI[component][1]
+                newFuel[f"ghgi_ul__{component}"] = levelisedGHGI[component][2]
 
-            newFuel['ghgi'] = sum(levelisedGHGI[component][0] for component in levelisedGHGI)
-            newFuel['ghgi_uu'] = sum(levelisedGHGI[component][1] for component in levelisedGHGI)
-            newFuel['ghgi_ul'] = sum(levelisedGHGI[component][2] for component in levelisedGHGI)
+            newFuel['cost'] = sum(newFuel[f"cost__{component}"] for component in levelisedCost)
+            newFuel['cost_uu'] = sum(newFuel[f"cost_uu__{component}"] for component in levelisedCost)
+            newFuel['cost_ul'] = sum(newFuel[f"cost_ul__{component}"] for component in levelisedCost)
 
-            if levelised:
-                for component in levelisedCost:
-                    newFuel[f"cost__{component}"] = levelisedCost[component][0]
-                    newFuel[f"cost_uu__{component}"] = levelisedCost[component][1]
-                    newFuel[f"cost_ul__{component}"] = levelisedCost[component][2]
-                for component in levelisedGHGI:
-                    newFuel[f"ghgi__{component}"] = levelisedGHGI[component][0]
-                    newFuel[f"ghgi_uu__{component}"] = levelisedGHGI[component][1]
-                    newFuel[f"ghgi_ul__{component}"] = levelisedGHGI[component][2]
+            newFuel['ghgi'] = sum(newFuel[f"ghgi__{component}"] for component in levelisedGHGI)
+            newFuel['ghgi_uu'] = sum(newFuel[f"ghgi_uu__{component}"] for component in levelisedGHGI)
+            newFuel['ghgi_ul'] = sum(newFuel[f"ghgi_ul__{component}"] for component in levelisedGHGI)
 
             fuelData = fuelData.append(newFuel, ignore_index=True)
 

@@ -5,10 +5,12 @@ from src.data.fuels.calc_fuels import calcFuelData
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig8(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
-             config: dict, export_img: bool = True):
-    # obtain data
-    plotData = __obtainData(fuelSpecs, scenario, fullParams, config)
+def plotFig8(fuelSpecs: dict, fuelData: pd.DataFrame, plotConfig: dict, export_img: bool = True):
+    # combine fuel specs with plot config from YAML file
+    config = {**fuelSpecs, **plotConfig}
+
+    # plot data
+    plotData = __obtainData(fuelData, config)
 
     # produce figure
     fig = __produceFigure(plotData, config)
@@ -36,19 +38,16 @@ def plotFig8(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame,
     return fig
 
 
-def __obtainData(fuelSpecs: dict, scenario: dict, fullParams: pd.DataFrame, config: dict):
-    levelisedFuelData, _ = calcFuelData(scenario['options']['times'], fullParams, scenario['fuels'],
-                                        scenario['options']['gwp'], levelised=True)
-
+def __obtainData(fuelData: pd.DataFrame, config: dict):
     # filter data
     fuels = config['fuels']
     years = config['years']
-    plotData = levelisedFuelData.query('fuel in @fuels & year in @years')
+    plotData = fuelData.query('fuel in @fuels & year in @years')
 
     # add names
     plotData.insert(1, 'name', len(plotData) * [''])
     for i, row in plotData.iterrows():
-        plotData.at[i, 'name'] = fuelSpecs['names'][row['fuel']]
+        plotData.at[i, 'name'] = config['names'][row['fuel']]
 
     # update name of green
     plotData.loc[(plotData['fuel']=='green RE') & (plotData['year']==2025), 'name'] = 'Electrolysis-RE-80%'
