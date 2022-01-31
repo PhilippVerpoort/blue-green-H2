@@ -1,9 +1,8 @@
 import yaml
 
-from src.config_load import input_data, steel_data
+from src.config_load import input_data, steel_data, plotting_cfg
 from src.data.data import getFullData
 from src.data.params.export_params import exportInputData
-from src.plotting.loadcfg import loadInitialPlottingCfg
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3
@@ -23,7 +22,6 @@ exportInputData(input_data)
 
 
 # Create plots and automatically export to image files.
-plotting_cfg = loadInitialPlottingCfg()
 plotFig1(fuelSpecs, fuelData, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader))
 plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader))
 plotFig3(fuelSpecs, FSCPData, FSCPDataSteel, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader))

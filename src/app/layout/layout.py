@@ -8,13 +8,10 @@ from src.app.layout.elements.plot_settings_modal import getPlotSettingsModal
 from src.app.layout.elements.plots import getPlots
 from src.app.layout.elements.results import getResultsWidgets
 from src.app.layout.elements.simple import getSimpleWidgets
-from src.plotting.loadcfg import loadInitialPlottingCfg
+from src.config_load import plotting_cfg
 
 
 def initLayout(app, input_data):
-    # load inital plotting cfg
-    plotting_cfg = loadInitialPlottingCfg()
-
     # define header
     header = getHeader(app)
 

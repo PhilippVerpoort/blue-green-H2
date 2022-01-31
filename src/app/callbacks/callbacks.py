@@ -9,9 +9,8 @@ from src.app.app import app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
-from src.config_load import input_data, steel_data
+from src.config_load import input_data, steel_data, n_figs
 from src.filepaths import getFilePathAssets, getFilePath
-from src.plotting.loadcfg import n_figs
 from src.plotting.plotFig1 import plotFig1
 from src.plotting.plotFig2 import plotFig2
 from src.plotting.plotFig3 import plotFig3

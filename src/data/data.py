@@ -9,7 +9,7 @@ from src.data.steel.calc_steel import calcSteelData
 
 
 # obtain all required data for a scenario
-def getFullData(input_data: dict, steel_data: pd.DataFrame, export_data: bool = True):
+def getFullData(input_data: dict, steel_data: dict, export_data: bool = True):
     options, params, fuels = (input_data['options'], input_data['params'], input_data['fuels'])
 
     # convert basic inputs to complete dataframes

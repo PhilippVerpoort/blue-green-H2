@@ -16,3 +16,9 @@ units = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)['units']
 
 __filePath = getFilePathInput('data/steel.yml')
 steel_data = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
+
+n_figs = 8
+plotting_cfg = {}
+for f in range(1, n_figs+1):
+    __filePath = getFilePathInput(f"plotting/config_fig{f}.yml")
+    plotting_cfg[f"fig{f}"] = open(__filePath, 'r').read()
