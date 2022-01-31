@@ -6,8 +6,7 @@ import plotly.graph_objects as go
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame,
-             config: dict, export_img: bool = True):
+def plotFig2(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
     # filter data
     plotData = pd.DataFrame()
     for fuel in config['fuels']:
@@ -15,7 +14,7 @@ def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame,
 
 
     # produce figure
-    fig = __produceFigure(plotData, fuelSpecs, config)
+    fig = __produceFigure(plotData, config)
 
 
     # write figure to image file
@@ -38,11 +37,11 @@ def plotFig2(fuelSpecs: dict, fuelData: pd.DataFrame,
     return fig
 
 
-def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
+def __produceFigure(plotData: pd.DataFrame, config: dict):
     # add full names to dataframe
     plotData.insert(1, 'name', len(plotData)*[''])
     for i, row in plotData.iterrows():
-        plotData.at[i, 'name'] = fuelSpecs['names'][row['fuel']]
+        plotData.at[i, 'name'] = config['names'][row['fuel']]
     plotData['ghgi_gPkWh'] = plotData['ghgi']*1000
 
 
@@ -51,7 +50,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
         x=plotData.index,
         y=plotData.ghgi_gPkWh,
         color=plotData.fuel,
-        color_discrete_map=fuelSpecs['colours'],
+        color_discrete_map=config['colours'],
     )
 
 
@@ -59,12 +58,12 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, config: dict):
     for trace in fig.data:
         fuel = trace['legendgroup']
         trace['showlegend'] = False
-        trace['hovertemplate'] = f"<b>{fuelSpecs['names'][fuel]}</b><br>{config['yaxislabel']}: %{{y}}<extra></extra>"
+        trace['hovertemplate'] = f"<b>{config['names'][fuel]}</b><br>{config['yaxislabel']}: %{{y}}<extra></extra>"
 
 
     # update axis ticks
     fig.update_xaxes(tickvals=[float(i) for i in range(len(config['fuels']))],
-                     ticktext=[fuelSpecs['names'][fuel] for fuel in config['fuels']])
+                     ticktext=[config['names'][fuel] for fuel in config['fuels']])
 
 
     # add arrows

@@ -10,11 +10,7 @@ from plotly.colors import hex_to_rgb
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig3(fuelSpecs: dict, FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame,
-             plotConfig: dict, export_img: bool = True):
-    # combine fuel specs with plot config from YAML file
-    config = {**fuelSpecs, **plotConfig}
-
+def plotFig3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict, export_img: bool = True):
     # select which lines to plot based on function argument
     FSCPsCols, plotFSCP, plotLines = __selectPlotFSCPs(FSCPData, config['showFSCPs'], config['refFuelTop'],
                                                        config['n_samples'])

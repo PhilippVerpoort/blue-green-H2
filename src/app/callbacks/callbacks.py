@@ -11,14 +11,7 @@ from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
 from src.config_load import input_data, steel_data, n_figs
 from src.filepaths import getFilePathAssets, getFilePath
-from src.plotting.plotFig1 import plotFig1
-from src.plotting.plotFig2 import plotFig2
-from src.plotting.plotFig3 import plotFig3
-from src.plotting.plotFig4 import plotFig4
-from src.plotting.plotFig5 import plotFig5
-from src.plotting.plotFig6 import plotFig6
-from src.plotting.plotFig7 import plotFig7
-from src.plotting.plotFig8 import plotFig8
+from src.plotting.plotAllFigs import plotAllFigs
 
 
 # update figure plotting settings
@@ -132,16 +125,11 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
         else:
             raise Exception("Unknown button pressed!")
 
-    saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
+    fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8 = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData,
+                                                                 fuelDataSteel, FSCPDataSteel, input_data, plotting_cfg,
+                                                                 export_img=False)
 
-    fig1 = plotFig1(fuelSpecs, fuelData, FSCPData, yaml.load(plotting_cfg['fig1'], Loader=yaml.FullLoader), export_img=False)
-    fig2 = plotFig2(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig2'], Loader=yaml.FullLoader), export_img=False)
-    fig3 = plotFig3(fuelSpecs, FSCPData, FSCPDataSteel, yaml.load(plotting_cfg['fig3'], Loader=yaml.FullLoader), export_img=False)
-    fig4 = plotFig4(fuelSpecs, fuelData, fuelDataSteel, yaml.load(plotting_cfg['fig4'], Loader=yaml.FullLoader), export_img=False)
-    fig5 = plotFig5(fuelSpecs, fuelData, fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig5'], Loader=yaml.FullLoader), export_img=False)
-    fig6 = plotFig6(fullParams, input_data_updated['fuels'], yaml.load(plotting_cfg['fig6'], Loader=yaml.FullLoader), export_img=False)
-    fig7 = plotFig7(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig7'], Loader=yaml.FullLoader), export_img=False)
-    fig8 = plotFig8(fuelSpecs, fuelData, yaml.load(plotting_cfg['fig8'], Loader=yaml.FullLoader), export_img=False)
+    saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
 
     return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8,\
            fuelData.to_dict('records'), saved_plot_data

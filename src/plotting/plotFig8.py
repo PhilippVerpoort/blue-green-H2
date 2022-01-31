@@ -5,10 +5,7 @@ from src.data.fuels.calc_fuels import calcFuelData
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig8(fuelSpecs: dict, fuelData: pd.DataFrame, plotConfig: dict, export_img: bool = True):
-    # combine fuel specs with plot config from YAML file
-    config = {**fuelSpecs, **plotConfig}
-
+def plotFig8(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
     # plot data
     plotData = __obtainData(fuelData, config)
 
