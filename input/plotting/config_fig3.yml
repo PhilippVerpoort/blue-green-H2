@@ -1,7 +1,7 @@
 plotting:
   t_min: 2023.5
   t_max: 2051.5
-  fscp_min: -50.0
+  fscp_min: -100.0
   fscp_max: 1000.0
 
 labels:

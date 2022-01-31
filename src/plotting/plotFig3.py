@@ -211,15 +211,14 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, showAnnotati
 
     purpleLine = cpTrajData.drop(columns=['name', 'CP_u', 'CP_l'])
 
-    diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
-    diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
-    points[2] = diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right', 'delta']).iloc[0]
-
     for i, line in enumerate([blueLine, greenLine, redLine]):
         diffLines = pd.merge(line, purpleLine, on=['year'])
-        print(diffLines)
         diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
-        points[i+3] = diffLines.nsmallest(1, 'delta').drop(columns=['CP', 'delta']).iloc[0]
+        points[i+2] = diffLines.nsmallest(1, 'delta').drop(columns=['CP', 'delta']).iloc[0]
+
+    diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
+    diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
+    points[5] = diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right', 'delta']).iloc[0]
 
     points[6] = redLine.abs().nsmallest(1, 'fscp').iloc[0]
 
