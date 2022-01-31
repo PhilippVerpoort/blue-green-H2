@@ -1,14 +1,14 @@
 yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
 
-ymax: 120.0
+ymax: 140.0
 
 labels:
   cost__cap_cost: Capital cost
   cost__fuel_cost: Fuel cost (non-elec.)
   cost__elec_cost: Electricity cost
-  cost__fonm_cost: Fixed Operation and Maintenance Cost
-  cost__vonm_cost: Variable Operation and Maintenance Cost
-  cost__cts_cost: Carbon transport and storage cost
+  cost__fonm_cost: Fixed Operation<br>and Maintenance Cost
+  cost__vonm_cost: Variable Operation<br>and Maintenance Cost
+  cost__cts_cost: Carbon transport<br>and storage cost
   cost__tra_cost: H<sub>2</sub> transport cost
 
 colours:

@@ -56,15 +56,24 @@ def __obtainData(fuelData: pd.DataFrame, config: dict):
 def __produceFigure(plotData: pd.DataFrame, config: dict):
     # create figure
     fig = go.Figure()
-    for stack in config['labels'].keys():
+    keys = config['labels'].keys()
+    for stack in keys:
         fig.add_bar(
             x=[plotData.year, plotData.name],
-            y=plotData[stack]*1000,
+            y=plotData[stack],
             marker_color=config['colours'][stack],
             name=config['labels'][stack],
             hovertemplate=f"<b>{config['labels'][stack]}</b><br>{config['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>",
         )
     fig.update_layout(barmode='stack')
+
+    # add error bar
+    fig.add_bar(
+        x=[plotData.year, plotData.name],
+        y=0.00000001*plotData[list(keys)[0]],
+        error_y=dict(type='data', array=plotData.ghgi_uu, arrayminus=plotData.ghgi_ul, color='black'),
+        showlegend=False,
+    )
 
     # add vertical line
     nYears = plotData['year'].nunique()
@@ -85,10 +94,6 @@ def __styling(fig: go.Figure):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            yanchor='top',
-            y=0.98,
-            xanchor='right',
-            x=0.99,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
