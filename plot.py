@@ -1,7 +1,16 @@
+import sys
+
 from src.config_load import input_data, steel_data, plotting_cfg
 from src.data.data import getFullData
 from src.data.params.export_params import exportInputData
 from src.plotting.plotAllFigs import plotAllFigs
+
+
+# Get list of figs to plot from command line args.
+if len(sys.argv) > 1:
+    plot_list = sys.argv[1:]
+else:
+    plot_list = None
 
 
 # Get full parameter, fuel, FSCP, and steel data based on input data.
@@ -13,4 +22,4 @@ exportInputData(input_data)
 
 
 # Create plots and automatically export to image files.
-plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel, input_data, plotting_cfg)
+plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel, input_data, plotting_cfg, plot_list=plot_list)
