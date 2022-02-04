@@ -185,14 +185,14 @@ def getSimpleWidgets(input_data: dict):
 
     param_fields_blue = {
         'cost_blue_capex_heb': {
-            'name': f"{input_data['params']['cost_blue_capex']['desc']} of SMR+LCRCCS",
-            'value': __getValWOUnc(input_data['params']['cost_blue_capex']['value']['smr+lcrccs'][2050]),
+            'name': f"{input_data['params']['cost_blue_capex']['desc']} of SMR-CCS-55%",
+            'value': __getValWOUnc(input_data['params']['cost_blue_capex']['value']['smr-ccs-55%'][2050]),
             'unit': f"{input_data['params']['cost_blue_capex']['unit']} per 10^5 Nm³/h",
             'step': 0.01,
         },
         'cost_blue_capex_leb': {
-            'name': f"{input_data['params']['cost_blue_capex']['desc']} of ATR+HCRCCS",
-            'value': __getValWOUnc(input_data['params']['cost_blue_capex']['value']['atr+hcrccs'][2050]),
+            'name': f"{input_data['params']['cost_blue_capex']['desc']} of ATR-CCS-93%",
+            'value': __getValWOUnc(input_data['params']['cost_blue_capex']['value']['atr-ccs-93%'][2050]),
             'unit': f"{input_data['params']['cost_blue_capex']['unit']} per 10^5 Nm³/h",
             'step': 0.01,
         },
@@ -209,14 +209,14 @@ def getSimpleWidgets(input_data: dict):
             'step': 1,
         },
         'blue_eff_heb': {
-            'name': f"{input_data['params']['blue_eff']['desc']} of SMR+LCRCCS",
-            'value': __getValWOUnc(input_data['params']['blue_eff']['value']['smr+lcrccs']),
+            'name': f"{input_data['params']['blue_eff']['desc']} of SMR-CCS-55%",
+            'value': __getValWOUnc(input_data['params']['blue_eff']['value']['smr-ccs-55%']),
             'unit': input_data['params']['blue_eff']['unit'],
             'step': 0.01,
         },
         'blue_eff_leb': {
-            'name': f"{input_data['params']['blue_eff']['desc']} of ATR+HCRCCS",
-            'value': __getValWOUnc(input_data['params']['blue_eff']['value']['atr+hcrccs']),
+            'name': f"{input_data['params']['blue_eff']['desc']} of ATR-CCS-93%",
+            'value': __getValWOUnc(input_data['params']['blue_eff']['value']['atr-ccs-93%']),
             'unit': input_data['params']['blue_eff']['unit'],
             'step': 0.01,
         },

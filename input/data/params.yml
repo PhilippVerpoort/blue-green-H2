@@ -56,19 +56,10 @@ params:
     desc: Blue CAPEX
     type: linear
     value:
-      smr:
-        2025: 570.0 +- 57.0
-        #2050: 444.6 +- 44.5
-        2050: 502.9 +- 50.3
-      smr+lcrccs:
+      smr-ccs-55%:
         2025: 673.0 +- 67.3
-        #2050: 524.9 +- 52.5
         2050: 593.7 +- 59.4
-      smr+hcrccs:
-        2025: 1018.0 +- 101.8
-        #2050: 794.0 +- 79.4
-        2050: 898.1 +- 89.8
-      atr+hcrccs:
+      atr-ccs-93%:
         2025: 1200.0 +- 120.0
         2030: 800.0 +- 80.0
         2040: 700.0 +- 70.0
@@ -86,16 +77,10 @@ params:
     desc: Fixed Operation and Maintenance Cost
     type: linear
     value:
-      smr:
-        2025: 25.0 +- 2.5
-        2050: 25.0 +- 2.5
-      smr+lcrccs:
+      smr-ccs-55%:
         2025: 29.0 +- 2.9
         2050: 29.0 +- 2.9
-      smr+hcrccs:
-        2025: 38.0 +- 3.8
-        2050: 38.0 +- 3.8
-      atr+hcrccs:
+      atr-ccs-93%:
         2025: 32.0 +- 3.2
         2030: 24.0 +- 2.4
         2040: 21.0 +- 2.1
@@ -112,16 +97,10 @@ params:
     desc: Variable Operation and Maintenance Cost (w/o fuel cost)
     type: linear
     value:
-      smr:
-        2025: 0.208
-        2050: 0.208
-      smr+lcrccs:
+      smr-ccs-55%:
         2025: 0.209
         2050: 0.209
-      smr+hcrccs:
-        2025: 0.196
-        2050: 0.196
-      atr+hcrccs:
+      atr-ccs-93%:
         2025: 1.908 +- 0.19
         2030: 0.252 +- 0.025
         2050: 0.252 +- 0.025
@@ -147,10 +126,8 @@ params:
     desc: Captured emissions for transport and storage
     type: const
     value:
-      smr: 0.0
-      smr+lcrccs: 0.4660
-      smr+hcrccs: 0.8004
-      atr+hcrccs: 0.8004
+      smr-ccs-55%: 0.4660
+      atr-ccs-93%: 0.8004
     unit: kgCO2/Nm3_H2
     source:
       SMR data from IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured (@Tom).
@@ -171,16 +148,10 @@ params:
     desc: Base emissions of blue hydrogen (per LHV)
     type: const
     value:
-      smr:
-        gwp100: 87.2 +- 4.4
-        gwp20: 89.7 +- 4.5
-      smr+lcrccs:
+      smr-ccs-55%:
         gwp100: 46.3 +- 2.3
         gwp20: 46.6 +- 2.3
-      smr+hcrccs:
-        gwp100: 20.8 +- 1.0
-        gwp20: 21.5 +- 1.1
-      atr+hcrccs:
+      atr-ccs-93%:
         gwp100: 20.8 +- 1.0
         gwp20: 21.5 +- 1.1
     unit: gCO2eq/MJ
@@ -193,16 +164,10 @@ params:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
     type: const
     value:
-      smr:
-        gwp100: 693.05
-        gwp20: 1974.1
-      smr+lcrccs:
+      smr-ccs-55%:
         gwp100: 706.1
         gwp20: 2011.2
-      smr+hcrccs:
-        gwp100: 713.2
-        gwp20: 2031.5
-      atr+hcrccs:
+      atr-ccs-93%:
         gwp100: 713.2
         gwp20: 2031.5
     unit: gCO2eq/MJ
@@ -213,10 +178,8 @@ params:
     desc: Fuel efficiency (natural gas)
     type: const
     value:
-      smr: 75.92
-      smr+lcrccs: 73.51
-      smr+hcrccs: 69.10
-      atr+hcrccs: 73.53
+      smr-ccs-55%: 73.51
+      atr-ccs-93%: 73.53
     unit: percent
     source:
       SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream (@Tom).
@@ -227,10 +190,8 @@ params:
     desc: Fuel efficiency (grid electricity)
     type: const
     value:
-      smr: -30.30
-      smr+lcrccs: -200.0
-      smr+hcrccs: -714.0
-      atr+hcrccs: 25.0
+      smr-ccs-55%: -200.0
+      atr-ccs-93%: 25.0
     unit: ~
     source:
       SMR data from IEAGHG report, p.16, Table 4 (Plant Performance Summary), total energy of inlet & outlet stream (@Tom).
