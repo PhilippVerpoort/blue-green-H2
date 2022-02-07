@@ -142,8 +142,8 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuels: dic
         legend=dict(
             yanchor="top",
             y=0.99,
-            xanchor="left",
-            x=0.005,
+            xanchor="right",
+            x=0.485,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
@@ -232,7 +232,7 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list)
 def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
     traces = []
 
-    for fuel_x in [config['fuelBlueRight']]:
+    for fuel_x in [config['fuelBlueLeft'], config['fuelBlueRight']]:
         fuel_y = config['fuelGreen']
         thisData = __convertFuelData(fuelData, fuel_x, fuel_y)
 

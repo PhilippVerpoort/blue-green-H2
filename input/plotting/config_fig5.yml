@@ -4,7 +4,7 @@ plotting:
   n_samples: 301
 
   xaxis1_min: 0.005
-  xaxis1_max: 0.100
+  xaxis1_max: 0.170
   xaxis2_min: 0.00
   xaxis2_max: 0.05
   xaxis3_min: 0.00
@@ -15,7 +15,7 @@ plotting:
   xaxis5_max: 1.00
 
   yaxis1_min: -20.0
-  yaxis1_max: 60.0
+  yaxis1_max: 80.0
   yaxis2_min: -10.0
   yaxis2_max: 25.0
 
