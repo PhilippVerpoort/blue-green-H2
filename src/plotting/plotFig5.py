@@ -316,13 +316,16 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelGreen: dict, fuelB
                              )))
 
     # determine other xaxis ranges
+    range3 = [GHGIBlue[0][0], GHGIBlue[0][-1]]
+
     pBlue = getGHGIParamsBlue(*currentParams, fuelBlue, gwp)
     pBlueOther = getGHGIParamsBlue(*currentParams, fuelBlue, gwpOther)
+    GHGIBlue, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
+    GHGIBlueOther, _ = __getGHGIs(pBlueOther, pGreen, baseOnly=True)
     # ghgi0_1 + p_1 * ghgim_1 = ghgi0_2 + p_2 * ghgim_2
     # p_2 = (p_1*ghgim_1+ghgi0_1-ghgi0_2)/ghgim_2
-    range2  = [(x*pBlue['mghgi']+pBlue['b'][0]-pBlueOther['b'][0]) / pBlueOther['mghgi']
+    range2  = [(x*pBlue['mghgi']+GHGIBlue-GHGIBlueOther) / pBlueOther['mghgi']
                for x in [xmin, xmax]]
-    range3 = [GHGIBlue[0][0], GHGIBlue[0][-1]]
 
     return traces, range2, range3
 
@@ -499,11 +502,11 @@ def __convertFuelData(fuelData: pd.DataFrame, fuel_x: str, fuel_y: str):
     return FSCPData
 
 
-def __getGHGIs(pBlue, pGreen):
+def __getGHGIs(pBlue, pGreen, baseOnly=False):
     GHGIBlue = getGHGIBlue(**pBlue)
     GHGIGreen = getGHGIGreen(**pGreen)
 
-    return sum(GHGIBlue[comp][0] for comp in GHGIBlue),\
+    return sum(GHGIBlue[comp][0] for comp in GHGIBlue if not baseOnly or comp!='scch4'),\
            sum(GHGIGreen[comp][0] for comp in GHGIGreen)
 
 

@@ -18,10 +18,25 @@ def calcGHGI(params: dict, fuel: dict, gwp: str):
 
 def getGHGIParamsNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str):
     return dict(
-        b=(
-            par[f"ghgi_ng_base_{GWP}"],
-            par_uu[f"ghgi_ng_base_{GWP}"],
-            par_ul[f"ghgi_ng_base_{GWP}"],
+        bdir=(
+            par[f"ghgi_ng_base_direct_{GWP}"],
+            par_uu[f"ghgi_ng_base_direct_{GWP}"],
+            par_ul[f"ghgi_ng_base_direct_{GWP}"],
+        ),
+        bele=(
+            par[f"ghgi_ng_base_elec_{GWP}"],
+            par_uu[f"ghgi_ng_base_elec_{GWP}"],
+            par_ul[f"ghgi_ng_base_elec_{GWP}"],
+        ),
+        bscc=(
+            par[f"ghgi_ng_base_scco2_{GWP}"],
+            par_uu[f"ghgi_ng_base_scco2_{GWP}"],
+            par_ul[f"ghgi_ng_base_scco2_{GWP}"],
+        ),
+        both=(
+            par[f"ghgi_ng_base_other_{GWP}"] + par[f"ghgi_ng_base_cts_{GWP}"],
+            par_uu[f"ghgi_ng_base_other_{GWP}"] + par_uu[f"ghgi_ng_base_cts_{GWP}"],
+            par_ul[f"ghgi_ng_base_other_{GWP}"] + par_ul[f"ghgi_ng_base_cts_{GWP}"],
         ),
         mlr=(
             par['ghgi_ng_methaneleakage'],
@@ -32,11 +47,14 @@ def getGHGIParamsNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str)
     )
 
 
-def getGHGING(b, mlr, mghgi):
+def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
 
     return {
-        'base': b,
-        'mleakage': tuple(e*mghgi for e in mlr)
+        'direct': bdir,
+        'elec': bele,
+        'scco2': bscc,
+        'scch4': tuple(e*mghgi for e in mlr),
+        'other': both,
     }
 
 
@@ -46,10 +64,25 @@ def getGHGIParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: st
         raise Exception("Blue capture rate type unknown: {}".format(tech_type))
 
     return dict(
-        b=(
-            par[f"ghgi_blue_base_{tech_type}_{GWP}"],
-            par_uu[f"ghgi_blue_base_{tech_type}_{GWP}"],
-            par_ul[f"ghgi_blue_base_{tech_type}_{GWP}"],
+        bdir=(
+            par[f"ghgi_blue_base_direct_{tech_type}_{GWP}"],
+            par_uu[f"ghgi_blue_base_direct_{tech_type}_{GWP}"],
+            par_ul[f"ghgi_blue_base_direct_{tech_type}_{GWP}"],
+        ),
+        bele=(
+            par[f"ghgi_blue_base_elec_{tech_type}_{GWP}"],
+            par_uu[f"ghgi_blue_base_elec_{tech_type}_{GWP}"],
+            par_ul[f"ghgi_blue_base_elec_{tech_type}_{GWP}"],
+        ),
+        bscc=(
+            par[f"ghgi_blue_base_scco2_{tech_type}_{GWP}"],
+            par_uu[f"ghgi_blue_base_scco2_{tech_type}_{GWP}"],
+            par_ul[f"ghgi_blue_base_scco2_{tech_type}_{GWP}"],
+        ),
+        both=(
+            par[f"ghgi_blue_base_other_{tech_type}_{GWP}"] + par[f"ghgi_blue_base_cts_{tech_type}_{GWP}"],
+            par_uu[f"ghgi_blue_base_other_{tech_type}_{GWP}"] + par_uu[f"ghgi_blue_base_cts_{tech_type}_{GWP}"],
+            par_ul[f"ghgi_blue_base_other_{tech_type}_{GWP}"] + par_ul[f"ghgi_blue_base_cts_{tech_type}_{GWP}"],
         ),
         mlr=(
             par['ghgi_ng_methaneleakage'],
@@ -60,11 +93,14 @@ def getGHGIParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: st
     )
 
 
-def getGHGIBlue(b, mlr, mghgi):
+def getGHGIBlue(bdir, bele, bscc, both, mlr, mghgi):
 
     return {
-        'base': b,
-        'mleakage': tuple(e*mghgi for e in mlr)
+        'direct': bdir,
+        'elec': bele,
+        'scco2': bscc,
+        'scch4': tuple(e*mghgi for e in mlr),
+        'other': both,
     }
 
 
@@ -109,6 +145,6 @@ def getGHGIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: s
 
 def getGHGIGreen(b, eff, eghgi):
     return {
-        'base': b,
-        'elec': tuple(e/eff for e in eghgi)
+        'elec': tuple(e/eff for e in eghgi),
+        'other': b,
     }

@@ -16,14 +16,23 @@ params:
 
   ghgi_ng_base:
     desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
-    type: linear
+    type: const
     value:
-      gwp100:
-        2025: 65.0 +- 0.0
-        2050: 65.0 +- 5.0
-      gwp20:
-        2025: 66.0 +- 0.0
-        2050: 66.0 +- 5.0
+      direct:
+        gwp100: 56.0 +- 0.28
+        gwp20: 56.0 +- 0.28
+      elec:
+        gwp100: 0.0
+        gwp20: 0.0
+      scco2:
+        gwp100: 8.3 +- 0.4
+        gwp20: 8.3 +- 0.4
+      cts:
+        gwp100: 0.0
+        gwp20: 0.0
+      other:
+        gwp100: 0.7 +- 0.04
+        gwp20: 0.7 +- 0.04
     unit: gCO2eq/MJ
     source:
       Based on second Excel Spreadsheet @Christian sent on 03/11/2021.
@@ -46,8 +55,8 @@ params:
     desc: GHG emissions due to methane leakage per CH4 emission rate (per LHV)
     type: const
     value:
-      gwp100: 606.06
-      gwp20: 1727.27
+      gwp100: 545.0
+      gwp20: 1553.0
     unit: gCO2eq/MJ
     source: Based on second Excel Spreadsheet @Christian sent on 03/11/2021. This stays constant per defintion.
 
@@ -148,12 +157,41 @@ params:
     desc: Base emissions of blue hydrogen (per LHV)
     type: const
     value:
-      smr-ccs-55%:
-        gwp100: 46.3 +- 2.3
-        gwp20: 46.6 +- 2.3
-      atr-ccs-93%:
-        gwp100: 20.8 +- 1.0
-        gwp20: 21.5 +- 1.1
+      direct:
+        smr-ccs-55%:
+          gwp100: 33.5 +- 1.7
+          gwp20: 33.5 +- 1.7
+        atr-ccs-93%:
+          gwp100: 4.9 +- 0.2
+          gwp20: 4.9 +- 0.2
+      elec:
+        smr-ccs-55%:
+          gwp100: 0.8 +- 0.04
+          gwp20: 0.9 +- 0.05
+        atr-ccs-93%:
+          gwp100: 3.8 +- 0.2
+          gwp20: 4.2 +- 0.2
+      scco2:
+        smr-ccs-55%:
+          gwp100: 10.7 +- 0.5
+          gwp20: 10.7 +- 0.5
+        atr-ccs-93%:
+          gwp100: 10.7 +- 0.5
+          gwp20: 10.7 +- 0.5
+      cts:
+        smr-ccs-55%:
+          gwp100: 0.2 +- 0.01
+          gwp20: 0.2 +- 0.01
+        atr-ccs-93%:
+          gwp100: 0.3 +- 0.01
+          gwp20: 0.3 +- 0.01
+      other:
+        smr-ccs-55%:
+          gwp100: 1.0 +- 0.01
+          gwp20: 1.3 +- 0.01
+        atr-ccs-93%:
+          gwp100: 1.0 +- 0.01
+          gwp20: 1.3 +- 0.01
     unit: gCO2eq/MJ
     source:
       Based on first Excel Spreadsheet sent by @Christian on 29/10/2021.

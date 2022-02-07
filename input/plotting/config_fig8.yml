@@ -1,14 +1,18 @@
-yaxislabel: Levelised GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
 labels:
-  ghgi__base: Base emissions
-  ghgi__mleakage: Methane leakage
+  ghgi__direct: Direct emissions
   ghgi__elec: Electricity
+  ghgi__scco2: NG Supply-chain CO<sub>2</sub>
+  ghgi__scch4: NG Supply-chain CH<sub>4</sub>
+  ghgi__other: Other
 
 colours:
-  ghgi__base: '#f36f21'
-  ghgi__mleakage: '#00813e'
-  ghgi__elec: '#3745a3'
+  ghgi__direct: '#f36f21'
+  ghgi__elec: '#e6af2e'
+  ghgi__scco2: '#3745a3'
+  ghgi__scch4: '#589ace'
+  ghgi__other: '#00813e'
 
 fuels:
   - natural gas
