@@ -35,9 +35,11 @@ params:
         gwp20: 0.7 +- 0.04
     unit: gCO2eq/MJ
     source:
-      Based on second Excel Spreadsheet @Christian sent on 03/11/2021.
+      Based on second Excel Spreadsheet @Christian sent on 07/02/2022.
       
       This stays constant, as outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section.
+    
+      Assuming uncertainty of uncertainty 5%.
 
   ghgi_ng_methaneleakage:
     desc: Amount of methane leakage in production chain (relative to total amount used)
@@ -58,7 +60,9 @@ params:
       gwp100: 545.0
       gwp20: 1553.0
     unit: gCO2eq/MJ
-    source: Based on second Excel Spreadsheet @Christian sent on 03/11/2021. This stays constant per defintion.
+    source:
+      Based on Excel Spreadsheet sent by @Christian on 07/02/2022. This stays constant (only depends on GWP
+      of natural gas and the natural gas demand of the plant).
 
   # blue parameters
   cost_blue_capex:
@@ -75,12 +79,12 @@ params:
         2050: 700.0 +- 70.0
     unit: EUR/kW
     source:
-      SMR data from IEAGHG report, Sec. 8.1.3, Table 2, Sheet 84 (@Tom). Assuming a 1% yearly learning rate, i.e.
-      0.99**25 = 78% of cost in 2050.
+      SMR data from IEAGHG report, Sec. 8.1.3, Table 2, Sheet 84 (@Tom). Assuming a 0.5% yearly learning rate, i.e.
+      0.995**25 = 88% of cost in 2050.
       
       ATR data from @Simon sent on 24/11/2021.
       
-      Assuming uncertainty +- 10%.
+      Assuming uncertainty of 10%.
 
   cost_blue_fixedonm:
     desc: Fixed Operation and Maintenance Cost
@@ -100,7 +104,7 @@ params:
     
       ATR data from @Simon sent on 24/11/2011.
     
-      Uncertainty is 10%.
+      Assuming uncertainty of 10%.
 
   cost_blue_varonm:
     desc: Variable Operation and Maintenance Cost (w/o fuel cost)
@@ -119,7 +123,7 @@ params:
     
       ATR data from @Simon sent on 24/11/2011.
     
-      Uncertainty is 10%.
+      Assuming uncertainty of 10%.
 
   cost_blue_flh:
     desc: Full load hours of blue-hydrogen plant
@@ -187,16 +191,16 @@ params:
           gwp20: 0.3 +- 0.01
       other:
         smr-ccs-55%:
-          gwp100: 1.0 +- 0.01
-          gwp20: 1.3 +- 0.01
+          gwp100: 1.0 +- 0.05
+          gwp20: 1.3 +- 0.07
         atr-ccs-93%:
-          gwp100: 1.0 +- 0.01
-          gwp20: 1.3 +- 0.01
+          gwp100: 1.0 +- 0.05
+          gwp20: 1.3 +- 0.07
     unit: gCO2eq/MJ
     source:
       Based on first Excel Spreadsheet sent by @Christian on 29/10/2021.
     
-      Uncertainty??
+      Assuming uncertainty of 5%.
 
   ghgi_blue_methaneleakage_perrate:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
@@ -210,7 +214,8 @@ params:
         gwp20: 2031.5
     unit: gCO2eq/MJ
     source:
-      Based on first Excel Spreadsheet sent by @Christian on 29/10/2021. This stays constant by definition.
+      Based on Excel Spreadsheet sent by @Christian on 07/02/2022. This stays constant (only depends on GWP
+      of natural gas and the natural gas demand of the plant).
 
   blue_eff:
     desc: Fuel efficiency (natural gas)
@@ -246,10 +251,7 @@ params:
       2040: 400 +- 150
       2050: 200 + 100 - 70
     unit: USD/kW
-    source:
-      Numbers provided by @Falko as spreadsheet on 13/01/2022.
-    
-      Does this include BoS, @Falko??
+    source: Numbers provided by @Falko as spreadsheet on 13/01/2022.
 
   cost_green_fixedonm:
     desc: Fixed Operation and Maintenance Cost
@@ -260,8 +262,7 @@ params:
       2040: 25.0
       2050: 20.0
     unit: EUR/kW
-    source:
-      ???
+    source: ???
 
   cost_green_varonm:
     desc: Variable Operation and Maintenance Cost (w/o fuel cost)
@@ -270,8 +271,7 @@ params:
       2025: 1.0
       2050: 0.2
     unit: EUR/MWh
-    source:
-      ???
+    source: ???
 
   cost_green_elec:
     desc: Electricity price
@@ -369,7 +369,7 @@ params:
     type: const
     value: 8
     unit: percent
-    source: Typical WACC for such an investment.
+    source: Assuming a typical WACC.
 
   cost_h2transp:
     desc: H2 transportation cost
