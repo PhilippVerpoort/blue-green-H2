@@ -245,12 +245,20 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             textfont=dict(color=col),
             name=name,
             legendgroup=f"{fuel_x}__{fuel_y}",
+            showlegend=False,
             line=dict(color=col, dash='dash' if fuel_x==config['fuelBlueLeft'] else 'solid'),
             marker_size=10,
-            mode='lines+markers+text',
+            mode='markers+text',
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}±%{{error_x.array:.2f}}<br>"
                           f"Direct cost difference (w/o CP): %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
+        ))
+
+        traces.append(go.Scatter(x=thisData.delta_ghgi * 1000, y=thisData.delta_cost,
+            name=name,
+            legendgroup=f"{fuel_x}__{fuel_y}",
+            line=dict(color=col, dash='dash' if fuel_x==config['fuelBlueLeft'] else 'solid'),
+            mode='lines',
         ))
 
         thisData = thisData.query(f"year==[2025,2030,2040,2050]")
