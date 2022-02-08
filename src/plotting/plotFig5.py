@@ -245,7 +245,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             textfont=dict(color=col),
             name=name,
             legendgroup=f"{fuel_x}__{fuel_y}",
-            line=dict(color=col),
+            line=dict(color=col, dash='dash' if fuel_x==config['fuelBlueLeft'] else 'solid'),
             marker_size=10,
             mode='lines+markers+text',
             customdata=thisData.year,
