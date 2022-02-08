@@ -56,8 +56,8 @@ colours:
   heatmap_low: '#6ac100'
 
 fscp_colours:
-  blue HEB to green RE: '#db2a1a'
-  blue LEB to green RE: '#ff0000'
+  blue HEB to green RE: '#dc291a'
+  blue LEB to green RE: '#fc4b32'
 
 colourscale:
   FSCPmin: -200.0

@@ -36,10 +36,10 @@ showAnnotations:
     - blue LEB
 
 fscp_colours:
-  blue HEB to green RE: '#db2a1a'
-  blue HEB to green pure RE: '#db2a1a'
-  blue LEB to green RE: '#ff0000'
-  blue LEB to green pure RE: '#db2a1a'
+  blue HEB to green RE: '#dc291a'
+  blue HEB to green pure RE: '#dc291a'
+  blue LEB to green RE: '#fc4b32'
+  blue LEB to green pure RE: '#fc4b32'
 
 carbon_price_trajectory:
   time: [2020, 2030, 2050]
