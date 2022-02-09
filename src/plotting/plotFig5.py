@@ -347,7 +347,7 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
 
 
     # add scatter traces
-    x_vals = [pBlue['mlr'][0]*100, (pBlue['mlr'][0]*pBlue['mghgi']+GHGIBlueBase-GHGIBlueOtherBase) / pBlueOther['mghgi'] * 100]
+    x_vals = [pBlue['mlr'][0]*100, xmax*(pBlue['mlr'][0]-range2[0])/(range2[1]-range2[0])*100]
     y_val = sum(e[0] for e in calcCost(currentParams, fuelGreenRawCfg).values()) - sum(e[0] for e in calcCost(currentParams, fuelBlueRawCfg).values())
 
     name = f"Comparing {config['names'][fuelBlue]} with {config['names'][fuelGreen]}"
