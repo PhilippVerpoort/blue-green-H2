@@ -51,7 +51,7 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
     pGreen = getCostParamsGreen(*currentParams, fuelGreen)
 
     # add green traces
-    varyGreenParams = ['p_el', 'c_pl', 'ocf']
+    varyGreenParams = ['pelre', 'c_pl', 'ocf']
     for i, par in enumerate(varyGreenParams):
         j = i + 1
         pGreenMod = pGreen.copy()

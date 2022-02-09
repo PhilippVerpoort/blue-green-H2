@@ -1,5 +1,5 @@
 known_tech_types = ['smr', 'smr-ccs-55%', 'atr-ccs-93%']
-known_elec_srcs = ['RE', 'mix', 'share']
+known_elec_srcs = ['RE', 'grid', 'share']
 
 
 def calcCost(params: tuple, fuel: dict):
@@ -56,9 +56,9 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
         ),
         eff=par[f"blue_eff_{tech_type}"],
         p_el = (
-            par['cost_green_elec_mix'],
-            par_uu['cost_green_elec_mix'],
-            par_ul['cost_green_elec_mix'],
+            par['cost_green_elec_grid'],
+            par_uu['cost_green_elec_grid'],
+            par_ul['cost_green_elec_grid'],
         ),
         eff_el=par[f"blue_eff_elec_{tech_type}"],
         c_CTS=(
@@ -91,30 +91,11 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     i = par['irate']
     n = par['lifetime']
 
-    sharemix = par['green_share']
-    if tech_type == 'mix':
-        sharemix = 1.0
+    share = par['green_share']
+    if tech_type == 'grid':
+        share = 0.0
     elif tech_type == 'RE':
-        sharemix = 0.0
-    shareof = {
-        'RE': (1-sharemix),
-        'mix': sharemix,
-    }
-
-    ocf = shareof['RE'] * par['green_ocf'] + shareof['mix'] * 1.0
-
-    if tech_type == 'share':
-        p_el = (
-           sum(shareof[tech_type]*par[f"cost_green_elec_{tech_type}"] for tech_type in ['RE', 'mix']),
-           sum(shareof[tech_type]*par_uu[f"cost_green_elec_{tech_type}"] for tech_type in ['RE', 'mix']),
-           sum(shareof[tech_type]*par_ul[f"cost_green_elec_{tech_type}"] for tech_type in ['RE', 'mix']),
-        )
-    else:
-        p_el = (
-            par[f"cost_green_elec_{tech_type}"],
-            par_uu[f"cost_green_elec_{tech_type}"],
-            par_ul[f"cost_green_elec_{tech_type}"],
-        )
+        share = 1.0
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
@@ -133,17 +114,28 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_uu['cost_green_varonm'],
             par_ul['cost_green_varonm'],
         ),
-        ocf=ocf,
-        p_el=p_el,
+        ocf=par['green_ocf'],
+        sh=share,
+        pelre=(
+            par['cost_green_elec_RE'],
+            par_uu['cost_green_elec_RE'],
+            par_ul['cost_green_elec_RE'],
+        ),
+        pelgrid=(
+            par['cost_green_elec_grid'],
+            par_uu['cost_green_elec_grid'],
+            par_ul['cost_green_elec_grid'],
+        ),
         eff=par['green_eff'],
         transp=par['cost_h2transp'],
     )
 
 
-def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, p_el, eff, transp):
+def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, sh, pelre, pelgrid, eff, transp):
+    ocf = sh*ocf + (1-sh)*1.0
     return {
         'cap_cost': tuple(FCR * c/(ocf*8760) for c in c_pl),
-        'elec_cost': tuple(p/eff for p in p_el),
+        'elec_cost': tuple((sh*pelre[i] + (1.0-sh)*pelgrid[i])/eff for i in range(3)),
         'fonm_cost': tuple(c/(ocf*8760) for c in c_fonm),
         'vonm_cost': tuple(c for c in c_vonm),
         'tra_cost': (transp, 0.0, 0.0),

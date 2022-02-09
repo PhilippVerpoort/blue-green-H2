@@ -1,5 +1,5 @@
 known_tech_types = ['smr', 'smr-ccs-55%', 'atr-ccs-93%']
-known_elec_srcs = ['RE', 'mix', 'share']
+known_elec_srcs = ['RE', 'grid', 'share']
 
 
 def calcGHGI(params: dict, fuel: dict, gwp: str):
@@ -99,7 +99,7 @@ def getGHGIBlue(bdir, bele, bscc, both, mlr, mghgi):
         'direct': bdir,
         'elec': bele,
         'scco2': bscc,
-        'scch4': tuple(e*mghgi for e in mlr),
+        'scch4': tuple(mlr[i]*mghgi for i in range(3)),
         'other': both,
     }
 
@@ -109,28 +109,11 @@ def getGHGIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: s
     if tech_type not in known_elec_srcs:
         raise Exception(f"Green electricity source type unknown: {tech_type}")
 
-    sharemix = par['green_share']
-    if tech_type == 'mix':
-        sharemix = 1.0
+    share = par['green_share']
+    if tech_type == 'grid':
+        share = 0.0
     elif tech_type == 'RE':
-        sharemix = 0.0
-    shareof = {
-        'RE': (1-sharemix),
-        'mix': sharemix,
-    }
-
-    if tech_type == 'share':
-        eghgi = (
-           sum(shareof[tech_type]*par[f"ghgi_green_elec_{tech_type}_{GWP}"] for tech_type in ['RE', 'mix']),
-           sum(shareof[tech_type]*par_uu[f"ghgi_green_elec_{tech_type}_{GWP}"] for tech_type in ['RE', 'mix']),
-           sum(shareof[tech_type]*par_ul[f"ghgi_green_elec_{tech_type}_{GWP}"] for tech_type in ['RE', 'mix']),
-        )
-    else:
-        eghgi = (
-            par[f"ghgi_green_elec_{tech_type}_{GWP}"],
-            par_uu[f"ghgi_green_elec_{tech_type}_{GWP}"],
-            par_ul[f"ghgi_green_elec_{tech_type}_{GWP}"],
-        )
+        share = 1.0
 
     return dict(
         b=(
@@ -139,12 +122,22 @@ def getGHGIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: s
             par_ul[f"ghgi_green_base_{GWP}"],
         ),
         eff=par[f"green_eff"],
-        eghgi=eghgi,
+        sh=share,
+        elre=(
+            par[f"ghgi_green_elec_RE_{GWP}"],
+            par_uu[f"ghgi_green_elec_RE_{GWP}"],
+            par_ul[f"ghgi_green_elec_RE_{GWP}"],
+        ),
+        elgrid=(
+            par[f"ghgi_green_elec_grid_{GWP}"],
+            par_uu[f"ghgi_green_elec_grid_{GWP}"],
+            par_ul[f"ghgi_green_elec_grid_{GWP}"],
+        ),
     )
 
 
-def getGHGIGreen(b, eff, eghgi):
+def getGHGIGreen(b, eff, sh, elre, elgrid):
     return {
-        'elec': tuple(e/eff for e in eghgi),
+        'elec': tuple((sh*elre[i] + (1.0-sh)*elgrid[i])/eff for i in range(3)),
         'other': b,
     }

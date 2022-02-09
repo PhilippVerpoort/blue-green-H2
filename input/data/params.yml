@@ -280,7 +280,7 @@ params:
       RE:
         2025: 45.0 +- 10.0
         2050: 25.0 +- 10.0
-      mix:
+      grid:
         2025: 85.0 +- 10.0
         2030: 80.0 +- 5.0
         2050: 70.0 + 5.0 - 10.0
@@ -313,7 +313,7 @@ params:
         gwp20:
           2025: 0.026 +- 0.010
           2050: 0.016 +- 0.005
-      mix:
+      grid:
         gwp100:
           2025: 0.397 +- 0.05
           2035: 0.190 +- 0.10
@@ -347,12 +347,12 @@ params:
     source: Own estimates by @Falko.
 
   green_share:
-    desc: Share of green and grey electricity
+    desc: Share of renewable and grey electricity. 100% means RE only.
     type: linear
     value:
-      2025: 20.0
-      2035: 0.0
-      2050: 0.0
+      2025: 80.0
+      2035: 100.0
+      2050: 100.0
     unit:
       percent
     source: Own estimates @Falko.

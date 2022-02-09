@@ -3,12 +3,12 @@ vertical_spacing: 0.3
 plotting:
   n_samples: 301
 
-  xaxis1_min: 0.005
+  xaxis1_min: 0.000
   xaxis1_max: 0.170
   xaxis2_min: 0.00
-  xaxis2_max: 0.05
+  xaxis2_max: 0.03
   xaxis3_min: 0.00
-  xaxis3_max: 0.05
+  xaxis3_max: 0.03
   xaxis4_min: 0.80
   xaxis4_max: 1.00
   xaxis5_min: 0.80
@@ -17,7 +17,7 @@ plotting:
   yaxis1_min: -20.0
   yaxis1_max: 80.0
   yaxis2_min: -10.0
-  yaxis2_max: 25.0
+  yaxis2_max: 40.0
 
 labels:
   xaxis1: GHG-Intensity<sub>blue</sub> — GHG-Intensity<sub>green</sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
@@ -46,7 +46,7 @@ subplot_title_positions:
 linedensity:
   plot1: 100
   plot2: 25
-  plot3: 25
+  plot3: 50
   plot4: 50
   plot5: 100
 
@@ -67,4 +67,5 @@ colourscale:
 fuelGreen: green RE
 fuelBlueLeft: blue HEB
 fuelBlueRight: blue LEB
-fuelYear: 2050
+fuelYearTop: 2035
+fuelYearBottom: 2030

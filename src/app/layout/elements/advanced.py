@@ -136,7 +136,7 @@ def getAdvancedWidgets(scenarioInputDefault: dict):
                                             {'value': 'smr+hcrccs', 'label': 'SMR+HCRCCS'},
                                             {'value': 'atr+hcrccs', 'label': 'ATR+HCRCCS'},
                                             {'value': 'RE', 'label': 'RE only'},
-                                            {'value': 'mix', 'label': 'Elec. mix'},
+                                            {'value': 'grid', 'label': 'Grid elec.'},
                                         ]
                                     },
                                     'include_capex': {
