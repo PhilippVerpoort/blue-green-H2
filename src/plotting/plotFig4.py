@@ -202,23 +202,49 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
 
         # data
         thisData = plotData.query(f"fuel=='{fuel}'")
-        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
 
-        # fuel line
-        traces.append(go.Scatter(x=thisData.ghgi*1000, y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=2),
-            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=2),
+
+        # points and lines
+        traces.append(go.Scatter(
+            x=thisData.ghgi*1000,
+            y=thisData.cost,
             text=thisData.year,
             textposition='top left',
             textfont=dict(color=col),
             name=name,
             legendgroup=fuel,
-            showlegend=not dashed,
-            mode="markers+lines+text",
-            line=dict(color=col, width=3, dash='dash' if dashed else 'solid'),
+            showlegend=False,
+            mode="markers+text",
+            line=dict(color=col),
             marker_size=10,
             customdata=thisData.year,
-            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"))
+            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"
+        ))
+
+        traces.append(go.Scatter(
+            x=thisData.ghgi*1000,
+            y=thisData.cost,
+            name=name,
+            legendgroup=fuel,
+            showlegend=not dashed,
+            line=dict(color=col, width=3, dash='dash' if dashed else 'solid'),
+            mode='lines',
+        ))
+
+
+        # error bars
+        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
+        traces.append(go.Scatter(
+            x=thisData.ghgi*1000,
+            y=thisData.cost,
+            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=2),
+            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=2),
+            line=dict(color=col),
+            marker_size=0.000001,
+            showlegend=False,
+            mode='markers',
+        ))
+
 
     return traces
 

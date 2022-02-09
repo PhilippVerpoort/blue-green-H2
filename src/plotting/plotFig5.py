@@ -233,6 +233,8 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         name = f"Comparing {config['names'][fuelBlue]} with {config['names'][fuelGreen]}"
         col = config['fscp_colours'][f"{fuelBlue} to {fuelGreen}"]
 
+
+        # points and lines
         traces.append(go.Scatter(
             x=thisData.delta_ghgi * 1000,
             y=thisData.delta_cost,
@@ -259,8 +261,9 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             mode='lines',
         ))
 
-        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
 
+        # error bars
+        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
         traces.append(go.Scatter(
             x=thisData.delta_ghgi * 1000,
             y=thisData.delta_cost,
