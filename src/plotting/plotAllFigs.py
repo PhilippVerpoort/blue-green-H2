@@ -4,6 +4,8 @@ import importlib
 import pandas as pd
 import yaml
 
+from src.config_load import n_figs
+
 
 def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFrame, FSCPData: pd.DataFrame,
                 fuelDataSteel: pd.DataFrame, FSCPDataSteel: pd.DataFrame, input_data: dict, plotting_cfg: dict,
@@ -21,7 +23,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
     ]
 
     figs = []
-    for i in range (1, len(plotting_cfg)+1):
+    for i in range (1, n_figs+1):
         if plot_list is not None and f"fig{i}" not in plot_list:
             figs.append(None)
             continue
