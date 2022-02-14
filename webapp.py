@@ -16,8 +16,8 @@ from src.app.callbacks.callbacks import callbackUpdate, callbackDownloadConfig, 
 callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
 
 
-# define server for wsgi
-server = app.server
+# define flask_app for wsgi
+flask_app = app.server
 
 
 # for running as Python script in standalone
