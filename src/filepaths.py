@@ -1,6 +1,6 @@
 import os
 
-pwd = os.getcwd()
+pwd = os.path.join(os.path.dirname(__file__), '..')
 
 def getFilePath(dname, fname):
     return os.path.join(pwd, dname, fname)
