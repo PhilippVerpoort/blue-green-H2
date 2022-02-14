@@ -25,4 +25,4 @@ def calcSteelData(fuelData: pd.DataFrame, steel_data: dict):
     refFuel['ghgi_uu'] = 0.0
     refFuel['ghgi_ul'] = 0.0
 
-    return fuelDataSteel.append(refFuel, ignore_index=True)
+    return pd.concat([fuelDataSteel, refFuel], ignore_index=True)

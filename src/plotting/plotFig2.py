@@ -8,9 +8,8 @@ from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 def plotFig2(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
     # filter data
-    plotData = pd.DataFrame()
-    for fuel in config['fuels']:
-        plotData = plotData.append(fuelData.query(f"fuel=='{fuel}' & year=={config['year']}"), ignore_index=True)
+    showFuels = config['fuels']
+    plotData = fuelData.query(f"fuel in @showFuels & year=={config['year']}").reset_index(drop=True)
 
 
     # produce figure

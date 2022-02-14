@@ -4,10 +4,9 @@ import pandas as pd
 def calcFSCPs(fuelData: pd.DataFrame):
     fuelData = fuelData[['fuel', 'type', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul']]
 
-    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).\
-                   assign(fscp=lambda f: (f['cost_x'] - f['cost_y'])/(f['ghgi_y'] - f['ghgi_x'])).\
-                   dropna()
+    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).dropna()
 
+    tmp['fscp'] = (tmp['cost_x'] - tmp['cost_y'])/(tmp['ghgi_y'] - tmp['ghgi_x'])
     tmp['fscp_tc'] = tmp['cost_x'] + tmp['fscp'] * tmp['ghgi_x']
 
     tmp['correlated'] = 0.0

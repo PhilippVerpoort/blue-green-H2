@@ -6,9 +6,8 @@ from src.data.fuels.calc_cost import calcCost
 
 # calculate fuel data
 def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str = 'gwp100', levelised: bool = False):
-    fuelData = pd.DataFrame(columns=['fuel', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul'])
-
     fuelSpecs = {'names': {}, 'colours': {}}
+    fuelEntries = []
 
     for fuel_id, fuel in fuels.items():
         fuelSpecs['names'][fuel_id] = fuel['desc']
@@ -20,7 +19,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
             levelisedCost = calcCost(currentParams, fuel)
             levelisedGHGI = calcGHGI(currentParams, fuel, gwp)
 
-            newFuel = {'fuel': fuel_id, 'year': t, 'type': fuels[fuel_id]['type']}
+            newFuel = {'fuel': fuel_id, 'type': fuels[fuel_id]['type'], 'year': t}
 
             for component in levelisedCost:
                 newFuel[f"cost__{component}"] = levelisedCost[component][0]
@@ -39,7 +38,9 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
             newFuel['ghgi_uu'] = sum(newFuel[f"ghgi_uu__{component}"] for component in levelisedGHGI)
             newFuel['ghgi_ul'] = sum(newFuel[f"ghgi_ul__{component}"] for component in levelisedGHGI)
 
-            fuelData = fuelData.append(newFuel, ignore_index=True)
+            fuelEntries.append(newFuel)
+
+    fuelData = pd.DataFrame.from_records(fuelEntries)
 
     return fuelData, fuelSpecs
 

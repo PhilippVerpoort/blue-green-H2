@@ -52,8 +52,8 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict, refFuel: str, n_s
     for index, args in enumerate(showFSCPs):
         cols, fuel_x, fuel_y = args
         if fuel_x == 'ref': fuel_x = refFuel
-        addFSCP = FSCPData.query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}' & year_x==year_y")
-        if fuel_x == refFuel: addFSCP['fuel_x'] = 'ref'
+        addFSCP = FSCPData.query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}' & year_x==year_y").reset_index(drop=True)
+        if fuel_x == refFuel: addFSCP.loc[:, 'fuel_x'] = 'ref'
         addFSCP.insert(1, 'plotIndex', len(addFSCP) * [index])
         FSCPsCols[index] = cols
         listOfFSCPs = pd.concat([listOfFSCPs, addFSCP], ignore_index=True)
@@ -69,20 +69,25 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict, refFuel: str, n_s
 
     # interpolation of plotLines
     t = np.linspace(plotLines['year'].min(), plotLines['year'].max(), n_samples)
-    plotLinesInterpolated = pd.DataFrame(columns=(plotLines.keys()))
+    dtypes = {'year': float, 'cost_x': float, 'cost_y': float, 'ghgi_x': float, 'ghgi_y': float}
+    allEntries = []
+
     for index in plotLines['plotIndex'].unique():
-        interpolationEntries = plotLines.query(f"plotIndex=={index}").reset_index(drop=True)
-        fuel_x = interpolationEntries.fuel_x.iloc[0]
-        fuel_y = interpolationEntries.fuel_y.iloc[0]
+        samples = plotLines.query(f"plotIndex=={index}").reset_index(drop=True).astype(dtypes)
+        fuel_x = samples.fuel_x.iloc[0]
+        fuel_y = samples.fuel_y.iloc[0]
         new = dict(
             plotIndex=n_samples * [int(index)],
             fuel_x=n_samples * [fuel_x],
             fuel_y=n_samples * [fuel_y],
             year=t,
         )
-        newEntries = pd.DataFrame(new)
-        newEntries = newEntries.merge(interpolationEntries, how='outer').sort_values(by=['year']).interpolate()
-        plotLinesInterpolated = plotLinesInterpolated.append(newEntries, ignore_index=True)
+        tmp = pd.DataFrame(new, columns=plotLines.keys())
+        tmp.index = np.arange(len(samples), len(tmp) + len(samples))
+        tmp = tmp.merge(samples, how='outer').sort_values(by=['year']).astype(dtypes)
+        allEntries.append(tmp.interpolate())
+
+    plotLinesInterpolated = pd.concat(allEntries, ignore_index=True)
     plotLinesInterpolated['fscp'] = (plotLinesInterpolated['cost_x'] - plotLinesInterpolated['cost_y']) / (
                 plotLinesInterpolated['ghgi_y'] - plotLinesInterpolated['ghgi_x'])
 

@@ -6,7 +6,7 @@ import pandas as pd
 
 # Calculate parameters including uncertainty at different times, using linear interpolation if needed.
 def getFullParams(basicData: dict, units: dict, times: list):
-    fullDataFrame = pd.DataFrame(columns=['name', 'year', 'unit', 'value', 'uncertainty', 'uncertainty_lower'])
+    pars = []
 
     for parId, par in basicData.items():
         newPars = __calcValues(parId, par['value'], par['type'], times)
@@ -17,9 +17,9 @@ def getFullParams(basicData: dict, units: dict, times: list):
                 newPar['uncertainty'] = conversionFactor * newPar['uncertainty'] if newPar['uncertainty'] is not None else None
                 newPar['uncertainty_lower'] = conversionFactor * newPar['uncertainty_lower'] if newPar['uncertainty_lower'] is not None else None
                 newPar['unit'] = newUnit
-            fullDataFrame = fullDataFrame.append(newPar, ignore_index=True)
+            pars.append(newPar)
 
-    return fullDataFrame
+    return pd.DataFrame.from_records(pars, columns=['name', 'year', 'unit', 'value', 'uncertainty', 'uncertainty_lower'])
 
 
 # Iteratively calculate values for 1) keys (smr/atr, gwp100/gwp20, etc) and 2) different times (2025, 2030, 2035, etc).
