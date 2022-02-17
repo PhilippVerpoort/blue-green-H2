@@ -3,8 +3,8 @@ yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV<
 labels:
   ghgi__direct: Direct emissions
   ghgi__elec: Electricity
-  ghgi__scco2: NG Supply-chain CO<sub>2</sub>
-  ghgi__scch4: NG Supply-chain CH<sub>4</sub>
+  ghgi__scco2: NG supply-chain CO<sub>2</sub>
+  ghgi__scch4: NG supply-chain CH<sub>4</sub>
   ghgi__other: Other
 
 colours:
