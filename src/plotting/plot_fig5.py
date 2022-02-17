@@ -11,7 +11,9 @@ from src.data.fuels.calc_fuels import getCurrentAsDict
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict, export_img: bool = True):
+def plot_fig5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict, export_img: bool = True, rd: bool = False):
+    if rd: return {'fig5': None}
+
     # produce figure
     fig = __produceFigure(fuelData, fullParams, fuelsRawCfg, config)
 
@@ -34,7 +36,7 @@ def plotFig5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict
 
         fig.write_image("output/fig5.png", **getImageSize(w_mm, h_mm))
 
-    return fig
+    return {'plot_fig5': fig}
 
 
 def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):

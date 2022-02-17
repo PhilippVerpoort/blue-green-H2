@@ -10,7 +10,9 @@ from plotly.colors import hex_to_rgb
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict, export_img: bool = True):
+def plot_fig3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict, export_img: bool = True, rd: bool = False):
+    if rd: return {'fig3': None}
+
     # select which lines to plot based on function argument
     FSCPsCols, plotFSCP, plotLines = __selectPlotFSCPs(FSCPData, config['showFSCPs'], config['refFuelTop'],
                                                        config['n_samples'])
@@ -42,7 +44,7 @@ def plotFig3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict, 
 
         fig.write_image("output/fig3.png", **getImageSize(w_mm, h_mm))
 
-    return fig
+    return {'fig3': fig}
 
 
 def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict, refFuel: str, n_samples: int):

@@ -3,7 +3,7 @@ import sys
 from src.config_load import input_data, steel_data, plotting_cfg
 from src.data.data import getFullData
 from src.data.params.export_params import exportInputData
-from src.plotting.plotAllFigs import plotAllFigs
+from src.plotting.plot_all import plotAllFigs
 
 
 # Get list of figs to plot from command line args.

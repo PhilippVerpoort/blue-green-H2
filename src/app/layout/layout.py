@@ -5,7 +5,7 @@ from src.app.layout.elements.advanced import getAdvancedWidgets
 from src.app.layout.elements.advanced_modal import getAdvancedModal
 from src.app.layout.elements.header import getHeader
 from src.app.layout.elements.plot_settings_modal import getPlotSettingsModal
-from src.app.layout.elements.plots import getPlots
+from src.app.layout.elements.figures import getFigures
 from src.app.layout.elements.results import getResultsWidgets
 from src.app.layout.elements.simple import getSimpleWidgets
 from src.config_load import plotting_cfg
@@ -28,7 +28,7 @@ def initLayout(app, input_data):
     widget_results = getResultsWidgets()
 
     # plots
-    fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8 = getPlots()
+    fig1, fig2, fig3, fig4, fig5, fig6 = getFigures()
 
     # plot settings modal
     plot_settings_modal = getPlotSettingsModal()
@@ -132,22 +132,22 @@ def initLayout(app, input_data):
                         )
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig1, md=8), dbc.Col(fig2, md=4)],
+                        children=[dbc.Col(fig1, md=8),],
+                    ),
+                    dbc.Row(
+                        children=[dbc.Col(fig2, md=8),],
                     ),
                     dbc.Row(
                         children=[dbc.Col(fig3, md=8),],
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig4, md=6),],
+                        children=[dbc.Col(fig4, md=8),],
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig5, md=12),],
+                        children=[dbc.Col(fig5, md=8),],
                     ),
                     dbc.Row(
-                        children=[dbc.Col(fig6, md=9),],
-                    ),
-                    dbc.Row(
-                        children=[dbc.Col(fig7, md=6), dbc.Col(fig8, md=6),],
+                        children=[dbc.Col(fig6, md=8),],
                     ),
                 ],
                 fluid=True,

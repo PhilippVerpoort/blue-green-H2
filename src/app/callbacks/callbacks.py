@@ -9,9 +9,9 @@ from src.app.app import app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
-from src.config_load import input_data, steel_data, n_figs
+from src.config_load import input_data, steel_data
 from src.filepaths import getFilePathAssets, getFilePath
-from src.plotting.plotAllFigs import plotAllFigs
+from src.plotting.plot_all import plotAllFigs
 
 
 # update figure plotting settings
@@ -19,20 +19,18 @@ from src.plotting.plotAllFigs import plotAllFigs
     [Output("settings-modal", "is_open"),
      Output("plotting-config", "data"),
      Output("settings-modal-textfield", "value"),],
-    [Input("fig1-settings", "n_clicks"),
+    [Input("fig1ab-settings", "n_clicks"),
      Input("fig2-settings", "n_clicks"),
      Input("fig3-settings", "n_clicks"),
      Input("fig4-settings", "n_clicks"),
      Input("fig5-settings", "n_clicks"),
      Input("fig6-settings", "n_clicks"),
-     Input("fig7-settings", "n_clicks"),
-     Input("fig8-settings", "n_clicks"),
      Input("settings-modal-ok", "n_clicks"),
      Input("settings-modal-cancel", "n_clicks"),],
     [State("settings-modal-textfield", "value"),
      State("plotting-config", "data"),],
 )
-def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n7: int, n8: int, n_ok: int, n_cancel: int,
+def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n_ok: int, n_cancel: int,
                           settings_modal_textfield: str, plotting_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -40,7 +38,7 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
         return False, plotting_cfg, ""
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btnPressed in [f"fig{f}-settings" for f in range(1, n_figs+1)]:
+        if btnPressed in [f"{cfgName}-settings" for cfgName in plotting_cfg]:
             fname = btnPressed.split("-")[0]
             plotting_cfg['last_btn_pressed'] = fname
             return True, plotting_cfg, plotting_cfg[fname]
@@ -56,14 +54,13 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
 
 # general callback for (re-)generating plots
 @app.callback(
-    [Output('fig1', 'figure'),
+    [Output('fig1a', 'figure'),
+     Output('fig1b', 'figure'),
      Output('fig2', 'figure'),
      Output('fig3', 'figure'),
      Output('fig4', 'figure'),
      Output('fig5', 'figure'),
      Output('fig6', 'figure'),
-     Output('fig7', 'figure'),
-     Output('fig8', 'figure'),
      Output('table-results', 'data'),
      Output('saved-plot-data', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -125,14 +122,12 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
         else:
             raise Exception("Unknown button pressed!")
 
-    fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8 = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData,
-                                                                 fuelDataSteel, FSCPDataSteel, input_data, plotting_cfg,
-                                                                 export_img=False)
+    figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel,
+                       input_data, plotting_cfg, export_img=False)
 
     saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
 
-    return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8,\
-           fuelData.to_dict('records'), saved_plot_data
+    return *figs.values(), fuelData.to_dict('records'), saved_plot_data
 
 
 # callback for YAML config download

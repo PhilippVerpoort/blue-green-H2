@@ -1,7 +1,7 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
-def getPlots():
+def getFigures():
     fig1 = dbc.Card(
         id="card-fig-1",
         children=[
@@ -14,11 +14,14 @@ def getPlots():
                                 type="circle",
                                 children=[
                                     dcc.Graph(
-                                        id='fig1',
+                                        id='fig1a',
+                                    ),
+                                    dcc.Graph(
+                                        id='fig1b',
                                     )
                                 ],
                             ),
-                            dbc.Button(id='fig1-settings', children='Plot config', className='scenario-buttons'),
+                            dbc.Button(id='fig1ab-settings', children='Plot config', className='scenario-buttons'),
                         ],
                     ),
                 ]
@@ -147,52 +150,4 @@ def getPlots():
         ],
     )
 
-    fig7 = dbc.Card(
-        id="card-fig-7",
-        children=[
-            dbc.CardHeader("Fig. 7"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig7',
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig7-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
-            ),
-        ],
-    )
-
-    fig8 = dbc.Card(
-        id="card-fig-8",
-        children=[
-            dbc.CardHeader("Fig. 8"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig8',
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig8-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
-            ),
-        ],
-    )
-
-    return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8
+    return fig1, fig2, fig3, fig4, fig5, fig6

@@ -5,35 +5,40 @@ from src.data.fuels.calc_fuels import calcFuelData
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig7(fuelData: pd.DataFrame, config: dict, type: str = 'cost', export_img: bool = True):
+def plot_fig1ab(fuelData: pd.DataFrame, config: dict, export_img: bool = True, rd: bool = False):
+    if rd: return {'fig1a': None, 'fig1b': None}
+
     # plot data
     plotData = __obtainData(fuelData, config)
 
-    # produce figure
-    fig = __produceFigure(plotData, config, type)
+    # produce figures
+    figs = {}
+    for name, type in [('a', 'cost'), ('b', 'ghgi')]:
+        fig = __produceFigure(plotData, config[type], type)
 
-    # styling figure
-    __styling(fig)
+        # styling figure
+        __styling(fig)
 
-    # write figure to image file
-    if export_img:
-        w_mm = 88.0
-        h_mm = 61.0
+        # write figure to image file
+        if export_img:
+            w_mm = 88.0
+            h_mm = 61.0
 
-        fs_sm = getFontSize(5.0)
-        fs_lg = getFontSize(7.0)
+            fs_sm = getFontSize(5.0)
+            fs_lg = getFontSize(7.0)
 
-        fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_lg)
-        fig.update_xaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-        fig.update_yaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
+            fig.update_layout(font_size=fs_sm)
+            fig.update_annotations(font_size=fs_lg)
+            fig.update_xaxes(title_font_size=fs_sm,
+                             tickfont_size=fs_sm)
+            fig.update_yaxes(title_font_size=fs_sm,
+                             tickfont_size=fs_sm)
 
-        num = '7' if type == 'cost' else '8'
-        fig.write_image(f"output/fig{num}.png", **getImageSize(w_mm, h_mm))
+            fig.write_image(f"output/fig1{name}.png", **getImageSize(w_mm, h_mm))
 
-    return fig
+        figs.update({f"fig1{name}": fig})
+
+    return figs
 
 
 def __obtainData(fuelData: pd.DataFrame, config: dict):
@@ -54,19 +59,19 @@ def __obtainData(fuelData: pd.DataFrame, config: dict):
     return plotData
 
 
-def __produceFigure(plotData: pd.DataFrame, config: dict, type: str):
+def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
     scale = 1.0 if type == 'cost' else 1000.0
 
     # create figure
     fig = go.Figure()
-    keys = config['labels'].keys()
+    keys = plotConfig['labels'].keys()
     for stack in keys:
         fig.add_bar(
             x=[plotData.year, plotData.name],
             y=plotData[stack]*scale,
-            marker_color=config['colours'][stack],
-            name=config['labels'][stack],
-            hovertemplate=f"<b>{config['labels'][stack]}</b><br>{config['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>",
+            marker_color=plotConfig['colours'][stack],
+            name=plotConfig['labels'][stack],
+            hovertemplate=f"<b>{plotConfig['labels'][stack]}</b><br>{plotConfig['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>",
         )
     fig.update_layout(barmode='stack')
 
@@ -87,7 +92,7 @@ def __produceFigure(plotData: pd.DataFrame, config: dict, type: str):
 
     # set axes labels
     fig.update_layout(xaxis=dict(title=''),
-                      yaxis=dict(title=config['yaxislabel'], range=[0.0, config['ymax']*scale]),
+                      yaxis=dict(title=plotConfig['yaxislabel'], range=[0.0, plotConfig['ymax'] * scale]),
                       legend_title='')
 
     return fig

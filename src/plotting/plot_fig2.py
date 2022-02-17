@@ -9,7 +9,9 @@ from plotly.colors import hex_to_rgb
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig1(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, export_img: bool = True):
+def plot_fig2(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, export_img: bool = True, rd: bool = False):
+    if rd: return {'fig2': None}
+
     # select which lines to plot based on function argument
     plotData, linesCols = __selectPlotData(fuelData, config['showFuels'])
 
@@ -34,9 +36,9 @@ def plotFig1(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, expor
         fig.update_yaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
 
-        fig.write_image("output/fig1.png", **getImageSize(w_mm, h_mm))
+        fig.write_image("output/fig2.png", **getImageSize(w_mm, h_mm))
 
-    return fig
+    return {'fig2': fig}
 
 
 def __selectPlotData(fuelData: pd.DataFrame, showFuels: dict = None):

@@ -9,7 +9,8 @@ from plotly.subplots import make_subplots
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict, export_img: bool = True):
+def plot_fig4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict, export_img: bool = True, rd: bool = False):
+    if rd: return {'fig4': None}
 
     # Select which lines to plot based on function argument and
     plotDataLeft, refDataLeft = __selectPlotData(fuelsData, config['refFuelLeft'], config['refYearLeft'], config['showFuels'])
@@ -37,7 +38,7 @@ def plotFig4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict
 
         fig.write_image("output/fig4.png", **getImageSize(w_mm, h_mm))
 
-    return fig
+    return {'fig4': fig}
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list):
