@@ -5,12 +5,12 @@ from src.data.fuels.calc_fuels import calcFuelData
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plotFig7(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
+def plotFig7(fuelData: pd.DataFrame, config: dict, type: str = 'cost', export_img: bool = True):
     # plot data
     plotData = __obtainData(fuelData, config)
 
     # produce figure
-    fig = __produceFigure(plotData, config)
+    fig = __produceFigure(plotData, config, type)
 
     # styling figure
     __styling(fig)
@@ -30,7 +30,8 @@ def plotFig7(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
         fig.update_yaxes(title_font_size=fs_sm,
                          tickfont_size=fs_sm)
 
-        fig.write_image('output/fig7.png', **getImageSize(w_mm, h_mm))
+        num = '7' if type == 'cost' else '8'
+        fig.write_image(f"output/fig{num}.png", **getImageSize(w_mm, h_mm))
 
     return fig
 
@@ -53,14 +54,16 @@ def __obtainData(fuelData: pd.DataFrame, config: dict):
     return plotData
 
 
-def __produceFigure(plotData: pd.DataFrame, config: dict):
+def __produceFigure(plotData: pd.DataFrame, config: dict, type: str):
+    scale = 1.0 if type == 'cost' else 1000.0
+
     # create figure
     fig = go.Figure()
     keys = config['labels'].keys()
     for stack in keys:
         fig.add_bar(
             x=[plotData.year, plotData.name],
-            y=plotData[stack],
+            y=plotData[stack]*scale,
             marker_color=config['colours'][stack],
             name=config['labels'][stack],
             hovertemplate=f"<b>{config['labels'][stack]}</b><br>{config['yaxislabel']}: %{{y}}<br>For fuel %{{x}}<extra></extra>",
@@ -71,7 +74,7 @@ def __produceFigure(plotData: pd.DataFrame, config: dict):
     fig.add_bar(
         x=[plotData.year, plotData.name],
         y=0.00000001*plotData[list(keys)[0]],
-        error_y=dict(type='data', array=plotData.cost_uu, arrayminus=plotData.cost_ul, color='black'),
+        error_y=dict(type='data', array=plotData[f"{type}_uu"], arrayminus=plotData[f"{type}_ul"], color='black'),
         showlegend=False,
     )
 
@@ -84,7 +87,7 @@ def __produceFigure(plotData: pd.DataFrame, config: dict):
 
     # set axes labels
     fig.update_layout(xaxis=dict(title=''),
-                      yaxis=dict(title=config['yaxislabel'], range=[0.0, config['ymax']]),
+                      yaxis=dict(title=config['yaxislabel'], range=[0.0, config['ymax']*scale]),
                       legend_title='')
 
     return fig

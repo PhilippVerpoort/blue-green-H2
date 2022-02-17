@@ -1,5 +1,7 @@
 yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
+ymax: 0.27
+
 labels:
   ghgi__direct: Direct emissions
   ghgi__elec: Electricity
