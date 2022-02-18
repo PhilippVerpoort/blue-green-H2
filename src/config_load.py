@@ -3,6 +3,7 @@ import yaml
 from src.filepaths import getFilePathInput
 
 
+# load input data for calculations
 __filePath = getFilePathInput('data/options.yml')
 options = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 __filePath = getFilePathInput('data/fuels.yml')
@@ -17,14 +18,11 @@ units = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)['units']
 __filePath = getFilePathInput('data/steel.yml')
 steel_data = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
-plotting_cfg = {
-    'fig1ab': None,
-    'fig2': None,
-    'fig3': None,
-    'fig4': None,
-    'fig5': None,
-    'fig6': None,
-}
-for plotName in plotting_cfg:
-    __filePath = getFilePathInput(f"plotting/config_{plotName}.yml")
+# load config data for plots and figures
+__filePath = getFilePathInput('plots.yml')
+plots = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
+
+plotting_cfg = {}
+for plotName in plots:
+    __filePath = getFilePathInput(f"plotting/{plotName}.yml")
     plotting_cfg[plotName] = open(__filePath, 'r').read()

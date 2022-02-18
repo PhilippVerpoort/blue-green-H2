@@ -1,13 +1,10 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from src.data.fuels.calc_fuels import calcFuelData
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plot_fig1ab(fuelData: pd.DataFrame, config: dict, export_img: bool = True, rd: bool = False):
-    if rd: return {'fig1a': None, 'fig1b': None}
-
+def plot1ab(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
     # plot data
     plotData = __obtainData(fuelData, config)
 

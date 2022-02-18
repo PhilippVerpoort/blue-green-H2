@@ -8,9 +8,7 @@ from src.data.fuels.calc_fuels import getCurrentAsDict
 from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 
-def plot_fig6(fullParams: pd.DataFrame, fuels: dict, config: dict, export_img: bool = True, rd: bool = False):
-    if rd: return {'fig6': None}
-
+def plot6(fullParams: pd.DataFrame, fuels: dict, config: dict, export_img: bool = True):
     # produce figure
     fig = __produceFigure(fullParams, fuels, config)
 
