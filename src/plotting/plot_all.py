@@ -9,17 +9,18 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
                 fuelDataSteel: pd.DataFrame, FSCPDataSteel: pd.DataFrame, input_data: dict, plotting_cfg: dict,
                 export_img=True, plot_list: Union[list, None] = None):
 
-    figArgs = [
-        ('fig1ab', (fuelData,)),
-        ('fig2', (fuelData, FSCPData,)),
-        ('fig3', (FSCPData, FSCPDataSteel,)),
-        ('fig4', (fuelData, fuelDataSteel,)),
-        ('fig5', (fuelData, fullParams, input_data['fuels'],)),
-        ('fig6', (fullParams, input_data['fuels'],)),
+    allPlotArgs = [
+        (fuelData,),
+        (fuelData, FSCPData,),
+        (FSCPData, FSCPDataSteel,),
+        (fuelData, fuelDataSteel,),
+        (fuelData, fullParams, input_data['fuels']),
+        (fullParams, input_data['fuels'],),
     ]
 
     figs = {}
-    for plotName, plotArgs in figArgs:
+    for i, plotName in enumerate(plotting_cfg):
+        plotArgs = allPlotArgs[i]
         config = {**fuelSpecs, **yaml.load(plotting_cfg[plotName], Loader=yaml.FullLoader)}
 
         module = importlib.import_module(f"src.plotting.plot_{plotName}")
