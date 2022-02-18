@@ -1,15 +1,19 @@
-import os
+import pathlib
 
-pwd = os.path.join(os.path.dirname(__file__), '..')
+
+BASE_PATH = pathlib.Path(__file__).parent.parent.resolve()
+ASSETS_PATH = BASE_PATH.joinpath("assets").resolve()
+INPUT_PATH = BASE_PATH.joinpath("input").resolve()
+OUTPUT_PATH = BASE_PATH.joinpath("output").resolve()
 
 def getFilePath(dname, fname):
-    return os.path.join(pwd, dname, fname)
+    return BASE_PATH.joinpath(dname).joinpath(fname).resolve()
 
 def getFilePathAssets(fname):
-    return getFilePath('assets/', fname)
+    return ASSETS_PATH.joinpath(fname).resolve()
 
 def getFilePathInput(fname):
-    return getFilePath('input/', fname)
+    return INPUT_PATH.joinpath(fname).resolve()
 
 def getFilePathOutput(fname):
-    return getFilePath('output/', fname)
+    return OUTPUT_PATH.joinpath(fname).resolve()
