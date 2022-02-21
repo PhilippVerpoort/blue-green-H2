@@ -35,7 +35,7 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
         if not (isinstance(value, float) or isinstance(value, int) or isinstance(value, str)):
             raise Exception('Unknown type of value variable. Must be string (including uncertainty) or float.')
 
-        value, uncertainty, uncertainty_lower = __convertValue(value)
+        value, uncertainty, uncertainty_lower = convertValue(value)
 
         for t in times:
             r = {'name': id, 'year': t, 'value': value, 'uncertainty': uncertainty, 'uncertainty_lower': uncertainty_lower}
@@ -50,7 +50,7 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
 
         points = []
         for key, val in value.items():
-            value, uncertainty, uncertainty_lower = __convertValue(val)
+            value, uncertainty, uncertainty_lower = convertValue(val)
             points.append((key, value, uncertainty, uncertainty_lower))
 
         for t in times:
@@ -65,7 +65,7 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
 
 
 # Convert strings to floats with uncertainty, e.g. string '1.0 +- 0.1' becomes tuple (1.0, 0.1, 0.1).
-def __convertValue(value: Union[str, float, int]):
+def convertValue(value: Union[str, float, int]):
     if isinstance(value, float) or isinstance(value, int):
         return value, None, None
     elif isinstance(value, str):

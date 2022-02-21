@@ -5,62 +5,19 @@ import dash
 from dash.dependencies import Input, Output, State
 from flask import send_file
 
-from src.app.app import app
+from src.app.app import dash_app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
+from src.config_load_app import figNames, figs_cfg, allSubFigNames
 from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
-from src.config_load import input_data, steel_data
+from src.config_load import input_data, steel_data, plots
 from src.filepaths import getFilePathAssets, getFilePath
 from src.plotting.plot_all import plotAllFigs
 
 
-# update figure plotting settings
-@app.callback(
-    [Output("settings-modal", "is_open"),
-     Output("plotting-config", "data"),
-     Output("settings-modal-textfield", "value"),],
-    [Input("fig1ab-settings", "n_clicks"),
-     Input("fig2-settings", "n_clicks"),
-     Input("fig3-settings", "n_clicks"),
-     Input("fig4-settings", "n_clicks"),
-     Input("fig5-settings", "n_clicks"),
-     Input("fig6-settings", "n_clicks"),
-     Input("settings-modal-ok", "n_clicks"),
-     Input("settings-modal-cancel", "n_clicks"),],
-    [State("settings-modal-textfield", "value"),
-     State("plotting-config", "data"),],
-)
-def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n_ok: int, n_cancel: int,
-                          settings_modal_textfield: str, plotting_cfg: dict):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        plotting_cfg['last_btn_pressed'] = None
-        return False, plotting_cfg, ""
-    else:
-        btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btnPressed in [f"{cfgName}-settings" for cfgName in plotting_cfg]:
-            fname = btnPressed.split("-")[0]
-            plotting_cfg['last_btn_pressed'] = fname
-            return True, plotting_cfg, plotting_cfg[fname]
-        elif btnPressed == 'settings-modal-cancel':
-            return False, plotting_cfg, ""
-        elif btnPressed == 'settings-modal-ok':
-            fname = plotting_cfg['last_btn_pressed']
-            plotting_cfg[fname] = settings_modal_textfield
-            return False, plotting_cfg, ""
-        else:
-            raise Exception("Unknown button pressed!")
-
-
 # general callback for (re-)generating plots
-@app.callback(
-    [Output('fig1a', 'figure'),
-     Output('fig1b', 'figure'),
-     Output('fig2', 'figure'),
-     Output('fig3', 'figure'),
-     Output('fig4', 'figure'),
-     Output('fig5', 'figure'),
-     Output('fig6', 'figure'),
+@dash_app.callback(
+    [*(Output(subFigName, 'figure') for subFigName in allSubFigNames),
      Output('table-results', 'data'),
      Output('saved-plot-data', 'data')],
     [Input('simple-update', 'n_clicks'),
@@ -68,29 +25,16 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
      Input('results-replot', 'n_clicks'),
      State('table-results', 'data'),
      State('saved-plot-data', 'data'),
-     State("plotting-config", "data"),
+     State('plotting-config', 'data'),
      State('simple-gwp', 'value'),
-     State('simple-leakage', 'value'),
-     State('simple-ng-price', 'value'),
-     State('simple-lifetime', 'value'),
-     State('simple-irate', 'value'),
-     State('simple-cost-green-capex-2025', 'value'),
-     State('simple-cost-green-capex-2050', 'value'),
-     State('simple-cost-green-elec-2025', 'value'),
-     State('simple-cost-green-elec-2050', 'value'),
-     State('simple-ghgi-green-elec', 'value'),
-     State('simple-green-ocf', 'value'),
-     State('simple-cost-blue-capex-heb', 'value'),
-     State('simple-cost-blue-capex-leb', 'value'),
-     State('simple-cost-blue-cts-2025', 'value'),
-     State('simple-cost-blue-cts-2050', 'value'),
-     State('simple-blue-eff-heb', 'value'),
-     State('simple-blue-eff-leb', 'value'),
+     State('simple-important-params', 'data'),
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data'),
      State('advanced-params', 'data'),])
-def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotting_cfg: dict, *args):
+def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotting_cfg: dict,
+                   simple_gwp: str, simple_important_params: list,
+                   advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
     ctx = dash.callback_context
     if not ctx.triggered:
         input_data_updated = input_data.copy()
@@ -98,10 +42,10 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
-            input_data_updated = updateScenarioInputSimple(input_data.copy(), *args)
+            input_data_updated = updateScenarioInputSimple(input_data.copy(), simple_gwp, simple_important_params)
             fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
         elif btnPressed == 'advanced-update':
-            input_data_updated = updateScenarioInputAdvanced(input_data.copy(), *args)
+            input_data_updated = updateScenarioInputAdvanced(input_data.copy(), advanced_gwp, advanced_times, advanced_fuels, advanced_params)
             fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
         elif btnPressed == 'results-replot':
             # load fuelSpecs and fullParams from session
@@ -131,50 +75,21 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
 
 
 # callback for YAML config download
-@app.callback(
-    Output("download-config-yaml", "data"),
-    [Input('simple-download-config', 'n_clicks'),
-     Input('advanced-download-config', 'n_clicks'),
-     State('simple-gwp', 'value'),
-     State('simple-leakage', 'value'),
-     State('simple-ng-price', 'value'),
-     State('simple-lifetime', 'value'),
-     State('simple-irate', 'value'),
-     State('simple-cost-green-capex-2025', 'value'),
-     State('simple-cost-green-capex-2050', 'value'),
-     State('simple-cost-green-elec-2025', 'value'),
-     State('simple-cost-green-elec-2050', 'value'),
-     State('simple-ghgi-green-elec', 'value'),
-     State('simple-green-ocf', 'value'),
-     State('simple-cost-blue-capex-heb', 'value'),
-     State('simple-cost-blue-capex-leb', 'value'),
-     State('simple-cost-blue-cts-2025', 'value'),
-     State('simple-cost-blue-cts-2050', 'value'),
-     State('simple-blue-eff-heb', 'value'),
-     State('simple-blue-eff-leb', 'value'),
+@dash_app.callback(
+    Output('download-config-yaml', 'data'),
+    [Input('advanced-download-config', 'n_clicks'),
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data'),
      State('advanced-params', 'data'),],
      prevent_initial_call=True,)
-def callbackDownloadConfig(n1, n2, *args):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        raise Exception("Initial call not prevented!")
-    else:
-        btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btnPressed == 'simple-download-config':
-            scenarioInputUpdated = updateScenarioInputSimple(input_data.copy(), *args)
-        elif btnPressed == 'advanced-download-config':
-            scenarioInputUpdated = updateScenarioInputAdvanced(input_data.copy(), *args)
-        else:
-            raise Exception("Unknown button pressed!")
-
+def callbackDownloadConfig(n, *args):
+    scenarioInputUpdated = updateScenarioInputAdvanced(input_data.copy(), *args)
     return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename="scenario.yml")
 
 
 # this callback sets the background colour of the rows in the fue table in the advanced tab
-@app.callback(
+@dash_app.callback(
    Output(component_id='advanced-fuels', component_property='style_data_conditional'),
    [Input(component_id='advanced-fuels', component_property='data')])
 def callbackTableColour(data: list):
@@ -196,15 +111,15 @@ def callbackTableColour(data: list):
 
 
 # update parameter values in advanced tab
-@app.callback(
-    [Output("advanced-modal", "is_open"),
-     Output("advanced-modal-textfield", "value"),
-     Output("advanced-params", "data"),],
-    [Input("advanced-modal-ok", "n_clicks"),
-     Input("advanced-modal-cancel", "n_clicks"),
-     Input("advanced-params", "active_cell")],
-    [State("advanced-modal-textfield", "value"),
-     State("advanced-params", "data"),],
+@dash_app.callback(
+    [Output('advanced-modal', 'is_open'),
+     Output('advanced-modal-textfield', 'value'),
+     Output('advanced-params', 'data'),],
+    [Input('advanced-modal-ok', 'n_clicks'),
+     Input('advanced-modal-cancel', 'n_clicks'),
+     Input('advanced-params', 'active_cell')],
+    [State('advanced-modal-textfield', 'value'),
+     State('advanced-params', 'data'),],
 )
 def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_modal_textfield: str, data: list):
     ctx = dash.callback_context
@@ -225,13 +140,73 @@ def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_m
             raise Exception("Unknown button pressed!")
 
 
+# update figure plotting settings
+@dash_app.callback(
+    [Output('plot-config-modal', 'is_open'),
+     Output('plotting-config', 'data'),
+     Output('plot-config-modal-textfield', 'value'),],
+    [*(Input(f'{plotName}-settings', 'n_clicks') for plotName in plots),
+     Input('plot-config-modal-ok', 'n_clicks'),
+     Input('plot-config-modal-cancel', 'n_clicks'),],
+    [State('plot-config-modal-textfield', 'value'),
+     State('plotting-config', 'data'),],
+)
+def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n_ok: int, n_cancel: int,
+                          settings_modal_textfield: str, plotting_cfg: dict):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        plotting_cfg['last_btn_pressed'] = None
+        return False, plotting_cfg, ""
+    else:
+        btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
+        if btnPressed in [f"{cfgName}-settings" for cfgName in plotting_cfg]:
+            fname = btnPressed.split("-")[0]
+            plotting_cfg['last_btn_pressed'] = fname
+            return True, plotting_cfg, plotting_cfg[fname]
+        elif btnPressed == 'plot-config-modal-cancel':
+            return False, plotting_cfg, ""
+        elif btnPressed == 'plot-config-modal-ok':
+            fname = plotting_cfg['last_btn_pressed']
+            plotting_cfg[fname] = settings_modal_textfield
+            return False, plotting_cfg, ""
+        else:
+            raise Exception("Unknown button pressed!")
+
+
+# display of simple or advanced controls
+@dash_app.callback(
+    Output('simple-controls-card', 'style'),
+    Output('advanced-controls-card-left', 'style'),
+    Output('advanced-controls-card-right', 'style'),
+    Output('results-card', 'style'),
+    *(Output(f"card-{figName}", 'style') for figName in figNames),
+    *(Output(f"{plotName}-settings-div", 'style') for plotName in plots),
+    [Input('url', 'pathname')]
+)
+def callbackDisplayForRoutes(route):
+    r = []
+
+    r.append({'display': 'none'} if route != '/' else {})
+    r.append({'display': 'none'} if route != '/advanced' else {})
+    r.append({'display': 'none'} if route != '/advanced' else {})
+    r.append({'display': 'none'} if route != '/advanced' else {})
+
+    for figName in figNames:
+        r.append({'display': 'none'} if route not in figs_cfg[figName]['display'] else {})
+
+    for figName in figNames:
+        r.append({'display': 'none'} if route != '/advanced' else {})
+
+    return r
+
+
 # path for downloading XLS data file
-@app.server.route('/download/data.xlsx')
+@dash_app.server.route('/download/data.xlsx')
 def callbackDownloadExportdata():
     return send_file(getFilePath('output/', 'data.xlsx'), as_attachment=True)
 
 
 # serving asset files
-@app.server.route('/assets/<path>')
+@dash_app.server.route('/assets/<path>')
 def callbackServeAssets(path):
     return send_file(getFilePathAssets(path), as_attachment=True)

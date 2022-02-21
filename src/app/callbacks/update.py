@@ -6,57 +6,23 @@ from dash.exceptions import PreventUpdate
 
 
 # simple update
-def updateScenarioInputSimple(scenarioInput: dict,
-                              simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
-                              simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,
-                              simple_cost_green_elec_2020: float, simple_cost_green_elec_2050: float,
-                              simple_ghgi_green_elec: str, simple_green_ocf: int,
-                              simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
-                              simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
-                              simple_blue_eff_heb: float, simple_blue_eff_leb: float,
-                              advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
+def updateScenarioInputSimple(scenarioInput: dict, simple_gwp: str, simple_important_params: list):
     # update gwp option
     scenarioInput['options']['gwp'] = simple_gwp
 
-    # define dict containing all value updates
-    allUpdates = {
-        # general options
-        'ghgi_ng_methaneleakage': {2050: simple_leakage},
-        'cost_ng_price': {2025: simple_ng_price, 2050: simple_ng_price},
-        'lifetime': simple_lifetime,
-        'irate': simple_irate,
+    # update most important params
+    # TODO: implement, including interpolation
 
-        # green data
-        'cost_green_capex': {2020: simple_cost_green_capex_2020, 2050: simple_cost_green_capex_2050},
-        'cost_green_elec': {'RE': {2020: simple_cost_green_elec_2020, 2050: simple_cost_green_elec_2050}},
-        'ghgi_green_elec': {'RE': {simple_gwp: {2025: simple_ghgi_green_elec, 2050: simple_ghgi_green_elec}}},
-        'green_ocf': simple_green_ocf,
-
-        # blue data
-        'cost_blue_capex': {
-            'smr+lcrccs': {
-                2020: simple_cost_blue_capex_heb,
-                2050: simple_cost_blue_capex_heb,
-            },
-            'atr+hcrccs': {
-                2025: simple_cost_blue_capex_leb,
-                2030: simple_cost_blue_capex_leb,
-                2050: simple_cost_blue_capex_leb,
-            },
-        },
-        'cost_blue_cts': {
-            2020: simple_cost_blue_cts_2020,
-            2050: simple_cost_blue_cts_2050,
-        },
-        'cost_blue_eff': {
-            'smr+lcrccs': simple_blue_eff_heb,
-            'atr+hcrccs': simple_blue_eff_leb,
-        },
-    }
+    # allUpdates = {
+    #         # green data
+    #         'cost_green_capex': {2020: simple_cost_green_capex_2020, 2050: simple_cost_green_capex_2050},
+    #         'cost_green_elec': {'RE': {2020: simple_cost_green_elec_2020, 2050: simple_cost_green_elec_2050}},
+    #         'ghgi_green_elec': {'RE': {simple_gwp: {2025: simple_ghgi_green_elec, 2050: simple_ghgi_green_elec}}},
+    #         'green_ocf': simple_green_ocf,
 
     # make updates accordingly
-    for paramKey, field in allUpdates.items():
-        __updateParameter(scenarioInput['params'][paramKey], {'value': field})
+    #for paramKey, field in allUpdates.items():
+    #    __updateParameter(scenarioInput['params'][paramKey], {'value': field})
 
     return scenarioInput
 
@@ -93,15 +59,7 @@ def __replaceValue(new_value: Union[int, float], param: str):
 
 
 # advanced update
-def updateScenarioInputAdvanced(scenarioInput: dict,
-                                simple_gwp: str, simple_leakage: float, simple_ng_price: float, simple_lifetime: int, simple_irate: float,
-                                simple_cost_green_capex_2020: float, simple_cost_green_capex_2050: float,
-                                simple_cost_green_elec_2020: float,  simple_cost_green_elec_2050: float,
-                                simple_ghgi_green_elec: str, simple_green_ocf: int,
-                                simple_cost_blue_capex_heb: float, simple_cost_blue_capex_leb: float,
-                                simple_cost_blue_cts_2020: float, simple_cost_blue_cts_2050: float,
-                                simple_cost_blue_eff_heb: float, simple_cost_blue_eff_leb: float,
-                                advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
+def updateScenarioInputAdvanced(scenarioInput: dict, advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
     # update GWP
     scenarioInput['options']['gwp'] = advanced_gwp
 

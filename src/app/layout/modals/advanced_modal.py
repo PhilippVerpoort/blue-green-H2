@@ -2,13 +2,13 @@ from dash import dcc
 import dash_bootstrap_components as dbc
 
 
-def getAdvancedModal():
+def getModalUpdateAdvancedTable():
     modal = dbc.Modal(
         [
-            dbc.ModalHeader("Update variable value"),
+            dbc.ModalHeader("Update parameter value"),
             dbc.ModalBody(
                 [
-                    dbc.Label("Settings:"),
+                    dbc.Label("Value:"),
                     dcc.Textarea(id="advanced-modal-textfield", style={'width': '100%', 'height': 500}),
                 ]
             ),

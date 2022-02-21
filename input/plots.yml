@@ -1,6 +1,7 @@
 plot1ab:
-  - fig1a
-  - fig1b
+  fig1:
+    - fig1a
+    - fig1b
 plot2:
   - fig2
 plot3:

@@ -1,153 +1,48 @@
 from dash import html, dcc
-import dash_bootstrap_components as dbc
+
+from src.config_load import plots
+from src.config_load_app import figs_cfg
+
 
 def getFigures():
-    fig1 = dbc.Card(
-        id="card-fig-1",
+    figs = []
+    for plotName in plots:
+        if isinstance(plots[plotName], list):
+            figs.extend([__getFigTemplate(fig, [fig], plotName) for fig in plots[plotName]])
+        elif isinstance(plots[plotName], dict):
+            figs.extend([__getFigTemplate(fig, plots[plotName][fig], plotName) for fig in plots[plotName]])
+        else:
+            raise Exception('Unkown figure type.')
+
+    return figs
+
+
+def __getFigTemplate(figName: str, subFigNames: list, plotName: str):
+    figCfg = figs_cfg[figName]
+    width = figCfg['width'] if 'width' in figCfg else '100%'
+    display = '/' in figCfg['display']
+
+    return html.Div(
+        id=f"card-{figName}",
+        className='fig-card',
         children=[
-            dbc.CardHeader("Fig. 1"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig1a',
-                                    ),
-                                    dcc.Graph(
-                                        id='fig1b',
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig1ab-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
+            *(
+                dcc.Graph(
+                    id=subFigName,
+                    style={'width': width, 'float': 'left'},
+                )
+                for subFigName in subFigNames
+            ),
+            html.Hr(),
+            html.B(f"{figCfg['name']} | {figCfg['title']}"),
+            html.P(figCfg['desc']),
+            html.Div([
+                    html.Hr(),
+                    html.Button(id=f"{plotName}-settings", children='Config', n_clicks=0,),
+                ],
+                id=f"{plotName}-settings-div",
+                style={'display': 'none'},
             ),
         ],
+        style={} if display else {'display': 'none'},
     )
-
-    fig2 = dbc.Card(
-        id="card-fig-2",
-        children=[
-            dbc.CardHeader("Fig. 2"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig2',
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig2-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
-            ),
-        ],
-    )
-
-    fig3 = dbc.Card(
-        id="card-fig-3",
-        children=[
-            dbc.CardHeader("Fig. 3"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig3',
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig3-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
-            ),
-        ],
-    )
-
-    fig4 = dbc.Card(
-        id="card-fig-4",
-        children=[
-            dbc.CardHeader("Fig. 4"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig4',
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig4-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
-            ),
-        ],
-    )
-
-    fig5 = dbc.Card(
-        id="card-fig-5",
-        children=[
-            dbc.CardHeader("Fig. 5"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig5',
-                                        style={'height': '700px'}
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig5-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
-            ),
-        ],
-    )
-
-    fig6 = dbc.Card(
-        id="card-fig-6",
-        children=[
-            dbc.CardHeader("Fig. 6"),
-            dbc.CardBody(
-                [
-                    html.Div(
-                        children=[
-                            dcc.Loading(
-                                type="circle",
-                                children=[
-                                    dcc.Graph(
-                                        id='fig6',
-                                    )
-                                ],
-                            ),
-                            dbc.Button(id='fig6-settings', children='Plot config', className='scenario-buttons'),
-                        ],
-                    ),
-                ]
-            ),
-        ],
-    )
-
-    return fig1, fig2, fig3, fig4, fig5, fig6

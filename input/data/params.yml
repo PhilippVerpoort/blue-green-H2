@@ -43,6 +43,7 @@ params:
 
   ghgi_ng_methaneleakage:
     desc: Amount of methane leakage in production chain (relative to total amount used)
+    short: CH4 Leakage
     type: linear
     value:
       2025: 1.0
@@ -275,6 +276,7 @@ params:
 
   cost_green_elec:
     desc: Electricity price
+    short: Elec. price
     type: linear
     value:
       RE:
@@ -330,6 +332,7 @@ params:
 
   green_ocf:
     desc: Operational capacity factor
+    short: OCF
     type: const
     value: 50
     unit: percent
@@ -348,6 +351,7 @@ params:
 
   green_share:
     desc: Share of renewable and grey electricity. 100% means RE only.
+    short: Share of RE
     type: linear
     value:
       2025: 80.0
@@ -372,7 +376,7 @@ params:
     source: Assuming a typical WACC.
 
   cost_h2transp:
-    desc: H2 transportation cost
+    desc: Transp. cost
     type: linear
     value:
       2025: 20.0

@@ -1,38 +1,47 @@
-import pandas as pd
-
 from dash import dcc, html, dash_table
 import dash_bootstrap_components as dbc
 
 
-def getResultsWidgets():
-
-    widget_results = dbc.Card(
-        [
+def getElementResultsCard():
+    return html.Div(
+        id="results-card",
+        children=[
             html.Div(
                 children=[
-                    dbc.CardHeader("Results"),
-                    dbc.CardBody(
-                        className='no-padding',
+                    dbc.Label(
+                        'Results',
+                        html_for='table-results',
+                    ),
+                    dash_table.DataTable(
+                        id='table-results',
+                        columns=[
+                            {'id': 'fuel', 'name': 'Fuel ID'},
+                            {'id': 'year', 'name': 'Year'},
+                            {'id': 'cost', 'name': 'Cost (EUR/MWh)'},
+                            {'id': 'ghgi', 'name': 'GHG intensity (tCO2eq/MWh)'},
+                        ],
+                        data=[],
+                        editable=True,
+                    ),
+                ],
+                className='card-element',
+            ),
+            html.Div(
+                children=[
+                    html.Form(
+                        action='/download/data.xlsx',
+                        method='get',
                         children=[
-                            dash_table.DataTable(
-                                id='table-results',
-                                columns=[
-                                    {'id': 'fuel', 'name': 'Fuel ID'},
-                                    {'id': 'year', 'name': 'Year'},
-                                    {'id': 'cost', 'name': 'Cost in EUR/MWh'},
-                                    {'id': 'cost_u', 'name': 'Cost uncertainty'},
-                                    {'id': 'ghgi', 'name': 'Carbon intensity in tCO2eq/MWh'},
-                                    {'id': 'ghgi_u', 'name': 'Carbon intensity uncertainty'},
-                                ],
-                                data=[],
-                                editable=True,
-                            ),
-                        ]
-                    )
-                ]
+                            dbc.Button(id='results-download', type='submit', children='Download data',
+                                       className='scenario-buttons')
+                        ],
+                        style={'float': 'left'},
+                    ),
+                    html.Button(id='results-replot', n_clicks=0, children='Replot using data'),
+                ],
+                className='card-element',
             )
         ],
-        style={'margin-left': '1em', 'margin-right': '1em'},
+        className='side-card elements-card',
+        style={'display': 'none'},
     )
-
-    return widget_results
