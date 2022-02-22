@@ -12,7 +12,7 @@ def getFigures():
         elif isinstance(plots[plotName], dict):
             figs.extend([__getFigTemplate(fig, plots[plotName][fig], plotName) for fig in plots[plotName]])
         else:
-            raise Exception('Unkown figure type.')
+            raise Exception('Unknown figure type.')
 
     return figs
 

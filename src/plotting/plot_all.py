@@ -29,7 +29,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
                 elif isinstance(plots[plotName], dict):
                     figs.update({f"{fig}{subFig}": None for fig in plots[plotName] for subFig in plots[plotName][fig]})
                 else:
-                    raise Exception('Unkown figure type.')
+                    raise Exception('Unknown figure type.')
 
         else:
             plotArgs = allPlotArgs[i]
