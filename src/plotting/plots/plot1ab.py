@@ -60,7 +60,12 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
     fig.add_bar(
         x=[plotData.year, plotData.name],
         y=0.00000001*plotData[list(keys)[0]],
-        error_y=dict(type='data', array=plotData[f"{type}_uu"], arrayminus=plotData[f"{type}_ul"], color='black'),
+        error_y=dict(
+            type='data',
+            array=plotData[f"{type}_uu"]*scale,
+            arrayminus=plotData[f"{type}_ul"]*scale,
+            color='black',
+        ),
         showlegend=False,
     )
 
