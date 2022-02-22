@@ -51,7 +51,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     ]
 
     plotConf = (config['plotting']['ghgi_max_left'], config['plotting']['cost_max_left'], config['plotting']['n_samples'])
-    traces = __addFSCPTraces(refDataLeft, thickLines, plotConf)
+    traces = __addFSCPTraces(refDataLeft, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, row=1, col=1)
     #fig.add_hline(refDataLeft.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=1)
@@ -70,10 +70,10 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     ]
 
     plotConf = (config['plotting']['ghgi_max_right'], config['plotting']['cost_max_right'], config['plotting']['n_samples'])
-    traces = __addFSCPTraces(refDataRight, thickLines, plotConf)
+    traces = __addFSCPTraces(refDataRight, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, row=1, col=2)
-    #fig.add_hline(refDataRight.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=2)
+    #fig.add_hline(refDataRight.cost, line_width=config['global']['lw_default'], line_dash="dash", line_color='black', row=1, col=2)
 
 
     # set plotting ranges
@@ -197,7 +197,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
             showlegend=False,
             mode="markers+text",
             line=dict(color=col),
-            marker_size=10,
+            marker_size=config['global']['highlight_marker_sm'],
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"
         ))
@@ -208,7 +208,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
             name=name,
             legendgroup=fuel,
             showlegend=not dashed,
-            line=dict(color=col, width=3, dash='dash' if dashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if dashed else 'solid'),
             mode='lines',
         ))
 
@@ -218,9 +218,9 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
         traces.append(go.Scatter(
             x=thisData.ghgi*1000,
             y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=2),
-            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=2),
-            line=dict(color=col),
+            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=config['global']['lw_thin']),
+            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=config['global']['lw_thin']),
+            line_color=col,
             marker_size=0.000001,
             showlegend=False,
             mode='markers',
@@ -230,7 +230,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
     return traces
 
 
-def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple):
+def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple, lw_thin: float, lw_ultrathin: float):
     traces = []
 
     ghgi_max, cost_max, n_samples = plotConf
@@ -272,6 +272,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple):
                                  [0.0, '#000000'],
                                  [1.0, '#000000'],
                              ],
+                             line_width=lw_ultrathin,
                              contours=dict(
                                  showlabels=False,
                                  start=0,
@@ -292,7 +293,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple):
                                  end=10,
                                  size=100,
                              ),
-                             line=dict(width=3, dash='dash')))
+                             line=dict(width=lw_thin, dash='dash')))
 
     # thick lines
     for kwargs in thickLines:
@@ -303,7 +304,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple):
                 [0.0, '#000000'],
                 [1.0, '#000000'],
             ],
-            line=dict(width=1.5),
+            line_width=lw_thin,
             contours=dict(
                 showlabels=True,
                 labelfont=dict(

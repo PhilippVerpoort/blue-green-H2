@@ -67,7 +67,7 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
             raise Exception("Unknown button pressed!")
 
     figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel,
-                       input_data, plotting_cfg)
+                       input_data, plotting_cfg, global_cfg='webapp')
 
     saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
 

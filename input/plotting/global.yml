@@ -1,0 +1,12 @@
+print:
+    lw_default: 5
+    lw_thin: 3
+    lw_ultrathin: 0.6
+    highlight_marker: 24
+    highlight_marker_sm: 12
+webapp:
+    lw_default: 2.5
+    lw_thin: 1.5
+    lw_ultrathin: 0.4
+    highlight_marker: 16
+    highlight_marker_sm: 8

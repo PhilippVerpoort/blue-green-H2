@@ -45,7 +45,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
     zmin, zmax, colourscale = __getColourScale(config)
 
     # add FSCP traces
-    traces = __addFSCPContours(config, zmin, zmax, colourscale)
+    traces = __addFSCPContours(config, zmin, zmax, colourscale, config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[0])
 
@@ -58,25 +58,25 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
     annotationStyling = dict(xanchor='left', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
 
     xmin, xmax = config['plotting']['xaxis2_min'], config['plotting']['xaxis2_max']
-    traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'] = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot2"])
+    traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'] = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot2'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[1])
     fig.add_annotation(x=0.1, y=-9.0, xref="x2", yref="y2", text=fuelsRawCfg[config['fuelBlueLeft']]['desc'], **annotationStyling)
 
     xmin, xmax = config['plotting']['xaxis3_min'], config['plotting']['xaxis3_max']
-    traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'] = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot3"])
+    traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'] = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot3'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[2])
     fig.add_annotation(x=0.1, y=-9.0, xref="x3", yref="y3", text=fuelsRawCfg[config['fuelBlueRight']]['desc'], **annotationStyling)
 
     xmin, xmax = config['plotting']['xaxis4_min'], config['plotting']['xaxis4_max']
-    traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot4"])
+    traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot4'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[3])
     fig.add_annotation(x=80.4, y=-9.0, xref="x4", yref="y4", text=fuelsRawCfg[config['fuelBlueLeft']]['desc'], **annotationStyling)
 
     xmin, xmax = config['plotting']['xaxis5_min'], config['plotting']['xaxis5_max']
-    traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity'][f"plot5"])
+    traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot5'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[4])
     fig.add_annotation(x=80.4, y=-9.0, xref="x5", yref="y5", text=fuelsRawCfg[config['fuelBlueRight']]['desc'], **annotationStyling)
@@ -167,7 +167,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
     return fig
 
 
-def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list):
+def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list, lw: float):
     traces = []
 
     delta_ghgi = np.linspace(config['plotting'][f"xaxis1_min"], config['plotting'][f"xaxis1_max"], config['plotting']['n_samples'])
@@ -193,6 +193,7 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list)
                                  [0.0, '#000000'],
                                  [1.0, '#000000'],
                              ],
+                             line_width=lw,
                              contours=dict(
                                  showlabels=True,
                                  labelformat='.4',
@@ -225,8 +226,8 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             name=name,
             legendgroup=f"{fuelBlue}__{fuelGreen}",
             showlegend=False,
-            marker_size=10,
-            line=dict(color=col),
+            marker_size=config['global']['highlight_marker_sm'],
+            line_color=col,
             mode='markers+text',
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}±%{{error_x.array:.2f}}<br>"
@@ -238,7 +239,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             y=thisData.delta_cost,
             name=name,
             legendgroup=f"{fuelBlue}__{fuelGreen}",
-            line=dict(color=col, dash='dash' if fuelBlue==config['fuelBlueLeft'] else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if fuelBlue==config['fuelBlueLeft'] else 'solid'),
             mode='lines',
         ))
 
@@ -248,9 +249,9 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         traces.append(go.Scatter(
             x=thisData.delta_ghgi * 1000,
             y=thisData.delta_cost,
-            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=2),
-            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=2),
-            line=dict(color=col),
+            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=config['global']['lw_thin']),
+            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=config['global']['lw_thin']),
+            line_color=col,
             marker_size=0.000001,
             showlegend=False,
             mode='markers',
@@ -260,7 +261,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
 
 
 def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float,
-                                config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float):
+                                config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float, lw: float):
     traces = []
 
 
@@ -309,6 +310,7 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
                                  [0.0, '#000000'],
                                  [1.0, '#000000'],
                              ],
+                             line_width=lw,
                              contours=dict(
                                  showlabels=True,
                                  start=zmin,
@@ -345,8 +347,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
         textfont=dict(color=col),
         legendgroup=f"{fuelBlueRawCfg}__{fuelGreenRawCfg}",
         showlegend=False,
-        marker_size=10,
-        line=dict(color=col),
+        marker_size=config['global']['highlight_marker_sm'],
+        line_color=col,
         mode='markers+text',
         customdata=[config['fuelYearTop'],],
         hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}±%{{error_x.array:.2f}}<br>"
@@ -358,7 +360,7 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
 
 
 def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float,
-                                   config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float):
+                                   config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float, lw: float):
     traces = []
 
 
@@ -419,6 +421,7 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
                                  [0.0, '#000000'],
                                  [1.0, '#000000'],
                              ],
+                             line_width=lw,
                              contours=dict(
                                  showlabels=True,
                                  start=zmin,
@@ -456,8 +459,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
         textfont=dict(color=col),
         legendgroup=f"{fuelBlueRawCfg}__{fuelGreenRawCfg}",
         showlegend=False,
-        marker_size=10,
-        line=dict(color=col),
+        marker_size=config['global']['highlight_marker_sm'],
+        line_color=col,
         mode='markers+text',
         customdata=[config['fuelYearBottom'],],
         hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}±%{{error_x.array:.2f}}<br>"

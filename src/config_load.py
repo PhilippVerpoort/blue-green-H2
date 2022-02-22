@@ -18,12 +18,16 @@ units = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)['units']
 __filePath = getFilePathInput('data/steel.yml')
 steel_data = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
+
 # load config data for plots and figures
 __filePath = getFilePathInput('plots.yml')
 plots = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
 __filePath = getFilePathInput('figure_print.yml')
 figure_print = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
+
+__filePath = getFilePathInput('plotting/global.yml')
+plots_cfg_global = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
 plotting_cfg = {} # TODO: rename into plots_cfg (for consistency)
 for plotName in plots:

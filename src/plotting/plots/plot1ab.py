@@ -12,7 +12,7 @@ def plot1ab(fuelData: pd.DataFrame, config: dict):
     # produce figures
     figs = {}
     for name, type in [('fig1a', 'cost'), ('fig1b', 'ghgi')]:
-        fig = __produceFigure(plotData, config[type], type)
+        fig = __produceFigure(plotData, {**config[type], **{'global': config['global']}}, type)
 
         # styling figure
         __styling(fig)
@@ -65,6 +65,8 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
             array=plotData[f"{type}_uu"]*scale,
             arrayminus=plotData[f"{type}_ul"]*scale,
             color='black',
+            thickness=plotConfig['global']['lw_thin'],
+            width=plotConfig['global']['highlight_marker_sm'],
         ),
         showlegend=False,
     )

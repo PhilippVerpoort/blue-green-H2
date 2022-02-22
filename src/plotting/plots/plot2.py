@@ -94,7 +94,7 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
         yaxis=dict(
             title=config['labels']['total_cost'],
             range=[0.0, config['plotting']['fuel_cost_max']],
-        )
+        ),
     )
 
 
@@ -179,7 +179,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             name=f"{name} ({year})",
             legendgroup=f"{fuel}_{year}",
             mode="lines",
-            line=dict(color=col, width=5, dash='dash' if occurrence[fuel]>1 else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if occurrence[fuel]>1 else 'solid'),
             hovertemplate=f"<b>{name}</b><br>Carbon price: %{{x:.2f}}<br>Total cost: %{{y:.2f}}<extra></extra>")))
 
         # fuel uncertainty
@@ -193,7 +193,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
                 marker=dict(color=col),
                 fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .1)),
                 fill='toself',
-                line=dict(width=.6),
+                line=dict(width=config['global']['lw_ultrathin']),
                 showlegend=False,
                 hoverinfo="none"
             )))
@@ -210,20 +210,20 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
         # circle at intersection
         traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_uu,), arrayminus=(row.fscp_ul,), thickness=0.0),
                                  mode="markers",
-                                 marker=dict(symbol=row.symbol, size=24, line={'width': 4}, color='Black'),
+                                 marker=dict(symbol=row.symbol, size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
         # dashed line to x-axis
         traces.append((index, go.Scatter(x=(row.fscp, row.fscp), y = (0, row.fscp_tc),
                                  mode="lines",
-                                 line=dict(color='Black', width=3, dash='dot'),
+                                 line=dict(color='Black', width=config['global']['lw_thin'], dash='dot'),
                                  showlegend=False, hoverinfo='none',)))
 
         # error bar near x-axis
         traces.append((index, go.Scatter(x=(row.fscp,), y = (0,),
                                  error_x=dict(type='data', array=(row.fscp_uu,), arrayminus=(row.fscp_ul,)) if config['plotting']['uncertainty'] else None,
-                                 marker=dict(symbol='x-thin', size=10, line={'width': 4}, color='Black'),
+                                 marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin']}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 

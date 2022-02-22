@@ -79,12 +79,14 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict, refFuel: str, n_s
 def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.DataFrame,
                     plotLines: pd.DataFrame, plotLinesSteel: pd.DataFrame, config: dict):
     # plot
-    fig = make_subplots(rows=2,
-                        cols=2,
-                        subplot_titles=ascii_lowercase,
-                        shared_yaxes=True,
-                        horizontal_spacing=0.025,
-                        vertical_spacing=0.1, )
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        subplot_titles=ascii_lowercase,
+        shared_yaxes=True,
+        horizontal_spacing=0.025,
+        vertical_spacing=0.1,
+    )
 
     # add FSCP traces for heating
     traces = __addFSCPTraces(plotFSCP, plotLines, len(FSCPsCols), config['refFuelTop'], config)
@@ -110,7 +112,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
     # zero y line
     for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
-        fig.add_hline(0.0, line_width=3, line_color='black', row=i + 1, col=j + 1)
+        fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=i + 1, col=j + 1)
 
     # annotations
     __addAnnotations(fig, cpTrajData, plotLines, plotLinesSteel, config)
@@ -174,8 +176,8 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
             y=data.fscp,
             text=data.index,
             mode='markers+text',
-            marker=dict(symbol='circle-open', size=24, line={'width': 4}, color='Black'),
-            textposition="bottom center",
+            marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
+            textposition='bottom center',
             showlegend=False,
             # hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>",
         ), row=args['row'], col=args['col'])
@@ -245,8 +247,8 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=False,
             mode="markers",
-            line=dict(color=col, width=4, dash='dash' if dashed else 'solid'),
-            marker=dict(symbol='x-thin', size=10, line={'width': 3, 'color': col}, ),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if dashed else 'solid'),
+            marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': col}, ),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
         )))
 
@@ -262,7 +264,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             showlegend=not dashed,
             name=name,
             mode="lines",
-            line=dict(color=col, width=4, dash='dash' if dashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if dashed else 'solid'),
         )))
 
         # error bars
@@ -273,13 +275,13 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             x=thisDataScatter['year'] + shift * 0.1,
             y=thisDataScatter['fscp'],
             error_y=dict(type='data', array=thisDataScatter['fscp_uu'], arrayminus=thisDataScatter['fscp_ul'],
-                         thickness=3),
+                         thickness=config['global']['lw_thin']),
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=False,
             mode="markers",
-            marker=dict(symbol='x-thin', size=0.00001, ),
-            line=dict(color=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .4)), width=3),
+            marker=dict(symbol='x-thin', size=0.00001,),
+            line_color=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .4)),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
         )))
 
@@ -327,7 +329,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         x=cpTrajData['year'],
         y=cpTrajData['CP'],
         line_color=colour,
-        line_width=3,
+        line_width=config['global']['lw_thin'],
         showlegend=True,
         hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>"
     ))
@@ -345,7 +347,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         marker=dict(color=colour),
         fillcolor=("rgba({}, {}, {}, 0.1)".format(*hex_to_rgb(colour))),
         fill='toself',
-        line=dict(width=.6),
+        line=dict(width=config['global']['lw_ultrathin']),
         showlegend=False,
         hoverinfo='skip'
     )
