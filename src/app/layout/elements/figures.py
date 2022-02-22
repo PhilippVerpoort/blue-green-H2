@@ -20,6 +20,7 @@ def getFigures():
 def __getFigTemplate(figName: str, subFigNames: list, plotName: str):
     figCfg = figs_cfg[figName]
     width = figCfg['width'] if 'width' in figCfg else '100%'
+    height = figCfg['height'] if 'height' in figCfg else '450px'
     display = '/' in figCfg['display']
 
     return html.Div(
@@ -27,9 +28,23 @@ def __getFigTemplate(figName: str, subFigNames: list, plotName: str):
         className='fig-card',
         children=[
             *(
-                dcc.Graph(
-                    id=subFigName,
-                    style={'width': width, 'float': 'left'},
+                dcc.Loading(
+                    children=[
+                        dcc.Graph(
+                            id=subFigName,
+                            style={
+                                'height': height,
+                                'width': width,
+                                'float': 'left',
+                            },
+                        ),
+                    ],
+                    type="circle",
+                    style={
+                        'height': height,
+                        'width': width,
+                        'float': 'left',
+                    },
                 )
                 for subFigName in subFigNames
             ),
