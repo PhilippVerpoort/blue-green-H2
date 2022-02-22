@@ -23,13 +23,12 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
     figs = {}
     for i, plotName in enumerate(plots):
         if plot_list is not None and plotName not in plot_list:
-            for plotName in plots:
-                if isinstance(plots[plotName], list):
-                    figs.update({f"{fig}": None for fig in plots[plotName]})
-                elif isinstance(plots[plotName], dict):
-                    figs.update({f"{fig}{subFig}": None for fig in plots[plotName] for subFig in plots[plotName][fig]})
-                else:
-                    raise Exception('Unknown figure type.')
+            if isinstance(plots[plotName], list):
+                figs.update({f"{fig}": None for fig in plots[plotName]})
+            elif isinstance(plots[plotName], dict):
+                figs.update({f"{subFig}": None for fig in plots[plotName] for subFig in plots[plotName][fig]})
+            else:
+                raise Exception('Unknown figure type.')
 
         else:
             print(f"Plotting {plotName}...")
