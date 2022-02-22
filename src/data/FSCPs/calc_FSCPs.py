@@ -1,6 +1,9 @@
 import pandas as pd
 
+from src.timeit import timeit
 
+
+@timeit
 def calcFSCPs(fuelData: pd.DataFrame):
     fuelData = fuelData[['fuel', 'type', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul']]
 

@@ -13,20 +13,25 @@ def getFullData(input_data: dict, steel_data: dict, export_data: bool = True):
     options, params, fuels = (input_data['options'], input_data['params'], input_data['fuels'])
 
     # convert basic inputs to complete dataframes
+    print('Getting full list of parameters...')
     fullParams = getFullParams(params, units, options['times'])
 
     # calculate fuel data
+    print('Calculating fuel cost and GHGI data...')
     fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, options['gwp'])
 
     # calculate steel data
+    print('Calculating steel data...')
     fuelDataSteel = calcSteelData(fuelData, steel_data)
 
     # calculate FSCPs
+    print('Calculating FSCPs...')
     FSCPData = calcFSCPs(fuelData)
     FSCPDataSteel = calcFSCPs(fuelDataSteel)
 
     # dump to output file
     if export_data:
+        print('Exporting...')
         filePath = getFilePath('output/', 'data.xlsx')
         writer = pd.ExcelWriter(filePath)
 

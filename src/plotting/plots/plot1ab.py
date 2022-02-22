@@ -2,8 +2,10 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from src.plotting.img_export_cfg import getFontSize, getImageSize
+from src.timeit import timeit
 
 
+@timeit
 def plot1ab(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
     # plot data
     plotData = __obtainData(fuelData, config)

@@ -7,8 +7,10 @@ from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 from src.plotting.img_export_cfg import getFontSize, getImageSize
+from src.timeit import timeit
 
 
+@timeit
 def plot2(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, export_img: bool = True):
     # select which lines to plot based on function argument
     plotData, linesCols = __selectPlotData(fuelData, config['showFuels'])

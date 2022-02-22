@@ -5,6 +5,10 @@ from src.data.fuels.calc_cost import calcCost
 
 
 # calculate fuel data
+from src.timeit import timeit
+
+
+@timeit
 def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str = 'gwp100', levelised: bool = False):
     fuelSpecs = {'names': {}, 'colours': {}}
     fuelEntries = []

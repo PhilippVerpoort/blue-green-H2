@@ -32,6 +32,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
                     raise Exception('Unknown figure type.')
 
         else:
+            print(f"Plotting {plotName}...")
             plotArgs = allPlotArgs[i]
             config = {**fuelSpecs, **yaml.load(plotting_cfg[plotName], Loader=yaml.FullLoader)}
 
@@ -40,5 +41,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
 
             newFigs = plotFigMethod(*plotArgs, config, export_img=export_img)
             figs.update(newFigs)
+
+    print('Done with plotting...')
 
     return figs

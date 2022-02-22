@@ -6,8 +6,10 @@ from plotly.subplots import make_subplots
 from src.data.fuels.calc_cost import getCostParamsBlue, getCostParamsGreen, getCostBlue, getCostGreen
 from src.data.fuels.calc_fuels import getCurrentAsDict
 from src.plotting.img_export_cfg import getFontSize, getImageSize
+from src.timeit import timeit
 
 
+@timeit
 def plot6(fullParams: pd.DataFrame, fuels: dict, config: dict, export_img: bool = True):
     # produce figure
     fig = __produceFigure(fullParams, fuels, config)

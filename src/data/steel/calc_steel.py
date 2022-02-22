@@ -1,6 +1,9 @@
 import pandas as pd
 
+from src.timeit import timeit
 
+
+@timeit
 def calcSteelData(fuelData: pd.DataFrame, steel_data: dict):
     fuelDataSteel = fuelData.copy()
 
