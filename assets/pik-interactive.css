@@ -67,6 +67,8 @@ H5, H3 {
 #right-column {
     /*background-color: #f4f4f4;*/
     padding: 0rem 2rem;
+    padding-left: 0rem;
+    padding-bottom: 2rem;
     min-height: calc(100vh - 5.5rem);
 }
 
