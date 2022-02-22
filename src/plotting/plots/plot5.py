@@ -35,7 +35,7 @@ def plot5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, c
 
         fig.write_image("output/fig5.png", **getImageSize(w_mm, h_mm))
 
-    return {'plot_fig5': fig}
+    return {'fig5': fig}
 
 
 def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
