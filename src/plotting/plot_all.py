@@ -9,7 +9,7 @@ from src.config_load import plots
 
 def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFrame, FSCPData: pd.DataFrame,
                 fuelDataSteel: pd.DataFrame, FSCPDataSteel: pd.DataFrame, input_data: dict, plotting_cfg: dict,
-                export_img=True, plot_list: Union[list, None] = None):
+                plot_list: Union[list, None] = None):
 
     allPlotArgs = [
         (fuelData,),
@@ -38,7 +38,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
             module = importlib.import_module(f"src.plotting.plots.{plotName}")
             plotFigMethod = getattr(module, plotName)
 
-            newFigs = plotFigMethod(*plotArgs, config, export_img=export_img)
+            newFigs = plotFigMethod(*plotArgs, config)
             figs.update(newFigs)
 
     print('Done with plotting...')

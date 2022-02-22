@@ -6,12 +6,11 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
-from src.plotting.img_export_cfg import getFontSize, getImageSize
 from src.timeit import timeit
 
 
 @timeit
-def plot2(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, export_img: bool = True):
+def plot2(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
     # select which lines to plot based on function argument
     plotData, linesCols = __selectPlotData(fuelData, config['showFuels'])
 
@@ -20,23 +19,6 @@ def plot2(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, export_i
 
     # produce figure
     fig = __produceFigure(plotData, linesCols, plotFSCP, FSCPsCols, config)
-
-    # write figure to image file
-    if export_img:
-        w_mm = 180.0
-        h_mm = 61.0
-
-        fs_sm = getFontSize(5.0)
-        fs_lg = getFontSize(7.0)
-
-        fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_lg)
-        fig.update_xaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-        fig.update_yaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-
-        fig.write_image("output/fig2.png", **getImageSize(w_mm, h_mm))
 
     return {'fig2': fig}
 

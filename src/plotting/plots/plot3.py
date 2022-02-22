@@ -7,12 +7,11 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
-from src.plotting.img_export_cfg import getFontSize, getImageSize
 from src.timeit import timeit
 
 
 @timeit
-def plot3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict, export_img: bool = True):
+def plot3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict):
     # select which lines to plot based on function argument
     FSCPsCols, plotFSCP, plotLines = __selectPlotFSCPs(FSCPData, config['showFSCPs'], config['refFuelTop'],
                                                        config['n_samples'])
@@ -24,25 +23,6 @@ def plot3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict, exp
 
     # styling figure
     __styling(fig, config)
-
-    # write figure to image file
-    if export_img:
-        w_mm = 180.0
-        h_mm = 122.0
-
-        fs_sm = getFontSize(5.0)
-        fs_lg = getFontSize(7.0)
-
-        fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_sm)
-        for annotation in fig['layout']['annotations'][:len(config['subplot_title_positions'])]:
-            annotation['font']['size'] = fs_lg
-        fig.update_xaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-        fig.update_yaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-
-        fig.write_image("output/fig3.png", **getImageSize(w_mm, h_mm))
 
     return {'fig3': fig}
 

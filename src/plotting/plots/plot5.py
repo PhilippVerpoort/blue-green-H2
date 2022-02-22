@@ -9,31 +9,11 @@ from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
 from src.data.fuels.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue
 from src.data.fuels.calc_fuels import getCurrentAsDict
-from src.plotting.img_export_cfg import getFontSize, getImageSize
 
 @timeit
-def plot5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict, export_img: bool = True):
+def plot5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
     # produce figure
     fig = __produceFigure(fuelData, fullParams, fuelsRawCfg, config)
-
-    # write figure to image file
-    if export_img:
-        w_mm = 180.0
-        h_mm = 81.0
-
-        fs_sm = getFontSize(5.0)
-        fs_lg = getFontSize(7.0)
-
-        fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_sm)
-        for annotation in fig['layout']['annotations'][:5]:
-            annotation['font']['size'] = fs_lg
-        fig.update_xaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-        fig.update_yaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-
-        fig.write_image("output/fig5.png", **getImageSize(w_mm, h_mm))
 
     return {'fig5': fig}
 

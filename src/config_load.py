@@ -22,6 +22,9 @@ steel_data = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 __filePath = getFilePathInput('plots.yml')
 plots = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
+__filePath = getFilePathInput('figure_print.yml')
+figure_print = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
+
 plotting_cfg = {} # TODO: rename into plots_cfg (for consistency)
 for plotName in plots:
     __filePath = getFilePathInput(f"plotting/{plotName}.yml")

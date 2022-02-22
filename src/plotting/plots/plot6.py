@@ -5,34 +5,16 @@ from plotly.subplots import make_subplots
 
 from src.data.fuels.calc_cost import getCostParamsBlue, getCostParamsGreen, getCostBlue, getCostGreen
 from src.data.fuels.calc_fuels import getCurrentAsDict
-from src.plotting.img_export_cfg import getFontSize, getImageSize
 from src.timeit import timeit
 
 
 @timeit
-def plot6(fullParams: pd.DataFrame, fuels: dict, config: dict, export_img: bool = True):
+def plot6(fullParams: pd.DataFrame, fuels: dict, config: dict):
     # produce figure
     fig = __produceFigure(fullParams, fuels, config)
 
     # styling figure
     __styling(fig)
-
-    # write figure to image file
-    if export_img:
-        w_mm = 88.0
-        h_mm = 61.0
-
-        fs_sm = getFontSize(5.0)
-        fs_lg = getFontSize(7.0)
-
-        fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_lg)
-        fig.update_xaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-        fig.update_yaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-
-        fig.write_image('output/fig6.png', **getImageSize(w_mm, h_mm))
 
     return {'fig6': fig}
 

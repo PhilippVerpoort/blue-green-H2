@@ -1,41 +1,23 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from src.plotting.img_export_cfg import getFontSize, getImageSize
 from src.timeit import timeit
 
 
 @timeit
-def plot1ab(fuelData: pd.DataFrame, config: dict, export_img: bool = True):
+def plot1ab(fuelData: pd.DataFrame, config: dict):
     # plot data
     plotData = __obtainData(fuelData, config)
 
     # produce figures
     figs = {}
-    for name, type in [('a', 'cost'), ('b', 'ghgi')]:
+    for name, type in [('fig1a', 'cost'), ('fig1b', 'ghgi')]:
         fig = __produceFigure(plotData, config[type], type)
 
         # styling figure
         __styling(fig)
 
-        # write figure to image file
-        if export_img:
-            w_mm = 88.0
-            h_mm = 61.0
-
-            fs_sm = getFontSize(5.0)
-            fs_lg = getFontSize(7.0)
-
-            fig.update_layout(font_size=fs_sm)
-            fig.update_annotations(font_size=fs_lg)
-            fig.update_xaxes(title_font_size=fs_sm,
-                             tickfont_size=fs_sm)
-            fig.update_yaxes(title_font_size=fs_sm,
-                             tickfont_size=fs_sm)
-
-            fig.write_image(f"output/fig1{name}.png", **getImageSize(w_mm, h_mm))
-
-        figs.update({f"fig1{name}": fig})
+        figs.update({name: fig})
 
     return figs
 

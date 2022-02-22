@@ -6,37 +6,17 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from src.plotting.img_export_cfg import getFontSize, getImageSize
 from src.timeit import timeit
 
 
 @timeit
-def plot4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict, export_img: bool = True):
+def plot4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict):
     # Select which lines to plot based on function argument and
     plotDataLeft, refDataLeft = __selectPlotData(fuelsData, config['refFuelLeft'], config['refYearLeft'], config['showFuels'])
     plotDataRight, refDataRight = __selectPlotData(fuelsDataSteel, config['refFuelRight'], config['refYearRight'], config['showFuels'])
 
     # produce figure
     fig = __produceFigure(plotDataLeft, refDataLeft, plotDataRight, refDataRight, config['showFuels'], config)
-
-    # write figure to image file
-    if export_img:
-        w_mm = 180.0
-        h_mm = 81.0
-
-        fs_sm = getFontSize(5.0)
-        fs_lg = getFontSize(7.0)
-
-        fig.update_layout(font_size=fs_sm)
-        fig.update_annotations(font_size=fs_sm)
-        for annotation in fig['layout']['annotations'][:len(config['subplot_title_positions'])]:
-            annotation['font']['size'] = fs_lg
-        fig.update_xaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-        fig.update_yaxes(title_font_size=fs_sm,
-                         tickfont_size=fs_sm)
-
-        fig.write_image("output/fig4.png", **getImageSize(w_mm, h_mm))
 
     return {'fig4': fig}
 
