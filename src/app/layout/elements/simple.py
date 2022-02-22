@@ -31,11 +31,11 @@ def getElementSimpleControlsCard():
                     dash_table.DataTable(
                         id="simple-important-params",
                         columns=[
-                            {'id': 'name', 'name': 'Name', 'editable': False,},
+                            {'id': 'name', 'name': 'Name', 'editable': False},
                             {'id': 'desc', 'name': 'Parameter', 'editable': False,},
                             {'id': 'unit', 'name': 'Unit', 'editable': False,},
-                            {'id': 'val_2025', 'name': 'Value 2025'},
-                            {'id': 'val_2050', 'name': 'Value 2050'},
+                            {'id': 'val_2025', 'name': 'Value 2025', 'type': 'numeric'},
+                            {'id': 'val_2050', 'name': 'Value 2050', 'type': 'numeric'},
                         ],
                         data=getSimpleParamsTable(),
                         editable=True,

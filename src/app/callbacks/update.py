@@ -4,25 +4,36 @@ from typing import Union
 import yaml
 from dash.exceptions import PreventUpdate
 
+from src.data.params.full_params import convertValue
+
 
 # simple update
 def updateScenarioInputSimple(scenarioInput: dict, simple_gwp: str, simple_important_params: list):
     # update gwp option
     scenarioInput['options']['gwp'] = simple_gwp
 
-    # update most important params
-    # TODO: implement, including interpolation
+    # update important params
+    for entry in simple_important_params:
+        value_old = scenarioInput['params'][entry['name']]['value']
+        value_new = {2025: entry['val_2025'], 2050: entry['val_2050']}
 
-    # allUpdates = {
-    #         # green data
-    #         'cost_green_capex': {2020: simple_cost_green_capex_2020, 2050: simple_cost_green_capex_2050},
-    #         'cost_green_elec': {'RE': {2020: simple_cost_green_elec_2020, 2050: simple_cost_green_elec_2050}},
-    #         'ghgi_green_elec': {'RE': {simple_gwp: {2025: simple_ghgi_green_elec, 2050: simple_ghgi_green_elec}}},
-    #         'green_ocf': simple_green_ocf,
+        if entry['name'] == 'cost_green_elec':
+            value_old = value_old['RE']
+            value_new = {'RE': value_new}
 
-    # make updates accordingly
-    #for paramKey, field in allUpdates.items():
-    #    __updateParameter(scenarioInput['params'][paramKey], {'value': field})
+        if isinstance(value_old, dict):
+            for year in value_old:
+                value_old[year] = convertValue(value_old[year])[0]
+        else:
+            tmp = convertValue(value_old)[0]
+            value_old = {2025: tmp, 2050: tmp}
+
+        for year in value_old:
+            if year not in [2025, 2050]:
+                value_new[year] = value_new[2025] + (value_new[2050]-value_new[2025])*(value_old[year]-value_old[2025])/(value_old[2050]-value_old[2025])
+
+        __updateParameter(scenarioInput['params'][entry['name']], {'value': value_new})
+        scenarioInput['params'][entry['name']]['type'] = 'linear'
 
     return scenarioInput
 
