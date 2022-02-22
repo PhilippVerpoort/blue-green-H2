@@ -322,6 +322,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
     # add main graphs (FSCP and CP)
     traces.append(go.Scatter(
         name=name,
+        legendgroup='co2price',
         mode='lines',
         x=cpTrajData['year'],
         y=cpTrajData['CP'],
@@ -337,6 +338,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
 
     errorBand = go.Scatter(
         name='Uncertainty Range',
+        legendgroup='co2price',
         x=pd.concat([data_x, data_x[::-1]], ignore_index=True),
         y=pd.concat([data_yl, data_yu[::-1]], ignore_index=True),
         mode='lines',
