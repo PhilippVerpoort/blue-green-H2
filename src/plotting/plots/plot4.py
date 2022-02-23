@@ -18,6 +18,9 @@ def plot4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict):
     # produce figure
     fig = __produceFigure(plotDataLeft, refDataLeft, plotDataRight, refDataRight, config['showFuels'], config)
 
+    # styling figure
+    __styling(fig, config)
+
     return {'fig4': fig}
 
 
@@ -104,10 +107,10 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     annotationStylingA = dict(xanchor='right', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
     fig.add_annotation(x=0.99*config['plotting']['ghgi_max_left']*1000,
                        y=y1low+0.01*(config['plotting']['cost_max_left']-refDataLeft.cost),
-                       xref="x", yref="y", text='Heating (H2 vs. Natural Gas)', **annotationStylingA)
+                       xref="x", yref="y", text='Heating (H<sub>2</sub> vs. Natural Gas)', **annotationStylingA)
     fig.add_annotation(x=0.99*config['plotting']['ghgi_max_right']*1000,
                        y=y2low+0.01*(config['plotting']['cost_max_right']-refDataRight.cost),
-                       xref="x2", yref="y2", text='Primary Steel Production (H2-DRI-EAF vs. Blast Furnace)', **annotationStylingA)
+                       xref="x2", yref="y2", text='Primary Steel Production (H<sub>2</sub>-DR-EAF vs. BF-BOF)', **annotationStylingA)
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
     fig.add_annotation(x=0.01*config['plotting']['ghgi_max_left']*1000,
@@ -115,58 +118,7 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
                        xref="x", yref="y", text='Price of natural gas', **annotationStylingB)
     fig.add_annotation(x=0.01*config['plotting']['ghgi_max_right']*1000,
                        y=refDataRight.cost,
-                       xref="x2", yref="y2", text='Direct cost of conventional steel (BF/BOF)', **annotationStylingB)
-
-
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=0.555,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis', 'xaxis2', 'yaxis2']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
-
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
+                       xref="x2", yref="y2", text='Direct cost of conventional steel (BF-BOF)', **annotationStylingB)
 
 
     return fig
@@ -314,3 +266,55 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple, lw_th
             )))
 
     return traces
+
+
+def __styling(fig: go.Figure, config):
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            yanchor='top',
+            y=0.99,
+            xanchor='center',
+            x=0.5,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'yaxis', 'xaxis2', 'yaxis2']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
+
+    # move title annotations
+    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
+        x_pos, y_pos = config['subplot_title_positions'][i]
+        annotation['xanchor'] = 'left'
+        annotation['yanchor'] = 'top'
+        annotation['xref'] = 'paper'
+        annotation['yref'] = 'paper'
+
+        annotation['x'] = x_pos
+        annotation['y'] = y_pos
+
+        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
