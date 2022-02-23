@@ -13,7 +13,7 @@ def calcGHGI(params: dict, fuel: dict, gwp: str):
         p = getGHGIParamsGreen(*params, fuel, gwp)
         return getGHGIGreen(**p)
     else:
-        raise Exception("Unknown fuel: {}".format(fuel['type']))
+        raise Exception(f"Unknown fuel: {fuel['type']}")
 
 
 def getGHGIParamsNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str):
@@ -61,7 +61,7 @@ def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
 def getGHGIParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str):
     tech_type = fuel['tech_type']
     if tech_type not in known_tech_types:
-        raise Exception("Blue capture rate type unknown: {}".format(tech_type))
+        raise Exception(f"Blue capture rate type unknown: {tech_type}")
 
     return dict(
         bdir=(

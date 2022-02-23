@@ -20,7 +20,7 @@ def __printScenarioValue(name, unit, source, value):
             r.extend(__printScenarioValue(f"{name} {key}", unit, source, val))
         return r
     elif isinstance(value, dict):
-        return [(name, unit, "{0}: {1}".format(*list(value.items())[0]), "{0}: {1}".format(*list(value.items())[-1]), source)]
+        return [(name, unit, '{0}: {1}'.format(*list(value.items())[0]), '{0}: {1}'.format(*list(value.items())[-1]), source)]
     else:
         return [(name, unit, f"2025: {value}", f"2050: {value}", source)]
 

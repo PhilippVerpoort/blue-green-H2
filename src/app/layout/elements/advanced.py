@@ -8,16 +8,16 @@ from src.config_load import input_data
 
 def getElementAdvancedControlsCardLeft():
     return html.Div(
-        id="advanced-controls-card-left",
+        id='advanced-controls-card-left',
         children=[
             html.Div(
                 [
                     dbc.Label(
-                        "Global Warming Potential (GWP) reference time scale:",
-                        html_for="advanced-gwp",
+                        'Global Warming Potential (GWP) reference time scale:',
+                        html_for='advanced-gwp',
                     ),
                     dcc.RadioItems(
-                        id="advanced-gwp",
+                        id='advanced-gwp',
                         options=[dict(value='gwp100', label='GWP100'), dict(value='gwp20', label='GWP20')],
                         value='gwp100',
                     ),
@@ -27,11 +27,11 @@ def getElementAdvancedControlsCardLeft():
             html.Div(
                 [
                     dbc.Label(
-                        "Time steps:",
-                        html_for="advanced-times",
+                        'Time steps:',
+                        html_for='advanced-times',
                     ),
                     dash_table.DataTable(
-                        id="advanced-times",
+                        id='advanced-times',
                         columns=[{'id': 'i', 'name': 'Time steps'}],
                         data=[dict(i=t) for t in input_data['options']['times']],
                         editable=True
@@ -145,7 +145,7 @@ def getElementAdvancedControlsCardRight():
                         ]
                     }
                 },
-                style_cell={"whiteSpace": "pre-line"},
+                style_cell={'whiteSpace': 'pre-line'},
                 style_cell_conditional=[
                     {
                         'if': {'column_id': 'param'},

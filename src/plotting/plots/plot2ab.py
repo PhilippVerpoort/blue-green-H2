@@ -138,14 +138,14 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
 
         # circle at intersection
         traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_uu,), arrayminus=(row.fscp_ul,), thickness=0.0),
-                                 mode="markers",
+                                 mode='markers',
                                  marker=dict(symbol=row.symbol, size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
                                  showlegend=False,
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
         # dashed line to x-axis
         traces.append((index, go.Scatter(x=(row.fscp, row.fscp), y = (0, row.fscp_tc),
-                                 mode="lines",
+                                 mode='lines',
                                  line=dict(color='Black', width=config['global']['lw_thin'], dash='dot'),
                                  showlegend=False, hoverinfo='none',)))
 
@@ -163,9 +163,9 @@ def __styling(fig: go.Figure, subFigName: str):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            yanchor="top",
+            yanchor='top',
             y=0.98,
-            xanchor="left",
+            xanchor='left',
             x=0.005,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',

@@ -65,7 +65,7 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
             FSCPData = calcFSCPs(fuelData)
             # TODO: Make sure input_data_updated is initialised! Needs work & testing.
         else:
-            raise Exception("Unknown button pressed!")
+            raise Exception('Unknown button pressed!')
 
     figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel,
                        input_data, plotting_cfg, global_cfg='webapp')
@@ -88,7 +88,7 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
      prevent_initial_call=True,)
 def callbackDownloadConfig(n, *args):
     scenarioInputUpdated = updateScenarioInputAdvanced(input_data.copy(), *args)
-    return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename="scenario.yml")
+    return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename='scenario.yml')
 
 
 # this callback sets the background colour of the rows in the fue table in the advanced tab
@@ -128,19 +128,19 @@ def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_m
     ctx = dash.callback_context
 
     if not ctx.triggered or active_cell['column_id']!='value':
-        return False, "", data
+        return False, '', data
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         row = active_cell['row']
         if btnPressed == 'advanced-params':
             return True, str(data[row]['value']), data
         elif btnPressed == 'advanced-modal-cancel':
-            return False, "", data
+            return False, '', data
         elif btnPressed == 'advanced-modal-ok':
             data[row]['value'] = advanced_modal_textfield
-            return False, "", data
+            return False, '', data
         else:
-            raise Exception("Unknown button pressed!")
+            raise Exception('Unknown button pressed!')
 
 
 # update figure plotting settings
@@ -159,21 +159,21 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
     ctx = dash.callback_context
     if not ctx.triggered:
         plotting_cfg['last_btn_pressed'] = None
-        return False, plotting_cfg, ""
+        return False, plotting_cfg, ''
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed in [f"{cfgName}-settings" for cfgName in plotting_cfg]:
-            fname = btnPressed.split("-")[0]
+            fname = btnPressed.split('-')[0]
             plotting_cfg['last_btn_pressed'] = fname
             return True, plotting_cfg, plotting_cfg[fname]
         elif btnPressed == 'plot-config-modal-cancel':
-            return False, plotting_cfg, ""
+            return False, plotting_cfg, ''
         elif btnPressed == 'plot-config-modal-ok':
             fname = plotting_cfg['last_btn_pressed']
             plotting_cfg[fname] = settings_modal_textfield
-            return False, plotting_cfg, ""
+            return False, plotting_cfg, ''
         else:
-            raise Exception("Unknown button pressed!")
+            raise Exception('Unknown button pressed!')
 
 
 # display of simple or advanced controls

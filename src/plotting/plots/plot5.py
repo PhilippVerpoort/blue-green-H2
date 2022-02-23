@@ -84,7 +84,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
     fig.add_annotation(x=80.4, y=-9.0, xref="x5", yref="y5", text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueRight']]['desc']), **annotationStyling)
 
 
-    # add mock traces to make additional x axes show
+    # add dummy traces to make additional x axes show
     fig.add_trace(go.Scatter(x=[1.0], y=[100], showlegend=False), row=1, col=3)
     fig['data'][-1]['xaxis'] = 'x7'
     fig.add_trace(go.Scatter(x=[2.0], y=[100], showlegend=False), row=1, col=4)
@@ -173,8 +173,8 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
 def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list, lw: float):
     traces = []
 
-    delta_ghgi = np.linspace(config['plotting'][f"xaxis1_min"], config['plotting'][f"xaxis1_max"], config['plotting']['n_samples'])
-    delta_cost = np.linspace(config['plotting'][f"yaxis1_min"], config['plotting'][f"yaxis1_max"], config['plotting']['n_samples'])
+    delta_ghgi = np.linspace(config['plotting']['xaxis1_min'], config['plotting']['xaxis1_max'], config['plotting']['n_samples'])
+    delta_cost = np.linspace(config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max'], config['plotting']['n_samples'])
     delta_ghgi_v, delta_cost_v = np.meshgrid(delta_ghgi, delta_cost)
     fscp = delta_cost_v / delta_ghgi_v
 
@@ -202,7 +202,7 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list,
                                  labelformat='.4',
                                  start=zmin,
                                  end=zmax,
-                                 size=config['linedensity'][f"plot1"],
+                                 size=config['linedensity']['plot1'],
                              )))
 
     return traces
@@ -379,7 +379,7 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
 
     # define data for plot grid
     share = np.linspace(xmin, xmax, config['plotting']['n_samples'])
-    delta_cost = np.linspace(config['plotting'][f"yaxis1_min"], config['plotting'][f"yaxis1_max"], config['plotting']['n_samples'])
+    delta_cost = np.linspace(config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max'], config['plotting']['n_samples'])
 
 
     # calculate GHGI data from params

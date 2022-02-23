@@ -39,7 +39,7 @@ def __getFigTemplate(figName: str, subFigNames: list, plotName: str):
                             },
                         ),
                     ],
-                    type="circle",
+                    type='circle',
                     style={
                         'height': height,
                         'width': width,

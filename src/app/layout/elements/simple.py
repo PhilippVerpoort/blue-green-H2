@@ -6,16 +6,16 @@ from src.app.callbacks.simple_params import getSimpleParamsTable
 
 def getElementSimpleControlsCard():
     return html.Div(
-        id="simple-controls-card",
+        id='simple-controls-card',
         children=[
             html.Div(
                 [
                     dbc.Label(
-                        "Global Warming Potential (GWP) reference time scale:",
-                        html_for="simple-gwp",
+                        'Global Warming Potential (GWP) reference time scale:',
+                        html_for='simple-gwp',
                     ),
                     dcc.RadioItems(
-                        id="simple-gwp",
+                        id='simple-gwp',
                         options=[dict(value='gwp100', label='GWP100'), dict(value='gwp20', label='GWP20')],
                         value='gwp100',
                     ),
@@ -25,11 +25,11 @@ def getElementSimpleControlsCard():
             html.Div(
                 [
                     dbc.Label(
-                        "Most important parameters and assumptions:",
-                        html_for="simple-important-params",
+                        'Most important parameters and assumptions:',
+                        html_for='simple-important-params',
                     ),
                     dash_table.DataTable(
-                        id="simple-important-params",
+                        id='simple-important-params',
                         columns=[
                             {'id': 'name', 'name': 'Name', 'editable': False},
                             {'id': 'desc', 'name': 'Parameter', 'editable': False,},

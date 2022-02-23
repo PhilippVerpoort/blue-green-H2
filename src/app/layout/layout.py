@@ -12,52 +12,52 @@ from src.config_load import plotting_cfg
 
 def getLayout(logo_url: str):
     return html.Div(
-        id="app-container",
+        id='app-container',
 
         # banner
         children=[
             html.Div(
-                id="banner",
-                className="banner",
+                id='banner',
+                className='banner',
                 children=[
                     html.A(
                         html.Img(src=logo_url),
-                        href="https://www.pik-potsdam.de/"
+                        href='https://www.pik-potsdam.de/'
                     ),
                     html.Div(
                         html.B('Cost competitiveness of blue and green H₂'),
-                        className="app-title",
+                        className='app-title',
                     ),
                     html.Div(
                         dcc.Link(
                             'Simple',
                             href='/',
-                            className="mainlink",
+                            className='mainlink',
                         ),
-                        className="app-modes",
+                        className='app-modes',
                     ),
                     html.Div(
                         dcc.Link(
                             'Advanced',
                             href='/advanced',
-                            className="mainlink",
+                            className='mainlink',
                         ),
-                        className="app-modes",
+                        className='app-modes',
                     ),
                 ],
             ),
 
             # left column
             html.Div(
-                id="left-column",
-                className="four columns",
+                id='left-column',
+                className='four columns',
                 children=[getElementSummaryCard(), getElementSimpleControlsCard(), getElementAdvancedControlsCardLeft()]
             ),
 
             # right column
             html.Div(
-                id="right-column",
-                className="eight columns",
+                id='right-column',
+                className='eight columns',
                 children=[getElementAdvancedControlsCardRight()]+getFigures()+[getElementResultsCard()],
             ),
 

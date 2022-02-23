@@ -55,8 +55,8 @@ def getCurrentAsDict(full_data: pd.DataFrame, t: int):
     currentDataUncUp = {}
     currentDataUncLo = {}
 
-    for p in list(full_data.query("year == {}".format(t)).name):
-        datum = full_data.query("year == {} & name == '{}'".format(t, p)).iloc[0]
+    for p in list(full_data.query(f"year=={t}").name):
+        datum = full_data.query(f"year=={t} & name=='{p}'").iloc[0]
 
         currentDataValue[p] = datum.value
         currentDataUncUp[p] = datum.uncertainty if not datum.isnull().uncertainty else 0.0

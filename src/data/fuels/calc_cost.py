@@ -12,7 +12,7 @@ def calcCost(params: tuple, fuel: dict):
         p = getCostParamsGreen(*params, fuel)
         return getCostGreen(**p)
     else:
-        raise Exception("Unknown fuel: {}".format(fuel['type']))
+        raise Exception(f"Unknown fuel: {fuel['type']}")
 
 
 def getCostNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
@@ -26,7 +26,7 @@ def getCostNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
 def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     tech_type = fuel['tech_type']
     if tech_type not in known_tech_types:
-        raise Exception("Blue capture rate type unknown: {}".format(tech_type))
+        raise Exception(f"Blue capture rate type unknown: {tech_type}")
 
     i = par['irate']
     n = par['lifetime']

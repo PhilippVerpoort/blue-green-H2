@@ -61,7 +61,7 @@ def __replaceValue(new_value: Union[int, float], param: str):
         uncertainty = float(nums[1])
         return f"{new_value} +- {uncertainty}"
     elif ' + ' in param and ' - ' in param:
-        nums = re.split(r" [+-] ", param)
+        nums = re.split(r' [+-] ', param)
         uncertainty = float(nums[1])
         uncertainty_lower = float(nums[2])
         return f"{new_value} + {uncertainty} - {uncertainty_lower}"

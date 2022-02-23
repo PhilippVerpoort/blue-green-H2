@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 
 def getElementResultsCard():
     return html.Div(
-        id="results-card",
+        id='results-card',
         children=[
             html.Div(
                 children=[

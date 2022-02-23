@@ -25,7 +25,7 @@ def plot4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict):
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list):
-    plotData = fuelsData.query("fuel in @showFuels")
+    plotData = fuelsData.query('fuel in @showFuels')
     refData = fuelsData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
 
     return plotData, refData

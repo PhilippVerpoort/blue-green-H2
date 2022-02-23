@@ -63,7 +63,7 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
             rs.append(r)
 
     else:
-        raise Exception("Unknown data type {}.".format(type))
+        raise Exception(f"Unknown data type {format(type)}.")
 
     return rs
 
@@ -79,7 +79,7 @@ def convertValue(value: Union[str, float, int]):
             uncertainty = float(nums[1])
             return value, uncertainty, None
         elif ' + ' in value and ' - ' in value:
-            nums = re.split(r" [+-] ", value)
+            nums = re.split(r' [+-] ', value)
             value = float(nums[0])
             uncertainty = float(nums[1])
             uncertainty_lower = float(nums[2])
