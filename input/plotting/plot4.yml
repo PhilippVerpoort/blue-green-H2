@@ -1,15 +1,13 @@
 plotting:
-  ghgi_max_left: 0.205
-  cost_max_left: 125.0
-  ghgi_max_right: 0.580
-  cost_max_right: 700.0
+  ghgi_max: 0.205
+  cost_max: 140.0
   n_samples: 301
 
 labels:
-  ghgiLeft: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
-  costLeft: Direct Cost (EUR/MWh<sub>LHV</sub>)
-  ghgiRight: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
-  costRight: Direct Cost (EUR/t<sub>LS</sub>)
+  ghgi: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+  cost: Direct Cost (EUR/MWh<sub>LHV</sub>)
+  ghgiSteel: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
+  costSteel: Direct Cost (EUR/t<sub>LS</sub>)
 
 subplot_title_positions:
   - [0.0, 1.1]

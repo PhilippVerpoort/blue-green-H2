@@ -6,12 +6,13 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from src.config_load import steel_data
 from src.timeit import timeit
 
 
 @timeit
 def plot4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict):
-    # Select which lines to plot based on function argument and
+    # select data to plot
     plotDataLeft, refDataLeft = __selectPlotData(fuelsData, config['refFuelLeft'], config['refYearLeft'], config['showFuels'])
     plotDataRight, refDataRight = __selectPlotData(fuelsDataSteel, config['refFuelRight'], config['refYearRight'], config['showFuels'])
 
@@ -53,11 +54,21 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
         {'size': 300, 'start': 1200, 'end': 1500},
     ]
 
-    plotConf = (config['plotting']['ghgi_max_left'], config['plotting']['cost_max_left'], config['plotting']['n_samples'])
+    plotConf = {
+        'ghgi_min': 0.0,
+        'ghgi_max': config['plotting']['ghgi_max'],
+        'cost_min': 0.0,
+        'cost_max': config['plotting']['cost_max'],
+        'n_samples': config['plotting']['n_samples'],
+    }
     traces = __addFSCPTraces(refDataLeft, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, row=1, col=1)
     #fig.add_hline(refDataLeft.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=1)
+
+
+    # add dummy traces to make additional x2 and y2 axes show
+    fig.add_trace(go.Scatter(x=[-999.0], y=[-999.0], showlegend=False), row=1, col=2)
 
 
     # add line traces
@@ -65,6 +76,8 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     for trace in traces:
         trace.showlegend = False
         fig.add_trace(trace, row=1, col=2)
+        fig['data'][-1]['xaxis'] = 'x3'
+        fig['data'][-1]['yaxis'] = 'y3'
 
 
     # add FSCP traces
@@ -72,53 +85,76 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
         {'size': 50, 'start': 50, 'end': 200},
     ]
 
-    plotConf = (config['plotting']['ghgi_max_right'], config['plotting']['cost_max_right'], config['plotting']['n_samples'])
+    plotConf = {
+        'ghgi_min': steel_data['other_ghgi'],
+        'ghgi_max': config['plotting']['ghgi_max'] * steel_data['h2_demand'] + steel_data['other_ghgi'],
+        'cost_min': steel_data['other_cost'],
+        'cost_max': config['plotting']['cost_max'] * steel_data['h2_demand'] + steel_data['other_cost'],
+        'n_samples': config['plotting']['n_samples'],
+    }
     traces = __addFSCPTraces(refDataRight, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, row=1, col=2)
+        fig['data'][-1]['xaxis'] = 'x3'
+        fig['data'][-1]['yaxis'] = 'y3'
     #fig.add_hline(refDataRight.cost, line_width=config['global']['lw_default'], line_dash="dash", line_color='black', row=1, col=2)
 
 
     # set plotting ranges
     shift = 0.1
-    y1low = refDataLeft.cost-shift*(config['plotting']['cost_max_left']-refDataLeft.cost)
-    y2low = refDataRight.cost-shift*(config['plotting']['cost_max_right']-refDataRight.cost)
+    ylow = refDataLeft.cost-shift*(config['plotting']['cost_max']-refDataLeft.cost)
     fig.update_layout(
         xaxis=dict(
-            title=config['labels']['ghgiLeft'],
-            range=[0.0, config['plotting']['ghgi_max_left']*1000]
+            title=config['labels']['ghgi'],
+            range=[0.0, config['plotting']['ghgi_max']*1000]
         ),
         yaxis=dict(
-            title=config['labels']['costLeft'],
-            range=[y1low, config['plotting']['cost_max_left']]
+            title=config['labels']['cost'],
+            range=[ylow, config['plotting']['cost_max']]
         ),
         xaxis2=dict(
-            title=config['labels']['ghgiRight'],
-            range=[0.0, config['plotting']['ghgi_max_right']*1000]
+            title=config['labels']['ghgi'],
+            range=[0.0, config['plotting']['ghgi_max']*1000]
         ),
         yaxis2=dict(
-            title=config['labels']['costRight'],
-            range=[y2low, config['plotting']['cost_max_right']]
+            title=config['labels']['cost'],
+            range=[ylow, config['plotting']['cost_max']]
+        ),
+        xaxis3=dict(
+            title=config['labels']['ghgiSteel'],
+            range=[steel_data['other_ghgi']*1000, (config['plotting']['ghgi_max'] * steel_data['h2_demand'] + steel_data['other_ghgi'])*1000],
+            overlaying='x2',
+            anchor='y2',
+            side='top',
+            ticks='outside',
+        ),
+        yaxis3=dict(
+            title=config['labels']['costSteel'],
+            range=[ylow*steel_data['h2_demand'] + steel_data['other_cost'], config['plotting']['cost_max']*steel_data['h2_demand'] + steel_data['other_cost']],
+            overlaying='y2',
+            anchor='x2',
+            side='right',
+            ticks='outside',
         ),
     )
 
 
     # add annotations
     annotationStylingA = dict(xanchor='right', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-    fig.add_annotation(x=0.99*config['plotting']['ghgi_max_left']*1000,
-                       y=y1low+0.01*(config['plotting']['cost_max_left']-refDataLeft.cost),
+    fig.add_annotation(x=0.99*config['plotting']['ghgi_max']*1000,
+                       y=ylow+0.01*(config['plotting']['cost_max']-refDataLeft.cost),
                        xref="x", yref="y", text='Heating (H<sub>2</sub> vs. Natural Gas)', **annotationStylingA)
-    fig.add_annotation(x=0.99*config['plotting']['ghgi_max_right']*1000,
-                       y=y2low+0.01*(config['plotting']['cost_max_right']-refDataRight.cost),
+    fig.add_annotation(x=0.99*config['plotting']['ghgi_max']*1000,
+                       y=ylow+0.01*(config['plotting']['cost_max']-refDataLeft.cost),
                        xref="x2", yref="y2", text='Primary Steel Production (H<sub>2</sub>-DR-EAF vs. BF-BOF)', **annotationStylingA)
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
-    fig.add_annotation(x=0.01*config['plotting']['ghgi_max_left']*1000,
+    fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
                        y=refDataLeft.cost,
                        xref="x", yref="y", text='Price of natural gas', **annotationStylingB)
-    fig.add_annotation(x=0.01*config['plotting']['ghgi_max_right']*1000,
-                       y=refDataRight.cost,
-                       xref="x2", yref="y2", text='Direct cost of conventional steel (BF-BOF)', **annotationStylingB)
+    #fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
+    #                   y=refDataLeft.cost,
+    #                   xref="x2", yref="y2", text='Direct cost of conventional steel (BF-BOF)', **annotationStylingB)
 
 
     return fig
@@ -182,13 +218,11 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
     return traces
 
 
-def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple, lw_thin: float, lw_ultrathin: float):
+def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thin: float, lw_ultrathin: float):
     traces = []
 
-    ghgi_max, cost_max, n_samples = plotConf
-
-    ghgi_samples = np.linspace(0.0, ghgi_max, n_samples)
-    cost_samples = np.linspace(0.0, cost_max, n_samples)
+    ghgi_samples = np.linspace(plotConf['ghgi_min'], plotConf['ghgi_max'], plotConf['n_samples'])
+    cost_samples = np.linspace(plotConf['cost_min'], plotConf['cost_max'], plotConf['n_samples'])
     ghgi_v, cost_v = np.meshgrid(ghgi_samples, cost_samples)
 
     ghgi_ref = refData.ghgi
@@ -208,7 +242,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: tuple, lw_th
                                  [1.0, '#f7bba1'],
                              ],
                              colorbar=dict(
-                                 x=1.0,
+                                 x=1.05,
                                  y=0.25,
                                  len=0.5,
                                  title='FSCP',
