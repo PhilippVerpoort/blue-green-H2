@@ -2,8 +2,10 @@ plot1ab:
   fig1:
     - fig1a
     - fig1b
-plot2:
-  - fig2
+plot2ab:
+  fig2:
+    - fig2a
+    - fig2b
 plot3:
   - fig3
 plot4:

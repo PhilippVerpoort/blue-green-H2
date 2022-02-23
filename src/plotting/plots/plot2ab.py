@@ -1,93 +1,70 @@
-from string import ascii_lowercase
-
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 from src.timeit import timeit
 
 
 @timeit
-def plot2(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
-    # select which lines to plot based on function argument
-    plotData, linesCols = __selectPlotData(fuelData, config['showFuels'])
+def plot2ab(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
+    figs = {}
+    for name, type in [('fig2a', 'left'), ('fig2b', 'right')]:
+        # select which lines to plot based on function argument
+        plotData = __selectPlotData(fuelData, config['showFuels'][type])
 
-    # select which FSCPs to plot based on function argument
-    plotFSCP, FSCPsCols = __selectPlotFSCPs(FSCPData, config['showFSCPs'])
+        # select which FSCPs to plot based on function argument
+        plotFSCP = __selectPlotFSCPs(FSCPData, config['showFSCPs'][type])
 
-    # produce figure
-    fig = __produceFigure(plotData, linesCols, plotFSCP, FSCPsCols, config)
+        # produce figures
+        fig = __produceFigure(plotData, plotFSCP, config)
 
-    return {'fig2': fig}
+        figs.update({name: fig})
 
-
-def __selectPlotData(fuelData: pd.DataFrame, showFuels: dict = None):
-    linesCols = {}
-
-    if showFuels is None:
-        plotData = fuelData.query("year == 2020")
-    else:
-        plotData = pd.DataFrame(columns=fuelData.keys())
-        for cols, year, fuel in showFuels:
-            addFuel = fuelData.query("year=={} & fuel=='{}'".format(year, fuel)).reset_index(drop=True)
-            addFuel.index += len(plotData)
-            linesCols[len(plotData)] = cols
-            plotData = pd.concat([plotData, addFuel])
-
-    return plotData, linesCols
+    return figs
 
 
-def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict = None):
-    FSCPsCols = {}
+def __selectPlotData(fuelData: pd.DataFrame, showFuels: dict):
+    fuelList = []
 
-    if showFSCPs is None:
-        plotFSCP = FSCPData.query("year_x==2020 & year_y==2020")
-    else:
-        plotFSCP = pd.DataFrame(columns=(list(FSCPData.keys()) + ['symbol']))
-        for cols, year_x, fuel_x, year_y, fuel_y, symbol in showFSCPs:
-            addFSCP = FSCPData.query("year_x=={} & fuel_x=='{}' & year_y=={} & fuel_y=='{}'".format(year_x, fuel_x, year_y, fuel_y))
-            addFSCP.insert(len(addFSCP.columns), 'symbol', symbol)
-            addFSCP.index += len(plotFSCP)
-            FSCPsCols[len(plotFSCP)] = cols
-            plotFSCP = pd.concat([plotFSCP, addFSCP], ignore_index = True)
+    for year, fuel in showFuels:
+        newFuel = fuelData.query(f"year=={year} & fuel=='{fuel}'").reset_index(drop=True)
+        fuelList.append(newFuel)
 
-    return plotFSCP, FSCPsCols
+    return pd.concat(fuelList, ignore_index=True)
 
 
-def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFrame, FSCPsCols: dict, config: dict):
+def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict):
+    FSCPList = []
+
+    for year_x, fuel_x, year_y, fuel_y, symbol in showFSCPs:
+        addFSCP = FSCPData.query(f"year_x=={year_x} & fuel_x=='{fuel_x}' & year_y=={year_y} & fuel_y=='{fuel_y}'")
+        addFSCP.insert(len(addFSCP.columns), 'symbol', symbol)
+        FSCPList.append(addFSCP)
+
+    return pd.concat(FSCPList, ignore_index=True)
+
+
+def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict):
     # plot
-    fig = make_subplots(rows=1,
-                        cols=config['plotting']['numb_cols'],
-                        subplot_titles=ascii_lowercase,
-                        shared_yaxes=True,
-                        horizontal_spacing=0.025,)
+    fig = go.Figure()
 
 
     # add line traces
     traces = __addLineTraces(plotData, config)
     for id, trace in traces:
-        for j, col in enumerate(linesCols[id]):
-            if j: trace.showlegend = False
-            fig.add_trace(trace, row=1, col=col)
+        fig.add_trace(trace)
 
 
     # add FSCP traces
     traces = __addFSCPTraces(plotFSCP, config)
     for id, trace in traces:
-        for j, col in enumerate(FSCPsCols[id]):
-            if j: trace.showlegend = False
-            fig.add_trace(trace, row=1, col=col)
+        fig.add_trace(trace)
 
 
     # update axes titles and ranges
     fig.update_layout(
         xaxis=dict(
-            title=config['labels']['CP'],
-            range=[0.0, config['plotting']['carb_price_max']],
-        ),
-        xaxis2=dict(
             title=config['labels']['CP'],
             range=[0.0, config['plotting']['carb_price_max']],
         ),
@@ -113,7 +90,7 @@ def __produceFigure(plotData: pd.DataFrame, linesCols: dict, plotFSCP: pd.DataFr
 
 
     # update axis styling
-    for axis in ['xaxis', 'xaxis2', 'yaxis', 'yaxis2']:
+    for axis in ['xaxis', 'yaxis']:
         update = {axis: dict(
             showline=True,
             linewidth=2,
@@ -176,7 +153,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
         # fuel line
         traces.append((index, go.Scatter(x=x, y=y,
-            name=f"{name} ({year})",
+            name=f"{name} ({year})" if fuel!='natural gas' else 'Natural gas',
             legendgroup=f"{fuel}_{year}",
             mode="lines",
             line=dict(color=col, width=config['global']['lw_default'], dash='dash' if occurrence[fuel]>1 else 'solid'),
