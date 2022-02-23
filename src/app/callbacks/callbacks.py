@@ -12,6 +12,7 @@ from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
 from src.config_load import input_data, steel_data, plots
 from src.filepaths import getFilePathAssets, getFilePath
+from src.plotting.export_file import updateFontSizeWebapp
 from src.plotting.plot_all import plotAllFigs
 
 
@@ -68,6 +69,8 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
 
     figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel,
                        input_data, plotting_cfg, global_cfg='webapp')
+
+    updateFontSizeWebapp(figs)
 
     saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
 
