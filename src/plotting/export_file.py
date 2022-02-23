@@ -24,12 +24,9 @@ def exportFigsToFiles(figs: dict):
         plotlyFigure.update_yaxes(title_font_size=fs_sm, tickfont_size=fs_sm)
 
         plotlyFigure.update_annotations(font_size=fs_sm)
-        numSubPlots=__countNumbSubplots(plotlyFigure)
-        if numSubPlots > 1:
-            for annotation in plotlyFigure['layout']['annotations'][:numSubPlots]:
-                annotation['font']['size'] = fs_lg
-        else:
-            plotlyFigure.update_annotations(font_size=fs_lg)
+        numSubPlots = __countNumbSubplots(plotlyFigure)
+        for annotation in plotlyFigure['layout']['annotations'][:numSubPlots]:
+            annotation['font']['size'] = fs_lg
 
         plotlyFigure.write_image(getFilePathOutput(f"{subfigName}.png"), **__getImageSize(w_mm, h_mm))
 

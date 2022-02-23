@@ -11,13 +11,13 @@ def plot1ab(fuelData: pd.DataFrame, config: dict):
 
     # produce figures
     figs = {}
-    for name, type in [('fig1a', 'cost'), ('fig1b', 'ghgi')]:
+    for subFigName, type in [('a', 'cost'), ('b', 'ghgi')]:
         fig = __produceFigure(plotData, {**config[type], **{'global': config['global']}}, type)
 
         # styling figure
-        __styling(fig)
+        __styling(fig, subFigName)
 
-        figs.update({name: fig})
+        figs.update({f"fig1{subFigName}": fig})
 
     return figs
 
@@ -88,7 +88,7 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
     return fig
 
 
-def __styling(fig: go.Figure):
+def __styling(fig: go.Figure, subFigName: str):
     # update legend styling
     fig.update_layout(
         legend=dict(
@@ -119,4 +119,17 @@ def __styling(fig: go.Figure):
         plot_bgcolor='rgba(255, 255, 255, 0.0)',
         font_color='black',
         font_family='Helvetica',
+    )
+
+
+    # add title annotation
+    fig.add_annotation(
+        showarrow=False,
+        text=f"<b>{subFigName}</b>",
+        x=0.0,
+        xanchor='left',
+        xref='paper',
+        y=1.2,
+        yanchor='top',
+        yref='paper',
     )

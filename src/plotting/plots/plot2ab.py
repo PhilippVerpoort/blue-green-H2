@@ -9,7 +9,7 @@ from src.timeit import timeit
 @timeit
 def plot2ab(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
     figs = {}
-    for name, type in [('fig2a', 'left'), ('fig2b', 'right')]:
+    for subFigName, type in [('a', 'left'), ('b', 'right')]:
         # select which lines to plot based on function argument
         plotData = __selectPlotData(fuelData, config['showFuels'][type])
 
@@ -19,7 +19,10 @@ def plot2ab(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
         # produce figures
         fig = __produceFigure(plotData, plotFSCP, config)
 
-        figs.update({name: fig})
+        # styling figure
+        __styling(fig, subFigName)
+
+        figs.update({f"fig2{subFigName}": fig})
 
     return figs
 
@@ -73,57 +76,6 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict
             range=[0.0, config['plotting']['fuel_cost_max']],
         ),
     )
-
-
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            yanchor="top",
-            y=0.98,
-            xanchor="left",
-            x=0.005,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
-
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations']):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
 
 
     return fig
@@ -205,3 +157,54 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
     return traces
+
+
+def __styling(fig: go.Figure, subFigName: str):
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            yanchor="top",
+            y=0.98,
+            xanchor="left",
+            x=0.005,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'yaxis']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
+
+    # add title annotation
+    fig.add_annotation(
+        showarrow=False,
+        text=f"<b>{subFigName}</b>",
+        x=0.0,
+        xanchor='left',
+        xref='paper',
+        y=1.15,
+        yanchor='top',
+        yref='paper',
+    )
