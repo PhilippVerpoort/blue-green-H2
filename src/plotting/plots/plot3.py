@@ -88,6 +88,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
         vertical_spacing=0.1,
     )
 
+
     # add FSCP traces for heating
     traces = __addFSCPTraces(plotFSCP, plotLines, len(FSCPsCols), config['refFuelTop'], config)
     for id, trace in traces:
@@ -95,12 +96,14 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
             if j: trace.showlegend = False
             fig.add_trace(trace, row=1, col=col)
 
+
     # add FSCP traces for steel
     traces = __addFSCPTraces(plotFSCPSteel, plotLinesSteel, len(FSCPsCols), config['refFuelBottom'], config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
             trace.showlegend = False
             fig.add_trace(trace, row=2, col=col)
+
 
     # compute and plot carbon price tracjetory
     cpTrajData = __computeCPTraj(config['carbon_price_trajectory'], config['n_samples'])
@@ -110,15 +113,25 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
             if i or j: trace.showlegend = False
             fig.add_trace(trace, row=i + 1, col=j + 1)
 
+
     # zero y line
     for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
         fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=i + 1, col=j + 1)
 
-    # annotations
+
+    # add circles on intersects
     __addAnnotations(fig, cpTrajData, plotLines, plotLinesSteel, config)
 
 
-    # add annotations
+    # add arrows in 2025
+    __addAnnotationArrows(fig, config)
+
+
+    # add legend for annotations
+    __addAnnotationsLegend(fig, config)
+
+
+    # add text annotations explaining figure content
     annotationStylingA = dict(xanchor='center', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2,
                               borderpad=3, bgcolor='white')
     fig.add_annotation(x=0.5, xref="paper",
@@ -127,6 +140,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
     fig.add_annotation(x=0.5, xref="paper",
                        y=0.98 * config['plotting']['fscp_max'], yref="y3",
                        text='Reference: Blast Furnace in Steel', **annotationStylingA)
+
 
     # update axes titles and ranges
     fig.update_layout(
@@ -161,10 +175,10 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, plotLinesSteel: pd.DataFrame, config: dict):
     traceArgs = [
-        dict(row=1, col=1, lines=plotLines, anno=config['showAnnotations']['left']),
-        dict(row=1, col=2, lines=plotLines, anno=config['showAnnotations']['right']),
-        dict(row=2, col=1, lines=plotLinesSteel, anno=config['showAnnotations']['left']),
-        dict(row=2, col=2, lines=plotLinesSteel, anno=config['showAnnotations']['right']),
+        dict(row=1, col=1, lines=plotLines, anno=config['annotationFuels']['left']),
+        dict(row=1, col=2, lines=plotLines, anno=config['annotationFuels']['right']),
+        dict(row=2, col=1, lines=plotLinesSteel, anno=config['annotationFuels']['left']),
+        dict(row=2, col=2, lines=plotLinesSteel, anno=config['annotationFuels']['right']),
     ]
 
     for args in traceArgs:
@@ -183,11 +197,10 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
         ), row=args['row'], col=args['col'])
 
 
-
-def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, showAnnotations: list) -> dict:
+def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list) -> dict:
     points = {}
 
-    fuelRef, fuelGreen, fuelBlue = showAnnotations
+    fuelRef, fuelGreen, fuelBlue = fuels
 
     dropCols = ['plotIndex', 'fuel_x', 'fuel_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
     greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
@@ -208,6 +221,86 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, showAnnotati
     points[6] = redLine.abs().nsmallest(1, 'fscp').iloc[0]
 
     return points
+
+
+def __addAnnotationArrows(fig: go.Figure, config: dict):
+    __addArrow(fig, 2025.0, 100.0, 650.0, 1, 1, config)
+    __addArrow(fig, 2025.5, 100.0, 950.0, 1, 1, config)
+    fig.add_annotation(text='1', x=2024.5, y=200.0, row=1, col=1, showarrow=False)
+
+    __addArrow(fig, 2025.0, 100.0, 350.0, 1, 2, config)
+    __addArrow(fig, 2025.5, 100.0, 950.0, 1, 2, config)
+    fig.add_annotation(text='1', x=2024.5, y=200.0, row=1, col=2, showarrow=False)
+
+    __addArrow(fig, 2024.5, 90.0, 200.0, 2, 1, config)
+    fig.add_annotation(text='1', x=2024.0, y=150.0, row=2, col=1, showarrow=False)
+
+    __addArrow(fig, 2024.5, 90.0, 200.0, 2, 2, config)
+    fig.add_annotation(text='1', x=2024.0, y=150.0, row=2, col=2, showarrow=False)
+
+
+def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: int, config: dict):
+    xaxes = [['x', 'x2'], ['x3', 'x4']]
+    yaxes = [['y', 'y2'], ['y3', 'y4']]
+    
+    for ay, y in [(y1, y2), (y2, y1)]:
+        fig.add_annotation(
+            axref=xaxes[row-1][col-1],
+            xref=xaxes[row-1][col-1],
+            ayref=yaxes[row-1][col-1],
+            yref=yaxes[row-1][col-1],
+            ax=x,
+            x=x,
+            ay=ay,
+            y=y,
+            arrowcolor='black',
+            arrowwidth=config['global']['lw_thin'],
+            #arrowsize=config['global']['highlight_marker_sm'],
+            arrowhead=2,
+            showarrow=True,
+            row=row,
+            col=col,
+        )
+
+
+def __addAnnotationsLegend(fig: go.Figure, config: dict):
+    fig.add_shape(
+        type='rect',
+        x0=0.25,
+        y0=-0.1,
+        x1=1.00,
+        y1=-0.3,
+        xref='paper',
+        yref='paper',
+        line_width=2,
+        fillcolor='white',
+    )
+
+    fig.add_annotation(
+        text=f"<b>{config['annotationTexts']['heading1']}:</b><br><br><br><br><b>{config['annotationTexts']['heading2']}:</b>",
+        align='left',
+        xanchor='left',
+        x=0.25,
+        yanchor='top',
+        y=-0.1,
+        xref='paper',
+        yref='paper',
+        showarrow=False,
+    )
+
+    for i in range(6):
+        fig.add_annotation(
+            text=f"{i+1}: "+config['annotationTexts'][f"point{i+1}"],
+            align='left',
+            xanchor='left',
+            x=0.25+i%3*0.22,
+            yanchor='top',
+            y=-0.13 if i<3 else -0.24,
+            xref='paper',
+            yref='paper',
+            showarrow=False,
+        )
+
 
 
 def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: int, refFuel: str, config: dict):
@@ -360,10 +453,10 @@ def __styling(fig: go.Figure, config: dict):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            xanchor="right",
-            x=0.9975,
-            yanchor="top",
-            y=0.445,
+            xanchor='left',
+            x=0.0,
+            yanchor='top',
+            y=-0.1,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
