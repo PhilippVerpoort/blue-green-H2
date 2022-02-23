@@ -6,8 +6,8 @@ plotting:
 
 labels:
   time: ''
-  fscp: FSCP (EUR/t<sub>CO<sub>2</sub>eq</sub>)
-  fscp_steel: FSCP (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  fscp: Fuel-switching carbon price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  fscp_steel: Fuel-switching carbon price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
 
 subplot_title_positions:
   - [0.0, 1.05]
