@@ -36,6 +36,8 @@ def __obtainData(fuelData: pd.DataFrame, config: dict):
     # update name of green
     plotData.loc[(plotData['fuel']=='green RE') & (plotData['year']==2025), 'name'] = 'Electrolysis-RE-80%'
     plotData.loc[(plotData['fuel']=='green RE') & (plotData['year']==2050), 'name'] = 'Electrolysis-RE-100%'
+    for blueName in ('blue HEB', 'blue LEB'):
+        plotData.loc[(plotData['fuel']==blueName), 'name'] = plotData.query(f"fuel=='{blueName}'").name.str.replace('.* \((.*)\)', lambda m: m.group(1), regex=True)
 
     return plotData
 

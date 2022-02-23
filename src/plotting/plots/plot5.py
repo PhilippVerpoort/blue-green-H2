@@ -1,3 +1,4 @@
+import re
 from string import ascii_lowercase
 
 import numpy as np
@@ -9,6 +10,7 @@ from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
 from src.data.fuels.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue
 from src.data.fuels.calc_fuels import getCurrentAsDict
+
 
 @timeit
 def plot5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
@@ -61,25 +63,25 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
     traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'] = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot2'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[1])
-    fig.add_annotation(x=0.1, y=-9.0, xref="x2", yref="y2", text=fuelsRawCfg[config['fuelBlueLeft']]['desc'], **annotationStyling)
+    fig.add_annotation(x=0.1, y=-9.0, xref="x2", yref="y2", text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueLeft']]['desc']), **annotationStyling)
 
     xmin, xmax = config['plotting']['xaxis3_min'], config['plotting']['xaxis3_max']
     traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'] = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot3'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[2])
-    fig.add_annotation(x=0.1, y=-9.0, xref="x3", yref="y3", text=fuelsRawCfg[config['fuelBlueRight']]['desc'], **annotationStyling)
+    fig.add_annotation(x=0.1, y=-9.0, xref="x3", yref="y3", text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueRight']]['desc']), **annotationStyling)
 
     xmin, xmax = config['plotting']['xaxis4_min'], config['plotting']['xaxis4_max']
     traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot4'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[3])
-    fig.add_annotation(x=80.4, y=-9.0, xref="x4", yref="y4", text=fuelsRawCfg[config['fuelBlueLeft']]['desc'], **annotationStyling)
+    fig.add_annotation(x=80.4, y=-9.0, xref="x4", yref="y4", text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueLeft']]['desc']), **annotationStyling)
 
     xmin, xmax = config['plotting']['xaxis5_min'], config['plotting']['xaxis5_max']
     traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot5'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[4])
-    fig.add_annotation(x=80.4, y=-9.0, xref="x5", yref="y5", text=fuelsRawCfg[config['fuelBlueRight']]['desc'], **annotationStyling)
+    fig.add_annotation(x=80.4, y=-9.0, xref="x5", yref="y5", text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueRight']]['desc']), **annotationStyling)
 
 
     # add mock traces to make additional x axes show
@@ -111,6 +113,7 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
     # set x axes titles and ranges
     newAxes = __getXAxesStyle(calcedRanges, config)
     fig.update_layout(**newAxes)
+
 
     # update legend styling
     fig.update_layout(

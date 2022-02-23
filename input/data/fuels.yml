@@ -5,28 +5,28 @@ fuels:
     colour: '#ef7500'
 
   blue HEB:
-    desc: SMR-CCS-55%
+    desc: Blue H<sub>2</sub> (SMR-CCS-55%)
     type: blue
     colour: '#3647a3'
     tech_type: smr-ccs-55%
     include_capex: True
 
   blue LEB:
-    desc: ATR-CCS-93%
+    desc: Blue H<sub>2</sub> (ATR-CCS-93%)
     type: blue
     colour: '#589ACE'
     tech_type: atr-ccs-93%
     include_capex: True
 
   green RE:
-    desc: Green Hydrogen
+    desc: Green H<sub>2</sub>
     type: green
     colour: '#6ac100'
     tech_type: share
     include_capex: True
 
   green pure RE:
-    desc: Green Hydrogen 100% RE
+    desc: Green H<sub>2</sub> (RE only)
     type: green
     colour: '#6ac100'
     tech_type: RE
