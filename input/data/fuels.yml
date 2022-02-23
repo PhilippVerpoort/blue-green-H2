@@ -14,7 +14,7 @@ fuels:
   blue LEB:
     desc: Blue H<sub>2</sub> (ATR-CCS-93%)
     type: blue
-    colour: '#589ACE'
+    colour: '#589ace'
     tech_type: atr-ccs-93%
     include_capex: True
 
