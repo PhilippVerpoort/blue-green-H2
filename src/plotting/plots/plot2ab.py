@@ -208,3 +208,15 @@ def __styling(fig: go.Figure, subFigName: str):
         yanchor='top',
         yref='paper',
     )
+
+
+    # margins
+    if subFigName == 'a':
+        fig.update_layout(
+            margin_r=0.0
+        )
+    elif subFigName == 'b':
+        fig.update_layout(
+            margin_l=0.0,
+            yaxis=dict(title=None, ticks=None, showticklabels=False),
+        )
