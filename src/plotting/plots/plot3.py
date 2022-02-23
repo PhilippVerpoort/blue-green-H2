@@ -132,14 +132,20 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 
     # add text annotations explaining figure content
-    annotationStylingA = dict(xanchor='center', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2,
-                              borderpad=3, bgcolor='white')
-    fig.add_annotation(x=0.5, xref="paper",
-                       y=0.98 * config['plotting']['fscp_max'], yref="y",
-                       text='Reference: Natural Gas in Heating', **annotationStylingA)
-    fig.add_annotation(x=0.5, xref="paper",
-                       y=0.98 * config['plotting']['fscp_max'], yref="y3",
-                       text='Reference: Blast Furnace in Steel', **annotationStylingA)
+    annotationStylingA = dict(xanchor='right', yanchor='top', showarrow=False,
+                              bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+    for i in range(4):
+        axisNumb = str(i+1) if i else ''
+        blueTech = config['annotationLabels']['blueTechs'][i%2]
+        application = config['annotationLabels']['applications'][i//2]
+        fig.add_annotation(
+            x=0.99,
+            xref=f"x{axisNumb} domain",
+            y=0.98,
+            yref=f"y{axisNumb} domain",
+            text=f"Blue tech.: {blueTech} | Application: {application}",
+            **annotationStylingA
+        )
 
 
     # update axes titles and ranges
