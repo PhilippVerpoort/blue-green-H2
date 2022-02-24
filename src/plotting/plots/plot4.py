@@ -136,17 +136,25 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
             side='right',
             ticks='outside',
         ),
+        margin_t=160.0,
     )
 
 
-    # add annotations
-    annotationStylingA = dict(xanchor='center', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-    fig.add_annotation(x=0.99*config['plotting']['ghgi_max']*1000,
-                       y=ylow+0.01*(config['plotting']['cost_max']-refDataLeft.cost),
-                       xref="x", yref="y", text=config['annotationLabels']['left'], **annotationStylingA)
-    fig.add_annotation(x=0.99*config['plotting']['ghgi_max']*1000,
-                       y=ylow+0.01*(config['plotting']['cost_max']-refDataLeft.cost),
-                       xref="x2", yref="y2", text=config['annotationLabels']['right'], **annotationStylingA)
+    # add text annotations explaining figure content
+    annotationStylingA = dict(xanchor='center', yanchor='bottom', showarrow=False,
+                              bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+
+    for i in range(2):
+        axisNumb = str(i+1) if i else ''
+        application = config['annotationLabels'][i]
+        fig.add_annotation(
+            x=0.50,
+            xref=f"x{axisNumb} domain",
+            y=1.15,
+            yref=f"y{axisNumb} domain",
+            text=application,
+            **annotationStylingA
+        )
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
     fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,

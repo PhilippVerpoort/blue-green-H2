@@ -17,7 +17,7 @@ def plot2ab(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
         plotFSCP = __selectPlotFSCPs(FSCPData, config['showFSCPs'][type])
 
         # produce figures
-        fig = __produceFigure(plotData, plotFSCP, config)
+        fig = __produceFigure(plotData, plotFSCP, config, type)
 
         # styling figure
         __styling(fig, subFigName)
@@ -48,7 +48,7 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict):
     return pd.concat(FSCPList, ignore_index=True)
 
 
-def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict):
+def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict, type: str):
     # plot
     fig = go.Figure()
 
@@ -63,6 +63,21 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict
     traces = __addFSCPTraces(plotFSCP, config)
     for id, trace in traces:
         fig.add_trace(trace)
+
+
+    # add blue tech annotations
+    annotationStyling = dict(xanchor='center', yanchor='middle', showarrow=False,
+                              bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+
+    blueTech = config['blueTechs'][type]
+    fig.add_annotation(
+        x=0.50,
+        xref=f"x domain",
+        y=1.10,
+        yref=f"y domain",
+        text=f"Blue H<sub>2</sub> from {blueTech}",
+        **annotationStyling
+    )
 
 
     # update axes titles and ranges

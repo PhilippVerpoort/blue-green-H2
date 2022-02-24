@@ -120,7 +120,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 
     # add text annotations explaining figure content
-    annotationStylingA = dict(xanchor='center', yanchor='middle', showarrow=False,
+    annotationStyling = dict(xanchor='center', yanchor='middle', showarrow=False,
                               bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
 
     for i in range(2):
@@ -129,10 +129,10 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
         fig.add_annotation(
             x=0.50,
             xref=f"x{axisNumb} domain",
-            y=1.20,
+            y=1.15,
             yref=f"y{axisNumb} domain",
             text=f"Blue H<sub>2</sub> from {blueTech}",
-            **annotationStylingA
+            **annotationStyling
         )
 
     for i in range(2):
@@ -145,7 +145,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
             yref=f"y{axisNumb} domain",
             text=f"{application}",
             textangle=-90,
-            **annotationStylingA
+            **annotationStyling
         )
 
 

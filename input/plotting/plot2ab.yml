@@ -8,6 +8,10 @@ labels:
   CP: Carbon Pricing (EUR/t<sub>CO<sub>2</sub>eq</sub>)
   total_cost: Total cost (EUR/MWh<sub>LHV</sub>)
 
+blueTechs:
+  left: SMR-CCS-56%
+  right: ATR-CCS-93%
+
 subplot_title_positions:
   - [0.0, 1.1]
   - [0.5, 1.1]
