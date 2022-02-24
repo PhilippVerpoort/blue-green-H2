@@ -6,8 +6,8 @@ plotting:
 
 labels:
   time: ''
-  fscp: Fuel-switching carbon price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
-  fscp_steel: Fuel-switching carbon price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  fscp: Fuel-switching CO<sub>2</sub> price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  fscp_steel: Fuel-switching CO<sub>2</sub> price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
 
 subplot_title_positions:
   - [0.0, 1.05]
@@ -67,7 +67,7 @@ co2price_traj:
     FF55-Option3: [30,143,191,239,287,334,382]
 
 carbon_price_config:
-  name: 'CO<sub>2</sub>-Price'
+  name: CO<sub>2</sub> price
   colour: '#7c2089'
 
 refFuelTop: natural gas
