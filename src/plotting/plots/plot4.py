@@ -314,10 +314,10 @@ def __styling(fig: go.Figure, config):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            yanchor='top',
-            y=0.99,
-            xanchor='center',
-            x=0.5,
+            yanchor='bottom',
+            y=0.01,
+            xanchor='right',
+            x=0.995,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
