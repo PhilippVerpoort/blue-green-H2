@@ -17,6 +17,7 @@ def exportFigsToFiles(figs: dict):
         w_mm, h_mm = figure_print[subfigName]['size']
 
         fs_sm = __getFontSize(5.0)
+        fs_md = __getFontSize(6.0)
         fs_lg = __getFontSize(7.0)
 
         plotlyFigure.update_layout(font_size=fs_sm)
@@ -27,6 +28,10 @@ def exportFigsToFiles(figs: dict):
         numSubPlots = __countNumbSubplots(plotlyFigure)
         for annotation in plotlyFigure['layout']['annotations'][:numSubPlots]:
             annotation['font']['size'] = fs_lg
+
+        if subfigName == 'fig3':
+            for annotation in plotlyFigure['layout']['annotations'][4:8]:
+                annotation['font']['size'] = fs_md
 
         plotlyFigure.write_image(getFilePathOutput(f"{subfigName}.png"), **__getImageSize(w_mm, h_mm))
 

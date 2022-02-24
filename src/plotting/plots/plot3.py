@@ -119,6 +119,36 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
         fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=i + 1, col=j + 1)
 
 
+    # add text annotations explaining figure content
+    annotationStylingA = dict(xanchor='center', yanchor='middle', showarrow=False,
+                              bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+
+    for i in range(2):
+        axisNumb = str(i+1) if i else ''
+        blueTech = config['annotationLabels']['blueTechs'][i]
+        fig.add_annotation(
+            x=0.50,
+            xref=f"x{axisNumb} domain",
+            y=1.20,
+            yref=f"y{axisNumb} domain",
+            text=f"Blue H<sub>2</sub> from {blueTech}",
+            **annotationStylingA
+        )
+
+    for i in range(2):
+        axisNumb = str(i+2) if i else ''
+        application = config['annotationLabels']['applications'][i]
+        fig.add_annotation(
+            x=-0.17,
+            xref=f"x{axisNumb} domain",
+            y=0.5,
+            yref=f"y{axisNumb} domain",
+            text=f"{application}",
+            textangle=-90,
+            **annotationStylingA
+        )
+
+
     # add circles on intersects
     __addAnnotations(fig, cpTrajData, plotLines, plotLinesSteel, config)
 
@@ -129,23 +159,6 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
     # add legend for annotations
     __addAnnotationsLegend(fig, config)
-
-
-    # add text annotations explaining figure content
-    annotationStylingA = dict(xanchor='right', yanchor='top', showarrow=False,
-                              bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-    for i in range(4):
-        axisNumb = str(i+1) if i else ''
-        blueTech = config['annotationLabels']['blueTechs'][i%2]
-        application = config['annotationLabels']['applications'][i//2]
-        fig.add_annotation(
-            x=0.99,
-            xref=f"x{axisNumb} domain",
-            y=0.98,
-            yref=f"y{axisNumb} domain",
-            text=f"Blue tech.: {blueTech} | Application: {application}",
-            **annotationStylingA
-        )
 
 
     # update axes titles and ranges
@@ -174,6 +187,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
             title=config['labels']['fscp_steel'],
             range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
         ),
+        margin_l=180.0,
     )
 
     return fig
