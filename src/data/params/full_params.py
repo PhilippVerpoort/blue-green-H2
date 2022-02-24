@@ -30,12 +30,12 @@ def getFullParams(basicData: dict, units: dict, times: list):
 def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list):
     rs = []
 
-    if isinstance(value, dict) and isinstance(list(value.keys())[0], str):
+    if isinstance(value, dict) and isinstance(list(value.keys())[0], str) and '+' not in list(value.keys())[0]:
         for key, val in value.items():
             rs.extend(__calcValues(id+'_'+key, val, type, times))
         return rs
 
-    if type == 'const':
+    if type == 'const' or isinstance(value, float) or isinstance(value, int) or isinstance(value, str):
         if not (isinstance(value, float) or isinstance(value, int) or isinstance(value, str)):
             raise Exception('Unknown type of value variable. Must be string (including uncertainty) or float.')
 
@@ -45,10 +45,7 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
             r = {'name': id, 'year': t, 'value': value, 'uncertainty': uncertainty, 'uncertainty_lower': uncertainty_lower}
             rs.append(r)
 
-    elif type == 'linear':
-        if not isinstance(value, dict):
-            raise Exception(f"Value must be a dict for type linear: {value}")
-
+    elif type == 'linear' and isinstance(value, dict):
         if not all(isinstance(v, float) or isinstance(v, int) or isinstance(v, str) for v in value.values()):
             raise Exception('Unknown type of value variable. Must be string (including uncertainty) or float.')
 
@@ -105,6 +102,10 @@ def __convertUnit(unit: str, units: dict):
 
 # Select value provided for time t. Alternatively, if not existent, interpolate to time t from adjacent points.
 def __linearInterpolate(t: int, points: list):
+    if len(points) == 1:
+        t, val, unc, uncl = points[0]
+        return val, unc, uncl
+
     p_min = None
     p_max = None
 
