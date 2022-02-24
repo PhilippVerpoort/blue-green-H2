@@ -345,7 +345,7 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     traces.append(go.Scatter(
         x=x_vals,
         y=[y_val, y_val],
-        text=[gwp, gwpOther],
+        text=[f"{config['fuelYearTop']}, {gwp.upper()}" for gwp in [gwp, gwpOther]],
         textposition=["bottom right", "top right"],
         textfont=dict(color=col),
         legendgroup=f"{fuelBlueRawCfg}__{fuelGreenRawCfg}",
