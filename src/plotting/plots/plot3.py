@@ -374,7 +374,6 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             x=thisDataLine['year'],
             y=thisDataLine['fscp'],
             legendgroup=f"{fuel_x} {fuel_y}",
-            showlegend=not dashed,
             name=name,
             mode="lines",
             line=dict(color=col, width=config['global']['lw_default'], dash='dash' if dashed else 'solid'),
