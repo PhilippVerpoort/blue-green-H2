@@ -176,7 +176,7 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list,
     delta_ghgi = np.linspace(config['plotting']['xaxis1_min'], config['plotting']['xaxis1_max'], config['plotting']['n_samples'])
     delta_cost = np.linspace(config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max'], config['plotting']['n_samples'])
     delta_ghgi_v, delta_cost_v = np.meshgrid(delta_ghgi, delta_cost)
-    fscp = delta_cost_v / delta_ghgi_v
+    fscp = delta_cost_v / (delta_ghgi_v+1.E-127)
 
     traces.append(go.Heatmap(x=delta_ghgi * 1000, y=delta_cost, z=fscp,
                              zsmooth='best', showscale=True, hoverinfo='skip',
