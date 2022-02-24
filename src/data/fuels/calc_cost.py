@@ -1,5 +1,5 @@
-known_tech_types = ['smr', 'smr-ccs-55%', 'atr-ccs-93%']
-known_elec_srcs = ['RE', 'grid', 'share']
+known_tech_types = ['smr-ccs-55%', 'atr-ccs-93%']
+known_elec_srcs = ['RE', 'fossil', 'share']
 
 
 def calcCost(params: tuple, fuel: dict):
@@ -56,9 +56,9 @@ def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
         ),
         eff=par[f"blue_eff_{tech_type}"],
         p_el = (
-            par['cost_green_elec_grid'],
-            par_uu['cost_green_elec_grid'],
-            par_ul['cost_green_elec_grid'],
+            par['cost_green_elec_fossil'],
+            par_uu['cost_green_elec_fossil'],
+            par_ul['cost_green_elec_fossil'],
         ),
         eff_el=par[f"blue_eff_elec_{tech_type}"],
         c_CTS=(
@@ -92,7 +92,7 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     n = par['lifetime']
 
     share = par['green_share']
-    if tech_type == 'grid':
+    if tech_type == 'fossil':
         share = 0.0
     elif tech_type == 'RE':
         share = 1.0
@@ -121,21 +121,21 @@ def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
             par_uu['cost_green_elec_RE'],
             par_ul['cost_green_elec_RE'],
         ),
-        pelgrid=(
-            par['cost_green_elec_grid'],
-            par_uu['cost_green_elec_grid'],
-            par_ul['cost_green_elec_grid'],
+        pelfos=(
+            par['cost_green_elec_fossil'],
+            par_uu['cost_green_elec_fossil'],
+            par_ul['cost_green_elec_fossil'],
         ),
         eff=par['green_eff'],
         transp=par['cost_h2transp'],
     )
 
 
-def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, sh, pelre, pelgrid, eff, transp):
+def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, sh, pelre, pelfos, eff, transp):
     ocf = sh*ocf + (1-sh)*1.0
     return {
         'cap_cost': tuple(FCR * c/(ocf*8760) for c in c_pl),
-        'elec_cost': tuple((sh*pelre[i] + (1.0-sh)*pelgrid[i])/eff for i in range(3)),
+        'elec_cost': tuple((sh * pelre[i] + (1.0-sh) * pelfos[i]) / eff for i in range(3)),
         'fonm_cost': tuple(c/(ocf*8760) for c in c_fonm),
         'vonm_cost': tuple(c for c in c_vonm),
         'tra_cost': (transp, 0.0, 0.0),

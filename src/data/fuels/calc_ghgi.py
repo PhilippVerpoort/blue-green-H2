@@ -1,5 +1,5 @@
-known_tech_types = ['smr', 'smr-ccs-55%', 'atr-ccs-93%']
-known_elec_srcs = ['RE', 'grid', 'share']
+known_tech_types = ['smr-ccs-55%', 'atr-ccs-93%']
+known_elec_srcs = ['RE', 'fossil', 'share']
 
 
 def calcGHGI(params: dict, fuel: dict, gwp: str):
@@ -110,7 +110,7 @@ def getGHGIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: s
         raise Exception(f"Green electricity source type unknown: {tech_type}")
 
     share = par['green_share']
-    if tech_type == 'grid':
+    if tech_type == 'fossil':
         share = 0.0
     elif tech_type == 'RE':
         share = 1.0
@@ -128,16 +128,16 @@ def getGHGIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: s
             par_uu[f"ghgi_green_elec_RE_{GWP}"],
             par_ul[f"ghgi_green_elec_RE_{GWP}"],
         ),
-        elgrid=(
-            par[f"ghgi_green_elec_grid_{GWP}"],
-            par_uu[f"ghgi_green_elec_grid_{GWP}"],
-            par_ul[f"ghgi_green_elec_grid_{GWP}"],
+        elfos=(
+            par[f"ghgi_green_elec_fossil_{GWP}"],
+            par_uu[f"ghgi_green_elec_fossil_{GWP}"],
+            par_ul[f"ghgi_green_elec_fossil_{GWP}"],
         ),
     )
 
 
-def getGHGIGreen(b, eff, sh, elre, elgrid):
+def getGHGIGreen(b, eff, sh, elre, elfos):
     return {
-        'elec': tuple((sh*elre[i] + (1.0-sh)*elgrid[i])/eff for i in range(3)),
+        'elec': tuple((sh * elre[i] + (1.0-sh) * elfos[i]) / eff for i in range(3)),
         'other': b,
     }

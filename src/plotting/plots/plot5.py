@@ -440,11 +440,11 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
     pGreenOther = getGHGIParamsGreen(*currentParams, fuelGreenRawCfg, gwpOther)
     GHGIGreenBase, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
     GHGIGreenOtherBase, _ = __getGHGIs(pBlue, pGreenOther, baseOnly=True)
-    # b_1 + eff*(sh1*ghgielre_1 + (1-sh1)*ghgielgrid_1) = b_2 + eff*(sh2*ghgielre_2 + (1-sh2)*ghgielgrid_2)
-    # eff*sh2*(ghgielre_2-ghgielgrid_2) = b_1-b_2 + eff*(ghgielgrid_1-ghgielgrid_2) + eff*sh1*(ghgielre_1-ghgielgrid_1)
-    # sh2 = (b_1-b_2 + eff*(ghgielgrid_1-ghgielgrid_2) + eff*sh1*(ghgielre_1-ghgielgrid_1))/(eff*(ghgielre_2-ghgielgrid_2))
-    range2  = [(GHGIGreenBase-GHGIGreenOtherBase + pGreen['eff']*(pGreen['elgrid'][0]-pGreenOther['elgrid'][0]) + pGreen['eff']*sh*(pGreen['elre'][0]-pGreen['elgrid'][0]))/
-               (pGreenOther['eff'] * (pGreenOther['elre'][0]-pGreenOther['elgrid'][0])) for sh in [xmin, xmax]]
+    # b_1 + eff*(sh1*ghgielre_1 + (1-sh1)*ghgielfos_1) = b_2 + eff*(sh2*ghgielre_2 + (1-sh2)*ghgielfos_2)
+    # eff*sh2*(ghgielre_2-ghgielfos_2) = b_1-b_2 + eff*(ghgielfos_1-ghgielfos_2) + eff*sh1*(ghgielre_1-ghgielfos_1)
+    # sh2 = (b_1-b_2 + eff*(ghgielfos_1-ghgielfos_2) + eff*sh1*(ghgielre_1-ghgielfos_1))/(eff*(ghgielre_2-ghgielfos_2))
+    range2  = [(GHGIGreenBase-GHGIGreenOtherBase + pGreen['eff']*(pGreen['elfos'][0]-pGreenOther['elfos'][0]) + pGreen['eff']*sh*(pGreen['elre'][0]-pGreen['elfos'][0]))/
+               (pGreenOther['eff'] * (pGreenOther['elre'][0]-pGreenOther['elfos'][0])) for sh in [xmin, xmax]]
 
 
     # add scatter traces
