@@ -90,12 +90,11 @@ def getElementAdvancedControlsCardRight():
                     },
                     'tech_type': {
                         'options': [
-                            {'value': 'smr', 'label': 'SMR only'},
-                            {'value': 'smr+lcrccs', 'label': 'SMR+LCRCCS'},
-                            {'value': 'smr+hcrccs', 'label': 'SMR+HCRCCS'},
-                            {'value': 'atr+hcrccs', 'label': 'ATR+HCRCCS'},
-                            {'value': 'RE', 'label': 'RE only'},
-                            {'value': 'grid', 'label': 'Grid elec.'},
+                            {'value': 'smr-ccs-55%', 'label': 'SMR-CCS-55%'},
+                            {'value': 'atr-ccs-93%', 'label': 'ATR-CCS-93%'},
+                            {'value': 'RE', 'label': 'Renewables'},
+                            {'value': 'fossil', 'label': 'Fossil'},
+                            {'value': 'share', 'label': 'Share of RE and Fos.'},
                         ]
                     },
                     'include_capex': {
