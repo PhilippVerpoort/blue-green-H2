@@ -59,11 +59,12 @@ fscp_colours:
   blue LEB to green RE: '#fc4b32'
   blue LEB to green pure RE: '#fc4b32'
 
-carbon_price_trajectory:
-  time: [2020, 2030, 2050]
-  value: [50.0, 130.0, 500.0]
-  value_upper: [70.0, 210.0, 700.0]
-  value_lower: [0.0, 50.0, 200.0]
+co2price_traj:
+  years: [2020,2025,2030,2035,2040,2045,2050]
+  values:
+    FF55-allETS: [30,134,201,268,335,402,469]
+    FF55-propSplit: [30,85,128,171,213,256,299]
+    FF55-Option3: [30,143,191,239,287,334,382]
 
 carbon_price_config:
   name: 'CO<sub>2</sub>-Price'

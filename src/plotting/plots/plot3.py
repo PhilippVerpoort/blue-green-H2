@@ -90,7 +90,6 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 
     # add FSCP traces for heating
-    print('heating')
     traces = __addFSCPTraces(plotFSCP, plotLines, len(FSCPsCols), config['refFuelTop'], config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
@@ -99,7 +98,6 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 
     # add FSCP traces for steel
-    print('steel')
     traces = __addFSCPTraces(plotFSCPSteel, plotLinesSteel, len(FSCPsCols), config['refFuelBottom'], config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
@@ -108,7 +106,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 
     # compute and plot carbon price tracjetory
-    cpTrajData = __computeCPTraj(config['carbon_price_trajectory'], config['n_samples'])
+    cpTrajData = __computeCPTraj(config['co2price_traj']['years'], config['co2price_traj']['values'], config['n_samples'])
     traces = __addCPTraces(cpTrajData, config)
     for trace in traces:
         for i, j in [(0, 0), (0, 1), (1, 0), (1, 1)]:
@@ -390,24 +388,30 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
 
 
 # compute carbon price trajectories
-def __computeCPTraj(params: dict, n_samples: int):
-    # poly fit function
-    t_fit = np.array(params['time'])
-    p_fit = np.array(params['value'])
-    p_fit_u = np.array(params['value_upper'])
-    p_fit_l = np.array(params['value_lower'])
-    poly = np.poly1d(np.polyfit(t_fit, p_fit, 2))
-    poly_u = np.poly1d(np.polyfit(t_fit, p_fit_u, 2))
-    poly_l = np.poly1d(np.polyfit(t_fit, p_fit_l, 2))
+def __computeCPTraj(years: list, values: dict, n_samples: int):
+    v_mean = []
+    v_upper = []
+    v_lower = []
+
+    for i, year in enumerate(years):
+        vals = [v[i] for v in values.values()]
+        mean = sum(vals)/len(vals)
+        v_mean.append(mean)
+        v_upper.append(max(vals)-mean)
+        v_lower.append(mean-min(vals))
 
     # create data frame with time and cp values
-    t = np.linspace(params['time'][0] - 5.0, params['time'][-1] + 5.0, n_samples)
     cpData = pd.DataFrame({
-        'year': t,
-        'CP': poly(t),
-        'CP_u': poly_u(t) - poly(t),
-        'CP_l': -(poly_l(t) - poly(t)),
+        'year': years,
+        'CP': v_mean,
+        'CP_u': v_upper,
+        'CP_l': v_lower,
     })
+
+    # interpolate in between
+    samples = pd.DataFrame({'year': np.linspace(years[0], years[-1] + 5.0, n_samples)})
+    dtypes = {'year': float, 'CP': float, 'CP_u': float, 'CP_l': float}
+    cpData = cpData.merge(samples, how='outer').sort_values(by=['year']).astype(dtypes).interpolate()
 
     # add name to dataframe
     cpData['name'] = 'cp'
