@@ -160,7 +160,7 @@ params:
 
   ghgi_blue_base:
     desc: Base emissions of blue hydrogen (per LHV)
-    type: const
+    type: linear
     value:
       direct:
         smr-ccs-55%:
@@ -174,8 +174,12 @@ params:
           gwp100: 0.8 +- 0.04
           gwp20: 0.9 +- 0.05
         atr-ccs-93%:
-          gwp100: 3.8 +- 0.2
-          gwp20: 4.2 +- 0.2
+          gwp100:
+            2025: 3.8 +- 0.2
+            2050: 0.5 +- 0.1
+          gwp20:
+            2025: 4.2 +- 0.2
+            2050: 0.6 +- 0.1
       scco2:
         smr-ccs-55%:
           gwp100: 10.7 +- 0.5
