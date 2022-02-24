@@ -1,4 +1,4 @@
-known_tech_types = ['smr-ccs-55%', 'atr-ccs-93%']
+known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%']
 known_elec_srcs = ['RE', 'fossil', 'share']
 
 

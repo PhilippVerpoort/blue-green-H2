@@ -90,7 +90,7 @@ def getElementAdvancedControlsCardRight():
                     },
                     'tech_type': {
                         'options': [
-                            {'value': 'smr-ccs-55%', 'label': 'SMR-CCS-55%'},
+                            {'value': 'smr-ccs-56%', 'label': 'SMR-CCS-56%'},
                             {'value': 'atr-ccs-93%', 'label': 'ATR-CCS-93%'},
                             {'value': 'RE', 'label': 'Renewables'},
                             {'value': 'fossil', 'label': 'Fossil'},

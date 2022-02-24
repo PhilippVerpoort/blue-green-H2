@@ -5,10 +5,10 @@ fuels:
     colour: '#ef7500'
 
   blue HEB:
-    desc: Blue H<sub>2</sub> (SMR-CCS-55%)
+    desc: Blue H<sub>2</sub> (SMR-CCS-56%)
     type: blue
     colour: '#3647a3'
-    tech_type: smr-ccs-55%
+    tech_type: smr-ccs-56%
     include_capex: True
 
   blue LEB:
