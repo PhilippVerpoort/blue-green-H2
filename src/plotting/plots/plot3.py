@@ -90,6 +90,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 
     # add FSCP traces for heating
+    print('heating')
     traces = __addFSCPTraces(plotFSCP, plotLines, len(FSCPsCols), config['refFuelTop'], config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
@@ -98,6 +99,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
 
     # add FSCP traces for steel
+    print('steel')
     traces = __addFSCPTraces(plotFSCPSteel, plotLinesSteel, len(FSCPsCols), config['refFuelBottom'], config)
     for id, trace in traces:
         for j, col in enumerate(FSCPsCols[id]):
@@ -353,7 +355,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
 
         # remove unphysical negative FSCPs
         if blueGreenSwitching:
-            thisDataLine = thisDataLine.query(f"year>=2030")
+            thisDataLine = thisDataLine.query(f"(year>=2030 & fscp>0.0) | year>=2040")
 
         # line plot
         traces.append((index, go.Scatter(
@@ -368,7 +370,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
 
         # error bars
         thisDataScatter = thisDataScatter.query(f"year==[2030,2040,2050]")
-        thisDataScatter = thisDataScatter.query(f"fscp<={config['plotting']['fscp_max']}")
+        thisDataScatter = thisDataScatter.query(f"fscp<={config['plotting']['fscp_max']} and (fscp>0.0 | year > 2040)")
 
         traces.append((index, go.Scatter(
             x=thisDataScatter['year'] + shift * 0.1,
