@@ -140,13 +140,13 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
 
 
     # add annotations
-    annotationStylingA = dict(xanchor='right', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+    annotationStylingA = dict(xanchor='center', yanchor='bottom', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
     fig.add_annotation(x=0.99*config['plotting']['ghgi_max']*1000,
                        y=ylow+0.01*(config['plotting']['cost_max']-refDataLeft.cost),
-                       xref="x", yref="y", text='Heating (H<sub>2</sub> vs. Natural Gas)', **annotationStylingA)
+                       xref="x", yref="y", text=config['annotationLabels']['left'], **annotationStylingA)
     fig.add_annotation(x=0.99*config['plotting']['ghgi_max']*1000,
                        y=ylow+0.01*(config['plotting']['cost_max']-refDataLeft.cost),
-                       xref="x2", yref="y2", text='Primary Steel Production (H<sub>2</sub>-DR-EAF vs. BF-BOF)', **annotationStylingA)
+                       xref="x2", yref="y2", text=config['annotationLabels']['right'], **annotationStylingA)
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
     fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,

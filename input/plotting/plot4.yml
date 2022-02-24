@@ -13,6 +13,10 @@ subplot_title_positions:
   - [0.0, 1.1]
   - [0.5, 1.1]
 
+annotationLabels:
+  left: Process heat (H<sub>2</sub> vs. natural gas)
+  right: Primary steel (H<sub>2</sub>-DR-EAF vs. BF-BOF)
+
 refFuelLeft: natural gas
 refYearLeft: 2025
 refFuelRight: blast furnace

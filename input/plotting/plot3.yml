@@ -50,8 +50,8 @@ annotationLabels:
     - SMR-CCS-56%
     - ATR-CCS-93%
   applications:
-    - Heating (H<sub>2</sub> vs. Natural Gas)
-    - Primary Steel Production (H<sub>2</sub>-DR-EAF vs. BF-BOF)
+    - Process heat (H<sub>2</sub> vs. natural gas)
+    - Primary steel (H<sub>2</sub>-DR-EAF vs. BF-BOF)
 
 fscp_colours:
   blue HEB to green RE: '#dc291a'
