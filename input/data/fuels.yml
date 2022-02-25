@@ -19,14 +19,14 @@ fuels:
     include_capex: True
 
   green RE:
-    desc: Green H<sub>2</sub> (80-to-100% renewable electricity transition)
+    desc: Green H<sub>2</sub> (80-to-100% RE)
     type: green
     colour: '#6ac100'
     tech_type: share
     include_capex: True
 
   green pure RE:
-    desc: Green H<sub>2</sub> (100% renewable electricity)
+    desc: Green H<sub>2</sub> (100% RE)
     type: green
     colour: '#6ac100'
     tech_type: RE
