@@ -253,7 +253,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
                                  x=1.05,
                                  y=0.25,
                                  len=0.5,
-                                 title='FSCP',
+                                 title='<i>FSCP<sub>Fossil→H<sub>2</sub></sub></i>',
                                  titleside='top',
                                  tickvals=tickvals,
                                  ticktext=ticktext,

@@ -186,7 +186,7 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list,
                                  x=1.0,
                                  y=0.4,
                                  len=0.8,
-                                 title='FSCP',
+                                 title='<i>FSCP<sub>Blue→Green</sub></i>',
                                  titleside='top',
                              )))
 
@@ -303,7 +303,6 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
                                  x=1.0,
                                  y=0.5,
                                  len=1.0,
-                                 title='FSCP',
                                  titleside='top',
                              )))
 
@@ -414,7 +413,6 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
                                  x=1.0,
                                  y=0.5,
                                  len=1.0,
-                                 title='FSCP',
                                  titleside='top',
                              )))
 
