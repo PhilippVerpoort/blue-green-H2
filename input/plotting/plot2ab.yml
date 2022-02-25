@@ -5,7 +5,7 @@ plotting:
   uncertainty: False
 
 labels:
-  CP: Carbon Pricing (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  CP: CO<sub>2</sub> price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
   total_cost: Total cost (EUR/MWh<sub>LHV</sub>)
 
 blueTechs:
