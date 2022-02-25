@@ -29,9 +29,14 @@ def exportFigsToFiles(figs: dict):
         for annotation in plotlyFigure['layout']['annotations'][:numSubPlots]:
             annotation['font']['size'] = fs_lg
 
-        if subfigName in ['fig2a', 'fig2b', 'fig3', 'fig4',]:
-            numLabels = 2 if subfigName!='fig3' else 4
-            for annotation in plotlyFigure['layout']['annotations'][numSubPlots:numSubPlots+numLabels]:
+        subLabels = {
+            'fig2a': 1,
+            'fig2b': 1,
+            'fig3': 4,
+            'fig4': 2,
+        }
+        if subfigName in subLabels:
+            for annotation in plotlyFigure['layout']['annotations'][numSubPlots:numSubPlots+subLabels[subfigName]]:
                 annotation['font']['size'] = fs_md
 
         plotlyFigure.write_image(getFilePathOutput(f"{subfigName}.png"), **__getImageSize(w_mm, h_mm))

@@ -3,7 +3,7 @@ known_elec_srcs = ['RE', 'fossil', 'share']
 
 
 def calcGHGI(params: dict, fuel: dict, gwp: str):
-    if fuel['type'] == 'ng':
+    if fuel['type'] == 'fossil':
         p = getGHGIParamsNG(*params, fuel, gwp)
         return getGHGING(**p)
     elif fuel['type'] == 'blue':

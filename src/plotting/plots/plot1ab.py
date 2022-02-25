@@ -47,6 +47,20 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
 
     # create figure
     fig = go.Figure()
+
+    # subplot labels
+    fig.add_annotation(
+        showarrow=False,
+        text=f"<b>{'a' if type=='cost' else 'b'}</b>",
+        x=0.0,
+        xanchor='left',
+        xref='paper',
+        y=1.2,
+        yanchor='top',
+        yref='paper',
+    )
+
+    # add bars
     keys = plotConfig['labels'].keys()
     for stack in keys:
         fig.add_bar(
@@ -119,17 +133,4 @@ def __styling(fig: go.Figure, subFigName: str):
         plot_bgcolor='rgba(255, 255, 255, 0.0)',
         font_color='black',
         font_family='Helvetica',
-    )
-
-
-    # add title annotation
-    fig.add_annotation(
-        showarrow=False,
-        text=f"<b>{subFigName}</b>",
-        x=0.0,
-        xanchor='left',
-        xref='paper',
-        y=1.2,
-        yanchor='top',
-        yref='paper',
     )

@@ -1,7 +1,7 @@
 fuels:
   natural gas:
     desc: Natural Gas
-    type: ng
+    type: fossil
     colour: '#ef7500'
 
   blue HEB:

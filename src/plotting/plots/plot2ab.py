@@ -53,6 +53,19 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict
     fig = go.Figure()
 
 
+    # subplot labels
+    fig.add_annotation(
+        showarrow=False,
+        text=f"<b>{'a' if type=='left' else 'b'}</b>",
+        x=0.0,
+        xanchor='left',
+        xref='paper',
+        y=1.15,
+        yanchor='top',
+        yref='paper',
+    )
+
+
     # add line traces
     traces = __addLineTraces(plotData, config)
     for id, trace in traces:
@@ -78,6 +91,13 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict
         text=f"Blue H<sub>2</sub> from {blueTech}",
         **annotationStyling
     )
+
+
+    # add FSCP labels
+    if type=='left':
+        labels = __addFSCPLabels(plotFSCP, config)
+        for label in labels:
+            fig.add_annotation(label)
 
 
     # update axes titles and ranges
@@ -174,6 +194,33 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
     return traces
 
 
+def __addFSCPLabels(plotFSCP: pd.DataFrame, config: dict):
+    labels = []
+
+    FSCPLabelNames = {
+        'fossil': 'Fossil',
+        'green': 'Green H<sub>2</sub>',
+        'blue': 'Blue H<sub>2</sub>',
+    }
+    ys = [
+        0.0,
+        30.0,
+        60.0,
+    ]
+
+    for index, row in plotFSCP.query("symbol=='circle-open'").sort_values(by=['fscp']).reset_index(drop=True).iterrows():
+        labels.append(go.layout.Annotation(
+            text=f"<i>FSCP<sub>{FSCPLabelNames[row.type_x]}→{FSCPLabelNames[row.type_y]}</sub></i>",
+            x=row.fscp+(10.0 if row.type_x=='fossil' else -10.0),
+            xanchor='left' if row.type_x=='fossil' else 'right',
+            y=ys[index],
+            yanchor='bottom',
+            showarrow=False,
+        ))
+
+    return labels
+
+
 def __styling(fig: go.Figure, subFigName: str):
     # update legend styling
     fig.update_layout(
@@ -209,19 +256,6 @@ def __styling(fig: go.Figure, subFigName: str):
         plot_bgcolor='rgba(255, 255, 255, 0.0)',
         font_color='black',
         font_family='Helvetica',
-    )
-
-
-    # add title annotation
-    fig.add_annotation(
-        showarrow=False,
-        text=f"<b>{subFigName}</b>",
-        x=0.0,
-        xanchor='left',
-        xref='paper',
-        y=1.15,
-        yanchor='top',
-        yref='paper',
     )
 
 

@@ -23,7 +23,7 @@ def calcFSCPs(fuelData: pd.DataFrame):
 
         tmp[f"fscp_{i}"] += (tmp['cost_x'] - tmp['cost_y']) / (tmp['ghgi_y'] - tmp['ghgi_x']) ** 2 * ghgi_diff_u
 
-    FSCPData = tmp[['fuel_x', 'year_x', 'fuel_y', 'year_y', 'fscp', 'fscp_uu', 'fscp_ul', 'fscp_tc',
+    FSCPData = tmp[['fuel_x', 'type_x', 'year_x', 'fuel_y', 'type_y', 'year_y', 'fscp', 'fscp_uu', 'fscp_ul', 'fscp_tc',
                     'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']]
 
     return FSCPData

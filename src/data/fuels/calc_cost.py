@@ -3,7 +3,7 @@ known_elec_srcs = ['RE', 'fossil', 'share']
 
 
 def calcCost(params: tuple, fuel: dict):
-    if fuel['type'] == 'ng':
+    if fuel['type'] == 'fossil':
         return getCostNG(*params, fuel)
     elif fuel['type'] == 'blue':
         p = getCostParamsBlue(*params, fuel)
