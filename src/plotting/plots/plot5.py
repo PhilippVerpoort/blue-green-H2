@@ -242,7 +242,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             y=thisData.delta_cost,
             name=name,
             legendgroup=f"{fuelBlue}__{fuelGreen}",
-            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if fuelBlue==config['fuelBlueLeft'] else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuelBlue==config['fuelBlueLeft'] else 'solid'),
             mode='lines',
         ))
 

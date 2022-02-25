@@ -143,7 +143,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             name=f"{name} ({year})" if fuel!='natural gas' else 'Natural gas',
             legendgroup=f"{fuel}_{year}",
             mode="lines",
-            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if occurrence[fuel]>1 else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if occurrence[fuel]>1 else 'solid'),
             hovertemplate=f"<b>{name}</b><br>Carbon price: %{{x:.2f}}<br>Total cost: %{{y:.2f}}<extra></extra>")))
 
         # fuel uncertainty

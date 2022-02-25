@@ -360,7 +360,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=False,
             mode="markers",
-            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if dashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
             marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': col}, ),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}±%{{error_y.array:.2f}}<extra></extra>",
         )))
@@ -376,7 +376,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             legendgroup=f"{fuel_x} {fuel_y}",
             name=name,
             mode="lines",
-            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if dashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
         )))
 
         # error bars

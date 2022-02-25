@@ -204,7 +204,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
             name=name,
             legendgroup=fuel,
             showlegend=not dashed,
-            line=dict(color=col, width=config['global']['lw_default'], dash='dash' if dashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
             mode='lines',
         ))
 
