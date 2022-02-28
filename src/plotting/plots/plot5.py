@@ -478,8 +478,8 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
     # settings for x axes 1 to 15 (6 and 11 are undefined)
     axisSetings = [
         (True, 1000, 'bottom', 'y', None, None, None),
-        (True, 100, 'bottom', 'y2', None, None, 25.0),
-        (True, 100, 'bottom', 'y3', None, None, 25.0),
+        (True, 100, 'bottom', 'y2', None, None, 37.0),
+        (True, 100, 'bottom', 'y3', None, None, 37.0),
         (True, 100, 'bottom', 'y4', None, None, None),
         (True, 100, 'bottom', 'y5', None, None, None),
         (False, None, None, None, None, None, None),
@@ -510,6 +510,8 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
                    config['plotting'][f"{axisName}_max"] * factor]
 
         title = config['labels'][axisName]
+        if i in [6, 7]:
+            title = 38*'&#160;' + title
 
         newAxes[axisName] = dict(
             title=title,

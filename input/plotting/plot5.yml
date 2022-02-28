@@ -21,12 +21,12 @@ plotting:
 
 labels:
   xaxis1: GHG Intensity<sub>Blue H<sub>2</sub></sub> — GHG Intensity<sub>Green H<sub>2</sub></sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
-  xaxis2: Methane leakage rate (%)
-  xaxis3: Methane leakage rate (%)
+  xaxis2: Methane leakage rate (%<sup>GWP100</sup>)
+  xaxis3: Methane leakage rate (%<sup>GWP100</sup>)
   xaxis4: Share of renewable electricity (%)
   xaxis5: Share of renewable electricity (%)
-  xaxis7: ''
-  xaxis8: ''
+  xaxis7: <sub>GWP20</sub>
+  xaxis8: <sub>GWP20</sub>
   xaxis9: ''
   xaxis10: ''
   xaxis12: GHG Intensity<sub>Blue H<sub>2</sub></sub> (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
