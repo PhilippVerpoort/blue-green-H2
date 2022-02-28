@@ -11,7 +11,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plot3(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict):
+def plotOverTime(FSCPData: pd.DataFrame, FSCPDataSteel: pd.DataFrame, config: dict):
     # select which lines to plot based on function argument
     FSCPsCols, plotFSCP, plotLines = __selectPlotFSCPs(FSCPData, config['showFSCPs'], config['refFuelTop'],
                                                        config['n_samples'])

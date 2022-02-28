@@ -11,7 +11,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plot4(fuelData: pd.DataFrame, fuelDataSteel: pd.DataFrame, config: dict):
+def plotHeatmap(fuelData: pd.DataFrame, fuelDataSteel: pd.DataFrame, config: dict):
 
     figs = {}
     for subFigName, type, fData in [('a', 'left', fuelData), ('b', 'right', fuelDataSteel)]:

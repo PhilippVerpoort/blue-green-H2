@@ -13,7 +13,7 @@ from src.data.fuels.calc_fuels import getCurrentAsDict
 
 
 @timeit
-def plot5(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
+def plotBlueGreen(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
     # produce figure
     fig = __produceFigure(fuelData, fullParams, fuelsRawCfg, config)
 

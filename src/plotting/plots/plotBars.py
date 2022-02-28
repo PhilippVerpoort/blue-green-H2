@@ -5,7 +5,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plot1ab(fuelData: pd.DataFrame, config: dict):
+def plotBars(fuelData: pd.DataFrame, config: dict):
     # plot data
     plotData = __obtainData(fuelData, config)
 

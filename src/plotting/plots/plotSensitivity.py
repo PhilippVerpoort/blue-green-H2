@@ -9,7 +9,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plot6(fullParams: pd.DataFrame, fuels: dict, config: dict):
+def plotSensitivity(fullParams: pd.DataFrame, fuels: dict, config: dict):
     # produce figure
     fig = __produceFigure(fullParams, fuels, config)
 

@@ -1,18 +1,18 @@
-plot1ab:
+plotBars:
   fig1:
     - fig1a
     - fig1b
-plot2ab:
+plotLines:
   fig2:
     - fig2a
     - fig2b
-plot3:
+plotOverTime:
   - fig3
-plot4:
+plotHeatmap:
   fig4:
     - fig4a
     - fig4b
-plot5:
+plotBlueGreen:
   - fig5
-plot6:
+plotSensitivity:
   - fig6

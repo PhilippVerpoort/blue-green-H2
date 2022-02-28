@@ -7,7 +7,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plot2ab(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
+def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
     figs = {}
     for subFigName, type in [('a', 'left'), ('b', 'right')]:
         # select which lines to plot based on function argument
