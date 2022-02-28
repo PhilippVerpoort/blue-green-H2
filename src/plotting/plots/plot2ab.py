@@ -174,13 +174,15 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
         # circle at intersection
         traces.append((index, go.Scatter(x=(row.fscp,), y=(row.fscp_tc,), error_x=dict(type='data', array=(row.fscp_uu,), arrayminus=(row.fscp_ul,), thickness=0.0),
                                  mode='markers',
+                                 legendgroup='fscpxmarkers',
                                  marker=dict(symbol=row.symbol, size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
                                  showlegend=False,
-                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
+                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<extra></extra>")))
 
         # dashed line to x-axis
         traces.append((index, go.Scatter(x=(row.fscp, row.fscp), y = (0, row.fscp_tc),
                                  mode='lines',
+                                 legendgroup='fscpxmarkers',
                                  line=dict(color='Black', width=config['global']['lw_thin'], dash='dot'),
                                  showlegend=False, hoverinfo='none',)))
 
@@ -190,8 +192,9 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
                                  marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin']}, color='Black'),
                                  showlegend=not index,
                                  mode='markers',
+                                 legendgroup='fscpxmarkers',
                                  name='Fuel-switching CO<sub>2</sub> price (FSCP)',
-                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
+                                 hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<extra></extra>")))
 
     return traces
 
