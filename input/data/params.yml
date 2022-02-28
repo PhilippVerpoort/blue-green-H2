@@ -256,23 +256,17 @@ params:
 
   cost_green_fixedonm:
     desc: Fixed Operation and Maintenance Cost
-    type: linear
-    value:
-      2025: 50.0
-      2030: 30.0
-      2040: 25.0
-      2050: 20.0
-    unit: EUR/kW
-    source: ???
+    type: const
+    value: 3
+    unit: percent
+    source: AEMO Integrated System Plan assumptions (@Tom).
 
   cost_green_varonm:
     desc: Variable Operation and Maintenance Cost (w/o fuel cost)
-    type: linear
-    value:
-      2025: 1.0
-      2050: 0.2
+    type: const
+    value: 0.4 +- 0.1
     unit: EUR/MWh
-    source: ???
+    source: Assuming USD 0.01-0.02/kg H2 from IEA for water consumption (@Tom).
 
   cost_green_elec:
     desc: Electricity price

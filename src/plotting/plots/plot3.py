@@ -245,12 +245,12 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list)
 
 
 def __addAnnotationArrows(fig: go.Figure, config: dict):
-    __addArrow(fig, 2025.0, 100.0, 650.0, 1, 1, config)
-    __addArrow(fig, 2025.5, 100.0, 950.0, 1, 1, config)
+    __addArrow(fig, 2025.0, 150.0, 600.0, 1, 1, config)
+    __addArrow(fig, 2025.5, 150.0, 800.0, 1, 1, config)
     fig.add_annotation(text='1', x=2024.5, y=200.0, row=1, col=1, showarrow=False)
 
-    __addArrow(fig, 2025.0, 100.0, 350.0, 1, 2, config)
-    __addArrow(fig, 2025.5, 100.0, 950.0, 1, 2, config)
+    __addArrow(fig, 2025.0, 150.0, 300.0, 1, 2, config)
+    __addArrow(fig, 2025.5, 150.0, 800.0, 1, 2, config)
     fig.add_annotation(text='1', x=2024.5, y=200.0, row=1, col=2, showarrow=False)
 
     __addArrow(fig, 2024.5, 90.0, 200.0, 2, 1, config)
