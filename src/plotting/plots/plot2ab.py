@@ -188,7 +188,9 @@ def __addFSCPTraces(plotFSCP: pd.DataFrame, config: dict):
         traces.append((index, go.Scatter(x=(row.fscp,), y = (0,),
                                  error_x=dict(type='data', array=(row.fscp_uu,), arrayminus=(row.fscp_ul,)) if config['plotting']['uncertainty'] else None,
                                  marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin']}, color='Black'),
-                                 showlegend=False,
+                                 showlegend=not index,
+                                 mode='markers',
+                                 name='Fuel-switching CO<sub>2</sub> price (FSCP)',
                                  hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}±%{{error_x.array:.2f}}<extra></extra>")))
 
     return traces
@@ -202,20 +204,16 @@ def __addFSCPLabels(plotFSCP: pd.DataFrame, config: dict):
         'green': 'Green H<sub>2</sub>',
         'blue': 'Blue H<sub>2</sub>',
     }
-    ys = [
-        0.0,
-        30.0,
-        60.0,
-    ]
 
     for index, row in plotFSCP.query("symbol=='circle-open'").sort_values(by=['fscp']).reset_index(drop=True).iterrows():
         labels.append(go.layout.Annotation(
             text=f"<i>FSCP</i><sub>{FSCPLabelNames[row.type_x]}→{FSCPLabelNames[row.type_y]}</sub>",
-            x=row.fscp+(10.0 if row.type_x=='fossil' else -10.0),
-            xanchor='left' if row.type_x=='fossil' else 'right',
-            y=ys[index],
+            x=row.fscp+5.0,
+            xanchor='left',
+            y=20.0,
             yanchor='bottom',
             showarrow=False,
+            textangle=90,
         ))
 
     return labels
@@ -226,9 +224,9 @@ def __styling(fig: go.Figure, subFigName: str):
     fig.update_layout(
         legend=dict(
             yanchor='top',
-            y=0.98,
+            y=1.00,
             xanchor='left',
-            x=0.005,
+            x=0.00,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
