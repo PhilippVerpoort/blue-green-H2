@@ -18,9 +18,13 @@ fig3:
   size:
     - 180.0
     - 122.0
-fig4:
+fig4a:
   size:
-    - 180.0
+    - 90.0
+    - 81.0
+fig4b:
+  size:
+    - 90.0
     - 81.0
 fig5:
   size:

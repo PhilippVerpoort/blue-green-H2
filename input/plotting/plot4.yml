@@ -1,6 +1,6 @@
 plotting:
   ghgi_max: 0.205
-  cost_max: 140.0
+  cost_max: 135.0
   n_samples: 301
 
 labels:
@@ -14,13 +14,16 @@ subplot_title_positions:
   - [0.5, 1.1]
 
 annotationLabels:
-  - Process heat (H<sub>2</sub> vs. natural gas)
-  - Primary steel (H<sub>2</sub>-DR-EAF vs. BF-BOF)
+  left: Process heat (H<sub>2</sub> vs. natural gas)
+  right: Primary steel (H<sub>2</sub>-DR-EAF vs. BF-BOF)
 
-refFuelLeft: natural gas
-refYearLeft: 2025
-refFuelRight: blast furnace
-refYearRight: 2025
+refFuel:
+  left: natural gas
+  right: blast furnace
+
+refYear:
+  left: 2025
+  right: 2025
 
 showFuels:
   - green RE

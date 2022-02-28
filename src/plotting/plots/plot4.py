@@ -11,18 +11,26 @@ from src.timeit import timeit
 
 
 @timeit
-def plot4(fuelsData: pd.DataFrame, fuelsDataSteel: pd.DataFrame, config: dict):
-    # select data to plot
-    plotDataLeft, refDataLeft = __selectPlotData(fuelsData, config['refFuelLeft'], config['refYearLeft'], config['showFuels'])
-    plotDataRight, refDataRight = __selectPlotData(fuelsDataSteel, config['refFuelRight'], config['refYearRight'], config['showFuels'])
+def plot4(fuelData: pd.DataFrame, fuelDataSteel: pd.DataFrame, config: dict):
 
-    # produce figure
-    fig = __produceFigure(plotDataLeft, refDataLeft, plotDataRight, refDataRight, config['showFuels'], config)
+    figs = {}
+    for subFigName, type, fData in [('a', 'left', fuelData), ('b', 'right', fuelDataSteel)]:
+        plotData, refData = __selectPlotData(fData, config['refFuel'][type], config['refYear'][type], config['showFuels'])
 
-    # styling figure
-    __styling(fig, config)
+        # determine y-axis plot range
+        if type == 'left':
+            shift = 0.1
+            ylow = refData.cost - shift * (config['plotting']['cost_max'] - refData.cost)
 
-    return {'fig4': fig}
+        # produce figures
+        fig = __produceFigure(plotData, refData, ylow, config, type)
+
+        # styling figure
+        __styling(fig)
+
+        figs.update({f"fig4{subFigName}": fig})
+
+    return figs
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list):
@@ -32,77 +40,75 @@ def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFu
     return plotData, refData
 
 
-def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
-                    plotDataRight: pd.DataFrame, refDataRight: pd.Series,
-                    showFuels: list, config: dict):
-    # plot
-    fig = make_subplots(rows=1,
-                        cols=2,
-                        subplot_titles=ascii_lowercase)
+def __produceFigure(plotData: pd.DataFrame, refData: pd.Series, ylow: float, config: dict, type: str):
+    # define plotly figure
+    fig = go.Figure()
+
+
+    # subplot labels
+    fig.add_annotation(
+        showarrow=False,
+        text=f"<b>{'a' if type=='left' else 'b'}</b>",
+        x=0.0,
+        xanchor='left',
+        xref='paper',
+        y=1.15,
+        yanchor='top',
+        yref='paper',
+    )
+
+
+    # left and right settings
+    if type == 'left':
+        thickLines = [
+            {'size': 100, 'start': 100, 'end': 600},
+            {'size': 250, 'start': 750, 'end': 1000},
+            {'size': 300, 'start': 1200, 'end': 1500},
+        ]
+
+        plotConf = {
+            'ghgi_min': 0.0,
+            'ghgi_max': config['plotting']['ghgi_max'],
+            'cost_min': 0.0,
+            'cost_max': config['plotting']['cost_max'],
+            'n_samples': config['plotting']['n_samples'],
+        }
+    else:
+        thickLines = [
+            {'size': 50, 'start': 50, 'end': 200},
+        ]
+
+        plotConf = {
+            'ghgi_min': steel_data['other_ghgi'],
+            'ghgi_max': config['plotting']['ghgi_max'] * steel_data['h2_demand'] + steel_data['other_ghgi'],
+            'cost_min': steel_data['other_cost'],
+            'cost_max': config['plotting']['cost_max'] * steel_data['h2_demand'] + steel_data['other_cost'],
+            'n_samples': config['plotting']['n_samples'],
+        }
+
+        fig.add_trace(go.Scatter(x=[-999.0], y=[-999.0], showlegend=False))
 
 
     # add line traces
-    traces = __addLineTraces(plotDataLeft, showFuels, config)
+    traces = __addLineTraces(plotData, config['showFuels'], config)
     for trace in traces:
-        fig.add_trace(trace, row=1, col=1)
+        fig.add_trace(trace)
+        if type == 'right':
+            fig['data'][-1]['xaxis'] = 'x2'
+            fig['data'][-1]['yaxis'] = 'y2'
 
 
     # add FSCP traces
-    thickLines = [
-        {'size': 100, 'start': 100, 'end': 600},
-        {'size': 250, 'start': 750, 'end': 1000},
-        {'size': 300, 'start': 1200, 'end': 1500},
-    ]
-
-    plotConf = {
-        'ghgi_min': 0.0,
-        'ghgi_max': config['plotting']['ghgi_max'],
-        'cost_min': 0.0,
-        'cost_max': config['plotting']['cost_max'],
-        'n_samples': config['plotting']['n_samples'],
-    }
-    traces = __addFSCPTraces(refDataLeft, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'])
+    traces = __addFSCPTraces(refData, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'], type=='left')
     for trace in traces:
-        fig.add_trace(trace, row=1, col=1)
-    #fig.add_hline(refDataLeft.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=1)
-
-
-    # add dummy traces to make additional x2 and y2 axes show
-    fig.add_trace(go.Scatter(x=[-999.0], y=[-999.0], showlegend=False), row=1, col=2)
-
-
-    # add line traces
-    traces = __addLineTraces(plotDataRight, showFuels, config)
-    for trace in traces:
-        trace.showlegend = False
-        fig.add_trace(trace, row=1, col=2)
-        fig['data'][-1]['xaxis'] = 'x3'
-        fig['data'][-1]['yaxis'] = 'y3'
-
-
-    # add FSCP traces
-    thickLines = [
-        {'size': 50, 'start': 50, 'end': 200},
-    ]
-
-    plotConf = {
-        'ghgi_min': steel_data['other_ghgi'],
-        'ghgi_max': config['plotting']['ghgi_max'] * steel_data['h2_demand'] + steel_data['other_ghgi'],
-        'cost_min': steel_data['other_cost'],
-        'cost_max': config['plotting']['cost_max'] * steel_data['h2_demand'] + steel_data['other_cost'],
-        'n_samples': config['plotting']['n_samples'],
-    }
-    traces = __addFSCPTraces(refDataRight, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'])
-    for trace in traces:
-        fig.add_trace(trace, row=1, col=2)
-        fig['data'][-1]['xaxis'] = 'x3'
-        fig['data'][-1]['yaxis'] = 'y3'
-    #fig.add_hline(refDataRight.cost, line_width=config['global']['lw_default'], line_dash="dash", line_color='black', row=1, col=2)
+        fig.add_trace(trace)
+        if type == 'right':
+            fig['data'][-1]['xaxis'] = 'x2'
+            fig['data'][-1]['yaxis'] = 'y2'
+    #fig.add_hline(refData.cost, line_width=4, line_dash="dash", line_color='black', row=1, col=1)
 
 
     # set plotting ranges
-    shift = 0.1
-    ylow = refDataLeft.cost-shift*(config['plotting']['cost_max']-refDataLeft.cost)
     fig.update_layout(
         xaxis=dict(
             title=config['labels']['ghgi'],
@@ -113,30 +119,23 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
             range=[ylow, config['plotting']['cost_max']]
         ),
         xaxis2=dict(
-            title=config['labels']['ghgi'],
-            range=[0.0, config['plotting']['ghgi_max']*1000]
-        ),
-        yaxis2=dict(
-            title=config['labels']['cost'],
-            range=[ylow, config['plotting']['cost_max']]
-        ),
-        xaxis3=dict(
             title=config['labels']['ghgiSteel'],
             range=[steel_data['other_ghgi']*1000, (config['plotting']['ghgi_max'] * steel_data['h2_demand'] + steel_data['other_ghgi'])*1000],
             overlaying='x2',
             anchor='y2',
             side='top',
             ticks='outside',
-        ),
-        yaxis3=dict(
+        ) if type=='right' else None,
+        yaxis2=dict(
             title=config['labels']['costSteel'],
             range=[ylow*steel_data['h2_demand'] + steel_data['other_cost'], config['plotting']['cost_max']*steel_data['h2_demand'] + steel_data['other_cost']],
             overlaying='y2',
             anchor='x2',
             side='right',
             ticks='outside',
-        ),
+        ) if type=='right' else None,
         margin_t=160.0,
+        margin_r=200.0,
     )
 
 
@@ -144,25 +143,26 @@ def __produceFigure(plotDataLeft: pd.DataFrame, refDataLeft: pd.Series,
     annotationStylingA = dict(xanchor='center', yanchor='bottom', showarrow=False,
                               bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
 
-    for i in range(2):
-        axisNumb = str(i+1) if i else ''
-        application = config['annotationLabels'][i]
-        fig.add_annotation(
-            x=0.50,
-            xref=f"x{axisNumb} domain",
-            y=1.15,
-            yref=f"y{axisNumb} domain",
-            text=application,
-            **annotationStylingA
-        )
+    application = config['annotationLabels'][type]
+    fig.add_annotation(
+        x=0.50,
+        xref='x domain',
+        y=1.15,
+        yref='y domain',
+        text=application,
+        **annotationStylingA
+    )
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
-    fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
-                       y=refDataLeft.cost,
-                       xref="x", yref="y", text='Price of natural gas', **annotationStylingB)
-    #fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
-    #                   y=refDataLeft.cost,
-    #                   xref="x2", yref="y2", text='Direct cost of conventional steel (BF-BOF)', **annotationStylingB)
+    if type == 'left':
+        fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
+                           y=refData.cost,
+                           xref="x", yref="y", text='Price of natural gas', **annotationStylingB)
+    else:
+        # fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
+        #                   y=refDataLeft.cost,
+        #                   xref="x2", yref="y2", text='Direct cost of conventional steel (BF-BOF)', **annotationStylingB)
+        pass
 
 
     return fig
@@ -203,7 +203,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
             y=thisData.cost,
             name=name,
             legendgroup=fuel,
-            showlegend=not dashed,
+            showlegend=True,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
             mode='lines',
         ))
@@ -226,7 +226,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
     return traces
 
 
-def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thin: float, lw_ultrathin: float):
+def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thin: float, lw_ultrathin: float, showscale: bool):
     traces = []
 
     ghgi_samples = np.linspace(plotConf['ghgi_min'], plotConf['ghgi_max'], plotConf['n_samples'])
@@ -242,22 +242,25 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
     tickvals = [100*i for i in range(6)]
     ticktext = [str(v) for v in tickvals]
     ticktext[-1] = '> 500'
-    traces.append(go.Heatmap(x=ghgi_samples*1000, y=cost_samples, z=fscp,
-                             zsmooth='best', showscale=True, hoverinfo='skip',
-                             zmin=0.0, zmax=500.0,
-                             colorscale=[
-                                 [0.0, '#c6dbef'],
-                                 [1.0, '#f7bba1'],
-                             ],
-                             colorbar=dict(
-                                 x=1.05,
-                                 y=0.25,
-                                 len=0.5,
-                                 title='<i>FSCP</i><sub>Fossil→H<sub>2</sub></sub>',
-                                 titleside='top',
-                                 tickvals=tickvals,
-                                 ticktext=ticktext,
-                             )))
+    traces.append(go.Heatmap(
+        x=ghgi_samples*1000, y=cost_samples, z=fscp,
+        zsmooth='best', hoverinfo='skip',
+        zmin=0.0, zmax=500.0,
+        colorscale=[
+            [0.0, '#c6dbef'],
+            [1.0, '#f7bba1'],
+        ],
+        colorbar=dict(
+            x=1.05,
+            y=0.25,
+            len=0.5,
+            title='<i>FSCP</i><sub>Fossil→H<sub>2</sub></sub>',
+            titleside='top',
+            tickvals=tickvals,
+            ticktext=ticktext,
+        ),
+        showscale=showscale,
+    ))
 
     # thin lines every 50
     traces.append(go.Contour(x=ghgi_samples*1000, y=cost_samples, z=fscp,
@@ -307,17 +310,18 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
                 **kwargs,
             )))
 
+
     return traces
 
 
-def __styling(fig: go.Figure, config):
+def __styling(fig: go.Figure):
     # update legend styling
     fig.update_layout(
         legend=dict(
             yanchor='bottom',
-            y=0.01,
+            y=0.00,
             xanchor='right',
-            x=0.995,
+            x=1.00,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
@@ -346,17 +350,3 @@ def __styling(fig: go.Figure, config):
         font_color='black',
         font_family='Helvetica',
     )
-
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])

@@ -9,7 +9,9 @@ plot2ab:
 plot3:
   - fig3
 plot4:
-  - fig4
+  fig4:
+    - fig4a
+    - fig4b
 plot5:
   - fig5
 plot6:

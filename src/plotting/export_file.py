@@ -33,7 +33,7 @@ def exportFigsToFiles(figs: dict):
             'fig2a': 1,
             'fig2b': 1,
             'fig3': 4,
-            'fig4': 2,
+            'fig4': 1,
         }
         if subfigName in subLabels:
             for annotation in plotlyFigure['layout']['annotations'][numSubPlots:numSubPlots+subLabels[subfigName]]:
