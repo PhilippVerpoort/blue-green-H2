@@ -188,6 +188,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
             range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
         ),
         margin_l=180.0,
+        margin_b=420.0,
     )
 
     return fig
@@ -286,10 +287,10 @@ def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: in
 def __addAnnotationsLegend(fig: go.Figure, config: dict):
     fig.add_shape(
         type='rect',
-        x0=0.25,
-        y0=-0.1,
-        x1=1.00,
-        y1=-0.3,
+        x0=0.0,
+        y0=-0.25,
+        x1=0.75,
+        y1=-0.45,
         xref='paper',
         yref='paper',
         line_width=2,
@@ -300,9 +301,9 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
         text=f"<b>{config['annotationTexts']['heading1']}:</b><br><br><br><br><b>{config['annotationTexts']['heading2']}:</b>",
         align='left',
         xanchor='left',
-        x=0.25,
+        x=0.0,
         yanchor='top',
-        y=-0.1,
+        y=-0.25,
         xref='paper',
         yref='paper',
         showarrow=False,
@@ -313,9 +314,9 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
             text=f"{i+1}: "+config['annotationTexts'][f"point{i+1}"],
             align='left',
             xanchor='left',
-            x=0.25+i%3*0.22,
+            x=0.0+i%3*0.22,
             yanchor='top',
-            y=-0.13 if i<3 else -0.24,
+            y=-0.28 if i<3 else -0.39,
             xref='paper',
             yref='paper',
             showarrow=False,
@@ -478,6 +479,8 @@ def __styling(fig: go.Figure, config: dict):
     # update legend styling
     fig.update_layout(
         legend=dict(
+            title='<b>Switching between fossil application and H<sub>2</sub>:<br>Switching between H<sub>2</sub>-supply options:</b>',
+            orientation='h',
             xanchor='left',
             x=0.0,
             yanchor='top',
