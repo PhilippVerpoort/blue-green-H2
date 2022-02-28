@@ -7,7 +7,7 @@ from src.app.layout.elements.figures import getFigures
 from src.app.layout.elements.results import getElementResultsCard
 from src.app.layout.elements.simple import getElementSimpleControlsCard
 from src.app.layout.elements.summary import getElementSummaryCard
-from src.config_load import plotting_cfg
+from src.config_load import plots_cfg
 
 
 def getLayout(logo_url: str):
@@ -68,7 +68,7 @@ def getLayout(logo_url: str):
             # dcc locations, stores, and downloads
             dcc.Location(id='url', refresh=False),
             dcc.Store(id='saved-plot-data', storage_type='session'),
-            dcc.Store(id='plotting-config', storage_type='session', data=plotting_cfg),
+            dcc.Store(id='plots-cfg', storage_type='session', data=plots_cfg),
             dcc.Download(id='download-config-yaml'),
             dcc.Download(id='download-results-xlsx'),
         ],

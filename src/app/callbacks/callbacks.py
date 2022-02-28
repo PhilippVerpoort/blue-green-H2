@@ -26,14 +26,14 @@ from src.plotting.plot_all import plotAllFigs
      Input('results-replot', 'n_clicks'),
      State('table-results', 'data'),
      State('saved-plot-data', 'data'),
-     State('plotting-config', 'data'),
+     State('plots-cfg', 'data'),
      State('simple-gwp', 'value'),
      State('simple-important-params', 'data'),
      State('advanced-gwp', 'value'),
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data'),
      State('advanced-params', 'data'),])
-def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotting_cfg: dict,
+def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plots_cfg: dict,
                    simple_gwp: str, simple_important_params: list,
                    advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
     ctx = dash.callback_context
@@ -68,7 +68,7 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plotti
             raise Exception('Unknown button pressed!')
 
     figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel,
-                       input_data, plotting_cfg, global_cfg='webapp')
+                       input_data, plots_cfg, global_cfg='webapp')
 
     updateFontSizeWebapp(figs)
 
@@ -146,32 +146,32 @@ def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_m
 # update figure plotting settings
 @dash_app.callback(
     [Output('plot-config-modal', 'is_open'),
-     Output('plotting-config', 'data'),
+     Output('plots-cfg', 'data'),
      Output('plot-config-modal-textfield', 'value'),],
     [*(Input(f'{plotName}-settings', 'n_clicks') for plotName in plots),
      Input('plot-config-modal-ok', 'n_clicks'),
      Input('plot-config-modal-cancel', 'n_clicks'),],
     [State('plot-config-modal-textfield', 'value'),
-     State('plotting-config', 'data'),],
+     State('plots-cfg', 'data'),],
 )
 def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n_ok: int, n_cancel: int,
-                          settings_modal_textfield: str, plotting_cfg: dict):
+                          settings_modal_textfield: str, plots_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:
-        plotting_cfg['last_btn_pressed'] = None
-        return False, plotting_cfg, ''
+        plots_cfg['last_btn_pressed'] = None
+        return False, plots_cfg, ''
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        if btnPressed in [f"{cfgName}-settings" for cfgName in plotting_cfg]:
+        if btnPressed in [f"{cfgName}-settings" for cfgName in plots_cfg]:
             fname = btnPressed.split('-')[0]
-            plotting_cfg['last_btn_pressed'] = fname
-            return True, plotting_cfg, plotting_cfg[fname]
+            plots_cfg['last_btn_pressed'] = fname
+            return True, plots_cfg, plots_cfg[fname]
         elif btnPressed == 'plot-config-modal-cancel':
-            return False, plotting_cfg, ''
+            return False, plots_cfg, ''
         elif btnPressed == 'plot-config-modal-ok':
-            fname = plotting_cfg['last_btn_pressed']
-            plotting_cfg[fname] = settings_modal_textfield
-            return False, plotting_cfg, ''
+            fname = plots_cfg['last_btn_pressed']
+            plots_cfg[fname] = settings_modal_textfield
+            return False, plots_cfg, ''
         else:
             raise Exception('Unknown button pressed!')
 

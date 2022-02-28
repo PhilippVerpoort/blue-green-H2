@@ -29,7 +29,7 @@ figure_print = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 __filePath = getFilePathInput('plotting/global.yml')
 plots_cfg_global = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
-plotting_cfg = {} # TODO: rename into plots_cfg (for consistency)
+plots_cfg = {}
 for plotName in plots:
     __filePath = getFilePathInput(f"plotting/{plotName}.yml")
-    plotting_cfg[plotName] = open(__filePath, 'r').read()
+    plots_cfg[plotName] = open(__filePath, 'r').read()

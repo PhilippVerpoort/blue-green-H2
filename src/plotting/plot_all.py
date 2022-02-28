@@ -8,7 +8,7 @@ from src.config_load import plots, plots_cfg_global
 
 
 def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFrame, FSCPData: pd.DataFrame,
-                fuelDataSteel: pd.DataFrame, FSCPDataSteel: pd.DataFrame, input_data: dict, plotting_cfg: dict,
+                fuelDataSteel: pd.DataFrame, FSCPDataSteel: pd.DataFrame, input_data: dict, plots_cfg: dict,
                 plot_list: Union[list, None] = None, global_cfg = 'print'):
 
     allPlotArgs = [
@@ -33,7 +33,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
         else:
             print(f"Plotting {plotName}...")
             plotArgs = allPlotArgs[i]
-            config = {**fuelSpecs, **yaml.load(plotting_cfg[plotName], Loader=yaml.FullLoader), **{'global': plots_cfg_global[global_cfg]}}
+            config = {**fuelSpecs, **yaml.load(plots_cfg[plotName], Loader=yaml.FullLoader), **{'global': plots_cfg_global[global_cfg]}}
 
             module = importlib.import_module(f"src.plotting.plots.{plotName}")
             plotFigMethod = getattr(module, plotName)

@@ -1,6 +1,6 @@
 import sys
 
-from src.config_load import input_data, steel_data, plotting_cfg
+from src.config_load import input_data, steel_data, plots_cfg
 from src.data.data import getFullData
 from src.data.params.export_params import exportInputData
 from src.plotting.export_file import exportFigsToFiles
@@ -23,7 +23,7 @@ exportInputData(input_data)
 
 
 # Create plots and automatically export to image files.
-figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel, input_data, plotting_cfg, plot_list=plot_list)
+figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel, input_data, plots_cfg, plot_list=plot_list)
 
 
 # Export figures to files
