@@ -124,9 +124,9 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
     for index, row in plotData.iterrows():
         # line properties
         fuel = row['fuel']
-        name = config['names'][fuel]
-        col = config['colours'][fuel]
         year = row['year']
+        name = config['names'][fuel] if fuel!='green RE' else ('Green H<sub>2</sub> (80% RE)' if year==2025 else 'Green H<sub>2</sub> (100% RE)')
+        col = config['colours'][fuel]
 
         # update line type
         if fuel not in occurrence: occurrence[fuel] = 1
@@ -140,7 +140,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
         # fuel line
         traces.append((index, go.Scatter(x=x, y=y,
-            name=f"{name} ({year})" if fuel!='natural gas' else 'Natural gas',
+            name=f"{name} in {year}" if fuel!='natural gas' else 'Natural gas',
             legendgroup=f"{fuel}_{year}",
             mode="lines",
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if occurrence[fuel]>1 else 'solid'),
