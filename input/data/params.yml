@@ -26,7 +26,7 @@ params:
         gwp20: 0.0
       scco2:
         gwp100: 8.3 +- 0.4
-        gwp20: 8.3 +- 0.4
+        gwp20: 9.3 +- 0.5
       cts:
         gwp100: 0.0
         gwp20: 0.0
@@ -58,8 +58,8 @@ params:
     desc: GHG emissions due to methane leakage per CH4 emission rate (per LHV)
     type: const
     value:
-      gwp100: 545.0
-      gwp20: 1553.0
+      gwp100: 606.06
+      gwp20: 1727.273
     unit: gCO2eq/MJ
     source:
       Based on Excel Spreadsheet sent by @Christian on 07/02/2022. This stays constant (only depends on GWP
@@ -160,7 +160,7 @@ params:
 
   ghgi_blue_base:
     desc: Base emissions of blue hydrogen (per LHV)
-    type: linear
+    type: const
     value:
       direct:
         smr-ccs-56%:
@@ -171,22 +171,18 @@ params:
           gwp20: 4.9 +- 0.2
       elec:
         smr-ccs-56%:
-          gwp100: 0.8 +- 0.04
-          gwp20: 0.9 +- 0.05
+          gwp100: 0.03 +- 0.002
+          gwp20: 0.04 +- 0.002
         atr-ccs-93%:
-          gwp100:
-            2025: 3.8 +- 0.2
-            2050: 0.5 +- 0.1
-          gwp20:
-            2025: 4.2 +- 0.2
-            2050: 0.6 +- 0.1
+          gwp100: 0.2 +- 0.01
+          gwp20: 0.2 +- 0.01
       scco2:
         smr-ccs-56%:
           gwp100: 10.7 +- 0.5
           gwp20: 10.7 +- 0.5
         atr-ccs-93%:
-          gwp100: 10.7 +- 0.5
-          gwp20: 10.7 +- 0.5
+          gwp100: 10.9 +- 0.5
+          gwp20: 10.9 +- 0.5
       cts:
         smr-ccs-56%:
           gwp100: 0.2 +- 0.01
@@ -212,11 +208,11 @@ params:
     type: const
     value:
       smr-ccs-56%:
-        gwp100: 706.1
-        gwp20: 2011.2
+        gwp100: 707.0
+        gwp20: 2010.0
       atr-ccs-93%:
-        gwp100: 713.2
-        gwp20: 2031.5
+        gwp100: 710.0
+        gwp20: 2032.0
     unit: gCO2eq/MJ
     source:
       Based on Excel Spreadsheet sent by @Christian on 07/02/2022. This stays constant (only depends on GWP
