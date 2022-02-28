@@ -375,3 +375,15 @@ params:
       2050: 10.0
     unit: EUR/MWh
     source: Numbers by @Falko.
+
+  ghgi_h2transp:
+    desc: GHGI of energy used in H2 transportation
+    type: const
+    value: 3
+    unit: percent
+    source:
+      <<Recompression every 100 km, 0.02 kWh(Strom)/kg hydrogen>> from this source
+      https://www.sciencedirect.com/science/article/pii/B9780128111970000038
+      gives 0.4 kWh/kg H2
+      
+      Using a compressor with 40% efficiency 1kWh_LHV-H2 per kg_H2. This means a 3% surplus on the GHGI.

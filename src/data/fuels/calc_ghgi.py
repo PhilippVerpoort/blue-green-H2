@@ -90,18 +90,22 @@ def getGHGIParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: st
             par_ul['ghgi_ng_methaneleakage'],
         ),
         mghgi=par[f"ghgi_blue_methaneleakage_perrate_{tech_type}_{GWP}"],
+        transp=par['ghgi_h2transp'],
     )
 
 
-def getGHGIBlue(bdir, bele, bscc, both, mlr, mghgi):
-
-    return {
+def getGHGIBlue(bdir, bele, bscc, both, mlr, mghgi, transp):
+    r = {
         'direct': bdir,
         'elec': bele,
         'scco2': bscc,
         'scch4': tuple(mlr[i]*mghgi for i in range(3)),
         'other': both,
     }
+
+    r['transp'] = tuple(transp*sum(e[i] for e in r.values()) for i in range(3))
+
+    return r
 
 
 def getGHGIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str):
@@ -133,11 +137,16 @@ def getGHGIParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: s
             par_uu[f"ghgi_green_elec_fossil_{GWP}"],
             par_ul[f"ghgi_green_elec_fossil_{GWP}"],
         ),
+        transp=par['ghgi_h2transp'],
     )
 
 
-def getGHGIGreen(b, eff, sh, elre, elfos):
-    return {
+def getGHGIGreen(b, eff, sh, elre, elfos, transp):
+    r = {
         'elec': tuple((sh * elre[i] + (1.0-sh) * elfos[i]) / eff for i in range(3)),
         'other': b,
     }
+
+    r['transp'] = tuple(transp*sum(e[i] for e in r.values()) for i in range(3))
+
+    return r
