@@ -348,7 +348,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
         # line properties
         fuel_x = thisDataScatter.iloc[thisDataScatter.first_valid_index()]['fuel_x']
         fuel_y = thisDataScatter.iloc[0]['fuel_y']
-        name = f"<i>FSCP<sub>Fossil→{config['names'][fuel_y]}</sub></i>" if fuel_x == 'ref' else f"<i>FSCP<sub>{config['names'][fuel_x]}→{config['names'][fuel_y]}</sub></i>"
+        name = f"Fossil→{config['names'][fuel_y]}" if fuel_x == 'ref' else f"{config['names'][fuel_x]}→{config['names'][fuel_y]}"
         col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"] if f"{fuel_x} to {fuel_y}" in config['fscp_colours'] else \
         config['colours'][fuel_y]
 

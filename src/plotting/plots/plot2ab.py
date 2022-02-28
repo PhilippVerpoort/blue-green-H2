@@ -210,7 +210,7 @@ def __addFSCPLabels(plotFSCP: pd.DataFrame, config: dict):
 
     for index, row in plotFSCP.query("symbol=='circle-open'").sort_values(by=['fscp']).reset_index(drop=True).iterrows():
         labels.append(go.layout.Annotation(
-            text=f"<i>FSCP<sub>{FSCPLabelNames[row.type_x]}→{FSCPLabelNames[row.type_y]}</sub></i>",
+            text=f"<i>FSCP</i><sub>{FSCPLabelNames[row.type_x]}→{FSCPLabelNames[row.type_y]}</sub>",
             x=row.fscp+(10.0 if row.type_x=='fossil' else -10.0),
             xanchor='left' if row.type_x=='fossil' else 'right',
             y=ys[index],

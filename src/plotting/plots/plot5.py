@@ -186,7 +186,7 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list,
                                  x=1.0,
                                  y=0.4,
                                  len=0.8,
-                                 title='<i>FSCP<sub>Blue→Green</sub></i>',
+                                 title='<i>FSCP</i><sub>Blue→Green</sub>',
                                  titleside='top',
                              )))
 
