@@ -121,7 +121,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
 
     # add text annotations explaining figure content
     annotationStyling = dict(xanchor='center', yanchor='middle', showarrow=False,
-                              bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+                             bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
 
     for i in range(2):
         axisNumb = str(i+1) if i else ''
@@ -188,7 +188,7 @@ def __produceFigure(FSCPsCols: list, plotFSCP: pd.DataFrame, plotFSCPSteel: pd.D
             range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
         ),
         margin_l=180.0,
-        margin_b=420.0,
+        margin_b=520.0,
     )
 
     return fig
@@ -288,9 +288,9 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
     fig.add_shape(
         type='rect',
         x0=0.0,
-        y0=-0.25,
-        x1=0.75,
-        y1=-0.45,
+        y0=-0.35,
+        x1=0.80,
+        y1=-0.55,
         xref='paper',
         yref='paper',
         line_width=2,
@@ -298,12 +298,12 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
     )
 
     fig.add_annotation(
-        text=f"<b>{config['annotationTexts']['heading1']}:</b><br><br><br><br><b>{config['annotationTexts']['heading2']}:</b>",
+        text=f"<b>{config['annotationTexts']['heading1']}:</b><br><br><br><b>{config['annotationTexts']['heading2']}:</b>",
         align='left',
         xanchor='left',
         x=0.0,
         yanchor='top',
-        y=-0.25,
+        y=-0.35,
         xref='paper',
         yref='paper',
         showarrow=False,
@@ -316,7 +316,7 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
             xanchor='left',
             x=0.0+i%3*0.22,
             yanchor='top',
-            y=-0.28 if i<3 else -0.39,
+            y=-0.38 if i<3 else -0.48,
             xref='paper',
             yref='paper',
             showarrow=False,
@@ -374,7 +374,9 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
         traces.append((index, go.Scatter(
             x=thisDataLine['year'],
             y=thisDataLine['fscp'],
-            legendgroup=f"{fuel_x} {fuel_y}",
+            #legendgroup=f"{fuel_x} {fuel_y}",
+            legendgroup=0 if fuel_x=='ref' else 1,
+            legendgrouptitle=dict(text=f"<b>{config['legendlabels'][0]}:</b>" if fuel_x=='ref' else f"<b>{config['legendlabels'][0]}:</b>"),
             name=name,
             mode='lines',
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
@@ -443,7 +445,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
     # add main graphs (FSCP and CP)
     traces.append(go.Scatter(
         name=name,
-        legendgroup='co2price',
+        legendgroup=1,
         mode='lines',
         x=cpTrajData['year'],
         y=cpTrajData['CP'],
@@ -459,7 +461,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
 
     errorBand = go.Scatter(
         name='Uncertainty Range',
-        legendgroup='co2price',
+        legendgroup=1,
         x=pd.concat([data_x, data_x[::-1]], ignore_index=True),
         y=pd.concat([data_yl, data_yu[::-1]], ignore_index=True),
         mode='lines',
@@ -479,7 +481,6 @@ def __styling(fig: go.Figure, config: dict):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            title='<b>Switching between fossil application and H<sub>2</sub>:<br>Switching between H<sub>2</sub>-supply options:</b>',
             orientation='h',
             xanchor='left',
             x=0.0,

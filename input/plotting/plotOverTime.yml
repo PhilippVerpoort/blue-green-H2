@@ -9,6 +9,10 @@ labels:
   fscp: Fuel-switching CO<sub>2</sub> price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
   fscp_steel: Fuel-switching CO<sub>2</sub> price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
 
+legendlabels:
+  - Switching between fossil application and H<sub>2</sub>
+  - Switching between H<sub>2</sub>-supply options
+
 subplot_title_positions:
   - [0.0, 1.05]
   - [0.5, 1.05]
@@ -38,7 +42,7 @@ annotationFuels:
 annotationTexts:
   heading1: Milestones that capture the expanding competitiveness of low-carbon hydrogen with fossil applications
   heading2: Milestones that capture the inversion of competitiveness within the hydrogen supply, such that green H<sub>2</sub> becomes the most competitive option
-  point1: Low-carbon hydrogen is currently not<br>competitive based solely on CO2 prices
+  point1: Low-carbon hydrogen is currently not<br>competitive based solely on CO<sub>2</sub> prices
   point2: Blue hydrogen becomes competitive<br>with the fossil fuel application
   point3: Green H<sub>2</sub> becomes competitive<br>with the fossil fuel application
   point4: Green H<sub>2</sub> becomes competitive<br>with blue Green H<sub>2</sub>
