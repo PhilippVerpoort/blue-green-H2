@@ -17,13 +17,28 @@ def plotHeatmap(fuelData: pd.DataFrame, fuelDataSteel: pd.DataFrame, config: dic
     for subFigName, type, fData in [('a', 'left', fuelData), ('b', 'right', fuelDataSteel)]:
         plotData, refData = __selectPlotData(fData, config['refFuel'][type], config['refYear'][type], config['showFuels'])
 
+        # define plotly figure
+        fig = go.Figure()
+
+        # subplot labels
+        fig.add_annotation(
+            showarrow=False,
+            text=f"<b>{'a' if type == 'left' else 'b'}</b>",
+            x=0.0,
+            xanchor='left',
+            xref='paper',
+            y=1.15,
+            yanchor='top',
+            yref='paper',
+        )
+
         # determine y-axis plot range
         if type == 'left':
             shift = 0.1
             ylow = refData.cost - shift * (config['plotting']['cost_max'] - refData.cost)
 
         # produce figures
-        fig = __produceFigure(plotData, refData, ylow, config, type)
+        fig = __produceFigure(fig, plotData, refData, ylow, config, type)
 
         # styling figure
         __styling(fig)
@@ -40,23 +55,8 @@ def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFu
     return plotData, refData
 
 
-def __produceFigure(plotData: pd.DataFrame, refData: pd.Series, ylow: float, config: dict, type: str):
-    # define plotly figure
-    fig = go.Figure()
-
-
-    # subplot labels
-    fig.add_annotation(
-        showarrow=False,
-        text=f"<b>{'a' if type=='left' else 'b'}</b>",
-        x=0.0,
-        xanchor='left',
-        xref='paper',
-        y=1.15,
-        yanchor='top',
-        yref='paper',
-    )
-
+def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, ylow: float, config: dict, type: str, row=None, col=None):
+    argsRowCol = dict(row=row, col=col) if row is not None and col is not None else dict()
 
     # left and right settings
     if type == 'left':
@@ -92,7 +92,7 @@ def __produceFigure(plotData: pd.DataFrame, refData: pd.Series, ylow: float, con
     # add line traces
     traces = __addLineTraces(plotData, config['showFuels'], config)
     for trace in traces:
-        fig.add_trace(trace)
+        fig.add_trace(trace, **argsRowCol)
         if type == 'right':
             fig['data'][-1]['xaxis'] = 'x2'
             fig['data'][-1]['yaxis'] = 'y2'
@@ -101,7 +101,7 @@ def __produceFigure(plotData: pd.DataFrame, refData: pd.Series, ylow: float, con
     # add FSCP traces
     traces = __addFSCPTraces(refData, thickLines, plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'], type=='left')
     for trace in traces:
-        fig.add_trace(trace)
+        fig.add_trace(trace, **argsRowCol)
         if type == 'right':
             fig['data'][-1]['xaxis'] = 'x2'
             fig['data'][-1]['yaxis'] = 'y2'
@@ -150,18 +150,27 @@ def __produceFigure(plotData: pd.DataFrame, refData: pd.Series, ylow: float, con
         y=1.15,
         yref='y domain',
         text=application,
-        **annotationStylingA
+        **annotationStylingA,
+        **argsRowCol,
     )
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
     if type == 'left':
-        fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
-                           y=refData.cost,
-                           xref="x", yref="y", text='Price of natural gas', **annotationStylingB)
+        fig.add_annotation(
+            x=0.01*config['plotting']['ghgi_max']*1000,
+            y=refData.cost,
+            xref="x", yref="y", text='Price of natural gas',
+            **annotationStylingB,
+            **argsRowCol,
+        )
     else:
-        # fig.add_annotation(x=0.01*config['plotting']['ghgi_max']*1000,
-        #                   y=refDataLeft.cost,
-        #                   xref="x2", yref="y2", text='Direct cost of conventional steel (BF-BOF)', **annotationStylingB)
+        # fig.add_annotation(
+        #     x=0.01*config['plotting']['ghgi_max']*1000,
+        #     y=refDataLeft.cost,
+        #     xref="x2", yref="y2", text='Direct cost of conventional steel (BF-BOF)',
+        #     **annotationStylingB,
+        #     **argsRowCol,
+        # )
         pass
 
 

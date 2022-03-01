@@ -16,3 +16,5 @@ plotBlueGreen:
   - fig5
 plotSensitivity:
   - fig6
+plotSensitivityNG:
+  - fig7

@@ -324,7 +324,7 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
 
 
 
-def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: int, refFuel: str, config: dict):
+def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: int, refFuel: str, config: dict, sensitivityNG: bool = False):
     traces = []
 
     for index in range(n_lines):
@@ -360,14 +360,14 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=False,
-            mode="markers",
+            mode='markers',
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
             marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': col}, ),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
         )))
 
         # remove unphysical negative FSCPs
-        if blueGreenSwitching:
+        if blueGreenSwitching and not sensitivityNG:
             thisDataLine = thisDataLine.query(f"(year>=2030 & fscp>0.0) | year>=2040")
 
         # line plot
@@ -376,7 +376,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             y=thisDataLine['fscp'],
             legendgroup=f"{fuel_x} {fuel_y}",
             name=name,
-            mode="lines",
+            mode='lines',
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
         )))
 
@@ -392,9 +392,9 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             name=name,
             legendgroup=f"{fuel_x} {fuel_y}",
             showlegend=False,
-            mode="markers",
+            mode='markers',
             marker=dict(symbol='x-thin', size=0.00001,),
-            line_color=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .4)),
+            line_color=('rgba({}, {}, {}, {})'.format(*hex_to_rgb(col), .4)),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
         )))
 

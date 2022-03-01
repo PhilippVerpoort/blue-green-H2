@@ -9,10 +9,6 @@ labels:
   ghgiSteel: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
   costSteel: Direct Cost (EUR/t<sub>LS</sub>)
 
-subplot_title_positions:
-  - [0.0, 1.1]
-  - [0.5, 1.1]
-
 annotationLabels:
   left: Process heat (H<sub>2</sub> vs. natural gas)
   right: Primary steel (H<sub>2</sub>-DR-EAF vs. BF-BOF)

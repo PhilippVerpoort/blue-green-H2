@@ -12,10 +12,6 @@ blueTechs:
   left: SMR-CCS-56%
   right: ATR-CCS-93%
 
-subplot_title_positions:
-  - [0.0, 1.1]
-  - [0.5, 1.1]
-
 showFuels:
   left:
     - [2025, natural gas]

@@ -11,14 +11,15 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
                 fuelDataSteel: pd.DataFrame, FSCPDataSteel: pd.DataFrame, input_data: dict, plots_cfg: dict,
                 plot_list: Union[list, None] = None, global_cfg = 'print'):
 
-    allPlotArgs = [
-        (fuelData,),
-        (fuelData, FSCPData,),
-        (FSCPData, FSCPDataSteel,),
-        (fuelData, fuelDataSteel,),
-        (fuelData, fullParams, input_data['fuels']),
-        (fullParams, input_data['fuels'],),
-    ]
+    allPlotArgs = {
+        'plotBars': (fuelData,),
+        'plotLines': (fuelData, FSCPData,),
+        'plotOverTime': (FSCPData, FSCPDataSteel,),
+        'plotHeatmap': (fuelData, fuelDataSteel,),
+        'plotBlueGreen': (fuelData, fullParams, input_data['fuels']),
+        'plotSensitivity': (fullParams, input_data['fuels'],),
+        'plotSensitivityNG': (fuelData, FSCPData, fullParams,),
+    }
 
     figs = {}
     for i, plotName in enumerate(plots):
@@ -32,8 +33,12 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
 
         else:
             print(f"Plotting {plotName}...")
-            plotArgs = allPlotArgs[i]
-            config = {**fuelSpecs, **yaml.load(plots_cfg[plotName], Loader=yaml.FullLoader), **{'global': plots_cfg_global[global_cfg]}}
+            plotArgs = allPlotArgs[plotName]
+            config = yaml.load(plots_cfg[plotName], Loader=yaml.FullLoader)
+            if 'import' in config:
+                for imp in config['import']:
+                    config[imp] = yaml.load(plots_cfg[imp], Loader=yaml.FullLoader)
+            config = {**config, **fuelSpecs, **yaml.load(plots_cfg[plotName], Loader=yaml.FullLoader), **{'global': plots_cfg_global[global_cfg]}}
 
             module = importlib.import_module(f"src.plotting.plots.{plotName}")
             plotFigMethod = getattr(module, plotName)
