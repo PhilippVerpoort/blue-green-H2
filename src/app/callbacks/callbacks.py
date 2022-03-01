@@ -154,7 +154,7 @@ def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_m
     [State('plot-config-modal-textfield', 'value'),
      State('plots-cfg', 'data'),],
 )
-def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n_ok: int, n_cancel: int,
+def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n7: int, n_ok: int, n_cancel: int,
                           settings_modal_textfield: str, plots_cfg: dict):
     ctx = dash.callback_context
     if not ctx.triggered:

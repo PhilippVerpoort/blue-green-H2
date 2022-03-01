@@ -1,4 +1,5 @@
-name: Figure 6
-title: Sensitivity analysis of difference between blue and green production cost in 2035 for key parameters.
-desc: ''
+name: Figure 7
+title: Sensitivity analysis
+desc: Replotting Figs. 4a (left column) and 3b (right column) with same assumptions (top), with natural-gas price increased by 20 EUR/MWh (middle), and with electricity price increased by 20 EUR/MWh.
 display: [/advanced]
+height: 1000px
