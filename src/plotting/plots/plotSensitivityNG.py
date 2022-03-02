@@ -79,11 +79,7 @@ def plotSensitivityNG(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, fullParams
         # obtain default plotting data
         FSCPsCols, plotFSCP, plotLines = __selectPlotFSCPs(calcFSCPs(fData), config['plotOverTime']['showFSCPs'], config['plotOverTime'][typeOverTime], config['plotOverTime']['n_samples'])
 
-        if j == 2:
-        #    plotFSCP = plotFSCP.query("fuel_x!='blue LEB' | fuel_y!='green pure RE'")
-            print(plotFSCP.query("fuel_x=='blue LEB' & fuel_y=='green RE'"))
-
-        traces = __addFSCPTraces(plotFSCP, plotLines, len(FSCPsCols), config['plotOverTime'][typeOverTime], cfg, sensitivityNG=j==2)
+        traces = __addFSCPTraces(plotFSCP, plotLines, len(FSCPsCols), config['plotOverTime'][typeOverTime], cfg, sensitivityNG=(j==2))
         for id, trace in traces:
             if 2 in FSCPsCols[id]:
                 fig.add_trace(trace, row=j, col=2)
@@ -91,6 +87,11 @@ def plotSensitivityNG(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, fullParams
         for trace in cpTraces:
             fig.add_trace(trace, row=j, col=2)
         fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=j, col=2)
+
+        if j == 2:
+            blueGreenSwitchingPoint = __getPointZeroGHGIDiff(cfg, plotLines)
+            print(blueGreenSwitchingPoint)
+            fig.add_vline(blueGreenSwitchingPoint, line_width=config['global']['lw_default'], line_color=cfg['fscp_colours']['blue LEB to green RE'], row=j, col=2)
 
 
     # set ranges and titles for axes
@@ -122,6 +123,20 @@ def plotSensitivityNG(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, fullParams
 
 
     return {'fig7': fig}
+
+
+def __getPointZeroGHGIDiff(cfg: dict, plotLines: pd.DataFrame):
+    fuelRef, fuelGreen, fuelBlue = cfg['annotationFuels']['right']
+
+    dropCols = ['plotIndex', 'fuel_x', 'fuel_y', 'cost_x', 'cost_y', 'ghgi_x', 'fscp']
+
+    greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
+    blueLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)
+
+    diffLines = pd.merge(greenLine, blueLine, on=['year'], suffixes=('', '_right'))
+    diffLines['delta'] = (diffLines['ghgi_y'] - diffLines['ghgi_y_right']).abs()
+
+    return diffLines.nsmallest(1, 'delta').iloc[0].year
 
 
 def __styling(fig: go.Figure):

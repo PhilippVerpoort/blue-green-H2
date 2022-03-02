@@ -353,6 +353,10 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
         col = config['fscp_colours'][f"{fuel_x} to {fuel_y}"] if f"{fuel_x} to {fuel_y}" in config['fscp_colours'] else \
         config['colours'][fuel_y]
 
+        # do not plot awkward red line in sensitivity analysis row 2
+        if sensitivityNG and fuel_x == 'blue LEB':
+            continue
+
         # scatter plot
         traces.append((index, go.Scatter(
             x=thisDataScatter['year'],
