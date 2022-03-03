@@ -22,7 +22,7 @@ fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFul
 exportInputData(input_data)
 
 
-# Create plots and automatically export to image files.
+# Run plotting routines to generate figures
 figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel, input_data, plots_cfg, plot_list=plot_list)
 
 
