@@ -16,7 +16,7 @@ params:
 
   ghgi_ng_base:
     desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
-    type: const
+    type: linear
     value:
       direct:
         gwp100: 56.0 +- 0.28
@@ -25,8 +25,14 @@ params:
         gwp100: 0.0
         gwp20: 0.0
       scco2:
-        gwp100: 8.3 +- 0.4
-        gwp20: 9.3 +- 0.5
+        gwp100:
+          2025: 8.3 +- 0.4
+          2035: 8.3 +- 0.4
+          2050: 7.3 +- 0.4
+        gwp20:
+          2025: 9.3 +- 0.5
+          2035: 9.3 +- 0.5
+          2050: 8.1 +- 0.4
       cts:
         gwp100: 0.0
         gwp20: 0.0
@@ -37,7 +43,9 @@ params:
     source:
       Based on second Excel Spreadsheet @Christian sent on 07/02/2022.
       
-      This stays constant, as outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section.
+      This stays mostly constant, as outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section.
+      
+      Only supply-chain CO2 emissions are reduced to 87.5% between 2035 and 2050.
     
       Assuming uncertainty of uncertainty 5%.
 
@@ -160,7 +168,7 @@ params:
 
   ghgi_blue_base:
     desc: Base emissions of blue hydrogen (per LHV)
-    type: const
+    type: linear
     value:
       direct:
         smr-ccs-56%:
@@ -178,11 +186,23 @@ params:
           gwp20: 0.2 +- 0.01
       scco2:
         smr-ccs-56%:
-          gwp100: 10.7 +- 0.5
-          gwp20: 10.7 +- 0.5
+          gwp100:
+            2025: 10.7 +- 0.5
+            2035: 10.7 +- 0.5
+            2050: 9.4 +- 0.5
+          gwp20:
+            2025: 10.7 +- 0.5
+            2035: 10.7 +- 0.5
+            2050: 9.4 +- 0.5
         atr-ccs-93%:
-          gwp100: 10.9 +- 0.5
-          gwp20: 10.9 +- 0.5
+          gwp100:
+            2025: 10.9 +- 0.5
+            2035: 10.9 +- 0.5
+            2050: 9.5 +- 0.5
+          gwp20:
+            2025: 10.9 +- 0.5
+            2035: 10.9 +- 0.5
+            2050: 9.5 +- 0.5
       cts:
         smr-ccs-56%:
           gwp100: 0.2 +- 0.01
@@ -200,6 +220,8 @@ params:
     unit: gCO2eq/MJ
     source:
       Based on first Excel Spreadsheet sent by @Christian on 29/10/2021.
+      
+      Everything kept constant, except supply-chain CO2 reduces to 87.5% by 2050.
     
       Assuming uncertainty of 5%.
 
