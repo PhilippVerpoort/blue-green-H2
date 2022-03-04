@@ -428,7 +428,7 @@ def __computeCPTraj(years: list, values: dict, n_samples: int):
     })
 
     # interpolate in between
-    samples = pd.DataFrame({'year': np.linspace(years[0], years[-1] + 5.0, n_samples)})
+    samples = pd.DataFrame({'year': np.linspace(years[0], years[-1], n_samples)})
     dtypes = {'year': float, 'CP': float, 'CP_u': float, 'CP_l': float}
     cpData = cpData.merge(samples, how='outer').sort_values(by=['year']).astype(dtypes).interpolate()
 
