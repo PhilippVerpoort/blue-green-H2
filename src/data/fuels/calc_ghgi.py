@@ -1,4 +1,4 @@
-known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%']
+known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
 known_elec_srcs = ['RE', 'fossil', 'share']
 
 
@@ -61,7 +61,12 @@ def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
 def getGHGIParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: str):
     tech_type = fuel['tech_type']
     if tech_type not in known_tech_types:
-        raise Exception(f"Blue capture rate type unknown: {tech_type}")
+        raise Exception(f"Blue technology type unknown: {tech_type}")
+    if tech_type == 'atr-ccs-93%-lowscco2':
+        tech_type = 'atr-ccs-93%'
+        lowscco2 = '-lowscco2'
+    else:
+        lowscco2 = ''
 
     return dict(
         bdir=(
@@ -75,9 +80,9 @@ def getGHGIParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict, GWP: st
             par_ul[f"ghgi_blue_base_elec_{tech_type}_{GWP}"],
         ),
         bscc=(
-            par[f"ghgi_blue_base_scco2_{tech_type}_{GWP}"],
-            par_uu[f"ghgi_blue_base_scco2_{tech_type}_{GWP}"],
-            par_ul[f"ghgi_blue_base_scco2_{tech_type}_{GWP}"],
+            par[f"ghgi_blue_base_scco2_{tech_type}{lowscco2}_{GWP}"],
+            par_uu[f"ghgi_blue_base_scco2_{tech_type}{lowscco2}_{GWP}"],
+            par_ul[f"ghgi_blue_base_scco2_{tech_type}{lowscco2}_{GWP}"],
         ),
         both=(
             par[f"ghgi_blue_base_other_{tech_type}_{GWP}"] + par[f"ghgi_blue_base_cts_{tech_type}_{GWP}"],

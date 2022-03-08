@@ -18,6 +18,13 @@ fuels:
     tech_type: atr-ccs-93%
     include_capex: True
 
+  blue LEB lowscco2:
+    desc: Blue H<sub>2</sub> (ATR-CCS-93%, low supply-chain CO<sub>2</sub>)
+    type: blue
+    colour: '#589ace'
+    tech_type: atr-ccs-93%-lowscco2
+    include_capex: True
+
   green RE:
     desc: Green H<sub>2</sub> (80-to-100% RE)
     type: green

@@ -28,6 +28,8 @@ showFSCPs:
   - [[2], blue LEB, green RE]
   - [[1], blue HEB, green pure RE]
   - [[2], blue LEB, green pure RE]
+  - [[2], ref, blue LEB lowscco2]
+  - [[2], blue LEB lowscco2, green RE]
 
 annotationFuels:
   left:
@@ -62,6 +64,7 @@ fscp_colours:
   blue HEB to green pure RE: '#dc291a'
   blue LEB to green RE: '#fc4b32'
   blue LEB to green pure RE: '#fc4b32'
+  blue LEB lowscco2 to green RE: '#fc4b32'
 
 co2price_traj:
   years: [2020,2025,2030,2035,2040,2045,2050,2055]

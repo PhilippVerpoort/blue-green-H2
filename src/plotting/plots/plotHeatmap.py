@@ -1,10 +1,7 @@
-from string import ascii_lowercase
-
 import numpy as np
 import pandas as pd
 
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 from src.config_load import steel_data
 from src.timeit import timeit
@@ -184,7 +181,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
         # line properties
         name = config['names'][fuel]
         col = config['colours'][fuel]
-        dashed = fuel == 'green pure RE'
+        dashed = fuel in ['green pure RE', 'blue LEB lowscco2']
 
         # data
         thisData = plotData.query(f"fuel=='{fuel}'")
@@ -194,8 +191,8 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
         traces.append(go.Scatter(
             x=thisData.ghgi*1000,
             y=thisData.cost,
-            text=thisData.year,
-            textposition='top left',
+            text=thisData.year if fuel != 'blue LEB lowscco2' else None,
+            textposition='top left' if fuel != 'blue LEB' else 'bottom right',
             textfont=dict(color=col),
             name=name,
             legendgroup=fuel,
@@ -219,6 +216,7 @@ def __addLineTraces(plotData: pd.DataFrame, showFuels: list, config: dict):
 
 
         # error bars
+        if fuel == 'blue LEB lowscco2': continue
         thisData = thisData.query(f"year==[2025,2030,2040,2050]")
         traces.append(go.Scatter(
             x=thisData.ghgi*1000,

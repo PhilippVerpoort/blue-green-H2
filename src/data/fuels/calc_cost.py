@@ -1,4 +1,4 @@
-known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%']
+known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
 known_elec_srcs = ['RE', 'fossil', 'share']
 
 
@@ -26,7 +26,9 @@ def getCostNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
 def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
     tech_type = fuel['tech_type']
     if tech_type not in known_tech_types:
-        raise Exception(f"Blue capture rate type unknown: {tech_type}")
+        raise Exception(f"Blue technology type unknown: {tech_type}")
+    if tech_type == 'atr-ccs-93%-lowscco2':
+        tech_type = 'atr-ccs-93%'
 
     i = par['irate']
     n = par['lifetime']

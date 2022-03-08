@@ -285,12 +285,14 @@ def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: in
 
 
 def __addAnnotationsLegend(fig: go.Figure, config: dict):
+    y0 = -0.40
+
     fig.add_shape(
         type='rect',
         x0=0.0,
-        y0=-0.35,
+        y0=y0,
         x1=0.80,
-        y1=-0.55,
+        y1=y0-0.2,
         xref='paper',
         yref='paper',
         line_width=2,
@@ -303,7 +305,7 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
         xanchor='left',
         x=0.0,
         yanchor='top',
-        y=-0.35,
+        y=y0,
         xref='paper',
         yref='paper',
         showarrow=False,
@@ -314,9 +316,9 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
             text=f"{i+1}: "+config['annotationTexts'][f"point{i+1}"],
             align='left',
             xanchor='left',
-            x=0.0+i%3*0.22,
+            x=0.0 + i%3 * 0.22,
             yanchor='top',
-            y=-0.38 if i<3 else -0.48,
+            y=y0-(0.03 if i<3 else 0.13),
             xref='paper',
             yref='paper',
             showarrow=False,
@@ -332,9 +334,10 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
         thisDataLine = plotLines.query(f"plotIndex=={index}").reset_index(drop=True)
 
         # styling of individual lines
-        blueGreenSwitching = thisDataScatter.loc[0, 'fuel_x'] == 'blue LEB' and thisDataScatter.loc[
-            0, 'fuel_y'] == 'green RE'
-        dashed = thisDataScatter.loc[0, 'fuel_y'] == 'green pure RE'
+        truncated = (thisDataScatter.loc[0, 'fuel_x'] == 'blue LEB' and thisDataScatter.loc[0, 'fuel_y'] == 'green RE') or \
+                    thisDataScatter.loc[0, 'fuel_x'] == 'blue LEB lowscco2'
+        dashed = thisDataScatter.loc[0, 'fuel_y'] in ['green pure RE', 'blue LEB lowscco2']
+        longdashed = thisDataScatter.loc[0, 'fuel_x'] == 'blue LEB lowscco2'
         shift = 0
         if thisDataScatter.loc[0, 'fuel_y'] == 'green RE':
             if thisDataScatter.loc[0, 'fuel_x'] == 'ref':
@@ -371,7 +374,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
         )))
 
         # remove unphysical negative FSCPs
-        if blueGreenSwitching and not sensitivityNG:
+        if truncated and not sensitivityNG:
             thisDataLine = thisDataLine.query(f"(year>=2030 & fscp>0.0) | year>=2040")
 
         # line plot
@@ -382,7 +385,7 @@ def __addFSCPTraces(plotData: pd.DataFrame, plotLines: pd.DataFrame, n_lines: in
             legendgrouptitle=dict(text=f"<b>{config['legendlabels'][0]}:</b>" if fuel_x=='ref' else f"<b>{config['legendlabels'][0]}:</b>"),
             name=name,
             mode='lines',
-            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'dash' if longdashed else 'solid'),
         )))
 
         # error bars
