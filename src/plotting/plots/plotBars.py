@@ -75,7 +75,7 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
     # add error bar
     fig.add_bar(
         x=[plotData.year, plotData.name],
-        y=0.00000001*plotData[list(keys)[0]],
+        y=0.00000001*plotData[type],
         error_y=dict(
             type='data',
             array=plotData[f"{type}_uu"]*scale,
