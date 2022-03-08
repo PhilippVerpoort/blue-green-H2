@@ -26,11 +26,11 @@ params:
         gwp100:
           2025: 8.3 +- 0.4
           2035: 8.3 +- 0.4
-          2050: 7.3 +- 0.4
+          2050: 4.2 +- 3.1
         gwp20:
           2025: 9.3 +- 0.5
           2035: 9.3 +- 0.5
-          2050: 8.1 +- 0.4
+          2050: 4.7 +- 3.5
       cts:
         gwp100: 0.0
         gwp20: 0.0
@@ -41,7 +41,8 @@ params:
     source:
       LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
       outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section. Supply-chain CO2 emissions 
-      are reduced to 87.5% between 2035 and 2050. The uncertainty is assumed to be 5% throughout.
+      are reduced to 87.5% between 2035 and 2050. The uncertainty is assumed to be 5% throughout, except for the
+      uncertainty of supply-chain CO2 emissions in 2050, which are 50% +- 37.5% of those in 2035.
 
   ghgi_ng_methaneleakage:
     desc: Amount of methane leakage in production chain (relative to total amount used)
@@ -169,20 +170,20 @@ params:
           gwp100:
             2025: 10.7 +- 0.5
             2035: 10.7 +- 0.5
-            2050: 9.4 +- 0.5
+            2050: 5.4 +- 4.0
           gwp20:
             2025: 10.7 +- 0.5
             2035: 10.7 +- 0.5
-            2050: 9.4 +- 0.5
+            2050: 5.4 +- 4.0
         atr-ccs-93%:
           gwp100:
             2025: 10.9 +- 0.5
             2035: 10.9 +- 0.5
-            2050: 9.5 +- 0.5
+            2050: 5.5 +- 4.1
           gwp20:
             2025: 10.9 +- 0.5
             2035: 10.9 +- 0.5
-            2050: 9.5 +- 0.5
+            2050: 5.5 +- 4.1
       cts:
         smr-ccs-56%:
           gwp100: 0.2 +- 0.01
@@ -201,7 +202,8 @@ params:
     source:
       LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
       outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section. Supply-chain CO2 emissions 
-      are reduced to 87.5% between 2035 and 2050. The uncertainty is assumed to be 5% throughout.
+      are reduced to 87.5% between 2035 and 2050. The uncertainty is assumed to be 5% throughout, except for the 
+      uncertainty of supply-chain CO2 emissions in 2050, which are 50% +- 37.5% of those in 2035.
 
   ghgi_blue_methaneleakage_perrate:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
