@@ -142,6 +142,20 @@ H5, H3 {
     color: #fff
 }
 
+.header-left-side {
+display: flex;
+}
+
+.header-right-side {
+    display: flex;
+    text-align: right;
+    margin-left: auto;
+}
+    
+.header-right-side > div {
+    margin-left: 1em;
+}
+
 
 
 /*
@@ -199,5 +213,24 @@ H5, H3 {
     .annotation-text {
         font-size: 0.8rem !important;
     }
+    
+    #banner {
+        display: block;
+        height: 14rem;
+    }
+    
+    #banner > div, #banner > a {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 
+    .header-left-side {
+        display: block;
+        text-align: center;
+    }
+
+    .header-right-side {
+        display: block;
+        text-align: center;
+    }
 }

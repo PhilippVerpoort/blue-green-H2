@@ -20,29 +20,60 @@ def getLayout(logo_url: str):
                 id='banner',
                 className='banner',
                 children=[
-                    html.A(
-                        html.Img(src=logo_url),
-                        href='https://www.pik-potsdam.de/'
+                    html.Div(
+                        children=[
+                            html.A(
+                                html.Img(src=logo_url),
+                                href='https://www.pik-potsdam.de/',
+                            ),
+                            html.Div(
+                                html.B('Cost competitiveness of blue and green H₂'),
+                                className='app-title',
+                            ),
+                            html.Div(
+                                dcc.Link(
+                                    'Simple',
+                                    href='/',
+                                    className='mainlink',
+                                ),
+                                className='app-modes',
+                            ),
+                            html.Div(
+                                dcc.Link(
+                                    'Advanced',
+                                    href='/advanced',
+                                    className='mainlink',
+                                ),
+                                className='app-modes',
+                            ),
+                        ],
+                        className='header-left-side',
                     ),
                     html.Div(
-                        html.B('Cost competitiveness of blue and green H₂'),
-                        className='app-title',
-                    ),
-                    html.Div(
-                        dcc.Link(
-                            'Simple',
-                            href='/',
-                            className='mainlink',
-                        ),
-                        className='app-modes',
-                    ),
-                    html.Div(
-                        dcc.Link(
-                            'Advanced',
-                            href='/advanced',
-                            className='mainlink',
-                        ),
-                        className='app-modes',
+                        children=[
+                            html.Div(
+                                dcc.Link(
+                                    'Impressum',
+                                    href='https://interactive.pik-potsdam.de/impressum',
+                                    className='mainlink',
+                                ),
+                            ),
+                            html.Div(
+                                dcc.Link(
+                                    'Accessibility',
+                                    href='https://interactive.pik-potsdam.de/accessibility',
+                                    className='mainlink',
+                                ),
+                            ),
+                            html.Div(
+                                dcc.Link(
+                                    'Privacy policy',
+                                    href='https://interactive.pik-potsdam.de/privacy-policy',
+                                    className='mainlink',
+                                ),
+                            ),
+                        ],
+                        className='header-right-side',
                     ),
                 ],
             ),
