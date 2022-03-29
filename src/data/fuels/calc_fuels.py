@@ -2,12 +2,10 @@ import pandas as pd
 
 from src.data.fuels.calc_ghgi import calcGHGI
 from src.data.fuels.calc_cost import calcCost
-
-
-# calculate fuel data
 from src.timeit import timeit
 
 
+# calculate fuel data
 @timeit
 def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str = 'gwp100', levelised: bool = False):
     fuelSpecs = {'names': {}, 'colours': {}}
@@ -18,7 +16,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
         fuelSpecs['colours'][fuel_id] = fuel['colour']
 
         for t in times:
-            currentParams = getCurrentAsDict(full_params, t)
+            currentParams = full_params.query(f"year=={t}").droplevel(level=1)
 
             levelisedCost = calcCost(currentParams, fuel)
             levelisedGHGI = calcGHGI(currentParams, fuel, gwp)
@@ -47,20 +45,3 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, gwp: str =
     fuelData = pd.DataFrame.from_records(fuelEntries)
 
     return fuelData, fuelSpecs
-
-
-# convert dataframe of parameters/coefficients to a simple dict
-def getCurrentAsDict(full_data: pd.DataFrame, t: int):
-    currentDataValue = {}
-    currentDataUncUp = {}
-    currentDataUncLo = {}
-
-    for p in list(full_data.query(f"year=={t}").name):
-        datum = full_data.query(f"year=={t} & name=='{p}'").iloc[0]
-
-        currentDataValue[p] = datum.value
-        currentDataUncUp[p] = datum.uncertainty if not datum.isnull().uncertainty else 0.0
-        currentDataUncLo[p] = datum.uncertainty_lower if not datum.isnull().uncertainty_lower else \
-                              datum.uncertainty if not datum.isnull().uncertainty else 0.0
-
-    return currentDataValue, currentDataUncUp, currentDataUncLo

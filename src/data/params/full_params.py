@@ -18,12 +18,16 @@ def getFullParams(basicData: dict, units: dict, times: list):
             if 'unit' in par and par['unit'] is not None:
                 conversionFactor, newUnit = __convertUnit(par['unit'], units)
                 newPar['value'] = conversionFactor * newPar['value']
-                newPar['uncertainty'] = conversionFactor * newPar['uncertainty'] if newPar['uncertainty'] is not None else None
-                newPar['uncertainty_lower'] = conversionFactor * newPar['uncertainty_lower'] if newPar['uncertainty_lower'] is not None else None
+                newPar['uncertainty'] = conversionFactor * newPar['uncertainty'] if newPar['uncertainty'] is not None else 0.0
+                newPar['uncertainty_lower'] = conversionFactor * newPar['uncertainty_lower'] if newPar['uncertainty_lower'] is not None else newPar['uncertainty']
                 newPar['unit'] = newUnit
             pars.append(newPar)
 
-    return pd.DataFrame.from_records(pars, columns=['name', 'year', 'unit', 'value', 'uncertainty', 'uncertainty_lower'])
+    r = pd.DataFrame.from_records(pars, columns=['name', 'year', 'unit', 'value', 'uncertainty', 'uncertainty_lower'])\
+                    .set_index(['name', 'year'])\
+                    .rename(columns={'value': 'val', 'uncertainty': 'uu', 'uncertainty_lower': 'ul'})
+
+    return r
 
 
 # Iteratively calculate values for 1) keys (smr/atr, gwp100/gwp20, etc) and 2) different times (2025, 2030, 2035, etc).

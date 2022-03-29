@@ -12,7 +12,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotSensitivityNG(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, fullParams: pd.DataFrame, config: dict):
+def plotSensitivityNG(fuelData: pd.DataFrame, fullParams: pd.DataFrame, config: dict):
     fig = make_subplots(
         rows=3,
         cols=2,
@@ -30,14 +30,14 @@ def plotSensitivityNG(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, fullParams
     # updated plotFSCP and FSCPs for ii)
     fuelDataII = fuelData.copy(deep=True)
     fuelDataII[['cost__fuel_cost']] = fuelDataII[['cost__fuel_cost']].fillna(value=0.0)
-    p_ng = fullParams.query(f"name=='cost_ng_price'").filter(items=['year', 'value']).rename(columns={'value': 'p_ng'}).assign(p_ng_new=lambda x: x['p_ng'] + config['addNGPrice'])
+    p_ng = fullParams.reset_index().query(f"name=='cost_ng_price'").filter(items=['year', 'val']).rename(columns={'val': 'p_ng'}).assign(p_ng_new=lambda x: x['p_ng'] + config['addNGPrice'])
     fuelDataII = fuelDataII.merge(p_ng, on=['year']).assign(cost=lambda x: x['cost'] + x['cost__fuel_cost'] * (x['p_ng_new'] / x['p_ng'] - 1.0))
 
 
     # updated plotFSCP and FSCPs for iii)
     fuelDataIII = fuelData.copy(deep=True)
     fuelDataIII[['cost__elec_cost']] = fuelDataIII[['cost__elec_cost']].fillna(value=0.0)
-    p_el = fullParams.query(f"name=='cost_green_elec_RE'").filter(items=['year', 'value']).rename(columns={'value': 'p_el'}).assign(p_el_new=lambda x: x['p_el'] + config['addElPrice'])
+    p_el = fullParams.reset_index().query(f"name=='cost_green_elec_RE'").filter(items=['year', 'val']).rename(columns={'val': 'p_el'}).assign(p_el_new=lambda x: x['p_el'] + config['addElPrice'])
     fuelDataIII = fuelDataIII.merge(p_el, on=['year']).assign(cost=lambda x: x['cost'] + x['cost__elec_cost']*(x['p_el_new']/x['p_el']-1.0))
 
 

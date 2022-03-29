@@ -4,7 +4,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from src.data.fuels.calc_cost import getCostParamsBlue, getCostParamsGreen, getCostBlue, getCostGreen
-from src.data.fuels.calc_fuels import getCurrentAsDict
 from src.timeit import timeit
 
 
@@ -30,9 +29,9 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
     fuelBlue = fuels[config['fuelBlue']]
     fuelGreen = fuels[config['fuelGreen']]
 
-    currentParams = getCurrentAsDict(fullParams, config['fuelYear'])
-    pBlue = getCostParamsBlue(*currentParams, fuelBlue)
-    pGreen = getCostParamsGreen(*currentParams, fuelGreen)
+    currentParams = fullParams.query(f"year=={config['fuelYear']}").droplevel(level=1)
+    pBlue = getCostParamsBlue(currentParams, fuelBlue)
+    pGreen = getCostParamsGreen(currentParams, fuelGreen)
 
     # add green traces
     varyGreenParams = ['pelre', 'c_pl', 'ocf']

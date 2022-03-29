@@ -9,7 +9,6 @@ from plotly.subplots import make_subplots
 from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
 from src.data.fuels.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue
-from src.data.fuels.calc_fuels import getCurrentAsDict
 
 
 @timeit
@@ -315,9 +314,9 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     gwp = 'gwp100'
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
-    currentParams = getCurrentAsDict(fullParams, config['fuelYearTop'])
-    pBlue = getGHGIParamsBlue(*currentParams, fuelBlueRawCfg, gwp)
-    pGreen = getGHGIParamsGreen(*currentParams, fuelGreenRawCfg, gwp)
+    currentParams = fullParams.query(f"year=={config['fuelYearTop']}").droplevel(level=1)
+    pBlue = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwp)
+    pGreen = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwp)
 
 
     # calculate FSCPs for grid
@@ -357,8 +356,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     # determine other xaxes ranges
     range3 = [GHGIBlue[0][0], GHGIBlue[0][-1]]
 
-    pBlue = getGHGIParamsBlue(*currentParams, fuelBlueRawCfg, gwp)
-    pBlueOther = getGHGIParamsBlue(*currentParams, fuelBlueRawCfg, gwpOther)
+    pBlue = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwp)
+    pBlueOther = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwpOther)
     GHGIBlueBase, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
     GHGIBlueOtherBase, _ = __getGHGIs(pBlueOther, pGreen, baseOnly=True)
     # ghgi0_1 + p_1 * ghgim_1 = ghgi0_2 + p_2 * ghgim_2
@@ -449,9 +448,9 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
     gwp = 'gwp100'
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
-    currentParams = getCurrentAsDict(fullParams, config['fuelYearBottom'])
-    pBlue = getGHGIParamsBlue(*currentParams, fuelBlueRawCfg, gwp)
-    pGreen = getGHGIParamsGreen(*currentParams, fuelGreenRawCfg, gwp)
+    currentParams = fullParams.query(f"year=={config['fuelYearBottom']}").droplevel(level=1)
+    pBlue = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwp)
+    pGreen = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwp)
 
 
     # calculate FSCPs for grid
@@ -498,8 +497,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
     # determine other xaxes ranges
     range3 = [GHGIGreen[0][0], GHGIGreen[0][-1]]
 
-    pGreen = getGHGIParamsGreen(*currentParams, fuelGreenRawCfg, gwp)
-    pGreenOther = getGHGIParamsGreen(*currentParams, fuelGreenRawCfg, gwpOther)
+    pGreen = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwp)
+    pGreenOther = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwpOther)
     GHGIGreenBase, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
     GHGIGreenOtherBase, _ = __getGHGIs(pBlue, pGreenOther, baseOnly=True)
     # b_1 + eff*(sh1*ghgielre_1 + (1-sh1)*ghgielfos_1) = b_2 + eff*(sh2*ghgielre_2 + (1-sh2)*ghgielfos_2)

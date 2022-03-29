@@ -18,7 +18,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
         'plotHeatmap': (fuelData, fuelDataSteel,),
         'plotBlueGreen': (fuelData, fullParams, input_data['fuels']),
         'plotSensitivity': (fullParams, input_data['fuels'],),
-        'plotSensitivityNG': (fuelData, FSCPData, fullParams,),
+        'plotSensitivityNG': (fuelData, fullParams,),
     }
 
     figs = {}

@@ -51,7 +51,7 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plots_
         elif btnPressed == 'results-replot':
             # load fuelSpecs and fullParams from session
             fuelSpecs = saved_plot_data['fuelSpecs']
-            fullParams = pd.DataFrame(saved_plot_data['fullParams'])
+            fullParams = pd.DataFrame(saved_plot_data['fullParams']).set_index(['name', 'year'])
             # convert relevant columns in fullParams Dataframe to int or float
             fullParams['year'] = fullParams['year'].astype(int)
             fullParams['value'] = fullParams['value'].astype(float)
@@ -72,7 +72,7 @@ def callbackUpdate(n1, n2, n3, table_results_data: list, saved_plot_data, plots_
 
     addWebappSpecificStyling(figs)
 
-    saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.to_dict()}
+    saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.reset_index().to_dict()}
 
     return *figs.values(), fuelData.to_dict('records'), saved_plot_data
 

@@ -1,75 +1,50 @@
+import pandas as pd
+
+
 known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
 known_elec_srcs = ['RE', 'fossil', 'share']
 
 
-def calcCost(params: tuple, fuel: dict):
+def calcCost(current_params: pd.DataFrame, fuel: dict):
     if fuel['type'] == 'fossil':
-        return getCostNG(*params, fuel)
+        return getCostNG(current_params, fuel)
     elif fuel['type'] == 'blue':
-        p = getCostParamsBlue(*params, fuel)
+        p = getCostParamsBlue(current_params, fuel)
         return getCostBlue(**p)
     elif fuel['type'] == 'green':
-        p = getCostParamsGreen(*params, fuel)
+        p = getCostParamsGreen(current_params, fuel)
         return getCostGreen(**p)
     else:
         raise Exception(f"Unknown fuel: {fuel['type']}")
 
 
-def getCostNG(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
-    r = par['cost_ng_price']
-    r_uu = par_uu['cost_ng_price']
-    r_ul = par_ul['cost_ng_price']
-
-    return {'fuel_cost': (r, r_uu, r_ul)}
+def getCostNG(pars: pd.DataFrame, fuel: dict):
+    return {'fuel_cost': __getValAndUnc(pars, 'cost_ng_price')}
 
 
-def getCostParamsBlue(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
+def getCostParamsBlue(pars: pd.DataFrame, fuel: dict):
     tech_type = fuel['tech_type']
     if tech_type not in known_tech_types:
         raise Exception(f"Blue technology type unknown: {tech_type}")
     if tech_type == 'atr-ccs-93%-lowscco2':
         tech_type = 'atr-ccs-93%'
 
-    i = par['irate']
-    n = par['lifetime']
+    i = __getVal(pars, 'irate')
+    n = __getVal(pars, 'lifetime')
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        c_pl=(
-            par[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
-            par_uu[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
-            par_ul[f"cost_blue_capex_{tech_type}"] if fuel['include_capex'] else 0.0,
-        ),
-        c_fonm=(
-            par[f"cost_blue_fixedonm_{tech_type}"],
-            par_uu[f"cost_blue_fixedonm_{tech_type}"],
-            par_ul[f"cost_blue_fixedonm_{tech_type}"],
-        ),
-        c_vonm=(
-            par[f"cost_blue_varonm_{tech_type}"],
-            par_uu[f"cost_blue_varonm_{tech_type}"],
-            par_ul[f"cost_blue_varonm_{tech_type}"],
-        ),
-        flh=par['cost_blue_flh'],
-        p_ng=(
-            par['cost_ng_price'],
-            par_uu['cost_ng_price'],
-            par_ul['cost_ng_price'],
-        ),
-        eff=par[f"blue_eff_{tech_type}"],
-        p_el = (
-            par['cost_green_elec_fossil'],
-            par_uu['cost_green_elec_fossil'],
-            par_ul['cost_green_elec_fossil'],
-        ),
-        eff_el=par[f"blue_eff_elec_{tech_type}"],
-        c_CTS=(
-            par['cost_blue_cts'],
-            par_uu['cost_blue_cts'],
-            par_ul['cost_blue_cts'],
-        ),
-        emi=par[f"cost_blue_emiForCTS_{tech_type}"],
-        transp=par['cost_h2transp'],
+        c_pl=__getValAndUnc(pars, f"cost_blue_capex_{tech_type}") if fuel['include_capex'] else (0.0, 0.0, 0.0),
+        c_fonm=__getValAndUnc(pars, f"cost_blue_fixedonm_{tech_type}"),
+        c_vonm=__getValAndUnc(pars, f"cost_blue_varonm_{tech_type}"),
+        flh=__getVal(pars, 'cost_blue_flh'),
+        p_ng=__getValAndUnc(pars, 'cost_ng_price'),
+        eff=__getVal(pars, f"blue_eff_{tech_type}"),
+        p_el=__getValAndUnc(pars, 'cost_green_elec_fossil'),
+        eff_el=__getVal(pars, f"blue_eff_elec_{tech_type}"),
+        c_CTS=__getValAndUnc(pars, 'cost_blue_cts'),
+        emi=__getVal(pars, f"cost_blue_emiForCTS_{tech_type}"),
+        transp=__getVal(pars, 'cost_h2transp'),
     )
 
 
@@ -85,47 +60,32 @@ def getCostBlue(FCR, c_pl, c_fonm, c_vonm, flh, p_ng, eff, p_el, eff_el, c_CTS, 
     }
 
 
-def getCostParamsGreen(par: dict, par_uu: dict, par_ul: dict, fuel: dict):
+def getCostParamsGreen(pars: pd.DataFrame, fuel: dict):
     tech_type = fuel['tech_type']
     if tech_type not in known_elec_srcs:
         raise Exception(f"Green electricity source type unknown: {tech_type}")
 
-    i = par['irate']
-    n = par['lifetime']
+    i = __getVal(pars, 'irate')
+    n = __getVal(pars, 'lifetime')
 
-    share = par['green_share']
     if tech_type == 'fossil':
         share = 0.0
     elif tech_type == 'RE':
         share = 1.0
+    else:
+        share = pars.loc['green_share'].val
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        c_pl=(
-            par['cost_green_capex'] if fuel['include_capex'] else 0.0,
-            par_uu['cost_green_capex'] if fuel['include_capex'] else 0.0,
-            par_ul['cost_green_capex'] if fuel['include_capex'] else 0.0,
-        ),
-        c_fonm=par['cost_green_fixedonm'],
-        c_vonm=(
-            par['cost_green_varonm'],
-            par_uu['cost_green_varonm'],
-            par_ul['cost_green_varonm'],
-        ),
-        ocf=par['green_ocf'],
+        c_pl=__getValAndUnc(pars, 'cost_green_capex'),
+        c_fonm=__getVal(pars, 'cost_green_fixedonm'),
+        c_vonm=__getValAndUnc(pars, 'cost_green_varonm'),
+        ocf=__getVal(pars, 'green_ocf'),
         sh=share,
-        pelre=(
-            par['cost_green_elec_RE'],
-            par_uu['cost_green_elec_RE'],
-            par_ul['cost_green_elec_RE'],
-        ),
-        pelfos=(
-            par['cost_green_elec_fossil'],
-            par_uu['cost_green_elec_fossil'],
-            par_ul['cost_green_elec_fossil'],
-        ),
-        eff=par['green_eff'],
-        transp=par['cost_h2transp'],
+        pelre=__getValAndUnc(pars, 'cost_green_elec_RE'),
+        pelfos=__getValAndUnc(pars, 'cost_green_elec_fossil'),
+        eff=__getVal(pars, 'green_eff'),
+        transp=__getVal(pars, 'cost_h2transp'),
     )
 
 
@@ -138,3 +98,11 @@ def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, sh, pelre, pelfos, eff, transp)
         'vonm_cost': tuple(c for c in c_vonm),
         'tra_cost': (transp, 0.0, 0.0),
     }
+
+
+def __getValAndUnc(pars: pd.DataFrame, pname: str):
+    return tuple(val for idx, val in pars.loc[pname, ['val', 'uu', 'ul']].iteritems())
+
+
+def __getVal(pars: pd.DataFrame, pname: str):
+    return pars.loc[pname].val
