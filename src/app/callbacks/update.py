@@ -89,9 +89,8 @@ def updateScenarioInputAdvanced(scenarioInput: dict, advanced_gwp: str, advanced
             'desc': row['desc'],
             'type': row['type'],
             'colour': row['colour'],
-            'blue_type': row['blue_type'],
+            'tech_type': row['tech_type'],
             'include_capex': row['include_capex'],
-            'elecsrc': row['elecsrc']
         }
 
         scenarioInput['fuels'][row['fuel']] = newFuel
