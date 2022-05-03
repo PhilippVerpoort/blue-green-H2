@@ -406,3 +406,10 @@ there.
 
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {}
+
+
+/* Table dropdown select dialogue fix
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.Select-menu-outer {
+  display : block !important;
+}
