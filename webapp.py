@@ -21,4 +21,4 @@ flask_app = dash_app.server
 
 # for running as Python script in standalone
 if __name__ == '__main__':
-    dash_app.run_server(debug=True)
+    dash_app.run_server(debug=False)
