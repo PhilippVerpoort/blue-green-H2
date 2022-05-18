@@ -103,7 +103,34 @@ def getElementAdvancedControlsCardRight():
                             {'value': False, 'label': 'False'},
                         ]
                     },
-                }
+                },
+                style_cell={'whiteSpace': 'pre-line'},
+                style_cell_conditional=[
+                    {
+                        'if': {'column_id': 'fuel'},
+                        'width': '15%',
+                    },
+                    {
+                        'if': {'column_id': 'desc'},
+                        'width': '30%',
+                    },
+                    {
+                        'if': {'column_id': 'colour'},
+                        'width': '5%',
+                    },
+                    {
+                        'if': {'column_id': 'type'},
+                        'width': '15%',
+                    },
+                    {
+                        'if': {'column_id': 'tech_type'},
+                        'width': '15%',
+                    },
+                    {
+                        'if': {'column_id': 'include_capex'},
+                        'width': '10%',
+                    },
+                ],
             ),
         ],
         className='card-element',
