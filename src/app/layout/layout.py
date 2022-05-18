@@ -5,7 +5,6 @@ from src.app.layout.elements.advanced import getElementAdvancedControlsCardLeft,
 from src.app.layout.modals.advanced_modal import getModalUpdateAdvancedTable
 from src.app.layout.modals.plot_settings_modal import getModalPlotConfig
 from src.app.layout.elements.figures import getFigures
-from src.app.layout.elements.results import getElementResultsCard
 from src.app.layout.elements.simple import getElementSimpleControlsCard
 from src.app.layout.elements.summary import getElementSummaryCard
 from src.config_load import plots_cfg
@@ -90,7 +89,7 @@ def getLayout(logo_url: str):
             html.Div(
                 id='right-column',
                 className='eight columns',
-                children=[getElementAdvancedControlsCardRight()]+getFigures()+[getElementResultsCard()],
+                children=[getElementAdvancedControlsCardRight()]+getFigures(),
             ),
 
             # modals

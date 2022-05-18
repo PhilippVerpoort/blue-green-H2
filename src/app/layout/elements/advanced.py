@@ -42,7 +42,15 @@ def getElementAdvancedControlsCardLeft():
             html.Div(
                 children=[
                     html.Button(id='advanced-update', n_clicks=0, children='Update', className='scenario-buttons'),
-                    html.Button(id='advanced-download-config', n_clicks=0, children='Download Config', className='scenario-buttons'),
+                    html.Button(id='advanced-download-config', n_clicks=0, children='Download config', className='scenario-buttons'),
+                    html.Form(
+                        action='/download/data.xlsx',
+                        method='get',
+                        children=[
+                            dbc.Button(id='results-download', type='submit', children='Download data', className='scenario-buttons')
+                        ],
+                        style={'float': 'right'},
+                    ),
                 ],
                 className='card-element',
             ),
