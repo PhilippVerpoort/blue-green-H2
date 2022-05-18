@@ -1,6 +1,6 @@
-from config_load import input_data, steel_data, plots_cfg
-from data.data import getFullData
-from plotting.plot_all import plotAllFigs
+from src.config_load import input_data, steel_data, plots_cfg
+from src.data.data import getFullData
+from src.plotting.plot_all import plotAllFigs
 
 
 outputData = getFullData(input_data.copy(), steel_data)

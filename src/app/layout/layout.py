@@ -1,6 +1,6 @@
 from dash import dcc, html
 
-from config_load_app import app_cfg
+from src.config_load_app import app_cfg
 from src.app.layout.elements.advanced import getElementAdvancedControlsCardLeft, getElementAdvancedControlsCardRight
 from src.app.layout.modals.advanced_modal import getModalUpdateAdvancedTable
 from src.app.layout.modals.plot_settings_modal import getModalPlotConfig

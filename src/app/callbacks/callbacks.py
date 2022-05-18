@@ -4,7 +4,7 @@ import dash
 from dash.dependencies import Input, Output, State
 from flask import send_file
 
-from app.callbacks.init import figsDefault
+from src.app.callbacks.init import figsDefault
 from src.app.app import dash_app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.config_load_app import figNames, figs_cfg, allSubFigNames
