@@ -4,6 +4,7 @@ import dash
 from dash.dependencies import Input, Output, State
 from flask import send_file
 
+from app.callbacks.init import figsDefault
 from src.app.app import dash_app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.config_load_app import figNames, figs_cfg, allSubFigNames
@@ -31,8 +32,8 @@ def callbackUpdate(n1, n2, plots_cfg: dict,
                    advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
     ctx = dash.callback_context
     if not ctx.triggered:
-        inputDataUpdated = input_data.copy()
-        outputData = getFullData(inputDataUpdated, steel_data)
+        print("Loading figures from default values")
+        return *figsDefault.values(),
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
