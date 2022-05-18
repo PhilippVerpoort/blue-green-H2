@@ -1,5 +1,6 @@
 from dash import dcc, html
 
+from config_load_app import app_cfg
 from src.app.layout.elements.advanced import getElementAdvancedControlsCardLeft, getElementAdvancedControlsCardRight
 from src.app.layout.modals.advanced_modal import getModalUpdateAdvancedTable
 from src.app.layout.modals.plot_settings_modal import getModalPlotConfig
@@ -27,7 +28,7 @@ def getLayout(logo_url: str):
                                 href='https://www.pik-potsdam.de/',
                             ),
                             html.Div(
-                                html.B('Cost competitiveness of blue and green H₂'),
+                                html.B(app_cfg['title']),
                                 className='app-title',
                             ),
                             html.Div(
