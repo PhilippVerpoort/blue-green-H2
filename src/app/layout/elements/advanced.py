@@ -47,7 +47,7 @@ def getElementAdvancedControlsCardLeft():
                 className='card-element',
             ),
         ],
-        className='side-card elements-card',
+        className='side-card',
         style={'display': 'none'},
     )
 
@@ -200,7 +200,7 @@ def getElementAdvancedControlsCardRight():
 
     return html.Div(
         id='advanced-controls-card-right',
-        className='fig-card',
+        className='side-card',
         children=[
             widget_advanced_fuels,
             widget_advanced_params,

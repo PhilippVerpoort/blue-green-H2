@@ -86,12 +86,6 @@ H5, H3 {
     cursor: pointer !important;
 }
 
-#intro {
-    margin: 20px 0px;
-    font-family: "Helvetica Neue", sans-serif;
-    text-align: justify;
-}
-
 .fig-card {
     background-color: #FFFFFF;
     padding: 1rem;
@@ -118,11 +112,11 @@ H5, H3 {
     margin-right: 15px;
 }
 
-.elements-card label.form-label {
+.side-card label.form-label {
     font-weight: bold;
 }
 
-.elements-card div.card-element {
+.side-card div.card-element {
     margin-top: 10px;
 }
 
@@ -178,10 +172,6 @@ display: flex;
 
     h3 {
         font-size: 2.5rem;
-    }
-
-    #intro {
-        margin: 10px 0px;
     }
 
     #left-column, #right-column {

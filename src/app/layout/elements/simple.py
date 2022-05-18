@@ -52,5 +52,5 @@ def getElementSimpleControlsCard():
                 className='card-element',
             ),
         ],
-        className='side-card elements-card',
+        className='side-card',
     )
