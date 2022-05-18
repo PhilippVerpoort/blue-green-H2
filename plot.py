@@ -1,7 +1,7 @@
 import sys
 
 from src.config_load import input_data, steel_data, plots_cfg
-from src.data.data import getFullData
+from src.data.data import getFullData, exportDataXLS
 from src.data.params.export_params import exportInputData
 from src.plotting.export_file import exportFigsToFiles
 from src.plotting.plot_all import plotAllFigs
@@ -15,15 +15,19 @@ else:
 
 
 # Get full parameter, fuel, FSCP, and steel data based on input data.
-fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data, steel_data)
+outputData = getFullData(input_data, steel_data)
 
 
 # Export params to CSV table for presenting in the paper.
-exportInputData(input_data)
+exportInputData(input_data['params'])
+
+
+# export selected input and output data as XLS
+exportDataXLS(input_data, outputData)
 
 
 # Run plotting routines to generate figures
-figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel, input_data, plots_cfg, plot_list=plot_list)
+figs = plotAllFigs(outputData, input_data, plots_cfg, plot_list=plot_list)
 
 
 # Export figures to files

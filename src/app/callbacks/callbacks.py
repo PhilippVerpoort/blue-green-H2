@@ -1,4 +1,3 @@
-import pandas as pd
 import yaml
 
 import dash
@@ -8,7 +7,6 @@ from flask import send_file
 from src.app.app import dash_app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.config_load_app import figNames, figs_cfg, allSubFigNames
-from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.data import getFullData
 from src.config_load import input_data, steel_data, plots
 from src.filepaths import getFilePathAssets, getFilePath
@@ -18,11 +16,9 @@ from src.plotting.plot_all import plotAllFigs
 
 # general callback for (re-)generating plots
 @dash_app.callback(
-    [*(Output(subFigName, 'figure') for subFigName in allSubFigNames),
-     Output('saved-plot-data', 'data')],
+    [*(Output(subFigName, 'figure') for subFigName in allSubFigNames),],
     [Input('simple-update', 'n_clicks'),
      Input('advanced-update', 'n_clicks'),
-     State('saved-plot-data', 'data'),
      State('plots-cfg', 'data'),
      State('simple-gwp', 'value'),
      State('simple-important-params', 'data'),
@@ -30,32 +26,29 @@ from src.plotting.plot_all import plotAllFigs
      State('advanced-times', 'data'),
      State('advanced-fuels', 'data'),
      State('advanced-params', 'data'),])
-def callbackUpdate(n1, n2, saved_plot_data, plots_cfg: dict,
+def callbackUpdate(n1, n2, plots_cfg: dict,
                    simple_gwp: str, simple_important_params: list,
                    advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
     ctx = dash.callback_context
     if not ctx.triggered:
-        input_data_updated = input_data.copy()
-        fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
+        inputDataUpdated = input_data.copy()
+        outputData = getFullData(inputDataUpdated, steel_data)
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
-            input_data_updated = updateScenarioInputSimple(input_data.copy(), simple_gwp, simple_important_params)
-            fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
+            inputDataUpdated = updateScenarioInputSimple(input_data.copy(), simple_gwp, simple_important_params)
+            outputData = getFullData(inputDataUpdated, steel_data)
         elif btnPressed == 'advanced-update':
-            input_data_updated = updateScenarioInputAdvanced(input_data.copy(), advanced_gwp, advanced_times, advanced_fuels, advanced_params)
-            fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel = getFullData(input_data_updated, steel_data)
+            inputDataUpdated = updateScenarioInputAdvanced(input_data.copy(), advanced_gwp, advanced_times, advanced_fuels, advanced_params)
+            outputData = getFullData(inputDataUpdated, steel_data)
         else:
             raise Exception('Unknown button pressed!')
 
-    figs = plotAllFigs(fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel,
-                       input_data, plots_cfg, global_cfg='webapp')
+    figs = plotAllFigs(outputData, inputDataUpdated, plots_cfg, global_cfg='webapp')
 
     addWebappSpecificStyling(figs)
 
-    saved_plot_data = {'fuelSpecs': fuelSpecs, 'fullParams': fullParams.reset_index().to_dict()}
-
-    return *figs.values(), saved_plot_data
+    return *figs.values(),
 
 
 # callback for YAML config download

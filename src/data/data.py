@@ -29,15 +29,24 @@ def getFullData(input_data: dict, steel_data: dict):
     FSCPData = calcFSCPs(fuelData)
     FSCPDataSteel = calcFSCPs(fuelDataSteel)
 
-    # export selected input and output data as XLS
-    exportDataXLS(params, fuels, fullParams, fuelData)
-
-    return fullParams, fuelSpecs, fuelData, FSCPData, fuelDataSteel, FSCPDataSteel
+    # return all output data
+    return {
+        'fullParams': fullParams,
+        'fuelSpecs': fuelSpecs,
+        'fuelData': fuelData,
+        'FSCPData': FSCPData,
+        'fuelDataSteel': fuelDataSteel,
+        'FSCPDataSteel': FSCPDataSteel,
+    }
 
 
 # export selected data into XLS output file
-def exportDataXLS(params, fuels, fullParams, fuelData):
-    print('Exporting...')
+def exportDataXLS(input_data, output_data):
+    print('Exporting to spreadsheet...')
+
+    options, params, fuels = (input_data['options'], input_data['params'], input_data['fuels'])
+    fullParams, fuelData = (output_data['fullParams'], output_data['fuelData'])
+
     filePath = getFilePathOutput('data.xlsx')
     writer = pd.ExcelWriter(filePath)
 

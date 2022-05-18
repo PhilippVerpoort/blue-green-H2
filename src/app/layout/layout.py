@@ -98,7 +98,6 @@ def getLayout(logo_url: str):
 
             # dcc locations, stores, and downloads
             dcc.Location(id='url', refresh=False),
-            dcc.Store(id='saved-plot-data', storage_type='session'),
             dcc.Store(id='plots-cfg', storage_type='session', data=plots_cfg),
             dcc.Download(id='download-config-yaml'),
             dcc.Download(id='download-results-xlsx'),

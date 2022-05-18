@@ -1,16 +1,18 @@
 import csv
 
+import pandas as pd
+
 from src.filepaths import getFilePathOutput
 
 
-def exportInputData(input_data: dict):
-    params = []
+def exportInputData(params: dict):
+    rows = []
 
-    for paramKey, paramData in input_data['params'].items():
+    for paramKey, paramData in params.items():
         source = paramData['source'] if 'source' in paramData else ''
-        params.extend(__printScenarioValue(paramData['desc'], paramData['unit'], source, paramData['value']))
+        rows.extend(__printScenarioValue(paramData['desc'], paramData['unit'], source, paramData['value']))
 
-    __writeToFile(params, 'table_scenario_params.csv')
+    __writeToFile(rows, 'table_scenario_params.csv')
 
 
 def __printScenarioValue(name, unit, source, value):
@@ -25,7 +27,7 @@ def __printScenarioValue(name, unit, source, value):
         return [(name, unit, f"2025: {value}", f"2050: {value}", source)]
 
 
-def exportFullParams(full_params: dict):
+def exportFullParams(full_params: pd.DataFrame):
     yearInit = 2025
     yearFinal = 2050
 

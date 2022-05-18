@@ -7,18 +7,17 @@ import yaml
 from src.config_load import plots, plots_cfg_global
 
 
-def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFrame, FSCPData: pd.DataFrame,
-                fuelDataSteel: pd.DataFrame, FSCPDataSteel: pd.DataFrame, input_data: dict, plots_cfg: dict,
+def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
                 plot_list: Union[list, None] = None, global_cfg = 'print'):
 
     allPlotArgs = {
-        'plotBars': (fuelData,),
-        'plotLines': (fuelData, FSCPData,),
-        'plotOverTime': (FSCPData, FSCPDataSteel,),
-        'plotHeatmap': (fuelData, fuelDataSteel,),
-        'plotBlueGreen': (fuelData, fullParams, input_data['fuels']),
-        'plotSensitivity': (fullParams, input_data['fuels'],),
-        'plotSensitivityNG': (fuelData, fullParams,),
+        'plotBars': (allData['fuelData'],),
+        'plotLines': (allData['fuelData'], allData['FSCPData'],),
+        'plotOverTime': (allData['FSCPData'], allData['FSCPDataSteel'],),
+        'plotHeatmap': (allData['fuelData'], allData['fuelDataSteel'],),
+        'plotBlueGreen': (allData['fuelData'], allData['fullParams'], input_data['fuels']),
+        'plotSensitivity': (allData['fullParams'], input_data['fuels'],),
+        'plotSensitivityNG': (allData['fuelData'], allData['fullParams'],),
     }
 
     figs = {}
@@ -38,7 +37,7 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
             if 'import' in config:
                 for imp in config['import']:
                     config[imp] = yaml.load(plots_cfg[imp], Loader=yaml.FullLoader)
-            config = {**config, **fuelSpecs, **yaml.load(plots_cfg[plotName], Loader=yaml.FullLoader), **{'global': plots_cfg_global[global_cfg]}}
+            config = {**config, **allData['fuelSpecs'], **yaml.load(plots_cfg[plotName], Loader=yaml.FullLoader), **{'global': plots_cfg_global[global_cfg]}}
 
             module = importlib.import_module(f"src.plotting.plots.{plotName}")
             plotFigMethod = getattr(module, plotName)
@@ -46,6 +45,6 @@ def plotAllFigs(fullParams: pd.DataFrame, fuelSpecs: dict, fuelData: pd.DataFram
             newFigs = plotFigMethod(*plotArgs, config)
             figs.update(newFigs)
 
-    print('Done with plotting...')
+    print('Plot creation complete...')
 
     return figs
