@@ -105,7 +105,6 @@ def getElementAdvancedControlsCardRight():
                     },
                 }
             ),
-            html.Div(id='table-fuels-dropdown-container'),
         ],
         className='card-element',
     )
@@ -168,7 +167,6 @@ def getElementAdvancedControlsCardRight():
                     },
                 ],
             ),
-            html.Div(id='table-params-dropdown-container'),
         ],
         className='card-element',
     )
