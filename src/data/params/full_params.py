@@ -3,13 +3,13 @@ from typing import Union
 
 import pandas as pd
 
-
+from src.config_load import units
 from src.timeit import timeit
 
 
 # Calculate parameters including uncertainty at different times, using linear interpolation if needed.
 @timeit
-def getFullParams(basicData: dict, units: dict, times: list):
+def getFullParams(basicData: dict, times: list):
     pars = []
 
     for parId, par in basicData.items():

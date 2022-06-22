@@ -4,9 +4,9 @@ params:
     desc: Natural gas price (per LHV)
     type: linear
     value:
-      2025: 6.0 +- 0.2
-      2050: 6.0 + 0.5 - 2.0
-    unit: EUR/GJ
+      2025: 30.0 +- 5.0
+      2050: 30.0 +- 10.0
+    unit: EUR/MWh
     source:
       6 €/GJ = 21.6 €/MWh taken from IEA GHG report. Uncertainty remains small in 2025 (ignoring current strong 
       fluctuations due to Ukraine conflict). This is followed by a potentially strong price decrease till 2050 due to 
@@ -280,13 +280,8 @@ params:
     short: Elec. price
     type: linear
     value:
-      RE:
-        2025: 45.0 +- 10.0
-        2050: 25.0 +- 10.0
-      fossil:
-        2025: 85.0 +- 10.0
-        2030: 80.0 +- 5.0
-        2050: 70.0 + 5.0 - 10.0
+      2025: 45.0 +- 10.0
+      2050: 25.0 +- 10.0
     unit: USD/MWh
     source:
       RE number assuming own estimates based on various sources. Mixed numbers based on Agora/Bloomberg(2021) till 2030 
@@ -353,15 +348,11 @@ params:
   green_share:
     desc: Share of renewable and grey electricity. 100% means RE only.
     short: Share of RE
-    type: linear
-    value:
-      2025: 80.0
-      2035: 100.0
-      2050: 100.0
-    unit:
-      percent
+    type: const
+    value: 100.0
+    unit: percent
     source:
-      Own assumptions.
+      Assuming dedicated RE production.
 
   lifetime:
     desc: lifetime

@@ -1,40 +1,117 @@
 fuels:
-  natural gas:
-    desc: Natural Gas
+  NG:
+    desc: Natural gas
     type: fossil
     colour: '#ef7500'
+    cases:
+      ghgi_ng_methaneleakage:
+        LL:
+          desc: Low leakage
+          value:
+            2025: 1.0
+            2050: 0.1
+        HL:
+          desc: High leakage
+          value:
+            2025: 5.0
+            2050: 2.5
+      cost_ng_price:
+        MP:
+          desc: 30 EUR/MWh
+          value:
+            2025: 40.0
+            2030: 30.0
+            2050: 30.0
+        HP: # high price case
+          desc: 40 EUR/MWh
+          value:
+            2025: 50.0
+            2030: 40.0
+            2050: 40.0
 
-  blue HEB:
-    desc: Blue H<sub>2</sub> (SMR-CCS-56%)
+  SMR56:
+    desc: Blue H<sub>2</sub> SMR-CCS-56%
     type: blue
     colour: '#3647a3'
     tech_type: smr-ccs-56%
-    include_capex: True
+    cases:
+      ghgi_ng_methaneleakage:
+        LL:
+          desc: Low leakage
+          value:
+            2025: 1.0
+            2050: 0.1
+        HL:
+          desc: High leakage
+          value:
+            2025: 5.0
+            2050: 2.5
+      cost_ng_price:
+        MP:
+          desc: 30 EUR/MWh
+          value:
+            2025: 40.0
+            2030: 30.0
+            2050: 30.0
+        HP: # high price case
+          desc: 40 EUR/MWh
+          value:
+            2025: 50.0
+            2030: 40.0
+            2050: 40.0
 
-  blue LEB:
-    desc: Blue H<sub>2</sub> (ATR-CCS-93%)
+  ATR93:
+    desc: Blue H<sub>2</sub> ATR-CCS-93%
     type: blue
     colour: '#589ace'
     tech_type: atr-ccs-93%
-    include_capex: True
+    cases:
+      ghgi_ng_methaneleakage:
+        LL:
+          desc: Low leakage
+          value:
+            2025: 1.0
+            2050: 0.1
+        HL:
+          desc: High leakage
+          value:
+            2025: 5.0
+            2050: 2.5
+      cost_ng_price:
+        MP:
+          desc: 30 EUR/MWh
+          value:
+            2025: 40.0
+            2030: 30.0
+            2050: 30.0
+        HP: # high price case
+          desc: 40 EUR/MWh
+          value:
+            2025: 50.0
+            2030: 40.0
+            2050: 40.0
 
-  blue LEB lowscco2:
-    desc: Blue H<sub>2</sub> (ATR-CCS-93%, low supply-chain CO<sub>2</sub>)
-    type: blue
-    colour: '#589ace'
-    tech_type: atr-ccs-93%-lowscco2
-    include_capex: True
-
-  green RE:
-    desc: Green H<sub>2</sub> (80-to-100% RE)
+  ELEC:
+    desc: Green H<sub>2</sub> Electrolysis
     type: green
     colour: '#6ac100'
-    tech_type: share
-    include_capex: True
-
-  green pure RE:
-    desc: Green H<sub>2</sub> (100% RE)
-    type: green
-    colour: '#6ac100'
-    tech_type: RE
-    include_capex: True
+    cases:
+      green_share:
+        RE:
+          desc: 100% RE
+          value: 100.0
+        ME:
+          desc: 90% RE
+          value: 90.0
+      cost_green_elec:
+        LP:
+          desc: 45-to-25 EUR/MWh
+          value:
+            2025: 45.0 +- 10.0
+            2050: 25.0 +- 10.0
+        HP:
+          desc: 70-to-60 EUR/MWh
+          value:
+            2025: 70.0 +- 10.0
+            2030: 70.0 +- 10.0
+            2050: 60.0 + 5.0 - 10.0

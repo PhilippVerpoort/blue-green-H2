@@ -40,10 +40,11 @@ ghgi:
       ghgi__other: '#00813e'
 
 fuels:
-  - natural gas
-  - blue HEB
-  - blue LEB
-  - green RE
+  - NG-LL-MP
+  - SMR56-LL-MP
+  - ATR93-LL-MP
+  - ELEC-RE-LP
+  - ELEC-RE-HP
 
 years:
   - 2025

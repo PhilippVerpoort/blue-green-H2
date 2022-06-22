@@ -33,12 +33,6 @@ def __obtainData(fuelData: pd.DataFrame, config: dict):
     for i, row in plotData.iterrows():
         plotData.at[i, 'name'] = config['names'][row['fuel']]
 
-    # update name of green
-    plotData.loc[(plotData['fuel']=='green RE') & (plotData['year']==2025), 'name'] = 'Electrolysis-RE-80%'
-    plotData.loc[(plotData['fuel']=='green RE') & (plotData['year']==2050), 'name'] = 'Electrolysis-RE-100%'
-    for blueName in ('blue HEB', 'blue LEB'):
-        plotData.loc[(plotData['fuel']==blueName), 'name'] = plotData.query(f"fuel=='{blueName}'").name.str.replace('.* \((.*)\)', lambda m: m.group(1), regex=True)
-
     return plotData
 
 
@@ -64,7 +58,7 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
     keys = plotConfig['labels'].keys()
     for stack in keys:
         fig.add_bar(
-            x=[plotData.year, plotData.name],
+            x=[plotData.year, plotData.fuel],
             y=plotData[stack]*scale,
             marker_color=plotConfig['colours'][stack],
             name=plotConfig['labels'][stack],
@@ -74,7 +68,7 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
 
     # add error bar
     fig.add_bar(
-        x=[plotData.year, plotData.name],
+        x=[plotData.year, plotData.fuel],
         y=0.00000001*plotData[type],
         error_y=dict(
             type='data',

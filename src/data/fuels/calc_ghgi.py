@@ -7,19 +7,35 @@ known_elec_srcs = ['RE', 'fossil', 'share']
 
 def calcGHGI(current_params: pd.DataFrame, fuel: dict, gwp: str):
     if fuel['type'] == 'fossil':
-        p = getGHGIParamsNG(current_params, fuel, gwp)
+        p = getGHGIParamsNG(current_params, gwp)
         return getGHGING(**p)
     elif fuel['type'] == 'blue':
-        p = getGHGIParamsBlue(current_params, fuel, gwp)
+        tech_type, lowscco2 = __getTechType(fuel)
+        p = getGHGIParamsBlue(current_params, tech_type, lowscco2, gwp)
         return getGHGIBlue(**p)
     elif fuel['type'] == 'green':
-        p = getGHGIParamsGreen(current_params, fuel, gwp)
+        p = getGHGIParamsGreen(current_params, gwp)
         return getGHGIGreen(**p)
     else:
         raise Exception(f"Unknown fuel: {fuel['type']}")
 
 
-def getGHGIParamsNG(pars: pd.DataFrame, fuel: dict, gwp: str):
+def __getTechType(fuel: dict):
+    known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
+
+    tech_type = fuel['tech_type']
+    if tech_type not in known_tech_types:
+        raise Exception(f"Blue technology type unknown: {tech_type}")
+    if tech_type == 'atr-ccs-93%-lowscco2':
+        tech_type = 'atr-ccs-93%'
+        lowscco2 = '-lowscco2'
+    else:
+        lowscco2 = ''
+
+    return tech_type, lowscco2
+
+
+def getGHGIParamsNG(pars: pd.DataFrame, gwp: str):
     return dict(
         bdir=__getValAndUnc(pars, f"ghgi_ng_base_direct_{gwp}"),
         bele=__getValAndUnc(pars, f"ghgi_ng_base_elec_{gwp}"),
@@ -41,15 +57,7 @@ def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
     }
 
 
-def getGHGIParamsBlue(pars: pd.DataFrame, fuel: dict, gwp: str):
-    tech_type = fuel['tech_type']
-    if tech_type not in known_tech_types:
-        raise Exception(f"Blue technology type unknown: {tech_type}")
-    if tech_type == 'atr-ccs-93%-lowscco2':
-        tech_type = 'atr-ccs-93%'
-        lowscco2 = '-lowscco2'
-    else:
-        lowscco2 = ''
+def getGHGIParamsBlue(pars: pd.DataFrame, tech_type: str, lowscco2: str, gwp: str):
 
     # add cts ghgi to other
     poth = pars.loc[f"ghgi_blue_base_other_{tech_type}_{gwp}", ['val', 'uu', 'ul']] \
@@ -80,22 +88,11 @@ def getGHGIBlue(bdir, bele, bscc, both, mlr, mghgi, transp):
     return r
 
 
-def getGHGIParamsGreen(pars: pd.DataFrame, fuel: dict, gwp: str):
-    tech_type = fuel['tech_type']
-    if tech_type not in known_elec_srcs:
-        raise Exception(f"Green electricity source type unknown: {tech_type}")
-
-    if tech_type == 'fossil':
-        share = 0.0
-    elif tech_type == 'RE':
-        share = 1.0
-    else:
-        share = pars.loc['green_share'].val
-
+def getGHGIParamsGreen(pars: pd.DataFrame, gwp: str):
     return dict(
         b=__getValAndUnc(pars, f"ghgi_green_base_{gwp}"),
         eff=__getVal(pars, 'green_eff'),
-        sh=share,
+        sh=__getVal(pars, 'green_share'),
         elre=__getValAndUnc(pars, f"ghgi_green_elec_RE_{gwp}"),
         elfos=__getValAndUnc(pars, f"ghgi_green_elec_fossil_{gwp}"),
         transp=__getVal(pars, 'ghgi_h2transp'),

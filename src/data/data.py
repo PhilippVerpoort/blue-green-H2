@@ -1,6 +1,5 @@
 import pandas as pd
 
-from src.config_load import units
 from src.filepaths import getFilePathOutput
 from src.data.params.full_params import getFullParams
 from src.data.FSCPs.calc_FSCPs import calcFSCPs
@@ -14,11 +13,11 @@ def getFullData(input_data: dict, steel_data: dict):
 
     # convert basic inputs to complete dataframes
     print('Getting full list of parameters...')
-    fullParams = getFullParams(params, units, options['times'])
+    fullParams = getFullParams(params, options['times'])
 
     # calculate fuel data
     print('Calculating fuel cost and GHGI data...')
-    fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, options['gwp'])
+    fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, params, options['gwp'])
 
     # calculate steel data
     print('Calculating steel data...')
