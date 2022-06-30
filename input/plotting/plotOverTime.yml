@@ -20,21 +20,21 @@ subplot_title_positions:
 
 selected_cases:
   uncompetitive:
-    - NG-LL-MP
-    - SMR56-LL-MP
-    - ELEC-RE-HP
+    - NG-LL-HP
+    - SMR56-LL-HP
+    - ELEC-RE-HP-HC
   blue-supreme:
     - NG-LL-LP
     - ATR93-LL-LP
-    - ELEC-RE-HP
+    - ELEC-RE-HP-HC
   green-supreme:
-    - NG-LL-MP
-    - SMR56-LL-MP
-    - ELEC-RE-LP
+    - NG-LL-HP
+    - SMR56-LL-HP
+    - ELEC-RE-LP-LC
   competitive:
     - NG-LL-LP
     - ATR93-LL-LP
-    - ELEC-RE-LP
+    - ELEC-RE-LP-LC
 
 selected_cases_labels:
   uncompetitive: Uncompetitive
@@ -44,11 +44,11 @@ selected_cases_labels:
 
 sidelabels:
   top:
-    - Pessimistic blue (low capture rate, medium gas price)
+    - Pessimistic blue (low capture rate, high gas price)
     - Optimistic blue (high capture rate, low gas price)
   left:
-    - Pessimistic green (high elec price)
-    - Optimistic green (low elec price)
+    - Pessimistic green (high elec and capital cost)
+    - Optimistic green (low elec and capital cost)
 
 annotationTexts:
   heading1: Milestones that capture the expanding competitiveness of low-carbon hydrogen with fossil applications

@@ -126,7 +126,7 @@ def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             **annotationStyling
         )
 
-    # # add circles on intersects
+    # add circles on intersects
     __addAnnotations(fig, cpTrajData, plotLines, config)
 
 
