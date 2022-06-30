@@ -16,6 +16,12 @@ fuels:
             2025: 5.0
             2050: 2.5
       cost_ng_price:
+        LP:
+          desc: 20 EUR/MWh
+          value:
+            2025: 20.0
+            2030: 20.0
+            2050: 20.0
         MP:
           desc: 30 EUR/MWh
           value:
@@ -47,6 +53,12 @@ fuels:
             2025: 5.0
             2050: 2.5
       cost_ng_price:
+        LP:
+          desc: 20 EUR/MWh
+          value:
+            2025: 20.0
+            2030: 20.0
+            2050: 20.0
         MP:
           desc: 30 EUR/MWh
           value:
@@ -78,6 +90,12 @@ fuels:
             2025: 5.0
             2050: 2.5
       cost_ng_price:
+        LP:
+          desc: 20 EUR/MWh
+          value:
+            2025: 20.0
+            2030: 20.0
+            2050: 20.0
         MP:
           desc: 30 EUR/MWh
           value:
@@ -94,7 +112,7 @@ fuels:
   ELEC:
     desc: Green H<sub>2</sub> Electrolysis
     type: green
-    colour: '#6ac100'
+    colour: '#6ac100' #38761d
     cases:
       green_share:
         RE:

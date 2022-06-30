@@ -1,6 +1,6 @@
 import sys
 
-from src.config_load import input_data, steel_data, plots_cfg
+from src.config_load import input_data, plots_cfg
 from src.data.data import getFullData, exportDataXLS
 from src.data.params.export_params import exportInputData
 from src.plotting.export_file import exportFigsToFiles
@@ -15,7 +15,7 @@ else:
 
 
 # Get full parameter, fuel, FSCP, and steel data based on input data.
-outputData = getFullData(input_data, steel_data)
+outputData = getFullData(input_data)
 
 
 # Export params to CSV table for presenting in the paper.

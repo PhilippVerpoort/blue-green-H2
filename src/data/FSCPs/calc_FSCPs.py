@@ -1,13 +1,17 @@
 import pandas as pd
+from pandas._libs.parsers import CategoricalDtype
 
 from src.timeit import timeit
 
 
 @timeit
 def calcFSCPs(fuelData: pd.DataFrame):
-    fuelData = fuelData[['fuel', 'type', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul']]
+    fuelData = fuelData.filter(['fuel', 'type', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul']) \
+                       .assign(code=lambda r: r.type.map({'fossil': 0, 'blue': 1, 'green': 2}))
 
-    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y')).dropna()
+    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y'))\
+                  .query(f"code_x < code_y")\
+                  .drop(columns=['code_x', 'code_y'])
 
     tmp['fscp'] = (tmp['cost_x'] - tmp['cost_y'])/(tmp['ghgi_y'] - tmp['ghgi_x'])
     tmp['fscp_tc'] = tmp['cost_x'] + tmp['fscp'] * tmp['ghgi_x']

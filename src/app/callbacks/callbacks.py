@@ -9,7 +9,7 @@ from src.app.app import dash_app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
 from src.config_load_app import figNames, figs_cfg, allSubFigNames
 from src.data.data import getFullData
-from src.config_load import input_data, steel_data, plots
+from src.config_load import input_data, plots
 from src.filepaths import getFilePathAssets, getFilePath
 from src.plotting.styling.webapp import addWebappSpecificStyling
 from src.plotting.plot_all import plotAllFigs
@@ -38,10 +38,10 @@ def callbackUpdate(n1, n2, plots_cfg: dict,
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
             inputDataUpdated = updateScenarioInputSimple(input_data.copy(), simple_gwp, simple_important_params)
-            outputData = getFullData(inputDataUpdated, steel_data)
+            outputData = getFullData(inputDataUpdated)
         elif btnPressed == 'advanced-update':
             inputDataUpdated = updateScenarioInputAdvanced(input_data.copy(), advanced_gwp, advanced_times, advanced_fuels, advanced_params)
-            outputData = getFullData(inputDataUpdated, steel_data)
+            outputData = getFullData(inputDataUpdated)
         else:
             raise Exception('Unknown button pressed!')
 

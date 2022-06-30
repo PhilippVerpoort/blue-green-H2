@@ -3,7 +3,6 @@ import pandas as pd
 
 import plotly.graph_objects as go
 
-from src.config_load import steel_data
 from src.timeit import timeit
 
 

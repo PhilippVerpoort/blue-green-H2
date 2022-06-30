@@ -4,11 +4,10 @@ from src.filepaths import getFilePathOutput
 from src.data.params.full_params import getFullParams
 from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.fuels.calc_fuels import calcFuelData
-from src.data.steel.calc_steel import calcSteelData
 
 
 # obtain all required data for a scenario
-def getFullData(input_data: dict, steel_data: dict):
+def getFullData(input_data: dict):
     options, params, fuels = (input_data['options'], input_data['params'], input_data['fuels'])
 
     # convert basic inputs to complete dataframes
@@ -19,14 +18,9 @@ def getFullData(input_data: dict, steel_data: dict):
     print('Calculating fuel cost and GHGI data...')
     fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, params, options['gwp'])
 
-    # calculate steel data
-    print('Calculating steel data...')
-    fuelDataSteel = calcSteelData(fuelData, steel_data)
-
     # calculate FSCPs
     print('Calculating FSCPs...')
     FSCPData = calcFSCPs(fuelData)
-    FSCPDataSteel = calcFSCPs(fuelDataSteel)
 
     # return all output data
     return {
@@ -34,8 +28,6 @@ def getFullData(input_data: dict, steel_data: dict):
         'fuelSpecs': fuelSpecs,
         'fuelData': fuelData,
         'FSCPData': FSCPData,
-        'fuelDataSteel': fuelDataSteel,
-        'FSCPDataSteel': FSCPDataSteel,
     }
 
 

@@ -9,7 +9,7 @@ from src.timeit import timeit
 # calculate fuel data
 @timeit
 def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: dict, gwp: str = 'gwp100', levelised: bool = False):
-    fuelSpecs = {'names': {}, 'colours': {}}
+    fuelSpecs = {'names': {}, 'shortnames': {}, 'colours': {}}
     fuelEntries = []
 
     #print(full_params)
@@ -17,6 +17,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
     for fuel_id, fuel in fuels.items():
         if 'cases' not in fuel:
             fuelSpecs['names'][fuel_id] = fuel['desc']
+            fuelSpecs['shortnames'][fuel_id] = fuel['desc']
             fuelSpecs['colours'][fuel_id] = fuel['colour']
 
             fuelEntries.extend(__calcFuel(full_params, fuel_id, fuel, gwp, times))
@@ -26,6 +27,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
                 fuel_id_full = f"{fuel_id}-{cid}"
 
                 fuelSpecs['names'][fuel_id_full] = f"{fuel['desc']} ({case['desc']})"
+                fuelSpecs['shortnames'][fuel_id_full] = f"{fuel['desc']}"
                 fuelSpecs['colours'][fuel_id_full] = fuel['colour']
 
                 overridden_names = case['params'].droplevel(level=1).index.unique().to_list()

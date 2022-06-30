@@ -15,9 +15,6 @@ input_data = {**options, **fuels, **params}
 __filePath = getFilePathInput('data/units.yml')
 units = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)['units']
 
-__filePath = getFilePathInput('data/steel.yml')
-steel_data = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
-
 
 # load config data for plots and figures
 __filePath = getFilePathInput('plots.yml')

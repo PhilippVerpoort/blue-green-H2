@@ -1,5 +1,0 @@
-h2_demand: 1.91 # H2 demand of H-DR in MWh_H2LHV / t_LS
-other_cost: 457.21 # Other production cost in H-DR route in EUR / t_LS
-other_ghgi: 0.1485 # Other GHG intensity in H-DR route in tCO2eq / t_LS
-bf_cost: 389.28 # Blast furnace cost in EUR / t_LS
-bf_ghgi: 2.0 # Blast furnace GHGI in tCO2eq / t_LS
