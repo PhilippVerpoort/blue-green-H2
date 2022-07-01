@@ -40,11 +40,11 @@ ghgi:
       ghgi__other: '#00813e'
 
 fuels:
-  - NG-LL-MP
-  - SMR56-LL-MP
-  - ATR93-LL-MP
-  - ELEC-RE-LP
-  - ELEC-RE-HP
+  - NG-LL-HP
+  - SMR56-LL-HP
+  - ATR93-LL-HP
+  - ELEC-RE-LP-LC
+  - ELEC-RE-HP-HC
 
 years:
   - 2025
