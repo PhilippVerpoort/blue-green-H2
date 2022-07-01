@@ -11,6 +11,7 @@ labels:
 legendlabels:
   - Switching between natural gas and H<sub>2</sub>
   - Switching between H<sub>2</sub>-supply options
+  - Policy instrument driving the fuel switch
 
 subplot_title_positions:
   - [0.0, 1.05]
@@ -19,36 +20,44 @@ subplot_title_positions:
   - [0.5, 0.5]
 
 selected_cases:
-  uncompetitive:
-    - NG-LL-HP
-    - SMR56-LL-HP
+  pessimistic-US:
+    - NG-HL-LP
+    - SMR56-HL-LP
     - ELEC-RE-HP-HC
-  blue-supreme:
-    - NG-LL-LP
-    - ATR93-LL-LP
+    - ELEC-ME-HP-HC
+  pessimistic-EU:
+    - NG-HL-HP
+    - SMR56-HL-HP
     - ELEC-RE-HP-HC
-  green-supreme:
-    - NG-LL-HP
-    - SMR56-LL-HP
-    - ELEC-RE-LP-LC
-  competitive:
+    - ELEC-ME-HP-HC
+  optimistic-US:
     - NG-LL-LP
     - ATR93-LL-LP
     - ELEC-RE-LP-LC
+    - ELEC-ME-LP-LC
+  optimistic-EU:
+    - NG-LL-HP
+    - ATR93-LL-HP
+    - ELEC-RE-LP-LC
+    - ELEC-ME-LP-LC
 
 selected_cases_labels:
-  uncompetitive: Uncompetitive
-  green-supreme: Green supreme
-  blue-supreme: Blue supreme
-  competitive: Competitive
+  pessimistic-US: Pessimistic US
+  pessimistic-EU: Pessimistic EU
+  optimistic-US: Optimistic US
+  optimistic-EU: Optimistic EU
+
+cases_dashed:
+  - ELEC-ME-HP-HC
+  - ELEC-ME-LP-LC
 
 sidelabels:
   top:
-    - Pessimistic blue (low capture rate, high gas price)
-    - Optimistic blue (high capture rate, low gas price)
+    - High gas prices
+    - Low gas prices
   left:
-    - Pessimistic green (high elec and capital cost)
-    - Optimistic green (low elec and capital cost)
+    - Pessimistic assumptions
+    - Optimistic assumptions
 
 annotationTexts:
   heading1: Milestones that capture the expanding competitiveness of low-carbon hydrogen with fossil applications
