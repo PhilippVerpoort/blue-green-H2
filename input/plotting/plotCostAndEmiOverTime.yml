@@ -1,0 +1,41 @@
+cost:
+    yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
+
+    ymax: 300.0
+
+ghgi:
+    yaxislabel: Life-cycle GHGI of Energy (kg<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+
+    ymax: 1
+
+fuels:
+  - NG-LL-LP
+  - NG-HL-LP
+  - NG-LL-HP
+  - NG-HL-HP
+  - SMR56-LL-LP
+  - SMR56-HL-LP
+  - SMR56-LL-HP
+  - SMR56-HL-HP
+  - ATR93-LL-LP
+  - ATR93-HL-LP
+  - ATR93-LL-HP
+  - ATR93-HL-HP
+  - ELEC-RE-HP-HC
+  - ELEC-ME-HP-HC
+  - ELEC-RE-LP-HC
+  - ELEC-ME-LP-HC
+  - ELEC-RE-HP-LC
+  - ELEC-ME-HP-LC
+  - ELEC-RE-LP-LC
+  - ELEC-ME-LP-LC
+
+
+
+years:
+  - 2025
+  - 2030
+  - 2035
+  - 2040
+  - 2045
+  - 2050

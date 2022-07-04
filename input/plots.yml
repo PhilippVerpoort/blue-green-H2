@@ -18,3 +18,7 @@ plotSensitivity:
   - fig6
 plotSensitivityNG:
   - fig7
+plotCostAndEmiOverTime:
+  fig8:
+    - fig8a
+    - fig8b
