@@ -10,20 +10,63 @@ labels:
   costSteel: Direct Cost (EUR/t<sub>LS</sub>)
 
 annotationLabels:
-  left: Process heat (H<sub>2</sub> vs. natural gas)
-  right: Primary steel (H<sub>2</sub>-DR-EAF vs. BF-BOF)
+  left: Low gas prices
+  right: High gas prices
+
+thickLines:
+  left:
+    - size: 100
+      start: 100
+      end: 600
+    - size: 250
+      start: 750
+      end: 1000
+    - size: 300
+      start: 1200
+      end: 1500
+  right:
+    - size: 100
+      start: 100
+      end: 600
+    - size: 250
+      start: 750
+      end: 1000
+    - size: 300
+      start: 1200
+      end: 1500
 
 refFuel:
-  left: natural gas
-  right: blast furnace
+  left: NG-HL-LP
+  right: NG-HL-HP
 
 refYear:
-  left: 2025
-  right: 2025
+  left: 2030
+  right: 2030
 
 showFuels:
-  - green RE
-  - green pure RE
-  - blue HEB
-  - blue LEB
-  - blue LEB lowscco2
+  left:
+    - SMR56-LL-LP
+    - SMR56-HL-LP
+    - ATR93-LL-LP
+    - ATR93-HL-LP
+    - ELEC-RE-HP-HC
+    - ELEC-ME-HP-HC
+    - ELEC-RE-LP-HC
+    - ELEC-ME-LP-HC
+    - ELEC-RE-HP-LC
+    - ELEC-ME-HP-LC
+    - ELEC-RE-LP-LC
+    - ELEC-ME-LP-LC
+  right:
+    - SMR56-LL-HP
+    - SMR56-HL-HP
+    - ATR93-LL-HP
+    - ATR93-HL-HP
+    - ELEC-RE-HP-HC
+    - ELEC-ME-HP-HC
+    - ELEC-RE-LP-HC
+    - ELEC-ME-LP-HC
+    - ELEC-RE-HP-LC
+    - ELEC-ME-HP-LC
+    - ELEC-RE-LP-LC
+    - ELEC-ME-LP-LC

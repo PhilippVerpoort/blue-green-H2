@@ -53,8 +53,8 @@ cases_dashed:
 
 sidelabels:
   top:
-    - High gas prices
     - Low gas prices
+    - High gas prices
   left:
     - Pessimistic assumptions
     - Optimistic assumptions

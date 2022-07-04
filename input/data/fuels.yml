@@ -13,8 +13,8 @@ fuels:
         HL:
           desc: High leakage
           value:
-            2025: 1.65
-            2050: 1.65
+            2025: 1.66
+            2050: 1.66
       cost_ng_price:
         LP:
           desc: 15 EUR/MWh US future
@@ -44,8 +44,8 @@ fuels:
         HL:
           desc: High leakage
           value:
-            2025: 1.65
-            2050: 1.65
+            2025: 1.66
+            2050: 1.66
       cost_ng_price:
         LP:
           desc: 15 EUR/MWh US future
@@ -75,8 +75,8 @@ fuels:
         HL:
           desc: High leakage
           value:
-            2025: 1.65
-            2050: 1.65
+            2025: 1.66
+            2050: 1.66
       cost_ng_price:
         LP:
           desc: 15 EUR/MWh US future

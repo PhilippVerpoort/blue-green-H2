@@ -8,7 +8,6 @@ from src.timeit import timeit
 
 
 # Calculate parameters including uncertainty at different times, using linear interpolation if needed.
-@timeit
 def getFullParams(basicData: dict, times: list):
     pars = []
 
