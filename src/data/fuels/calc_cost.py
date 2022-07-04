@@ -73,16 +73,16 @@ def getCostParamsGreen(pars: pd.DataFrame):
         c_fonm=__getVal(pars, 'cost_green_fixedonm'),
         c_vonm=__getValAndUnc(pars, 'cost_green_varonm'),
         ocf=__getVal(pars, 'green_ocf'),
-        pel=__getValAndUnc(pars, 'cost_green_elec'),
+        p_el=__getValAndUnc(pars, 'cost_green_elec'),
         eff=__getVal(pars, 'green_eff'),
         transp=__getVal(pars, 'cost_h2transp'),
     )
 
 
-def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, pel, eff, transp):
+def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, p_el, eff, transp):
     return {
         'cap_cost': tuple(FCR * c/(ocf*8760) for c in c_pl),
-        'elec_cost': tuple(pel[i] / eff for i in range(3)),
+        'elec_cost': tuple(p_el[i] / eff for i in range(3)),
         'fonm_cost': tuple(c_fonm * FCR * c/(ocf*8760) for c in c_pl),
         'vonm_cost': tuple(c for c in c_vonm),
         'tra_cost': (transp, 0.0, 0.0),

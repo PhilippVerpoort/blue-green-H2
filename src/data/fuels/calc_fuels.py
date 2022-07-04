@@ -9,30 +9,30 @@ from src.timeit import timeit
 # calculate fuel data
 @timeit
 def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: dict, gwp: str = 'gwp100', levelised: bool = False):
-    fuelSpecs = {'names': {}, 'shortnames': {}, 'colours': {}}
+    fuelSpecs = {'names': {}, 'shortnames': {}, 'colours': {}, 'params': {}}
     fuelEntries = []
-
-    #print(full_params)
 
     for fuel_id, fuel in fuels.items():
         if 'cases' not in fuel:
+            fuelEntries.extend(__calcFuel(full_params, fuel_id, fuel, gwp, times))
+
             fuelSpecs['names'][fuel_id] = fuel['desc']
             fuelSpecs['shortnames'][fuel_id] = fuel['desc']
             fuelSpecs['colours'][fuel_id] = fuel['colour']
-
-            fuelEntries.extend(__calcFuel(full_params, fuel_id, fuel, gwp, times))
+            fuelSpecs['params'][fuel_id] = full_params
         else:
             cases = __getCases(fuel['cases'], params, times)
             for cid, case in cases.items():
                 fuel_id_full = f"{fuel_id}-{cid}"
 
-                fuelSpecs['names'][fuel_id_full] = f"{fuel['desc']} ({case['desc']})"
-                fuelSpecs['shortnames'][fuel_id_full] = f"{fuel['desc']}"
-                fuelSpecs['colours'][fuel_id_full] = fuel['colour']
-
                 overridden_names = case['params'].droplevel(level=1).index.unique().to_list()
                 this_params = pd.concat([full_params.query(f"name not in @overridden_names"), case['params']])
                 fuelEntries.extend(__calcFuel(this_params, fuel_id_full, fuel, gwp, times))
+
+                fuelSpecs['names'][fuel_id_full] = f"{fuel['desc']} ({case['desc']})"
+                fuelSpecs['shortnames'][fuel_id_full] = f"{fuel['desc']}"
+                fuelSpecs['colours'][fuel_id_full] = fuel['colour']
+                fuelSpecs['params'][fuel_id_full] = this_params
 
     fuelData = pd.DataFrame.from_records(fuelEntries)
 

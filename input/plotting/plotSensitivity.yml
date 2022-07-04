@@ -9,12 +9,12 @@ plotting:
 
 labels:
   x1: Electricity price<br>(EUR/MWh)
-  x2: Green GAPEX<br>(EUR/kW)
+  x2: Green CAPEX<br>(EUR/kW)
   x3: Green OCF<br>(%)
   x4: Natural-gas price<br>(EUR/MWh)
   x5: Blue CAPEX<br>(EUR/kW)
   cost: Cost difference in 2035 (EUR/MWh<sub>LHV</sub>)
 
-fuelBlue: blue LEB
-fuelGreen: green RE
+fuelBlue: ATR93-LL-LP
+fuelGreen: ELEC-RE-LP-LC
 fuelYear: 2035

@@ -8,9 +8,9 @@ from src.timeit import timeit
 
 
 @timeit
-def plotSensitivity(fullParams: pd.DataFrame, fuels: dict, config: dict):
+def plotSensitivity(fuels: dict, config: dict):
     # produce figure
-    fig = __produceFigure(fullParams, fuels, config)
+    fig = __produceFigure(fuels, config)
 
     # styling figure
     __styling(fig)
@@ -18,7 +18,7 @@ def plotSensitivity(fullParams: pd.DataFrame, fuels: dict, config: dict):
     return {'fig6': fig}
 
 
-def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
+def __produceFigure(fuels: dict, config: dict):
     # plot
     fig = make_subplots(rows=1,
                         cols=5,
@@ -26,15 +26,13 @@ def __produceFigure(fullParams: pd.DataFrame, fuels: dict, config: dict):
                         horizontal_spacing=0.02)
 
     # get data
-    fuelBlue = fuels[config['fuelBlue']]
-    fuelGreen = fuels[config['fuelGreen']]
+    techBlue = fuels[config['fuelBlue'].split('-')[0]]['tech_type']
 
-    currentParams = fullParams.query(f"year=={config['fuelYear']}").droplevel(level=1)
-    pBlue = getCostParamsBlue(currentParams, fuelBlue)
-    pGreen = getCostParamsGreen(currentParams, fuelGreen)
+    pBlue = getCostParamsBlue(config['params'][config['fuelBlue']].query(f"year=={config['fuelYear']}").droplevel(level=1), techBlue)
+    pGreen = getCostParamsGreen(config['params'][config['fuelBlue']].query(f"year=={config['fuelYear']}").droplevel(level=1))
 
     # add green traces
-    varyGreenParams = ['pelre', 'c_pl', 'ocf']
+    varyGreenParams = ['p_el', 'c_pl', 'ocf']
     for i, par in enumerate(varyGreenParams):
         j = i + 1
         pGreenMod = pGreen.copy()
