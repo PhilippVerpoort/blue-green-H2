@@ -46,8 +46,8 @@ params:
     short: CH4 Leakage
     type: linear
     value:
-      2025: 1.0
-      2050: 0.1
+      2025: 1.66
+      2050: 1.66
     unit: percent
     source:
       Based on today's range of leakage rates and the ambition of the industry to lower it significantly along with 
