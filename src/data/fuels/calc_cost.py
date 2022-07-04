@@ -2,14 +2,28 @@ import pandas as pd
 
 
 def calcCost(current_params: pd.DataFrame, fuel: dict):
+    p = paramsCost(current_params, fuel)
+    return evalCost(p, fuel)
+
+
+def paramsCost(current_params: pd.DataFrame, fuel: dict):
     if fuel['type'] == 'fossil':
-        return getCostNG(current_params)
+        return getCostParamsNG(current_params)
     elif fuel['type'] == 'blue':
         tech_type = __getTechType(fuel)
-        p = getCostParamsBlue(current_params, tech_type)
+        return getCostParamsBlue(current_params, tech_type)
+    elif fuel['type'] == 'green':
+        return getCostParamsGreen(current_params)
+    else:
+        raise Exception(f"Unknown fuel: {fuel['type']}")
+
+
+def evalCost(p, fuel: dict):
+    if fuel['type'] == 'fossil':
+        return getCostNG(**p)
+    elif fuel['type'] == 'blue':
         return getCostBlue(**p)
     elif fuel['type'] == 'green':
-        p = getCostParamsGreen(current_params)
         return getCostGreen(**p)
     else:
         raise Exception(f"Unknown fuel: {fuel['type']}")
@@ -27,8 +41,16 @@ def __getTechType(fuel: dict):
     return tech_type
 
 
-def getCostNG(pars: pd.DataFrame):
-    return {'fuel_cost': __getValAndUnc(pars, 'cost_ng_price')}
+def getCostParamsNG(pars: pd.DataFrame):
+    return dict(
+        p_ng=__getValAndUnc(pars, 'cost_ng_price'),
+    )
+
+
+def getCostNG(p_ng):
+    return {
+        'fuel_cost': tuple(p for p in p_ng),
+    }
 
 
 def getCostParamsBlue(pars: pd.DataFrame, tech_type: str):

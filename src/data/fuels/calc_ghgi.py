@@ -6,15 +6,28 @@ known_elec_srcs = ['RE', 'fossil', 'share']
 
 
 def calcGHGI(current_params: pd.DataFrame, fuel: dict, gwp: str):
+    p = paramsGHGI(current_params, fuel, gwp)
+    return evalGHGI(p, fuel)
+
+
+def paramsGHGI(current_params: pd.DataFrame, fuel: dict, gwp: str):
     if fuel['type'] == 'fossil':
-        p = getGHGIParamsNG(current_params, gwp)
-        return getGHGING(**p)
+        return getGHGIParamsNG(current_params, gwp)
     elif fuel['type'] == 'blue':
         tech_type, lowscco2 = __getTechType(fuel)
-        p = getGHGIParamsBlue(current_params, tech_type, lowscco2, gwp)
+        return getGHGIParamsBlue(current_params, tech_type, lowscco2, gwp)
+    elif fuel['type'] == 'green':
+        return getGHGIParamsGreen(current_params, gwp)
+    else:
+        raise Exception(f"Unknown fuel: {fuel['type']}")
+
+
+def evalGHGI(p, fuel: dict):
+    if fuel['type'] == 'fossil':
+        return getGHGING(**p)
+    elif fuel['type'] == 'blue':
         return getGHGIBlue(**p)
     elif fuel['type'] == 'green':
-        p = getGHGIParamsGreen(current_params, gwp)
         return getGHGIGreen(**p)
     else:
         raise Exception(f"Unknown fuel: {fuel['type']}")
@@ -47,7 +60,6 @@ def getGHGIParamsNG(pars: pd.DataFrame, gwp: str):
 
 
 def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
-
     return {
         'direct': bdir,
         'elec': bele,
