@@ -1,3 +1,4 @@
+from itertools import permutations
 from string import ascii_lowercase
 
 import numpy as np
@@ -36,8 +37,8 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
         listOfFSCPs.append(selected_FSCPs)
 
     plotFSCPs = pd.concat(listOfFSCPs)
-    plotScatter = plotFSCPs[['tid', 'fuel_x', 'fuel_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul']]
-    plotLines = plotFSCPs[['tid', 'fuel_x', 'fuel_y', 'year', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']]
+    plotScatter = plotFSCPs[['tid', 'fuel_x', 'type_x', 'fuel_y', 'type_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul']]
+    plotLines = plotFSCPs[['tid', 'fuel_x', 'type_x', 'fuel_y', 'type_y', 'year', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']]
 
     # interpolation of plotLines
     t = np.linspace(plotLines['year'].min(), plotLines['year'].max(), n_samples)
@@ -46,6 +47,8 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
 
     for tid in plotLines.tid.unique():
         fuel_x, fuel_y = tid.split(' to ')
+        type_x = plotLines.query(f"fuel_x=='{fuel_x}'").type_x.tolist()[0]
+        type_y = plotLines.query(f"fuel_y=='{fuel_y}'").type_y.tolist()[0]
 
         samples = plotLines.query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}'")\
                            .reset_index(drop=True)\
@@ -53,7 +56,9 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
         new = dict(
             tid=n_samples * [tid],
             fuel_x=n_samples * [fuel_x],
+            type_x=n_samples * [type_x],
             fuel_y=n_samples * [fuel_y],
+            type_y=n_samples * [type_y],
             year=t,
         )
         tmp = pd.DataFrame(new, columns=plotLines.keys())
@@ -194,7 +199,13 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
         fuel_y = thisScatter.iloc[thisScatter.first_valid_index()]['fuel_y']
         name = f"Fossil→{config['shortnames'][fuel_y]}" if fuel_x.startswith('NG') else f"{config['shortnames'][fuel_x]}→{config['shortnames'][fuel_y]}"
         col = config['fscp_colour'][fuel_x.split('-')[0]] if 'NG' not in tid else config['colours'][fuel_y]
-        isbluegreen = 'NG' in fuel_x
+        isbluegreen = 'NG' not in fuel_x
+
+        if isbluegreen and thisLine.fscp.max() > 2000.0:
+            y = thisLine.loc[thisLine.fscp.idxmax(), 'year']
+            q = f"year>={y}"
+            thisLine = thisLine.query(q)
+            thisScatter = thisScatter.query(q)
 
         # scatter plot
         thisTraces.append(go.Scatter(
@@ -204,7 +215,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             legendgroup=0 if isbluegreen else 1,
             showlegend=False,
             mode='markers',
-            line=dict(color=col, width=config['global']['lw_default']), #, dash='dot' if dashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default']),
             marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': col}, ),
             hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
         ))
@@ -217,7 +228,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             legendgrouptitle=dict(text=f"<b>{config['legendlabels'][0]}:</b>" if isbluegreen else f"<b>{config['legendlabels'][1]}:</b>"),
             name=name,
             mode='lines',
-            line=dict(color=col, width=config['global']['lw_default']), #, dash='dot' if dashed else 'dash' if longdashed else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuel_y in config['cases_dashed'] else 'solid'),
         ))
 
         traces[tid] = thisTraces
@@ -226,16 +237,14 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
 
 
 def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
-    #scid_include = ['green-supreme', 'competitive']
-
     for i, j, scid in [(k//2+1, k%2+1, scid) for k, scid in enumerate(config['selected_cases'])]:
-        points = __calcPoints(cpTrajData, plotLines, config['selected_cases'][scid])
-        data = pd.DataFrame(points).T.query(f"delta < 5.0")
+        points = __calcPoints(cpTrajData, plotLines, config['selected_cases'][scid], config)
+        data = points.query(f"delta < 5.0")
 
         fig.add_trace(go.Scatter(
             x=data.year,
             y=data.fscp,
-            text=data.index,
+            text=data.label,
             mode='markers+text',
             marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
             textposition='bottom center',
@@ -244,30 +253,38 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
         ), row=i, col=j)
 
 
-def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list) -> dict:
-    points = {}
+def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list, config: dict) -> dict:
+    points = []
 
-    fuelRef, fuelBlue, fuelGreen = fuels
+    types = ['fossil', 'blue', 'green']
+    groupedFuels = {t: [f for f in fuels if not plotLines.query(f"(fuel_x=='{f}' and type_x=='{t}') or (fuel_y=='{f}' and type_y=='{t}')").empty] for t in types}
 
-    dropCols = ['tid', 'fuel_x', 'fuel_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
-    greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
-    blueLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)
-    redLine = plotLines.query(f"fuel_x=='{fuelBlue}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
+    for fuelRef, fuelBlue, fuelGreen in [(r,b,g) for r in groupedFuels['fossil'] for b in groupedFuels['blue'] for g in groupedFuels['green']]:
+        dropCols = ['tid', 'fuel_x', 'fuel_y', 'type_x', 'type_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
+        greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
+        blueLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)
+        redLine = plotLines.query(f"fuel_x=='{fuelBlue}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
 
-    purpleLine = cpTrajData.drop(columns=['name', 'CP_u', 'CP_l'])
+        purpleLine = cpTrajData.drop(columns=['name', 'CP_u', 'CP_l'])
 
-    for i, line in enumerate([blueLine, greenLine, redLine]):
-        diffLines = pd.merge(line, purpleLine, on=['year'])
-        diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
-        points[i+2] = diffLines.nsmallest(1, 'delta').drop(columns=['CP']).iloc[0]
+        # marker 5
+        diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
+        diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
+        points.append(diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).head(1).assign(label=5))
 
-    diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
-    diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
-    points[5] = diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).iloc[0]
+        if fuelGreen in config['cases_dashed']:
+            continue
 
-    points[6] = redLine.abs().nsmallest(1, 'fscp').assign(delta=lambda r: r.fscp).iloc[0]
+        # markers 2-4
+        for i, line in enumerate([blueLine, greenLine, redLine]):
+            diffLines = pd.merge(line, purpleLine, on=['year'])
+            diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
+            points.append(diffLines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i+2))
 
-    return points
+        # marker 6
+        points.append(redLine.abs().nsmallest(1, 'fscp').assign(delta=lambda r: r.fscp).head(1).assign(label=6))
+
+    return pd.concat(points)
 
 
 def __addAnnotationArrows(fig: go.Figure, config: dict):
@@ -393,7 +410,8 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
     # add main graphs (FSCP and CP)
     traces.append(go.Scatter(
         name=name,
-        legendgroup=1,
+        legendgroup=3,
+        legendgrouptitle=dict(text=f"<b>{config['legendlabels'][2]}</b>:"),
         mode='lines',
         x=cpTrajData['year'],
         y=cpTrajData['CP'],
