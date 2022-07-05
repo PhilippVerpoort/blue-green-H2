@@ -82,13 +82,12 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict
     annotationStyling = dict(xanchor='center', yanchor='middle', showarrow=False,
                               bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
 
-    blueTech = config['blueTechs'][type]
     fig.add_annotation(
         x=0.50,
         xref=f"x domain",
         y=1.10,
         yref=f"y domain",
-        text=f"Blue H<sub>2</sub> from {blueTech}",
+        text=config['headings'][type],
         **annotationStyling
     )
 
@@ -125,7 +124,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         # line properties
         fuel = row['fuel']
         year = row['year']
-        name = config['names'][fuel] if fuel!='green RE' else ('Green H<sub>2</sub> (80% RE)' if year==2025 else 'Green H<sub>2</sub> (100% RE)')
+        name = config['names'][fuel]
         col = config['colours'][fuel]
 
         # update line type
@@ -140,7 +139,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
         # fuel line
         traces.append((index, go.Scatter(x=x, y=y,
-            name=f"{name} in {year}" if fuel!='natural gas' else 'Natural gas',
+            name=f"{fuel} ({year})",
             legendgroup=f"{fuel}_{year}",
             mode="lines",
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if occurrence[fuel]>1 else 'solid'),
