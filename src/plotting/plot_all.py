@@ -19,6 +19,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
         'plotSensitivity': (input_data['fuels'],),
         'plotSensitivityNG': (allData['fuelData'], allData['fullParams'],),
         'plotCostAndEmiOverTime': (allData['fuelData'],),
+        'plotSensitivityFSCP': (input_data['fuels'],),
     }
 
     figs = {}

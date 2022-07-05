@@ -1,0 +1,36 @@
+n_samples: 51
+yrange:
+  - 0.0
+  - 600.0
+ylabel: Blue-to-green fuel-switching carbon price (EUR)
+
+
+sensitivity_params:
+  p_el:
+    delta: 10.0
+    scale: 1.0
+    label: Electricity price<br>(EUR/MWh)
+  sh:
+    delta: -0.1
+    scale: 100.0
+    label: Share of renewable elec.<br>(%)
+  p_ng:
+    delta: 15.0
+    scale: 1.0
+    label: Natural-gas price<br>(EUR/MWh)
+  mlr:
+    delta: 0.01
+    scale: 100.0
+    label: Methane-leakage rate<br>(%)
+
+
+colour: '#fc4b32'
+
+
+fuels:
+  - ELEC-RE-LP-LC to ATR93-LL-LP
+
+
+years:
+  - 2035
+  - 2045
