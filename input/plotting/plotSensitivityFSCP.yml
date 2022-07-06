@@ -1,7 +1,7 @@
 n_samples: 51
 yrange:
   - -10.0
-  - +800.0
+  - +600.0
 ylabel: Blue-to-green fuel-switching carbon price (EUR)
 
 
@@ -30,11 +30,11 @@ sensitivity_params:
       - top left
   p_ng:
     range:
-      - -10.0
-      - +10.0
+      - 10.0
+      - 40.0
     scale: 1.0
-    label: Change of natural-gas price<br>(EUR/MWh)
-    mode: relative
+    label: Natural-gas price<br>(EUR/MWh)
+    mode: absolute
     vline: once
     textpos:
       - top right
@@ -67,15 +67,10 @@ colour: '#fc4b32'
 
 
 fuels:
-  - ATR93-LL-LP to ELEC-RE-LP-LC
-  - ATR93-LL-HP to ELEC-RE-LP-LC
+  - ATR93-LL-LP to ELEC-RE-LP-LC-HCF
 
 
 years:
   - 2035
+  - 2040
   - 2045
-
-
-fuel_labels:
-  - Low gas price
-  - High gas price

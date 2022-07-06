@@ -58,8 +58,7 @@ def __produceFigure(fuels: dict, config: dict):
                     y=fscp,
                     hoverinfo='skip',
                     mode='lines',
-                    name=config['fuel_labels'][fid],
-                    showlegend=True if fid not in hasLegend else False,
+                    showlegend=False,
                     line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
                 ),
                 row=1, col=j+1,
@@ -81,7 +80,7 @@ def __produceFigure(fuels: dict, config: dict):
                     hoverinfo='skip',
                     mode='markers+text',
                     showlegend=False,
-                    line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
+                    line=dict(width=config['global']['lw_default'], color=config['colour'], dash='dash' if fid else None),
                     marker=dict(symbol='circle-open', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': config['colour']},),
                     textposition=settings['textpos'][fid],
                     textfont=dict(color=config['colour']),
@@ -130,6 +129,9 @@ def __produceFigure(fuels: dict, config: dict):
             'range': xrange,
         }
         fig.update_layout(**{f"xaxis{j + 1 if j else ''}": axis})
+
+        # add horizontal line for fscp=0
+        fig.add_hline(0.0, row=1, col=j+1)
 
 
     # set y axis range and label
