@@ -73,7 +73,7 @@ params:
         2050: 593.7 +- 59.4
       atr-ccs-93%:
         2025: 1200.0 +- 120.0
-        2030: 800.0 +- 80.0
+        2030: 900.0 +- 80.0
         2040: 700.0 +- 70.0
         2050: 700.0 +- 70.0
     unit: EUR/kW
@@ -337,8 +337,8 @@ params:
   green_ocf:
     desc: Operational capacity factor
     short: OCF
-    type: const
-    value: 50
+    type: linear
+    value: 10
     unit: percent
     source:
       Feasible OCF for RE-only operation mode.
@@ -350,7 +350,7 @@ params:
       2025: 65.0
       2030: 65.0
       2040: 70.0
-      2050: 70.0
+      2050: 75.0
     unit: percent
     source:
       Own estimates based on various sources.
@@ -368,8 +368,13 @@ params:
 
   green_lifetime:
     desc: Lifetime of electrolysis plants.
-    type: const
-    value: 20
+    type: linear
+    value:
+      2025: 10
+      2030: 15
+      2035: 20
+      2040: 20
+      2050: 20
     unit: ~
     source:
       Stack lifetime is 95kh according to IEA Future of Hydrogen (2019) report. With 50% OCF that is ~21 years.

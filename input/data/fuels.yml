@@ -138,4 +138,20 @@ fuels:
             2030: 400
             2040: 200
             2050: 110
-
+      green_ocf:
+        LCF:
+          desc: Low operational capacity factor for 100% RE
+          value:
+            2025: 35
+            2030: 40
+            2035: 50
+            2040: 50
+            2050: 50
+        HCF:
+          desc: High operational capacity factor for 80-100% RE
+          value:
+            2025: 50
+            2030: 50
+            2035: 50
+            2040: 50
+            2050: 50

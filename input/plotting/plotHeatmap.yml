@@ -1,6 +1,6 @@
 plotting:
-  ghgi_max: 0.205
-  cost_max: 135.0
+  ghgi_max: 0.22
+  cost_max: 160.0
   n_samples: 301
 
 labels:
@@ -49,24 +49,24 @@ showFuels:
     - SMR56-HL-LP
     - ATR93-LL-LP
     - ATR93-HL-LP
-    - ELEC-RE-HP-HC
-    - ELEC-ME-HP-HC
-    - ELEC-RE-LP-HC
-    - ELEC-ME-LP-HC
-    - ELEC-RE-HP-LC
-    - ELEC-ME-HP-LC
-    - ELEC-RE-LP-LC
-    - ELEC-ME-LP-LC
+    - ELEC-RE-HP-HC-LCF
+    - ELEC-ME-HP-HC-HCF
+    - ELEC-RE-LP-HC-LCF
+    - ELEC-ME-LP-HC-HCF
+    - ELEC-RE-HP-LC-LCF
+    - ELEC-ME-HP-LC-HCF
+    - ELEC-RE-LP-LC-LCF
+    - ELEC-ME-LP-LC-HCF
   right:
     - SMR56-LL-HP
     - SMR56-HL-HP
     - ATR93-LL-HP
     - ATR93-HL-HP
-    - ELEC-RE-HP-HC
-    - ELEC-ME-HP-HC
-    - ELEC-RE-LP-HC
-    - ELEC-ME-LP-HC
-    - ELEC-RE-HP-LC
-    - ELEC-ME-HP-LC
-    - ELEC-RE-LP-LC
-    - ELEC-ME-LP-LC
+    - ELEC-RE-HP-HC-LCF
+    - ELEC-ME-HP-HC-HCF
+    - ELEC-RE-LP-HC-LCF
+    - ELEC-ME-LP-HC-HCF
+    - ELEC-RE-HP-LC-LCF
+    - ELEC-ME-HP-LC-HCF
+    - ELEC-RE-LP-LC-LCF
+    - ELEC-ME-LP-LC-HCF

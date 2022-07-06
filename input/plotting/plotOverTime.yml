@@ -23,23 +23,23 @@ selected_cases:
   pessimistic-US:
     - NG-HL-LP
     - SMR56-HL-LP
-    - ELEC-RE-HP-HC
-    - ELEC-ME-HP-HC
+    - ELEC-RE-HP-HC-LCF
+    - ELEC-ME-HP-HC-HCF
   pessimistic-EU:
     - NG-HL-HP
     - SMR56-HL-HP
-    - ELEC-RE-HP-HC
-    - ELEC-ME-HP-HC
+    - ELEC-RE-HP-HC-LCF
+    - ELEC-ME-HP-HC-HCF
   optimistic-US:
     - NG-LL-LP
     - ATR93-LL-LP
-    - ELEC-RE-LP-LC
-    - ELEC-ME-LP-LC
+    - ELEC-RE-LP-LC-LCF
+    - ELEC-ME-LP-LC-HCF
   optimistic-EU:
     - NG-LL-HP
     - ATR93-LL-HP
-    - ELEC-RE-LP-LC
-    - ELEC-ME-LP-LC
+    - ELEC-RE-LP-LC-LCF
+    - ELEC-ME-LP-LC-HCF
 
 selected_cases_labels:
   pessimistic-US: Pessimistic US
@@ -48,8 +48,8 @@ selected_cases_labels:
   optimistic-EU: Optimistic EU
 
 cases_dashed:
-  - ELEC-ME-HP-HC
-  - ELEC-ME-LP-LC
+  - ELEC-ME-HP-HC-HCF
+  - ELEC-ME-LP-LC-HCF
 
 sidelabels:
   top:
