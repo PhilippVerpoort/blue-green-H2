@@ -36,7 +36,7 @@ sensitivity_params:
   mlr:
     range:
       - 0.00
-      - 0.02
+      - 0.05
     scale: 100.0
     label: Methane-leakage rate<br>(%)
     mode: absolute
@@ -44,13 +44,13 @@ sensitivity_params:
     textpos: bottom right
   cr:
     range:
-      - 0.6
+      - 0.0
       - 1.0
     scale: 100.0
     label: Capture rate<br>(%)
     mode: absolute
     vline: once
-    textpos: bottom right
+    textpos: top left
 
 
 colour: '#fc4b32'

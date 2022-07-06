@@ -89,10 +89,8 @@ def getGHGIParamsBlue(pars: pd.DataFrame, cr_default: float, tech_type: str, low
 
 
 def getGHGIBlue(bdir, bele, bscc, both, cr, crd, mlr, mghgi, transp):
-    print(cr)
-
     r = {
-        'direct': tuple(cr/crd*bdir[i] for i in range(3)),
+        'direct': tuple((1-cr)/(1-crd)*bdir[i] for i in range(3)),
         'elec': bele,
         'scco2': bscc,
         'scch4': tuple(mlr[i]*mghgi for i in range(3)),
