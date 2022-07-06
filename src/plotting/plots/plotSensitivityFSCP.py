@@ -46,9 +46,9 @@ def __produceFigure(fuels: dict, config: dict):
 
 
             # cut off line going from infinity to minus infinity
-            # cutoff = 2000.0
-            # if fscp.max() > cutoff:
-            #     fscp[fscp.argmax():] = cutoff
+            cutoff = 2000.0
+            if j == 1 and fscp.max() > cutoff:
+                fscp[:fscp.argmax()] = cutoff
 
 
             # draw lines
@@ -83,7 +83,7 @@ def __produceFigure(fuels: dict, config: dict):
                     showlegend=False,
                     line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
                     marker=dict(symbol='circle-open', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': config['colour']},),
-                    textposition=settings['textpos'],
+                    textposition=settings['textpos'][fid],
                     textfont=dict(color=config['colour']),
                 ),
                 row=1, col=j+1,
@@ -185,8 +185,13 @@ def __getFSCP(pAC, pAG, pBC, pBG, fuelA, fuelB):
     ghgiA = evalGHGI(pAG, fuelA)
     ghgiB = evalGHGI(pBG, fuelB)
 
-    fscp = (sum(costB[comp][0] for comp in costB) - sum(costA[comp][0] for comp in costA)) / \
-           (sum(ghgiA[comp][0] for comp in ghgiA) - sum(ghgiB[comp][0] for comp in ghgiB))
+    cost_diff = sum(costB[comp][0] for comp in costB) - sum(costA[comp][0] for comp in costA)
+    ghgi_diff = sum(ghgiA[comp][0] for comp in ghgiA) - sum(ghgiB[comp][0] for comp in ghgiB)
+
+    if isinstance(cost_diff, np.ndarray):
+        fscp = np.maximum(cost_diff, [0.0]*len(cost_diff)) / ghgi_diff
+    else:
+        fscp = max(cost_diff, 0.0) / ghgi_diff
 
     return fscp
 
