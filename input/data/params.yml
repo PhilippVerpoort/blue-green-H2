@@ -213,6 +213,16 @@ params:
       are reduced to 87.5% between 2035 and 2050. The uncertainty is assumed to be 5% throughout, except for the 
       uncertainty of supply-chain CO2 emissions in 2050, which are 50% +- 37.5% of those in 2035.
 
+  ghgi_blue_capture_rate:
+    desc: Capture rate of blue-hydrogen technologies
+    type: const
+    value:
+      smr-ccs-56%: 56
+      atr-ccs-93%: 93
+    unit: percent
+    source:
+      Value given by assumed technology.
+
   ghgi_blue_methaneleakage_perrate:
     desc: Methan leakage emissions per CH4 emission rate (per LHV)
     type: const

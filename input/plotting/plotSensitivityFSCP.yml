@@ -42,6 +42,15 @@ sensitivity_params:
     mode: absolute
     vline: peryear
     textpos: bottom right
+  cr:
+    range:
+      - 0.6
+      - 1.0
+    scale: 100.0
+    label: Capture rate<br>(%)
+    mode: absolute
+    vline: once
+    textpos: bottom right
 
 
 colour: '#fc4b32'

@@ -34,6 +34,7 @@ fuels:
     type: blue
     colour: '#3647a3'
     tech_type: smr-ccs-56%
+    cr_default: 0.56
     cases:
       ghgi_ng_methaneleakage:
         LL:
@@ -65,6 +66,7 @@ fuels:
     type: blue
     colour: '#589ace'
     tech_type: atr-ccs-93%
+    cr_default: 0.93
     cases:
       ghgi_ng_methaneleakage:
         LL:

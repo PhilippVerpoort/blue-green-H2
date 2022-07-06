@@ -15,7 +15,7 @@ def paramsGHGI(current_params: pd.DataFrame, fuel: dict, gwp: str):
         return getGHGIParamsNG(current_params, gwp)
     elif fuel['type'] == 'blue':
         tech_type, lowscco2 = __getTechType(fuel)
-        return getGHGIParamsBlue(current_params, tech_type, lowscco2, gwp)
+        return getGHGIParamsBlue(current_params, fuel['cr_default'], tech_type, lowscco2, gwp)
     elif fuel['type'] == 'green':
         return getGHGIParamsGreen(current_params, gwp)
     else:
@@ -69,7 +69,7 @@ def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
     }
 
 
-def getGHGIParamsBlue(pars: pd.DataFrame, tech_type: str, lowscco2: str, gwp: str):
+def getGHGIParamsBlue(pars: pd.DataFrame, cr_default: float, tech_type: str, lowscco2: str, gwp: str):
 
     # add cts ghgi to other
     poth = pars.loc[f"ghgi_blue_base_other_{tech_type}_{gwp}", ['val', 'uu', 'ul']] \
@@ -80,15 +80,19 @@ def getGHGIParamsBlue(pars: pd.DataFrame, tech_type: str, lowscco2: str, gwp: st
         bele=__getValAndUnc(pars, f"ghgi_blue_base_elec_{tech_type}_{gwp}"),
         bscc=__getValAndUnc(pars, f"ghgi_blue_base_scco2_{tech_type}{lowscco2}_{gwp}"),
         both=(poth.val, poth.uu, poth.ul),
+        cr=__getVal(pars, f"ghgi_blue_capture_rate_{tech_type}"),
+        crd=cr_default,
         mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage'),
         mghgi=__getVal(pars, f"ghgi_blue_methaneleakage_perrate_{tech_type}_{gwp}"),
         transp=__getVal(pars, 'ghgi_h2transp'),
     )
 
 
-def getGHGIBlue(bdir, bele, bscc, both, mlr, mghgi, transp):
+def getGHGIBlue(bdir, bele, bscc, both, cr, crd, mlr, mghgi, transp):
+    print(cr)
+
     r = {
-        'direct': bdir,
+        'direct': tuple(cr/crd*bdir[i] for i in range(3)),
         'elec': bele,
         'scco2': bscc,
         'scch4': tuple(mlr[i]*mghgi for i in range(3)),
