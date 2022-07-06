@@ -56,16 +56,16 @@ colours:
   heatmap_low: '#6ac100'
 
 fscp_colours:
-  blue HEB to green RE: '#dc291a'
-  blue LEB to green RE: '#fc4b32'
+  ATR93-LL-LP to ELEC-ME-HP-HC-HCF: '#dc291a'
+  ATR93-LL-HP to ELEC-ME-HP-HC-HCF: '#fc4b32'
 
 colourscale:
   FSCPmin: -200.0
   FSCPmax: 1200.0
   FSCPmid: 400.0
 
-fuelGreen: green RE
-fuelBlueLeft: blue HEB
-fuelBlueRight: blue LEB
+fuelGreen: ELEC-ME-HP-HC-HCF
+fuelBlueLeft: ATR93-LL-LP
+fuelBlueRight: ATR93-LL-HP
 fuelYearTop: 2035
 fuelYearBottom: 2030

@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 
 from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
-from src.data.fuels.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue
+from src.data.fuels.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue, paramsGHGI
 
 
 @timeit
@@ -110,10 +110,10 @@ def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCf
 
     # add white annotation labels
     annotationStyling = dict(x=0.01, y=0.985, xanchor='left', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-    fig.add_annotation(xref='x2 domain', yref='y2 domain', text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueLeft']]['desc']), **annotationStyling)
-    fig.add_annotation(xref='x3 domain', yref='y3 domain', text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueRight']]['desc']), **annotationStyling)
-    fig.add_annotation(xref='x4 domain', yref='y4 domain', text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueLeft']]['desc']), **annotationStyling)
-    fig.add_annotation(xref='x5 domain', yref='y5 domain', text=re.sub(r'.* \((.*)\)', r'\g<1>', fuelsRawCfg[config['fuelBlueRight']]['desc']), **annotationStyling)
+    fig.add_annotation(xref='x2 domain', yref='y2 domain', text=config['fuelBlueLeft'], **annotationStyling)
+    fig.add_annotation(xref='x3 domain', yref='y3 domain', text=config['fuelBlueRight'], **annotationStyling)
+    fig.add_annotation(xref='x4 domain', yref='y4 domain', text=config['fuelBlueLeft'], **annotationStyling)
+    fig.add_annotation(xref='x5 domain', yref='y5 domain', text=config['fuelBlueRight'], **annotationStyling)
 
 
     # add dummy traces to make additional x axes show
@@ -247,7 +247,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         fuelGreen = config['fuelGreen']
         thisData = __convertFuelData(fuelData, fuelBlue, fuelGreen)
 
-        name = f"Comparing {config['names'][fuelBlue]} with {config['names'][fuelGreen]}"
+        name = f"Comparing {fuelBlue} with {fuelGreen}"
         col = config['fscp_colours'][f"{fuelBlue} to {fuelGreen}"]
 
 
@@ -301,8 +301,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
 
 
     # get fuels raw data
-    fuelGreenRawCfg = fuelsRawCfg[fuelGreen]
-    fuelBlueRawCfg = fuelsRawCfg[fuelBlue]
+    fuelGreenRawCfg = fuelsRawCfg[fuelGreen.split('-')[0]]
+    fuelBlueRawCfg = fuelsRawCfg[fuelBlue.split('-')[0]]
 
 
     # define data for plot grid
@@ -315,8 +315,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
     currentParams = fullParams.query(f"year=={config['fuelYearTop']}").droplevel(level=1)
-    pBlue = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwp)
-    pGreen = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwp)
+    pBlue = paramsGHGI(currentParams, fuelBlueRawCfg, gwp)
+    pGreen = paramsGHGI(currentParams, fuelGreenRawCfg, gwp)
 
 
     # calculate FSCPs for grid
@@ -356,8 +356,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     # determine other xaxes ranges
     range3 = [GHGIBlue[0][0], GHGIBlue[0][-1]]
 
-    pBlue = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwp)
-    pBlueOther = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwpOther)
+    pBlue = paramsGHGI(currentParams, fuelBlueRawCfg, gwp)
+    pBlueOther = paramsGHGI(currentParams, fuelBlueRawCfg, gwpOther)
     GHGIBlueBase, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
     GHGIBlueOtherBase, _ = __getGHGIs(pBlueOther, pGreen, baseOnly=True)
     # ghgi0_1 + p_1 * ghgim_1 = ghgi0_2 + p_2 * ghgim_2
@@ -430,8 +430,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
 
 
     # get fuels raw data
-    fuelGreenRawCfg = fuelsRawCfg[fuelGreen]
-    fuelBlueRawCfg = fuelsRawCfg[fuelBlue]
+    fuelGreenRawCfg = fuelsRawCfg[fuelGreen.split('-')[0]]
+    fuelBlueRawCfg = fuelsRawCfg[fuelBlue.split('-')[0]]
 
 
     # turn this on to set methane leakage to zero in subplots (d) and (e)
@@ -449,8 +449,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
     gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
 
     currentParams = fullParams.query(f"year=={config['fuelYearBottom']}").droplevel(level=1)
-    pBlue = getGHGIParamsBlue(currentParams, fuelBlueRawCfg, gwp)
-    pGreen = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwp)
+    pBlue = paramsGHGI(currentParams, fuelBlueRawCfg, gwp)
+    pGreen = paramsGHGI(currentParams, fuelGreenRawCfg, gwp)
 
 
     # calculate FSCPs for grid
@@ -497,8 +497,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
     # determine other xaxes ranges
     range3 = [GHGIGreen[0][0], GHGIGreen[0][-1]]
 
-    pGreen = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwp)
-    pGreenOther = getGHGIParamsGreen(currentParams, fuelGreenRawCfg, gwpOther)
+    pGreen = paramsGHGI(currentParams, fuelGreenRawCfg, gwp)
+    pGreenOther = paramsGHGI(currentParams, fuelGreenRawCfg, gwpOther)
     GHGIGreenBase, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
     GHGIGreenOtherBase, _ = __getGHGIs(pBlue, pGreenOther, baseOnly=True)
     # b_1 + eff*(sh1*ghgielre_1 + (1-sh1)*ghgielfos_1) = b_2 + eff*(sh2*ghgielre_2 + (1-sh2)*ghgielfos_2)
