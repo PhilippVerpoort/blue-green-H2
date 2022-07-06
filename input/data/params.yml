@@ -366,13 +366,21 @@ params:
     source:
       Assuming dedicated RE production.
 
-  lifetime:
-    desc: lifetime
+  green_lifetime:
+    desc: Lifetime of electrolysis plants.
     type: const
     value: 20
     unit: ~
     source:
       Stack lifetime is 95kh according to IEA Future of Hydrogen (2019) report. With 50% OCF that is ~21 years.
+
+  blue_lifetime:
+    desc: Lifetime of blue-hydrogen plants.
+    type: const
+    value: 20
+    unit: ~
+    source:
+      To be determined (IEAGHG report!?).
 
   irate:
     desc: Interest rate

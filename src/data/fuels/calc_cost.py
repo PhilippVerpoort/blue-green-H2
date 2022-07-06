@@ -55,7 +55,7 @@ def getCostNG(p_ng):
 
 def getCostParamsBlue(pars: pd.DataFrame, tech_type: str):
     i = __getVal(pars, 'irate')
-    n = __getVal(pars, 'lifetime')
+    n = __getVal(pars, 'blue_lifetime')
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
@@ -87,7 +87,7 @@ def getCostBlue(FCR, c_pl, c_fonm, c_vonm, flh, p_ng, eff, p_el, eff_el, c_CTS, 
 
 def getCostParamsGreen(pars: pd.DataFrame):
     i = __getVal(pars, 'irate')
-    n = __getVal(pars, 'lifetime')
+    n = __getVal(pars, 'green_lifetime')
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
