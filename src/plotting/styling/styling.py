@@ -7,9 +7,11 @@ def adjustFontSizes(subfigName: str, plotlyFigure: go.Figure, fs_sm: float, fs_m
     plotlyFigure.update_yaxes(title_font_size=fs_sm, tickfont_size=fs_sm)
 
     plotlyFigure.update_annotations(font_size=fs_sm)
-    numSubPlots = __countNumbSubplots(plotlyFigure)
-    for annotation in plotlyFigure['layout']['annotations'][:numSubPlots]:
-        annotation['font']['size'] = fs_lg
+
+    if subfigName not in ['fig6', 'fig9']:
+        numSubPlots = __countNumbSubplots(plotlyFigure)
+        for annotation in plotlyFigure['layout']['annotations'][:numSubPlots]:
+            annotation['font']['size'] = fs_lg
 
     subLabels = {
         'fig2a': 1,

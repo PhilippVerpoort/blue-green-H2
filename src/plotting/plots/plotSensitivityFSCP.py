@@ -26,51 +26,113 @@ def __produceFigure(fuels: dict, config: dict):
         rows=1,
         cols=len(config['sensitivity_params']),
         shared_yaxes=True,
-        horizontal_spacing=0.04
+        horizontal_spacing=0.02
     )
 
 
     # loop over fuels
-    for fuelA, fuelB, year in [(*f.split(' to '), y) for f in config['fuels'] for y in config['years']]:
+    has_vline = []
+    hasLegend = []
+    for fid, fuelA, fuelB, year in [(fid, *f.split(' to '), y) for fid, f in enumerate(config['fuels']) for y in config['years']]:
         pAC, pAG = __getFuelPs(fuelA, fuels, config['params'][fuelA], year)
         pBC, pBG = __getFuelPs(fuelB, fuels, config['params'][fuelB], year)
 
         for j, item in enumerate(config['sensitivity_params'].items()):
             var, settings = item
-            ps = __calcLinspace(var, settings, config['n_samples'], pAC, pAG, pBC, pBG)
-            x = np.linspace(0.0, settings['delta'], config['n_samples'])
 
+            # get linspaces for parameters, x, and y
+            x, ps, val = __calcLinspace(var, settings, config['n_samples'], pAC, pAG, pBC, pBG)
             fscp = __getFSCP(*ps, fuels[fuelA.split('-')[0]], fuels[fuelB.split('-')[0]])
 
 
             # cut off line going from infinity to minus infinity
-            cutoff = 2000.0
-            if fscp.max() > cutoff:
-                fscp[fscp.argmax():] = cutoff
+            # cutoff = 2000.0
+            # if fscp.max() > cutoff:
+            #     fscp[fscp.argmax():] = cutoff
 
+
+            # draw lines
             fig.add_trace(
                 go.Scatter(
                     x=x*settings['scale'],
                     y=fscp,
                     hoverinfo='skip',
                     mode='lines',
-                    showlegend=False,
-                    line=dict(width=config['global']['lw_thin'], color=config['colour']),
+                    name=config['fuel_labels'][fid],
+                    showlegend=True if fid not in hasLegend else False,
+                    line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
                 ),
                 row=1, col=j+1,
             )
 
+
+            # markers and vertical lines at x=0 for mode relative
+            if settings['mode'] == 'relative':
+                val = 0.0
+
+
+            # add markers
             fscp = __getFSCP(pAC, pAG, pBC, pBG, fuels[fuelA.split('-')[0]], fuels[fuelB.split('-')[0]])
-            fig.add_hline(y=fscp, row=1, col=j+1)
+            fig.add_trace(
+                go.Scatter(
+                    x=[val*settings['scale']],
+                    y=[fscp],
+                    text=[year],
+                    hoverinfo='skip',
+                    mode='markers+text',
+                    showlegend=False,
+                    line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
+                    marker=dict(symbol='circle-open', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': config['colour']},),
+                    textposition=settings['textpos'],
+                    textfont=dict(color=config['colour']),
+                ),
+                row=1, col=j+1,
+            )
 
-            axis = {
-                'title': settings['label'],
-                'range': [x[0]*settings['scale'], x[-1]*settings['scale']],
-            }
-            fig.update_layout(**{f"xaxis{j+1 if j else ''}": axis})
+            if fid not in hasLegend:
+                hasLegend.append(fid)
 
 
-    # set y plotting range
+            # add vertical lines
+            vlineid = f"{var}-{year}" if settings['vline'] == 'peryear' else f"{var}"
+            if vlineid not in has_vline:
+                fig.add_vline(
+                    x=val*settings['scale'],
+                    line=dict(color='black', dash='dash'),
+                    row=1,
+                    col=j+1
+                )
+
+                fig.add_annotation(go.layout.Annotation(
+                    text=f"Default {year}" if settings['vline'] == 'peryear' else 'Default',
+                    x=val*settings['scale'],
+                    xanchor='left',
+                    y=config['yrange'][1],
+                    yanchor='top',
+                    showarrow=False,
+                    textangle=90,
+                ), row=1, col=j+1)
+
+                has_vline.append(vlineid)
+
+
+    # set x axes ranges and labels
+    for j, item in enumerate(config['sensitivity_params'].items()):
+        var, settings = item
+
+        xrange = [settings['range'][0] * settings['scale'], settings['range'][1] * settings['scale']]
+
+        if var == 'sh':
+            xrange[-1] = 100.35
+
+        axis = {
+            'title': settings['label'],
+            'range': xrange,
+        }
+        fig.update_layout(**{f"xaxis{j + 1 if j else ''}": axis})
+
+
+    # set y axis range and label
     fig.update_layout(yaxis=dict(
         title=config['ylabel'],
         range=config['yrange'],
@@ -94,6 +156,8 @@ def __getFuelPs(fuel: str, fuels: dict, params: pd.DataFrame, year: int):
 def __calcLinspace(var, settings, n, *ps):
     ps = list(ps)
 
+    x = np.linspace(*settings['range'], n)
+
     for k in [i for i in range(4) if var in ps[i]]:
         val = ps[k][var]
         hasUncertainty = isinstance(val, tuple)
@@ -101,12 +165,18 @@ def __calcLinspace(var, settings, n, *ps):
         if hasUncertainty:
             val = val[0]
 
-        x = np.linspace(val, val + settings['delta'], n)
-
         ps[k] = ps[k].copy()
-        ps[k][var] = (x, 0.0, 0.0) if hasUncertainty else x
 
-    return ps
+        if settings['mode'] == 'absolute':
+            xplot = x
+        elif settings['mode'] == 'relative':
+            xplot = np.linspace(val + settings['range'][0], val + settings['range'][1], n)
+        else:
+            raise Exception(f"Unknown mode selected for variable {var}: {settings['mode']}")
+
+        ps[k][var] = (xplot, 0.0, 0.0) if hasUncertainty else xplot
+
+    return x, ps, val
 
 
 def __getFSCP(pAC, pAG, pBC, pBG, fuelA, fuelB):
@@ -122,6 +192,20 @@ def __getFSCP(pAC, pAG, pBC, pBG, fuelA, fuelB):
 
 
 def __styling(fig: go.Figure):
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            yanchor='top',
+            y=1.00,
+            xanchor='left',
+            x=1.02,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
     # update axis styling
     for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'xaxis5', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4', 'yaxis5']:
         update = {axis: dict(
