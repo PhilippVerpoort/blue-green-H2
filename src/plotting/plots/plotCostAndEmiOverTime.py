@@ -100,12 +100,12 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
             name=newnames[tech],  # fuel,
             legendgroup=tech,  # fuel,
             # line=dict(color=plotConfig["colours"][fuel], width=plotConfig['global']['lw_default']),
-            showlegend= True
+            showlegend=True,
         )
         fig.add_trace(corridor)
 
     # set axes labels
-    fig.update_layout(xaxis=dict(title='',zeroline=True),
+    fig.update_layout(xaxis=dict(title='', zeroline=True),
                       yaxis=dict(title=plotConfig['yaxislabel'],zeroline=True),
                       legend_title='',
                       title=title_names[type])

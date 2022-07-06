@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from plotly.colors import hex_to_rgb
 
-from src.data.fuels.calc_cost import getCostParamsBlue, getCostParamsGreen, getCostBlue, getCostGreen, paramsCost, \
-    evalCost
-from src.data.fuels.calc_ghgi import getGHGIBlue, getGHGIGreen, paramsGHGI, evalGHGI
+from src.data.fuels.calc_cost import paramsCost, evalCost
+from src.data.fuels.calc_ghgi import paramsGHGI, evalGHGI
 from src.timeit import timeit
 
 
@@ -33,6 +33,8 @@ def __produceFigure(fuels: dict, config: dict):
     # loop over fuels
     has_vline = []
     hasLegend = []
+    allLines = {var: {'y': []} for var in config['sensitivity_params']}
+
     for fid, fuelA, fuelB, year in [(fid, *f.split(' to '), y) for fid, f in enumerate(config['fuels']) for y in config['years']]:
         pAC, pAG = __getFuelPs(fuelA, fuels, config['params'][fuelA], year)
         pBC, pBG = __getFuelPs(fuelB, fuels, config['params'][fuelB], year)
@@ -43,6 +45,11 @@ def __produceFigure(fuels: dict, config: dict):
             # get linspaces for parameters, x, and y
             x, ps, val = __calcLinspace(var, settings, config['n_samples'], pAC, pAG, pBC, pBG)
             fscp = __getFSCP(*ps, fuels[fuelA.split('-')[0]], fuels[fuelB.split('-')[0]])
+
+
+            # save for creation of filled area
+            allLines[var]['x'] = x
+            allLines[var]['y'].append(fscp)
 
 
             # cut off line going from infinity to minus infinity
@@ -115,7 +122,7 @@ def __produceFigure(fuels: dict, config: dict):
                 has_vline.append(vlineid)
 
 
-    # set x axes ranges and labels
+    # set x axes ranges and labels and add area plots
     for j, item in enumerate(config['sensitivity_params'].items()):
         var, settings = item
 
@@ -132,6 +139,22 @@ def __produceFigure(fuels: dict, config: dict):
 
         # add horizontal line for fscp=0
         fig.add_hline(0.0, row=1, col=j+1)
+
+        # add area plots
+        x = allLines[var]['x']
+        yu = np.maximum.reduce(allLines[var]['y'])
+        yl = np.minimum.reduce(allLines[var]['y'])
+
+        fig.add_trace(go.Scatter(
+            x=np.concatenate((x*settings['scale'], x[::-1]*settings['scale'])),
+            y=np.concatenate((yu, yl[::-1])),
+            mode='lines',
+            fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(config['colour']), .2)),
+            fill='toself',
+            line=dict(width=0.0),
+            showlegend=False,
+            hoverinfo="none"
+        ), row=1, col=j+1)
 
 
     # set y axis range and label
