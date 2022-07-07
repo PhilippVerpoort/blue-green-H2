@@ -8,6 +8,7 @@ plotLines:
     - fig2b
 plotOverTime:
   - fig3
+  - fig11
 plotHeatmap:
   fig4:
     - fig4a

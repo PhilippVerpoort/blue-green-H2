@@ -1,4 +1,3 @@
-from itertools import permutations
 from string import ascii_lowercase
 
 import numpy as np
@@ -8,6 +7,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
+from src.data.FSCPs.calc_FSCPs import calcFSCPFromCostAndGHGI
 from src.timeit import timeit
 
 
@@ -17,12 +17,19 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict):
     plotScatter, plotLines = __selectPlotFSCPs(FSCPData, config['selected_cases'], config['n_samples'])
 
     # produce figure
-    fig = __produceFigure(plotScatter, plotLines, config)
+    fig3 = __produceFigureFull(plotScatter, plotLines, config)
 
-    # styling figure
-    __styling(fig, config)
+    # produce figure
+    fig11 = __produceFigureReduced(plotScatter, plotLines, config)
 
-    return {'fig3': fig}
+    # styling of figures
+    __styling(fig3, config)
+    __styling(fig11, config)
+
+    return {
+        'fig3': fig3,
+        'fig11': fig11,
+    }
 
 
 def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: int):
@@ -38,11 +45,21 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
 
     plotFSCPs = pd.concat(listOfFSCPs)
     plotScatter = plotFSCPs[['tid', 'fuel_x', 'type_x', 'fuel_y', 'type_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul']]
-    plotLines = plotFSCPs[['tid', 'fuel_x', 'type_x', 'fuel_y', 'type_y', 'year', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']]
+    plotLines = plotFSCPs[[
+        'tid', 'fuel_x', 'type_x', 'fuel_y', 'type_y', 'year',
+        'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y',
+        'cost_uu_x', 'cost_uu_y', 'ghgi_uu_x', 'ghgi_uu_y',
+        'cost_ul_x', 'cost_ul_y', 'ghgi_ul_x', 'ghgi_ul_y'
+    ]]
 
     # interpolation of plotLines
     t = np.linspace(plotLines['year'].min(), plotLines['year'].max(), n_samples)
-    dtypes = {'year': float, 'cost_x': float, 'cost_y': float, 'ghgi_x': float, 'ghgi_y': float}
+    dtypes = {
+        'year': float,
+        'cost_x': float, 'cost_y': float, 'ghgi_x': float, 'ghgi_y': float,
+        'cost_uu_x': float, 'cost_uu_y': float, 'ghgi_uu_x': float, 'ghgi_uu_y': float,
+        'cost_ul_x': float, 'cost_ul_y': float, 'ghgi_ul_x': float, 'ghgi_ul_y': float
+    }
     allEntries = []
 
     for tid in plotLines.tid.unique():
@@ -67,13 +84,73 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
         allEntries.append(tmp.interpolate())
 
     plotLinesInterpolated = pd.concat(allEntries, ignore_index=True)
-    plotLinesInterpolated['fscp'] = (plotLinesInterpolated['cost_x'] - plotLinesInterpolated['cost_y']) / (
-                plotLinesInterpolated['ghgi_y'] - plotLinesInterpolated['ghgi_x'])
+
+    plotLinesInterpolated['correlated'] = 0.0
+    plotLinesInterpolated.loc[(plotLinesInterpolated['type_x'] != 'green') & (plotLinesInterpolated['type_y'] != 'green'), 'correlated'] = 1.0
+
+    fscp, fscpu = calcFSCPFromCostAndGHGI(
+        plotLinesInterpolated['cost_x'],
+        plotLinesInterpolated['ghgi_x'],
+        plotLinesInterpolated['cost_y'],
+        plotLinesInterpolated['ghgi_y'],
+        [plotLinesInterpolated[f"cost_{i}_x"] for i in ['uu', 'ul']],
+        [plotLinesInterpolated[f"ghgi_{i}_x"] for i in ['uu', 'ul']],
+        [plotLinesInterpolated[f"cost_{i}_y"] for i in ['uu', 'ul']],
+        [plotLinesInterpolated[f"ghgi_{i}_y"] for i in ['uu', 'ul']],
+        correlated=plotLinesInterpolated['correlated'],
+    )
+
+    plotLinesInterpolated['fscp'] = fscp
+    plotLinesInterpolated['fscp_uu'] = fscpu[0]
+    plotLinesInterpolated['fscp_ul'] = fscpu[1]
 
     return plotScatter, plotLinesInterpolated
 
 
-def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
+def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
+    # plot
+    fig = go.Figure()
+
+
+    # add FSCP traces
+    all_traces = __addFSCPTraces(plotScatter, plotLines, config, uncertainity=True)
+    for tid, traces in all_traces.items():
+        if not config['bgfscp_unc'] and 'NG' not in tid: continue
+        if all(fuel in config['uncertainity_cases'] for fuel in tid.split(' to ')):
+            for trace in traces:
+                trace.showlegend = False
+                fig.add_trace(trace)
+
+
+    # compute and plot carbon price tracjetory
+    if config['show_cp_unc']:
+        cpTrajData = __computeCPTraj(config['co2price_traj']['years'], config['co2price_traj']['values'], config['n_samples'])
+        traces = __addCPTraces(cpTrajData, config)
+        for trace in traces:
+            trace.showlegend = False
+            fig.add_trace(trace)
+
+
+    # zero y line
+    fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black')
+
+
+    # update axes titles and ranges
+    fig.update_layout(
+        xaxis=dict(
+            title=config['labels']['time'],
+            range=[config['plotting']['t_min'], config['plotting']['t_max']]
+        ),
+        yaxis=dict(
+            title=config['labels']['fscp'],
+            range=[config['plotting']['fscp_unc_min'], config['plotting']['fscp_unc_max']]
+        ),
+    )
+
+    return fig
+
+
+def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
     # plot
     fig = make_subplots(
         rows=2,
@@ -185,7 +262,7 @@ def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
     return fig
 
 
-def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, sensitivityNG: bool = False):
+def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, sensitivityNG: bool = False, uncertainity: bool = False):
     traces = {}
 
     for tid in plotScatter.tid.unique():
@@ -230,6 +307,22 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             mode='lines',
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuel_y in config['cases_dashed'] else 'solid'),
         ))
+
+        # uncertainity envelope
+        if uncertainity:
+            x = np.concatenate((thisLine['year'], thisLine['year'][::-1]))
+            y = np.concatenate((thisLine['fscp']+thisLine['fscp_uu'], (thisLine['fscp']-thisLine['fscp_ul'])[::-1]))
+
+            thisTraces.append(go.Scatter(
+                x=x,
+                y=y,
+                mode='lines',
+                fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .2)),
+                fill='toself',
+                line=dict(width=config['global']['lw_ultrathin'], color=col),
+                showlegend=False,
+                hoverinfo="none",
+            ))
 
         traces[tid] = thisTraces
 

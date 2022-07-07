@@ -3,6 +3,8 @@ plotting:
   t_max: 2051.5
   fscp_min: -100.0
   fscp_max: 1000.0
+  fscp_unc_min: -30.0
+  fscp_unc_max: 600.0
 
 labels:
   time: ''
@@ -40,6 +42,14 @@ selected_cases:
     - ATR93-LL-HP
     - ELEC-RE-LP-LC-LCF
     - ELEC-ME-LP-LC-HCF
+
+uncertainity_cases:
+  - NG-LL-LP
+  - ATR93-LL-LP
+  - ELEC-RE-LP-LC-LCF
+
+show_cp_unc: False
+bgfscp_unc: False
 
 selected_cases_labels:
   pessimistic-US: Pessimistic US
