@@ -1,4 +1,3 @@
-import re
 from string import ascii_lowercase
 
 import numpy as np
@@ -8,18 +7,94 @@ from plotly.subplots import make_subplots
 
 from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
-from src.data.fuels.calc_ghgi import getGHGIParamsBlue, getGHGIParamsGreen, getGHGIGreen, getGHGIBlue, paramsGHGI
+from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, paramsGHGI
 
 
 @timeit
 def plotBlueGreen(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
     # produce figure
-    fig = __produceFigure(fuelData, fullParams, fuelsRawCfg, config)
+    fig5 = __produceFigureSimple(fuelData, fullParams, fuelsRawCfg, config)
 
-    return {'fig5': fig}
+    # produce figure
+    fig10 = __produceFigureFull(fuelData, fullParams, fuelsRawCfg, config)
+
+    return {
+        'fig5': fig5,
+        'fig10': fig10,
+    }
 
 
-def __produceFigure(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
+def __produceFigureSimple(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
+    # plot
+    fig = go.Figure()
+
+
+    # get colour scale config
+    zmin, zmax, colourscale = __getColourScale(config)
+
+
+    # add FSCP traces for main plot
+    traces = __addFSCPContours(config, zmin, zmax, colourscale, config['global']['lw_ultrathin'])
+    for trace in traces:
+        fig.add_trace(trace)
+
+
+    # add scatter curves for main plot
+    traces = __addFSCPScatterCurves(fuelData, config)
+    for trace in traces:
+        fig.add_trace(trace)
+
+
+    # set y axes titles and ranges
+    fig.update_yaxes(title=config['labels']['yaxis1'], range=[config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max']])
+
+
+    # set x axes titles and ranges
+    fig.update_xaxes(title=config['labels']['xaxis1'], range=[config['plotting']['xaxis1_min'] * 1000, config['plotting']['xaxis1_max'] * 1000])
+
+
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="right",
+            x=0.98,
+            bgcolor='rgba(255,255,255,1.0)',
+            bordercolor='black',
+            borderwidth=2,
+        ),
+    )
+
+
+    # update axis styling
+    for axis in ['xaxis', 'yaxis']:
+        update = {axis: dict(
+            showline=True,
+            linewidth=2,
+            linecolor='black',
+            showgrid=False,
+            zeroline=False,
+            mirror=True,
+            ticks='outside',
+        )}
+        fig.update_layout(**update)
+    fig.update_xaxes(ticks='outside')
+
+
+    # update figure background colour and font colour and type
+    fig.update_layout(
+        paper_bgcolor='rgba(255, 255, 255, 1.0)',
+        plot_bgcolor='rgba(255, 255, 255, 0.0)',
+        font_color='black',
+        font_family='Helvetica',
+    )
+
+
+    return fig
+
+
+def __produceFigureFull(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
     # plot
     fig = make_subplots(rows=2,
                         cols=4,
@@ -243,12 +318,12 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list,
 def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
     traces = []
 
-    for fuelBlue in [config['fuelBlueLeft'], config['fuelBlueRight']]:
-        fuelGreen = config['fuelGreen']
+    hasYearMarker = []
+    for fuelBlue, fuelGreen in [(fB, fG) for fB in config['fuelsScatterBlue'] for fG in config['fuelsScatterGreen']]:
         thisData = __convertFuelData(fuelData, fuelBlue, fuelGreen)
 
         name = f"Comparing {fuelBlue} with {fuelGreen}"
-        col = config['fscp_colours'][f"{fuelBlue} to {fuelGreen}"]
+        col = config['fscp_colours'][fuelBlue.split('-')[0]]
 
 
         # points and lines
@@ -263,34 +338,39 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             showlegend=False,
             marker_size=config['global']['highlight_marker_sm'],
             line_color=col,
-            mode='markers+text',
+            mode='markers+text' if fuelBlue.split('-')[0] not in hasYearMarker else 'markers',
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>"
                           f"Direct cost difference (w/o CP): %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
         ))
+
+        if fuelBlue.split('-')[0] not in hasYearMarker:
+            hasYearMarker.append(fuelBlue.split('-')[0])
 
         traces.append(go.Scatter(
             x=thisData.delta_ghgi * 1000,
             y=thisData.delta_cost,
             name=name,
             legendgroup=f"{fuelBlue}__{fuelGreen}",
+            showlegend=False,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuelBlue==config['fuelBlueLeft'] else 'solid'),
             mode='lines',
         ))
 
 
         # error bars
-        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
-        traces.append(go.Scatter(
-            x=thisData.delta_ghgi * 1000,
-            y=thisData.delta_cost,
-            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=config['global']['lw_thin']),
-            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=config['global']['lw_thin']),
-            line_color=col,
-            marker_size=0.000001,
-            showlegend=False,
-            mode='markers',
-        ))
+        if config['show_errorbars']:
+            thisData = thisData.query(f"year==[2025,2030,2040,2050]")
+            traces.append(go.Scatter(
+                x=thisData.delta_ghgi * 1000,
+                y=thisData.delta_cost,
+                error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=config['global']['lw_thin']),
+                error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=config['global']['lw_thin']),
+                line_color=col,
+                marker_size=0.000001,
+                showlegend=False,
+                mode='markers',
+            ))
 
     return traces
 
@@ -371,7 +451,7 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     y_val = sum(e[0] for e in calcCost(currentParams, fuelGreenRawCfg).values()) - sum(e[0] for e in calcCost(currentParams, fuelBlueRawCfg).values())
 
     name = f"Comparing {config['names'][fuelBlue]} with {config['names'][fuelGreen]}"
-    col = config['fscp_colours'][f"{fuelBlue} to {fuelGreen}"]
+    col = config['fscp_colours'][fuelBlue.split('-')[0]]
 
     traces.append(go.Scatter(
         x=x_vals,
@@ -513,7 +593,7 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
     y_val = sum(e[0] for e in calcCost(currentParams, fuelGreenRawCfg).values()) - sum(e[0] for e in calcCost(currentParams, fuelBlueRawCfg).values())
 
     name = f"Comparing {config['names'][fuelBlue]} with {config['names'][fuelGreen]}"
-    col = config['fscp_colours'][f"{fuelBlue} to {fuelGreen}"]
+    col = config['fscp_colours'][fuelBlue.split('-')[0]]
 
     traces.append(go.Scatter(
         x=[x_val,],
@@ -539,7 +619,7 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
     vspace = config['vertical_spacing']
 
     # settings for x axes 1 to 15 (6 and 11 are undefined)
-    axisSetings = [
+    axisSettings = [
         (True, 1000, 'bottom', 'y', None, None, None),
         (True, 100, 'bottom', 'y2', None, None, 37.0),
         (True, 100, 'bottom', 'y3', None, None, 37.0),
@@ -558,7 +638,7 @@ def __getXAxesStyle(calcedRanges: dict, config: dict):
     ]
 
     newAxes = {}
-    for i, settings in enumerate(axisSetings):
+    for i, settings in enumerate(axisSettings):
         add, factor, side, anchor, overlay, position, standoff = settings
 
         if not add:

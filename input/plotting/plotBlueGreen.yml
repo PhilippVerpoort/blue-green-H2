@@ -4,7 +4,7 @@ plotting:
   n_samples: 301
 
   xaxis1_min: 0.000
-  xaxis1_max: 0.170
+  xaxis1_max: 0.190
   xaxis2_min: 0.00
   xaxis2_max: 0.03
   xaxis3_min: 0.00
@@ -14,8 +14,8 @@ plotting:
   xaxis5_min: 0.80
   xaxis5_max: 1.00
 
-  yaxis1_min: -20.0
-  yaxis1_max: 80.0
+  yaxis1_min: -30.0
+  yaxis1_max: 100.0
   yaxis2_min: -10.0
   yaxis2_max: 40.0
 
@@ -56,16 +56,38 @@ colours:
   heatmap_low: '#6ac100'
 
 fscp_colours:
-  ATR93-LL-LP to ELEC-ME-HP-HC-HCF: '#dc291a'
-  ATR93-LL-HP to ELEC-ME-HP-HC-HCF: '#fc4b32'
+  SMR56: '#dc291a'
+  ATR93: '#fc4b32'
 
 colourscale:
   FSCPmin: -200.0
   FSCPmax: 1200.0
   FSCPmid: 400.0
 
+fuelsScatterGreen:
+    - ELEC-RE-HP-HC-LCF
+    - ELEC-ME-HP-HC-HCF
+    - ELEC-RE-LP-HC-LCF
+    - ELEC-ME-LP-HC-HCF
+    - ELEC-RE-HP-LC-LCF
+    - ELEC-ME-HP-LC-HCF
+    - ELEC-RE-LP-LC-LCF
+    - ELEC-ME-LP-LC-HCF
+
+fuelsScatterBlue:
+    - SMR56-LL-LP
+    - SMR56-HL-LP
+    - SMR56-LL-HP
+    - SMR56-HL-HP
+    - ATR93-LL-LP
+    - ATR93-HL-LP
+    - ATR93-LL-HP
+    - ATR93-HL-HP
+
 fuelGreen: ELEC-ME-HP-HC-HCF
 fuelBlueLeft: ATR93-LL-LP
 fuelBlueRight: ATR93-LL-HP
 fuelYearTop: 2035
 fuelYearBottom: 2030
+
+show_errorbars: False

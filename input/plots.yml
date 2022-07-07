@@ -14,6 +14,7 @@ plotHeatmap:
     - fig4b
 plotBlueGreen:
   - fig5
+  - fig10
 plotSensitivity:
   - fig6
 plotSensitivityNG:
