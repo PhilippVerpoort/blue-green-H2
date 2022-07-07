@@ -43,8 +43,8 @@ fuels:
   - NG-LL-HP
   - SMR56-LL-HP
   - ATR93-LL-HP
-  - ELEC-RE-LP-LC
-  - ELEC-RE-HP-HC
+  - ELEC-RE-LP-LC-LCF
+  - ELEC-RE-HP-HC-HCF
 
 years:
   - 2025
