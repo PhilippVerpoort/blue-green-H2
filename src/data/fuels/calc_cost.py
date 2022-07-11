@@ -11,7 +11,7 @@ def paramsCost(current_params: pd.DataFrame, fuel: dict):
         return getCostParamsNG(current_params)
     elif fuel['type'] == 'blue':
         tech_type = __getTechType(fuel)
-        return getCostParamsBlue(current_params, tech_type)
+        return getCostParamsBlue(current_params, fuel['cr_default'], tech_type)
     elif fuel['type'] == 'green':
         return getCostParamsGreen(current_params)
     else:
@@ -53,7 +53,7 @@ def getCostNG(p_ng):
     }
 
 
-def getCostParamsBlue(pars: pd.DataFrame, tech_type: str):
+def getCostParamsBlue(pars: pd.DataFrame, cr_default: float, tech_type: str):
     i = __getVal(pars, 'irate')
     n = __getVal(pars, 'blue_lifetime')
 
@@ -70,17 +70,19 @@ def getCostParamsBlue(pars: pd.DataFrame, tech_type: str):
         c_CTS=__getValAndUnc(pars, 'cost_blue_cts'),
         emi=__getVal(pars, f"cost_blue_emiForCTS_{tech_type}"),
         transp=__getVal(pars, 'cost_h2transp'),
+        cr=__getVal(pars, f"ghgi_blue_capture_rate_{tech_type}"),
+        crd=cr_default,
     )
 
 
-def getCostBlue(FCR, c_pl, c_fonm, c_vonm, flh, p_ng, eff, p_el, eff_el, c_CTS, emi, transp):
+def getCostBlue(FCR, c_pl, c_fonm, c_vonm, flh, p_ng, eff, p_el, eff_el, c_CTS, emi, transp, cr, crd):
     return {
         'cap_cost': tuple(FCR * c/flh for c in c_pl),
         'fuel_cost': tuple(p/eff for p in p_ng),
         'elec_cost': tuple(p/eff_el for p in p_el),
         'fonm_cost': tuple(c/flh for c in c_fonm),
         'vonm_cost': tuple(c for c in c_vonm),
-        'cts_cost': tuple(c*emi for c in c_CTS),
+        'cts_cost': tuple(cr/crd*emi*c for c in c_CTS),
         'tra_cost': (transp, 0.0, 0.0),
     }
 
