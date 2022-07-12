@@ -31,7 +31,7 @@ def __obtainData(fuelData: pd.DataFrame, config: dict):
     # add names
     plotData.insert(1, 'name', len(plotData) * [''])
     for i, row in plotData.iterrows():
-        plotData.at[i, 'name'] = config['names'][row['fuel']]
+        plotData.at[i, 'name'] = config['fuelSpecs'][row['fuel']]['name']
 
     return plotData
 

@@ -34,6 +34,9 @@ params:
       other:
         gwp100: 0.7 +- 0.04
         gwp20: 0.7 +- 0.04
+    options:
+      - component
+      - gwp
     unit: gCO2eq/MJ
     source:
       LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
@@ -59,6 +62,8 @@ params:
     value:
       gwp100: 606.06
       gwp20: 1727.273
+    options:
+      - gwp
     unit: gCO2eq/MJ
     source:
       Part of the LCA data produced by Christian Bauer at PSI.
@@ -76,6 +81,8 @@ params:
         2030: 900.0 +- 80.0
         2040: 700.0 +- 70.0
         2050: 700.0 +- 70.0
+    options:
+      - blue_tech
     unit: EUR/kW
     source:
       SMR data from IEAGHG report, Sec. 8.1.3, Table 2, Sheet 84. Assuming a 0.5% yearly learning rate, i.e.
@@ -93,6 +100,8 @@ params:
         2030: 24.0 +- 2.4
         2040: 21.0 +- 2.1
         2050: 21.0 +- 2.1
+    options:
+      - blue_tech
     unit: EUR/kW
     source:
       SMR data from IEAGHG report, p. 18, Table 4. ATR data provided by Simon Roussanaly at Sintef. Assuming 
@@ -109,6 +118,8 @@ params:
         2025: 1.908 +- 0.19
         2030: 0.252 +- 0.025
         2050: 0.252 +- 0.025
+    options:
+      - blue_tech
     unit: EUR/MWh
     source:
       SMR data from IEAGHG report, p. 18, Table 4. ATR data provided by Simon Roussanaly at Sintef. Assuming 
@@ -128,6 +139,8 @@ params:
     value:
       smr-ccs-56%: 0.4660
       atr-ccs-93%: 0.8004
+    options:
+      - blue_tech
     unit: kgCO2/Nm3_H2
     source:
       SMR data from IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured. ATR data estimated from 
@@ -206,6 +219,10 @@ params:
         atr-ccs-93%:
           gwp100: 1.0 +- 0.05
           gwp20: 1.3 +- 0.07
+    options:
+      - component
+      - blue_tech
+      - gwp
     unit: gCO2eq/MJ
     source:
       LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
@@ -219,6 +236,20 @@ params:
     value:
       smr-ccs-56%: 56
       atr-ccs-93%: 93
+    options:
+      - blue_tech
+    unit: percent
+    source:
+      Value given by assumed technology.
+
+  ghgi_blue_capture_rate_default:
+    desc: Same as above but to be kept constant as a reference parameter.
+    type: const
+    value:
+      smr-ccs-56%: 56
+      atr-ccs-93%: 93
+    options:
+      - blue_tech
     unit: percent
     source:
       Value given by assumed technology.
@@ -233,6 +264,9 @@ params:
       atr-ccs-93%:
         gwp100: 710.0
         gwp20: 2032.0
+    options:
+      - blue_tech
+      - gwp
     unit: gCO2eq/MJ
     source:
       Part of the LCA data produced by Christian Bauer at PSI.
@@ -243,6 +277,8 @@ params:
     value:
       smr-ccs-56%: 73.51
       atr-ccs-93%: 73.53
+    options:
+      - blue_tech
     unit: percent
     source:
       SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. 
@@ -254,6 +290,8 @@ params:
     value:
       smr-ccs-56%: -200.0
       atr-ccs-93%: 25.0
+    options:
+      - blue_tech
     unit: ~
     source:
       SMR data from IEAGHG report, p.16, Table 4 (Plant Performance Summary), total energy of inlet & outlet stream. 
@@ -307,6 +345,8 @@ params:
       gwp20:
         2025: 0.14 +- 0.02
         2050: 0.07 +- 0.01
+    options:
+      - gwp
     unit: kgCO2eq/kgH2
     source:
       Based on LCA data provided by Christian Bauer at PSI.
@@ -329,6 +369,9 @@ params:
         gwp20:
           2025: 0.650 +- 0.05
           2050: 0.650 +- 0.05
+    options:
+      - elec_src
+      - gwp
     unit: kgCO2eq/kWh
     source:
       Based on LCA data provided by Christian Bauer at PSI. Fossil is assuming natural gas as a source for power 

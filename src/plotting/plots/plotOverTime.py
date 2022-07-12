@@ -169,7 +169,7 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
     hasLegend = []
     for i, j, scid in subfigs:
         for tid, traces in all_traces.items():
-            tid_techs = '-'.join([fuel.split('-')[0] for fuel in tid.split(' to ')])
+            tid_techs = '-'.join([fuel.split('-')[0]+'-'+fuel.split('-')[-1] for fuel in tid.split(' to ')])
             if all(fuel in config['selected_cases'][scid] for fuel in tid.split(' to ')):
                 for trace in traces:
                     if tid_techs in hasLegend:
@@ -274,8 +274,10 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
         # line properties
         fuel_x = thisScatter.iloc[thisScatter.first_valid_index()]['fuel_x']
         fuel_y = thisScatter.iloc[thisScatter.first_valid_index()]['fuel_y']
-        name = f"Fossil→{config['shortnames'][fuel_y]}" if fuel_x.startswith('NG') else f"{config['shortnames'][fuel_x]}→{config['shortnames'][fuel_y]}"
-        col = config['fscp_colour'][fuel_x.split('-')[0]] if 'NG' not in tid else config['colours'][fuel_y]
+        name_x = 'NG' if fuel_x.startswith('NG') else config['fuelSpecs'][fuel_x]['shortname']
+        name_y = config['fuelSpecs'][fuel_y]['shortname'] + f" ({'Pessimistic' if fuel_x.endswith('pess') else 'Optimistic'})"
+        name = f"{name_x}→{name_y}"
+        col = config['fscp_colour'][fuel_x.split('-')[-1]] if 'NG' not in tid else config['fuelSpecs'][fuel_y]['colour']
         isbluegreen = 'NG' not in fuel_x
 
         if isbluegreen and thisLine.fscp.max() > 2000.0:
@@ -349,10 +351,10 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
 def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list, config: dict) -> dict:
     points = []
 
-    types = ['fossil', 'blue', 'green']
+    types = ['NG', 'BLUE', 'GREEN']
     groupedFuels = {t: [f for f in fuels if not plotLines.query(f"(fuel_x=='{f}' and type_x=='{t}') or (fuel_y=='{f}' and type_y=='{t}')").empty] for t in types}
 
-    for fuelRef, fuelBlue, fuelGreen in [(r,b,g) for r in groupedFuels['fossil'] for b in groupedFuels['blue'] for g in groupedFuels['green']]:
+    for fuelRef, fuelBlue, fuelGreen in [(r,b,g) for r in groupedFuels['NG'] for b in groupedFuels['BLUE'] for g in groupedFuels['GREEN']]:
         dropCols = ['tid', 'fuel_x', 'fuel_y', 'type_x', 'type_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
         greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
         blueLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)

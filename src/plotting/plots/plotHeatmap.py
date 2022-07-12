@@ -11,7 +11,7 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict):
 
     figs = {}
     for subFigName, type in [('a', 'left'), ('b', 'right')]:
-        plotData, refData = __selectPlotData(fuelData, config['refFuel'][type], config['refYear'][type], config['showFuels'][type])
+        plotData, refData = __selectPlotData(fuelData, config['refFuel'][type], config['refYear'][type], config['showFuels'][type], config['showYears'])
 
         # define plotly figure
         fig = go.Figure()
@@ -39,8 +39,8 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict):
     return figs
 
 
-def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list):
-    plotData = fuelsData.query('fuel in @showFuels')
+def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, showYears: list):
+    plotData = fuelsData.query('fuel in @showFuels and year in @showYears')
     refData = fuelsData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
 
     return plotData, refData
@@ -124,9 +124,9 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
     for fuel in plotData.fuel.unique():
         # line properties
-        name = config['names'][fuel]
-        col = config['colours'][fuel]
-        tech = fuel.split('-')[0]
+        name = config['fuelSpecs'][fuel]['name'].split(' (')[0] + f" ({'Pessimistic' if fuel.endswith('pess') else 'Optimistic'})"
+        col = config['fuelSpecs'][fuel]['colour']
+        tech = fuel.split('-')[0]+'-'+fuel.split('-')[-1]
         dashed = 'ME' in fuel
 
 
@@ -139,12 +139,12 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             x=thisData.ghgi*1000,
             y=thisData.cost,
             text=thisData.year if fuel != 'blue LEB lowscco2' else None,
-            textposition='top left' if fuel != 'blue LEB' else 'bottom right',
+            textposition='top left' if 'pess' in fuel else 'bottom right',
             textfont=dict(color=col),
             name=name,
             legendgroup=fuel,
             showlegend=False,
-            mode='markers+text' if tech not in hasLegend else 'markers',
+            mode='markers+text',# if tech not in hasLegend else 'markers',
             line=dict(color=col),
             marker_size=config['global']['highlight_marker_sm'],
             customdata=thisData.year,
@@ -154,7 +154,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         traces.append(go.Scatter(
             x=thisData.ghgi*1000,
             y=thisData.cost,
-            name=tech,
+            name=name,
             legendgroup=tech,
             showlegend=tech not in hasLegend,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
@@ -211,7 +211,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
             x=1.05,
             y=0.25,
             len=0.5,
-            title='<i>FSCP</i><sub>Fossil→H<sub>2</sub></sub>',
+            title='<i>FSCP</i><sub>NG→H<sub>2</sub></sub>',
             titleside='top',
             tickvals=tickvals,
             ticktext=ticktext,

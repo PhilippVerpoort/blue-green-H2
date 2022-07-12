@@ -1,61 +1,46 @@
 import pandas as pd
 
-
-known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
-known_elec_srcs = ['RE', 'fossil', 'share']
+from src.config_load import params_options
 
 
-def calcGHGI(current_params: pd.DataFrame, fuel: dict, gwp: str):
-    p = paramsGHGI(current_params, fuel, gwp)
-    return evalGHGI(p, fuel)
+known_blue_techs = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
 
 
-def paramsGHGI(current_params: pd.DataFrame, fuel: dict, gwp: str):
-    if fuel['type'] == 'fossil':
-        return getGHGIParamsNG(current_params, gwp)
-    elif fuel['type'] == 'blue':
-        tech_type, lowscco2 = __getTechType(fuel)
-        return getGHGIParamsBlue(current_params, fuel['cr_default'], tech_type, lowscco2, gwp)
-    elif fuel['type'] == 'green':
-        return getGHGIParamsGreen(current_params, gwp)
+def calcGHGI(current_params: pd.DataFrame, type: str, options: dict):
+    p = paramsGHGI(current_params, type, options)
+    return evalGHGI(p, type)
+
+
+def paramsGHGI(current_params: pd.DataFrame, type: str, options: dict):
+    if type == 'NG':
+        return getGHGIParamsNG(current_params, options)
+    elif type == 'BLUE':
+        return getGHGIParamsBlue(current_params, options)
+    elif type == 'GREEN':
+        return getGHGIParamsGreen(current_params, options)
     else:
-        raise Exception(f"Unknown fuel: {fuel['type']}")
+        raise Exception(f"Unknown fuel type: {type}")
 
 
-def evalGHGI(p, fuel: dict):
-    if fuel['type'] == 'fossil':
+def evalGHGI(p, type: str):
+    if type == 'NG':
         return getGHGING(**p)
-    elif fuel['type'] == 'blue':
+    elif type == 'BLUE':
         return getGHGIBlue(**p)
-    elif fuel['type'] == 'green':
+    elif type == 'GREEN':
         return getGHGIGreen(**p)
     else:
-        raise Exception(f"Unknown fuel: {fuel['type']}")
+        raise Exception(f"Unknown fuel: {type}")
 
 
-def __getTechType(fuel: dict):
-    known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
-
-    tech_type = fuel['tech_type']
-    if tech_type not in known_tech_types:
-        raise Exception(f"Blue technology type unknown: {tech_type}")
-    if tech_type == 'atr-ccs-93%-lowscco2':
-        tech_type = 'atr-ccs-93%'
-        lowscco2 = '-lowscco2'
-    else:
-        lowscco2 = ''
-
-    return tech_type, lowscco2
-
-
-def getGHGIParamsNG(pars: pd.DataFrame, gwp: str):
+def getGHGIParamsNG(pars: pd.DataFrame, options: dict):
     return dict(
-        bdir=__getValAndUnc(pars, f"ghgi_ng_base_direct_{gwp}"),
-        bele=__getValAndUnc(pars, f"ghgi_ng_base_elec_{gwp}"),
-        bscc=__getValAndUnc(pars, f"ghgi_ng_base_scco2_{gwp}"),
-        both=__getValAndUnc(pars, f"ghgi_ng_base_other_{gwp}"),
-        mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage'),
-        mghgi=__getVal(pars, f"ghgi_ng_methaneleakage_perrate_{gwp}"),
+        bdir=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'direct', **options}),
+        bele=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'elec', **options}),
+        bscc=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'scco2', **options}),
+        both=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'other', **options}),
+        mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage', options),
+        mghgi=__getVal(pars, 'ghgi_ng_methaneleakage_perrate', options),
     )
 
 
@@ -69,32 +54,35 @@ def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
     }
 
 
-def getGHGIParamsBlue(pars: pd.DataFrame, cr_default: float, tech_type: str, lowscco2: str, gwp: str):
+def getGHGIParamsBlue(pars: pd.DataFrame, options: dict):
+    if options['blue_tech'] not in known_blue_techs:
+        raise Exception(f"Unknown blue technology type: {options['blue_tech']}")
 
-    # add cts ghgi to other
-    poth = pars.loc[f"ghgi_blue_base_other_{tech_type}_{gwp}", ['val', 'uu', 'ul']] \
-         + pars.loc[f"ghgi_blue_base_cts_{tech_type}_{gwp}", ['val', 'uu', 'ul']]
+    options_lowscco2 = options.copy()
+    if options['blue_tech'].endswith('-lowscco2'):
+        options['blue_tech'] = options['blue_tech'].rstrip('-lowscco2')
 
     return dict(
-        bdir=__getValAndUnc(pars, f"ghgi_blue_base_direct_{tech_type}_{gwp}"),
-        bele=__getValAndUnc(pars, f"ghgi_blue_base_elec_{tech_type}_{gwp}"),
-        bscc=__getValAndUnc(pars, f"ghgi_blue_base_scco2_{tech_type}{lowscco2}_{gwp}"),
-        both=(poth.val, poth.uu, poth.ul),
-        cr=__getVal(pars, f"ghgi_blue_capture_rate_{tech_type}"),
-        crd=cr_default,
-        mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage'),
-        mghgi=__getVal(pars, f"ghgi_blue_methaneleakage_perrate_{tech_type}_{gwp}"),
-        transp=__getVal(pars, 'ghgi_h2transp'),
+        bdir=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'direct', **options}),
+        bele=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'elec', **options}),
+        bscc=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'scco2', **(options_lowscco2 if options_lowscco2 else options)}),
+        bcts=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'cts', **options}),
+        both=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'other', **options}),
+        cr=__getVal(pars, 'ghgi_blue_capture_rate', options),
+        crd=__getVal(pars, 'ghgi_blue_capture_rate_default', options),
+        mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage', options),
+        mghgi=__getVal(pars, 'ghgi_blue_methaneleakage_perrate', options),
+        transp=__getVal(pars, 'ghgi_h2transp', options),
     )
 
 
-def getGHGIBlue(bdir, bele, bscc, both, cr, crd, mlr, mghgi, transp):
+def getGHGIBlue(bdir, bele, bscc, bcts, both, cr, crd, mlr, mghgi, transp):
     r = {
         'direct': tuple((1-cr)/(1-crd)*bdir[i] for i in range(3)),
         'elec': bele,
         'scco2': bscc,
         'scch4': tuple(mlr[i]*mghgi for i in range(3)),
-        'other': both,
+        'other': tuple(bcts[i]+both[i] for i in range(3)),
     }
 
     r['transp'] = tuple(transp*sum(e[i] for e in r.values()) for i in range(3))
@@ -102,14 +90,14 @@ def getGHGIBlue(bdir, bele, bscc, both, cr, crd, mlr, mghgi, transp):
     return r
 
 
-def getGHGIParamsGreen(pars: pd.DataFrame, gwp: str):
+def getGHGIParamsGreen(pars: pd.DataFrame, options: dict):
     return dict(
-        b=__getValAndUnc(pars, f"ghgi_green_base_{gwp}"),
-        eff=__getVal(pars, 'green_eff'),
-        sh=__getVal(pars, 'green_share'),
-        elre=__getValAndUnc(pars, f"ghgi_green_elec_RE_{gwp}"),
-        elfos=__getValAndUnc(pars, f"ghgi_green_elec_fossil_{gwp}"),
-        transp=__getVal(pars, 'ghgi_h2transp'),
+        b=__getValAndUnc(pars, 'ghgi_green_base', options),
+        eff=__getVal(pars, 'green_eff', options),
+        sh=__getVal(pars, 'green_share', options),
+        elre=__getValAndUnc(pars, 'ghgi_green_elec', {'elec_src': 'RE', **options}),
+        elfos=__getValAndUnc(pars, 'ghgi_green_elec', {'elec_src': 'fossil', **options}),
+        transp=__getVal(pars, 'ghgi_h2transp', options),
     )
 
 
@@ -124,9 +112,15 @@ def getGHGIGreen(b, eff, sh, elre, elfos, transp):
     return r
 
 
-def __getValAndUnc(pars: pd.DataFrame, pname: str):
-    return tuple(val for idx, val in pars.loc[pname, ['val', 'uu', 'ul']].iteritems())
+def __getValAndUnc(pars: pd.DataFrame, pname: str, options: dict):
+    pname_full = __getFullPname(pname, options)
+    return tuple(val for idx, val in pars.loc[pname_full, ['val', 'uu', 'ul']].iteritems())
 
 
-def __getVal(pars: pd.DataFrame, pname: str):
-    return pars.loc[pname].val
+def __getVal(pars: pd.DataFrame, pname: str, options: dict):
+    pname_full = __getFullPname(pname, options)
+    return pars.loc[pname_full].val
+
+
+def __getFullPname(pname: str, options: dict):
+    return '_'.join([pname] + [options[t] for t in params_options[pname]])

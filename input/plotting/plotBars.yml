@@ -1,7 +1,7 @@
 cost:
     yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
 
-    ymax: 140.0
+    ymax: 170.0
 
     labels:
       cost__cap_cost: Capital cost
@@ -23,7 +23,7 @@ cost:
 ghgi:
     yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
-    ymax: 0.27
+    ymax: 0.29
 
     labels:
       ghgi__direct: Direct emissions
@@ -40,11 +40,11 @@ ghgi:
       ghgi__other: '#00813e'
 
 fuels:
-  - NG-LL-HP
-  - SMR56-LL-HP
-  - ATR93-LL-HP
-  - ELEC-RE-LP-LC-LCF
-  - ELEC-RE-HP-HC-HCF
+  - NG-high-opti
+  - BLUE-high-pess
+  - BLUE-high-opti
+  - GREEN-RE-pess
+  - GREEN-RE-opti
 
 years:
   - 2025

@@ -1,49 +1,41 @@
 import pandas as pd
 
-
-def calcCost(current_params: pd.DataFrame, fuel: dict):
-    p = paramsCost(current_params, fuel)
-    return evalCost(p, fuel)
+from src.config_load import params_options
 
 
-def paramsCost(current_params: pd.DataFrame, fuel: dict):
-    if fuel['type'] == 'fossil':
-        return getCostParamsNG(current_params)
-    elif fuel['type'] == 'blue':
-        tech_type = __getTechType(fuel)
-        return getCostParamsBlue(current_params, fuel['cr_default'], tech_type)
-    elif fuel['type'] == 'green':
-        return getCostParamsGreen(current_params)
+known_blue_techs = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
+
+
+def calcCost(current_params: pd.DataFrame, type: str, options: dict):
+    p = paramsCost(current_params, type, options)
+    return evalCost(p, type)
+
+
+def paramsCost(current_params: pd.DataFrame, type: str, options: dict):
+    if type == 'NG':
+        return getCostParamsNG(current_params, options)
+    elif type == 'BLUE':
+        return getCostParamsBlue(current_params, options)
+    elif type == 'GREEN':
+        return getCostParamsGreen(current_params, options)
     else:
-        raise Exception(f"Unknown fuel: {fuel['type']}")
+        raise Exception(f"Unknown fuel: {type}")
 
 
-def evalCost(p, fuel: dict):
-    if fuel['type'] == 'fossil':
+def evalCost(p, type: str):
+    if type == 'NG':
         return getCostNG(**p)
-    elif fuel['type'] == 'blue':
+    elif type == 'BLUE':
         return getCostBlue(**p)
-    elif fuel['type'] == 'green':
+    elif type == 'GREEN':
         return getCostGreen(**p)
     else:
-        raise Exception(f"Unknown fuel: {fuel['type']}")
+        raise Exception(f"Unknown fuel: {type}")
 
 
-def __getTechType(fuel: dict):
-    known_tech_types = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
-
-    tech_type = fuel['tech_type']
-    if tech_type not in known_tech_types:
-        raise Exception(f"Blue technology type unknown: {tech_type}")
-    if tech_type == 'atr-ccs-93%-lowscco2':
-        tech_type = 'atr-ccs-93%'
-
-    return tech_type
-
-
-def getCostParamsNG(pars: pd.DataFrame):
+def getCostParamsNG(pars: pd.DataFrame, options: dict):
     return dict(
-        p_ng=__getValAndUnc(pars, 'cost_ng_price'),
+        p_ng=__getValAndUnc(pars, 'cost_ng_price', options),
     )
 
 
@@ -53,25 +45,32 @@ def getCostNG(p_ng):
     }
 
 
-def getCostParamsBlue(pars: pd.DataFrame, cr_default: float, tech_type: str):
-    i = __getVal(pars, 'irate')
-    n = __getVal(pars, 'blue_lifetime')
+def getCostParamsBlue(pars: pd.DataFrame, options: dict):
+    if options['blue_tech'] not in known_blue_techs:
+        raise Exception(f"Unknown blue technology type: {options['blue_tech']}")
+
+    if options['blue_tech'].endswith('-lowscco2'):
+        options['blue_tech_lowssco2'] = options['blue_tech']
+        options['blue_tech'] = options['blue_tech'].rstrip('-lowscco2')
+
+    i = __getVal(pars, 'irate', options)
+    n = __getVal(pars, 'blue_lifetime', options)
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        c_pl=__getValAndUnc(pars, f"cost_blue_capex_{tech_type}"),
-        c_fonm=__getValAndUnc(pars, f"cost_blue_fixedonm_{tech_type}"),
-        c_vonm=__getValAndUnc(pars, f"cost_blue_varonm_{tech_type}"),
-        flh=__getVal(pars, 'cost_blue_flh'),
-        p_ng=__getValAndUnc(pars, 'cost_ng_price'),
-        eff=__getVal(pars, f"blue_eff_{tech_type}"),
-        p_el=__getValAndUnc(pars, 'cost_green_elec'),
-        eff_el=__getVal(pars, f"blue_eff_elec_{tech_type}"),
-        c_CTS=__getValAndUnc(pars, 'cost_blue_cts'),
-        emi=__getVal(pars, f"cost_blue_emiForCTS_{tech_type}"),
-        transp=__getVal(pars, 'cost_h2transp'),
-        cr=__getVal(pars, f"ghgi_blue_capture_rate_{tech_type}"),
-        crd=cr_default,
+        c_pl=__getValAndUnc(pars, 'cost_blue_capex', options),
+        c_fonm=__getValAndUnc(pars, 'cost_blue_fixedonm', options),
+        c_vonm=__getValAndUnc(pars, 'cost_blue_varonm', options),
+        flh=__getVal(pars, 'cost_blue_flh', options),
+        p_ng=__getValAndUnc(pars, 'cost_ng_price', options),
+        eff=__getVal(pars, 'blue_eff', options),
+        p_el=__getValAndUnc(pars, 'cost_green_elec', options),
+        eff_el=__getVal(pars, 'blue_eff_elec', options),
+        c_CTS=__getValAndUnc(pars, 'cost_blue_cts', options),
+        emi=__getVal(pars, 'cost_blue_emiForCTS', options),
+        transp=__getVal(pars, 'cost_h2transp', options),
+        cr=__getVal(pars, 'ghgi_blue_capture_rate', options),
+        crd=__getVal(pars, 'ghgi_blue_capture_rate_default', options),
     )
 
 
@@ -87,19 +86,19 @@ def getCostBlue(FCR, c_pl, c_fonm, c_vonm, flh, p_ng, eff, p_el, eff_el, c_CTS, 
     }
 
 
-def getCostParamsGreen(pars: pd.DataFrame):
-    i = __getVal(pars, 'irate')
-    n = __getVal(pars, 'green_lifetime')
+def getCostParamsGreen(pars: pd.DataFrame, options: dict):
+    i = __getVal(pars, 'irate', options)
+    n = __getVal(pars, 'green_lifetime', options)
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        c_pl=__getValAndUnc(pars, 'cost_green_capex'),
-        c_fonm=__getVal(pars, 'cost_green_fixedonm'),
-        c_vonm=__getValAndUnc(pars, 'cost_green_varonm'),
-        ocf=__getVal(pars, 'green_ocf'),
-        p_el=__getValAndUnc(pars, 'cost_green_elec'),
-        eff=__getVal(pars, 'green_eff'),
-        transp=__getVal(pars, 'cost_h2transp'),
+        c_pl=__getValAndUnc(pars, 'cost_green_capex', options),
+        c_fonm=__getVal(pars, 'cost_green_fixedonm', options),
+        c_vonm=__getValAndUnc(pars, 'cost_green_varonm', options),
+        ocf=__getVal(pars, 'green_ocf', options),
+        p_el=__getValAndUnc(pars, 'cost_green_elec', options),
+        eff=__getVal(pars, 'green_eff', options),
+        transp=__getVal(pars, 'cost_h2transp', options),
     )
 
 
@@ -113,9 +112,15 @@ def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, p_el, eff, transp):
     }
 
 
-def __getValAndUnc(pars: pd.DataFrame, pname: str):
-    return tuple(val for idx, val in pars.loc[pname, ['val', 'uu', 'ul']].iteritems())
+def __getValAndUnc(pars: pd.DataFrame, pname: str, options: dict):
+    pname_full = __getFullPname(pname, options)
+    return tuple(val for idx, val in pars.loc[pname_full, ['val', 'uu', 'ul']].iteritems())
 
 
-def __getVal(pars: pd.DataFrame, pname: str):
-    return pars.loc[pname].val
+def __getVal(pars: pd.DataFrame, pname: str, options: dict):
+    pname_full = __getFullPname(pname, options)
+    return pars.loc[pname_full].val
+
+
+def __getFullPname(pname: str, options: dict):
+    return '_'.join([pname] + [options[t] for t in params_options[pname]])

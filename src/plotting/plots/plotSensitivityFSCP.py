@@ -36,15 +36,17 @@ def __produceFigure(fuels: dict, config: dict):
     allLines = {var: {'y': []} for var in config['sensitivity_params']}
 
     for fid, fuelA, fuelB, year in [(fid, *f.split(' to '), y) for fid, f in enumerate(config['fuels']) for y in config['years']]:
-        pAC, pAG = __getFuelPs(fuelA, fuels, config['params'][fuelA], year)
-        pBC, pBG = __getFuelPs(fuelB, fuels, config['params'][fuelB], year)
+        typeA = config['fuelSpecs'][fuelA]['type']
+        typeB = config['fuelSpecs'][fuelB]['type']
+
+        pars = {fuel: __getFuelPs(config['fuelSpecs'][fuel]['params'], config['fuelSpecs'][fuel]['type'], config['fuelSpecs'][fuel]['options'], year) for fuel in [fuelA, fuelB]}
 
         for j, item in enumerate(config['sensitivity_params'].items()):
             var, settings = item
 
             # get linspaces for parameters, x, and y
-            x, ps, val = __calcLinspace(var, settings, config['n_samples'], pAC, pAG, pBC, pBG)
-            fscp = __getFSCP(*ps, fuels[fuelA.split('-')[0]], fuels[fuelB.split('-')[0]])
+            x, ps, val = __calcLinspace(var, settings, config['n_samples'], *pars[fuelA], *pars[fuelB])
+            fscp = __getFSCP(*ps, typeA, typeB)
 
 
             # save for creation of filled area
@@ -78,7 +80,7 @@ def __produceFigure(fuels: dict, config: dict):
 
 
             # add markers
-            fscp = __getFSCP(pAC, pAG, pBC, pBG, fuels[fuelA.split('-')[0]], fuels[fuelB.split('-')[0]])
+            fscp = __getFSCP(*pars[fuelA], *pars[fuelB], typeA, typeB)
             fig.add_trace(
                 go.Scatter(
                     x=[val*settings['scale']],
@@ -166,14 +168,11 @@ def __produceFigure(fuels: dict, config: dict):
     return fig
 
 
-def __getFuelPs(fuel: str, fuels: dict, params: pd.DataFrame, year: int):
-    fuelBasic = fuel.split('-')[0]
+def __getFuelPs(params: pd.DataFrame, type: str, options: dict, year: int):
     pars = params.query(f"year=={year}").droplevel(level=1)
 
-    gwp = 'gwp100'
-
-    pC = paramsCost(pars, fuels[fuelBasic])
-    pG = paramsGHGI(pars, fuels[fuelBasic], gwp)
+    pC = paramsCost(pars, type, options)
+    pG = paramsGHGI(pars, type, options)
 
     return pC, pG
 
@@ -204,11 +203,11 @@ def __calcLinspace(var, settings, n, *ps):
     return x, ps, val
 
 
-def __getFSCP(pAC, pAG, pBC, pBG, fuelA, fuelB):
-    costA = evalCost(pAC, fuelA)
-    costB = evalCost(pBC, fuelB)
-    ghgiA = evalGHGI(pAG, fuelA)
-    ghgiB = evalGHGI(pBG, fuelB)
+def __getFSCP(pAC, pAG, pBC, pBG, typeA, typeB):
+    costA = evalCost(pAC, typeA)
+    ghgiA = evalGHGI(pAG, typeA)
+    costB = evalCost(pBC, typeB)
+    ghgiB = evalGHGI(pBG, typeB)
 
     cost_diff = sum(costB[comp][0] for comp in costB) - sum(costA[comp][0] for comp in costA)
     ghgi_diff = sum(ghgiA[comp][0] for comp in ghgiA) - sum(ghgiB[comp][0] for comp in ghgiB)

@@ -22,49 +22,49 @@ subplot_title_positions:
   - [0.5, 0.5]
 
 selected_cases:
-  pessimistic-US:
-    - NG-HL-LP
-    - SMR56-HL-LP
-    - ELEC-RE-HP-HC-LCF
-    - ELEC-ME-HP-HC-HCF
-  pessimistic-EU:
-    - NG-HL-HP
-    - SMR56-HL-HP
-    - ELEC-RE-HP-HC-LCF
-    - ELEC-ME-HP-HC-HCF
-  optimistic-US:
-    - NG-LL-LP
-    - ATR93-LL-LP
-    - ELEC-RE-LP-LC-LCF
-    - ELEC-ME-LP-LC-HCF
-  optimistic-EU:
-    - NG-LL-HP
-    - ATR93-LL-HP
-    - ELEC-RE-LP-LC-LCF
-    - ELEC-ME-LP-LC-HCF
+  high-pess:
+    - NG-high-pess
+    - BLUE-high-pess
+    - GREEN-RE-pess
+    - GREEN-ME-pess
+  low-pess:
+    - NG-low-pess
+    - BLUE-low-pess
+    - GREEN-RE-pess
+    - GREEN-ME-pess
+  high-opti:
+    - NG-high-opti
+    - BLUE-high-opti
+    - GREEN-RE-opti
+    - GREEN-ME-opti
+  low-opti:
+    - NG-low-opti
+    - BLUE-low-opti
+    - GREEN-RE-opti
+    - GREEN-ME-opti
 
 uncertainity_cases:
-  - NG-LL-LP
-  - ATR93-LL-LP
-  - ELEC-RE-LP-LC-LCF
+  - NG-low-opti
+  - BLUE-low-opti
+  - GREEN-RE-opti
 
 show_cp_unc: False
 bgfscp_unc: False
 
 selected_cases_labels:
-  pessimistic-US: Pessimistic US
-  pessimistic-EU: Pessimistic EU
-  optimistic-US: Optimistic US
-  optimistic-EU: Optimistic EU
+  high-pess: High gas price, pessimistic
+  low-pess: Low gas price, pessimistic
+  high-opti: High gas price, optimistic
+  low-opti: Low gas price, optimistic
 
 cases_dashed:
-  - ELEC-ME-HP-HC-HCF
-  - ELEC-ME-LP-LC-HCF
+  - GREEN-ME-pess
+  - GREEN-ME-opti
 
 sidelabels:
   top:
-    - Low gas prices
     - High gas prices
+    - Low gas prices
   left:
     - Pessimistic assumptions
     - Optimistic assumptions
@@ -80,8 +80,8 @@ annotationTexts:
   point6: Direct costs of green H<sub>2</sub> fall<br>below those of blue H<sub>2</sub>
 
 fscp_colour:
-  SMR56: '#dc291a'
-  ATR93: '#fc4b32'
+  pess: '#dc291a'
+  opti: '#fc4b32'
 
 co2price_traj:
   years: [2020,2025,2030,2035,2040,2045,2050,2055]

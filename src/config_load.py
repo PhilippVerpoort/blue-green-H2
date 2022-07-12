@@ -12,6 +12,8 @@ __filePath = getFilePathInput('data/params.yml')
 params = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 input_data = {**options, **fuels, **params}
 
+params_options = {pkey: pval['options'] if 'options' in pval else [] for pkey, pval in params['params'].items()}
+
 __filePath = getFilePathInput('data/units.yml')
 units = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)['units']
 

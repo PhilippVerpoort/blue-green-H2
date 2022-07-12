@@ -6,7 +6,7 @@ from src.timeit import timeit
 @timeit
 def calcFSCPs(fuelData: pd.DataFrame):
     fuelData = fuelData.filter(['fuel', 'type', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul']) \
-                       .assign(code=lambda r: r.type.map({'fossil': 0, 'blue': 1, 'green': 2}))
+                       .assign(code=lambda r: r.type.map({'NG': 0, 'BLUE': 1, 'GREEN': 2}))
 
     tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y'))\
                   .query(f"code_x < code_y")\
