@@ -55,9 +55,11 @@ colours:
   heatmap_medium: '#589ACE'
   heatmap_low: '#6ac100'
 
-fscp_colours:
-  SMR56: '#dc291a'
-  ATR93: '#fc4b32'
+fscp_colour:
+  pess-pess: '#dc291a'
+  pess-opti: '#dc291a'
+  opti-pess: '#fc4b32'
+  opti-opti: '#fc4b32'
 
 colourscale:
   FSCPmin: -200.0
@@ -65,28 +67,18 @@ colourscale:
   FSCPmid: 400.0
 
 fuelsScatterGreen:
-    - ELEC-RE-HP-HC-LCF
-    - ELEC-ME-HP-HC-HCF
-    - ELEC-RE-LP-HC-LCF
-    - ELEC-ME-LP-HC-HCF
-    - ELEC-RE-HP-LC-LCF
-    - ELEC-ME-HP-LC-HCF
-    - ELEC-RE-LP-LC-LCF
-    - ELEC-ME-LP-LC-HCF
+    - GREEN-RE-pess
+    - GREEN-RE-opti
 
 fuelsScatterBlue:
-    - SMR56-LL-LP
-    - SMR56-HL-LP
-    - SMR56-LL-HP
-    - SMR56-HL-HP
-    - ATR93-LL-LP
-    - ATR93-HL-LP
-    - ATR93-LL-HP
-    - ATR93-HL-HP
+    - BLUE-high-pess
+    - BLUE-high-opti
+    - BLUE-low-pess
+    - BLUE-low-opti
 
-fuelGreen: ELEC-ME-HP-HC-HCF
-fuelBlueLeft: ATR93-LL-LP
-fuelBlueRight: ATR93-LL-HP
+fuelGreen: GREEN-RE-opti
+fuelBlueLeft: BLUE-high-pess
+fuelBlueRight: BLUE-high-opti
 fuelYearTop: 2035
 fuelYearBottom: 2030
 

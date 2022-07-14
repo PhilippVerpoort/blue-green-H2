@@ -7,16 +7,18 @@ from plotly.subplots import make_subplots
 
 from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
-from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, paramsGHGI
+from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, paramsGHGI, getGHGIParamsGreen, getGHGIParamsBlue
 
 
 @timeit
-def plotBlueGreen(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
+def plotBlueGreen(fuelData: pd.DataFrame, config: dict):
     # produce figure
-    fig5 = __produceFigureSimple(fuelData, fullParams, fuelsRawCfg, config)
+    fig5 = __produceFigureSimple(fuelData, config)
+
 
     # produce figure
-    fig10 = __produceFigureFull(fuelData, fullParams, fuelsRawCfg, config)
+    fig10 = __produceFigureFull(fuelData, config)
+
 
     return {
         'fig5': fig5,
@@ -24,7 +26,7 @@ def plotBlueGreen(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg:
     }
 
 
-def __produceFigureSimple(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
+def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
     # plot
     fig = go.Figure()
 
@@ -56,10 +58,10 @@ def __produceFigureSimple(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuel
     # update legend styling
     fig.update_layout(
         legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="right",
-            x=0.98,
+            yanchor='bottom',
+            y=1.1,
+            xanchor='left',
+            x=0.0,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
@@ -94,7 +96,7 @@ def __produceFigureSimple(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuel
     return fig
 
 
-def __produceFigureFull(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsRawCfg: dict, config: dict):
+def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     # plot
     fig = make_subplots(rows=2,
                         cols=4,
@@ -135,7 +137,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsR
 
     # add FSCP traces in subplots
     xmin, xmax = config['plotting']['xaxis2_min'], config['plotting']['xaxis2_max']
-    traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'], annotationsTop, shapesTop = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot2'], config['global']['lw_ultrathin'], config['global']['lw_thin'], config['plotting']['yaxis2_min'])
+    traces, calcedRanges['xaxis7'], calcedRanges['xaxis12'], annotationsTop, shapesTop = __addFSCPSubplotContoursTop(config['fuelBlueLeft'], config['fuelGreen'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot2'], config['global']['lw_ultrathin'], config['global']['lw_thin'], config['plotting']['yaxis2_min'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[1])
     for a in annotationsTop:
@@ -154,7 +156,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsR
         fig.add_shape(s, **rowcol_mapping[1])
 
     xmin, xmax = config['plotting']['xaxis3_min'], config['plotting']['xaxis3_max']
-    traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'], annotationsTop, shapesTop = __addFSCPSubplotContoursTop(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot3'], config['global']['lw_ultrathin'], config['global']['lw_thin'], config['plotting']['yaxis2_min'])
+    traces, calcedRanges['xaxis8'], calcedRanges['xaxis13'], annotationsTop, shapesTop = __addFSCPSubplotContoursTop(config['fuelBlueRight'], config['fuelGreen'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot3'], config['global']['lw_ultrathin'], config['global']['lw_thin'], config['plotting']['yaxis2_min'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[2])
     for a in annotationsTop:
@@ -173,22 +175,21 @@ def __produceFigureFull(fuelData: pd.DataFrame, fullParams: pd.DataFrame, fuelsR
         fig.add_shape(s, **rowcol_mapping[2])
 
     xmin, xmax = config['plotting']['xaxis4_min'], config['plotting']['xaxis4_max']
-    traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueLeft'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot4'], config['global']['lw_ultrathin'])
+    traces, calcedRanges['xaxis9'], calcedRanges['xaxis14'] = __addFSCPSubplotContoursBottom(config['fuelBlueLeft'], config['fuelGreen'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot4'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[3])
 
     xmin, xmax = config['plotting']['xaxis5_min'], config['plotting']['xaxis5_max']
-    traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'] = __addFSCPSubplotContoursBottom(fullParams, fuelsRawCfg, config['fuelGreen'], config['fuelBlueRight'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot5'], config['global']['lw_ultrathin'])
+    traces, calcedRanges['xaxis10'], calcedRanges['xaxis15'] = __addFSCPSubplotContoursBottom(config['fuelBlueRight'], config['fuelGreen'], xmin, xmax, config, zmin, zmax, colourscale, config['linedensity']['plot5'], config['global']['lw_ultrathin'])
     for trace in traces:
         fig.add_trace(trace, **rowcol_mapping[4])
 
 
     # add white annotation labels
     annotationStyling = dict(x=0.01, y=0.985, xanchor='left', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-    fig.add_annotation(xref='x2 domain', yref='y2 domain', text=config['fuelBlueLeft'], **annotationStyling)
-    fig.add_annotation(xref='x3 domain', yref='y3 domain', text=config['fuelBlueRight'], **annotationStyling)
-    fig.add_annotation(xref='x4 domain', yref='y4 domain', text=config['fuelBlueLeft'], **annotationStyling)
-    fig.add_annotation(xref='x5 domain', yref='y5 domain', text=config['fuelBlueRight'], **annotationStyling)
+    for k, f in enumerate(['fuelBlueLeft', 'fuelBlueRight'] * 2):
+        t = 'Pessimistic' if config[f].endswith('pess') else 'Optimistic'
+        fig.add_annotation(xref=f"x{k+2} domain", yref=f"y{k+2} domain", text=t, **annotationStyling)
 
 
     # add dummy traces to make additional x axes show
@@ -323,7 +324,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
         thisData = __convertFuelData(fuelData, fuelBlue, fuelGreen)
 
         name = f"Comparing {fuelBlue} with {fuelGreen}"
-        col = config['fscp_colours'][fuelBlue.split('-')[0]]
+        col = config['fscp_colour'][fuelBlue.split('-')[-1] + '-' + fuelBlue.split('-')[-1]]
 
 
         # points and lines
@@ -352,8 +353,8 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
             y=thisData.delta_cost,
             name=name,
             legendgroup=f"{fuelBlue}__{fuelGreen}",
-            showlegend=False,
-            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuelBlue==config['fuelBlueLeft'] else 'solid'),
+            showlegend=True,
+            line=dict(color=col, width=config['global']['lw_default']),
             mode='lines',
         ))
 
@@ -375,14 +376,11 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
     return traces
 
 
-def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float,
+def __addFSCPSubplotContoursTop(blueFuel: str, greenFuel: str, xmin: float, xmax: float,
                                 config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float, lw: float, lw_default: float, ymin: float):
+    fuelSpecs = config['fuelSpecs']
+
     traces = []
-
-
-    # get fuels raw data
-    fuelGreenRawCfg = fuelsRawCfg[fuelGreen.split('-')[0]]
-    fuelBlueRawCfg = fuelsRawCfg[fuelBlue.split('-')[0]]
 
 
     # define data for plot grid
@@ -391,12 +389,16 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
 
 
     # calculate GHGI data from params
-    gwp = 'gwp100'
-    gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
+    gwp = fuelSpecs[blueFuel]['options']['gwp']
+    gwpOther = __otherGwp(gwp)
+    blueOptionsOther = fuelSpecs[blueFuel]['options'].copy()
+    blueOptionsOther['gwp'] = gwpOther
 
-    currentParams = fullParams.query(f"year=={config['fuelYearTop']}").droplevel(level=1)
-    pBlue = paramsGHGI(currentParams, fuelBlueRawCfg, gwp)
-    pGreen = paramsGHGI(currentParams, fuelGreenRawCfg, gwp)
+    currentParamsGreen = fuelSpecs[greenFuel]['params'].query(f"year=={config['fuelYearTop']}").droplevel(level=1)
+    currentParamsBlue = fuelSpecs[blueFuel]['params'].query(f"year=={config['fuelYearTop']}").droplevel(level=1)
+
+    pBlue = getGHGIParamsBlue(currentParamsBlue, fuelSpecs[blueFuel]['options'])
+    pGreen = getGHGIParamsGreen(currentParamsGreen, fuelSpecs[greenFuel]['options'])
 
 
     # calculate FSCPs for grid
@@ -436,8 +438,8 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     # determine other xaxes ranges
     range3 = [GHGIBlue[0][0], GHGIBlue[0][-1]]
 
-    pBlue = paramsGHGI(currentParams, fuelBlueRawCfg, gwp)
-    pBlueOther = paramsGHGI(currentParams, fuelBlueRawCfg, gwpOther)
+    pBlue = getGHGIParamsBlue(currentParamsBlue, fuelSpecs[blueFuel]['options'])
+    pBlueOther = getGHGIParamsBlue(currentParamsBlue, blueOptionsOther)
     GHGIBlueBase, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
     GHGIBlueOtherBase, _ = __getGHGIs(pBlueOther, pGreen, baseOnly=True)
     # ghgi0_1 + p_1 * ghgim_1 = ghgi0_2 + p_2 * ghgim_2
@@ -448,18 +450,19 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
 
     # add scatter traces
     x_vals = [pBlue['mlr'][0]*100, xmax*(pBlue['mlr'][0]-range2[0])/(range2[1]-range2[0])*100]
-    y_val = sum(e[0] for e in calcCost(currentParams, fuelGreenRawCfg).values()) - sum(e[0] for e in calcCost(currentParams, fuelBlueRawCfg).values())
+    y_val = sum(e[0] for e in calcCost(currentParamsGreen, 'GREEN', fuelSpecs[greenFuel]['options']).values())\
+          - sum(e[0] for e in calcCost(currentParamsBlue, 'BLUE', fuelSpecs[blueFuel]['options']).values())
 
-    name = f"Comparing {config['names'][fuelBlue]} with {config['names'][fuelGreen]}"
-    col = config['fscp_colours'][fuelBlue.split('-')[0]]
+    name = f"Comparing {fuelSpecs[blueFuel]['name']} with {fuelSpecs[greenFuel]['name']}"
+    col = config['fscp_colour'][blueFuel.split('-')[-1] + '-' + greenFuel.split('-')[-1]]
 
     traces.append(go.Scatter(
         x=x_vals,
-        y=[y_val, y_val],
+        y=[y_val] * 2,
         text=[f"{config['fuelYearTop']}, {gwp.upper()}" for gwp in [gwp, gwpOther]],
         textposition=['top right', 'top right'],
         textfont=dict(color=col),
-        legendgroup=f"{fuelBlueRawCfg}__{fuelGreenRawCfg}",
+        legendgroup=f"{blueFuel}--{greenFuel}",
         showlegend=False,
         marker_size=config['global']['highlight_marker_sm'],
         line_color=col,
@@ -504,17 +507,15 @@ def __addFSCPSubplotContoursTop(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuel
     return traces, range2, range3, annotations, shapes
 
 
-def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, fuelGreen: dict, fuelBlue: dict, xmin: float, xmax: float,
+def __addFSCPSubplotContoursBottom(blueFuel: str, greenFuel: str, xmin: float, xmax: float,
                                    config: dict, zmin: float, zmax: float, colourscale: list, linedensity: float, lw: float):
+    fuelSpecs = config['fuelSpecs']
+
+
     traces = []
 
 
-    # get fuels raw data
-    fuelGreenRawCfg = fuelsRawCfg[fuelGreen.split('-')[0]]
-    fuelBlueRawCfg = fuelsRawCfg[fuelBlue.split('-')[0]]
-
-
-    # turn this on to set methane leakage to zero in subplots (d) and (e)
+    # uncomment below codes lines to set methane-leakage rate to zero in subplots (d) and (e)
     #fullParams = fullParams.copy()
     #fullParams.loc[fullParams['name'] == 'ghgi_ng_methaneleakage', 'value'] = 0.0
 
@@ -525,12 +526,16 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
 
 
     # calculate GHGI data from params
-    gwp = 'gwp100'
-    gwpOther = 'gwp20' if gwp == 'gwp100' else 'gwp100'
+    gwp = fuelSpecs[blueFuel]['options']['gwp']
+    gwpOther = __otherGwp(gwp)
+    greenOptionsOther = fuelSpecs[blueFuel]['options'].copy()
+    greenOptionsOther['gwp'] = gwpOther
 
-    currentParams = fullParams.query(f"year=={config['fuelYearBottom']}").droplevel(level=1)
-    pBlue = paramsGHGI(currentParams, fuelBlueRawCfg, gwp)
-    pGreen = paramsGHGI(currentParams, fuelGreenRawCfg, gwp)
+    currentParamsGreen = fuelSpecs[greenFuel]['params'].query(f"year=={config['fuelYearTop']}").droplevel(level=1)
+    currentParamsBlue = fuelSpecs[blueFuel]['params'].query(f"year=={config['fuelYearTop']}").droplevel(level=1)
+
+    pBlue = getGHGIParamsBlue(currentParamsBlue, fuelSpecs[blueFuel]['options'])
+    pGreen = getGHGIParamsGreen(currentParamsGreen, fuelSpecs[greenFuel]['options'])
 
 
     # calculate FSCPs for grid
@@ -577,8 +582,8 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
     # determine other xaxes ranges
     range3 = [GHGIGreen[0][0], GHGIGreen[0][-1]]
 
-    pGreen = paramsGHGI(currentParams, fuelGreenRawCfg, gwp)
-    pGreenOther = paramsGHGI(currentParams, fuelGreenRawCfg, gwpOther)
+    pGreen = getGHGIParamsGreen(currentParamsGreen, fuelSpecs[greenFuel]['options'])
+    pGreenOther = getGHGIParamsGreen(currentParamsGreen, greenOptionsOther)
     GHGIGreenBase, _ = __getGHGIs(pBlue, pGreen, baseOnly=True)
     GHGIGreenOtherBase, _ = __getGHGIs(pBlue, pGreenOther, baseOnly=True)
     # b_1 + eff*(sh1*ghgielre_1 + (1-sh1)*ghgielfos_1) = b_2 + eff*(sh2*ghgielre_2 + (1-sh2)*ghgielfos_2)
@@ -590,10 +595,11 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
 
     # add scatter traces
     x_val = pGreen['sh']*100
-    y_val = sum(e[0] for e in calcCost(currentParams, fuelGreenRawCfg).values()) - sum(e[0] for e in calcCost(currentParams, fuelBlueRawCfg).values())
+    y_val = sum(e[0] for e in calcCost(currentParamsGreen, 'GREEN', fuelSpecs[greenFuel]['options']).values())\
+          - sum(e[0] for e in calcCost(currentParamsBlue, 'BLUE', fuelSpecs[blueFuel]['options']).values())
 
-    name = f"Comparing {config['names'][fuelBlue]} with {config['names'][fuelGreen]}"
-    col = config['fscp_colours'][fuelBlue.split('-')[0]]
+    name = f"Comparing {fuelSpecs[blueFuel]['name']} with {fuelSpecs[greenFuel]['name']}"
+    col = config['fscp_colour'][blueFuel.split('-')[-1] + '-' + greenFuel.split('-')[-1]]
 
     traces.append(go.Scatter(
         x=[x_val,],
@@ -601,7 +607,7 @@ def __addFSCPSubplotContoursBottom(fullParams: pd.DataFrame, fuelsRawCfg:dict, f
         text=[config['fuelYearBottom'],],
         textposition=["bottom right", "top right"],
         textfont=dict(color=col),
-        legendgroup=f"{fuelBlueRawCfg}__{fuelGreenRawCfg}",
+        legendgroup=f"{blueFuel}--{greenFuel}",
         showlegend=False,
         marker_size=config['global']['highlight_marker_sm'],
         line_color=col,
@@ -740,3 +746,7 @@ def __getColourScale(config: dict):
     ]
 
     return zmin, zmax, colourscale
+
+
+def __otherGwp(gwp: str):
+    return 'gwp20' if gwp == 'gwp100' else 'gwp100'
