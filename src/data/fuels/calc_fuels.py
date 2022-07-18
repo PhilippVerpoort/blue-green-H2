@@ -47,7 +47,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
                     'name': f"{fuel['name']} ({case['desc']})",
                     'type': fuel_id,
                     'shortname': fuel['name'],
-                    'colour': case['colour'] if 'colour' in case else fuel['colour'],
+                    'colour': case['colour'] if 'colour' in case and case['colour'] else fuel['colour'],
                     'params': this_params,
                     'options': options,
                 }

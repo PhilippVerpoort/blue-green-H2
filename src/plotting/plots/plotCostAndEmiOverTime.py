@@ -1,40 +1,34 @@
-from string import ascii_lowercase #TODO probably not all of this is needed for Falko's new plot
-
-import numpy as np
 import pandas as pd
 
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
 from src.timeit import timeit
 
+
 @timeit
 def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict):
-    #TODO, ADD HERE, Philipp? select which lines to plot already based on function argument?
-
-    # # plot data
-    plotData = __obtainData(fuelData, config)
-
     # produce figures
     figs = {}
     for subFigName, type in [('a', 'cost'), ('b', 'ghgi')]:
 
-        fig = __produceFigure(plotData, {**config[type], **{'global': config['global']}, **{'colours': config['colours']}}, type)
+        fig = __produceFigure(fuelData, config['fuelSpecs'], {**config[type], **{'global': config['global']}}, type)
 
         # styling figure
-        __styling(fig, subFigName)
+        __styling(fig)
 
         figs.update({f"fig8{subFigName}": fig})
 
     return figs
 
 
-def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
+def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, type: str):
     scale = 1.0 if type == 'cost' else 1000.0
+
 
     # create figure
     fig = go.Figure()
+
 
     # subplot labels
     fig.add_annotation(
@@ -48,75 +42,81 @@ def __produceFigure(plotData: pd.DataFrame, plotConfig: dict, type: str):
         yref='paper',
     )
 
-    has_legend = []
-    newnames = {'NG': 'Natural Gas', 'SMR56': 'Blue H<sub>2</sub> (SMR56)', 'ATR93': 'Blue H<sub>2</sub> (ATR93)', 'ELEC': 'Green H<sub>2</sub>'}  # legend labels
-    title_names = {'cost': 'Direct costs', 'ghgi': 'Emission intensity'}  # titles
-    for fuel in plotData.fuel.unique():
-        thisData = plotData.query(f"fuel=='{fuel}'")
 
-        tech = fuel.split("-")[0]
+    for cID, corridor in subConfig['showCorridors'].items():
+        cCases = corridor['cases']
+        cLabel = corridor['label']
+        cColour = fuelSpecs[cCases[0]]['colour']
+        print(cLabel, cColour)
+
+        thisData = plotData.query('fuel in @cCases').reset_index(drop=True)
+
+        thisData['upper'] = thisData[type] + thisData[type + '_uu']
+        thisData['lower'] = thisData[type] - thisData[type + '_ul']
+
+        thisData_max = thisData.loc[thisData.groupby('year')['upper'].idxmax()]
+        thisData_min = thisData.loc[thisData.groupby('year')['lower'].idxmin()]
 
         trace = go.Scatter(
-            x=thisData.year,
-            y=thisData[type],
-            name= newnames[tech], #fuel,
-            legendgroup= tech, #fuel,
-            mode="lines",
-            line=dict(color=plotConfig["colours"][fuel], width=plotConfig['global']['lw_default']),
-            showlegend=newnames[tech] not in has_legend,
-            opacity = 1
-        )
-       # fig.add_trace(trace)
-        if newnames[tech] not in has_legend:
-            has_legend.append(newnames[tech])
-    n = 0
-
-    for tech in ['ELEC','ATR93','SMR56','NG']:
-        n = n + 1
-        #tech = fuel.split("-")[0]
-        thisData = plotData.query(f"fuel.str.contains('{tech}')", engine='python')
-        thisData_max = thisData.loc[thisData.groupby("year")[type].idxmax()]
-        thisData_min = thisData.loc[thisData.groupby("year")[type].idxmin()]
-        fuel = thisData_min.fuel.unique()[0]
-
-        trace = go.Scatter(# The minimum (or maximum) line needs to be added before the below area plot can be applied.
+            # The minimum (or maximum) line needs to be added before the below area plot can be applied.
             x=thisData_min.year,
-            y=thisData_min[type],
-           # name=tech,  # fuel,
-          #  legendgroup=tech,  # fuel,
-          mode="lines",
-            line=dict(color=plotConfig["colours"][fuel]),
-            opacity=1,
-            #line=dict(color=plotConfig["colours"][fuel], width=plotConfig['global']['lw_default']),
-            showlegend= False
+            y=thisData_min['upper']*scale,
+            legendgroup=cID,
+            mode='lines',
+            line=dict(color=cColour, width=subConfig['global']['lw_default']),
+            showlegend=False
         )
         fig.add_trace(trace)
 
         corridor = go.Scatter(
             x=thisData_max.year,
-            y=thisData_max[type],
+            y=thisData_max['lower']*scale,
             fill='tonexty',  # fill area between trace0 and trace1
-            mode='lines', line_color=plotConfig["colours"][fuel],
-            name=newnames[tech],  # fuel,
-            legendgroup=tech,  # fuel,
-            # line=dict(color=plotConfig["colours"][fuel], width=plotConfig['global']['lw_default']),
+            mode='lines',
+            name=cLabel,
+            legendgroup=cID,
+            line=dict(color=cColour, width=subConfig['global']['lw_default']),
             showlegend=True,
         )
         fig.add_trace(corridor)
 
+
+    # add label inside plot
+    fig.add_annotation(
+        text=subConfig['label'],
+        xanchor='left',
+        xref='x domain',
+        x=0.01,
+        yanchor='bottom',
+        yref='y domain',
+        y=0.015,
+        showarrow=False,
+        bordercolor='black',
+        borderwidth=2,
+        borderpad=3,
+        bgcolor='white',
+    )
+
+
     # set axes labels
-    fig.update_layout(xaxis=dict(title='', zeroline=True),
-                      yaxis=dict(title=plotConfig['yaxislabel'],zeroline=True),
-                      legend_title='',
-                      title=title_names[type])
+    fig.update_layout(
+        xaxis=dict(title='', zeroline=True),
+        yaxis=dict(title=subConfig['yaxislabel'], zeroline=True, range=[0, subConfig['ymax']*scale]),
+        legend_title='',
+    )
     fig.update_yaxes(rangemode= "tozero")
 
     return fig
 
-def __styling(fig: go.Figure, subFigName: str):
+
+def __styling(fig: go.Figure):
     # update legend styling
     fig.update_layout(
         legend=dict(
+            yanchor='top',
+            y=1.00,
+            xanchor='right',
+            x=1.00,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
@@ -144,22 +144,3 @@ def __styling(fig: go.Figure, subFigName: str):
         font_color='black',
         font_family='Helvetica',
     )
-
-
-def __obtainData(fuelData: pd.DataFrame, config: dict):
-    # filter data
-    fuels = config['fuels']
-    years = config['years']
-    plotData = fuelData.query('fuel in @fuels & year in @years')
-
-    # add names
-    plotData.insert(1, 'name', len(plotData) * [''])
-    for i, row in plotData.iterrows():
-        plotData.at[i, 'name'] = config['names'][row['fuel']]
-
-    return plotData
-
-
-
-
-

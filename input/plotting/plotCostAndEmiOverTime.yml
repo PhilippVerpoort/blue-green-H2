@@ -1,41 +1,56 @@
 cost:
     yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
+    ymax: 160.0
+    label: Direct cost
+    showCorridors:
+      NG:
+        label: NG
+        cases:
+          - NG-high-pess
+          - NG-high-opti
+          - NG-low-pess
+          - NG-low-opti
+      BLUE:
+        label: Blue H<sub>2</sub>
+        cases:
+          - BLUE-high-pess
+          - BLUE-high-opti
+          - BLUE-low-pess
+          - BLUE-low-opti
+      GREEN-high:
+        label: Green H<sub>2</sub> (High elec. price)
+        cases:
+          - GREEN-RE-pess
+      GREEN-low:
+        label: Green H<sub>2</sub> (Low elec. price)
+        cases:
+          - GREEN-RE-opti
 
-    ymax: 300.0
 
 ghgi:
     yaxislabel: Life-cycle GHGI of Energy (kg<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
-
-    ymax: 1
-
-fuels:
-  - NG-LL-LP
-  - NG-HL-LP
-  - NG-LL-HP
-  - NG-HL-HP
-  - SMR56-LL-LP
-  - SMR56-HL-LP
-  - SMR56-LL-HP
-  - SMR56-HL-HP
-  - ATR93-LL-LP
-  - ATR93-HL-LP
-  - ATR93-LL-HP
-  - ATR93-HL-HP
-  - ELEC-RE-HP-HC-LCF
-  - ELEC-ME-HP-HC-HCF
-  - ELEC-RE-LP-HC-LCF
-  - ELEC-ME-LP-HC-HCF
-  - ELEC-RE-HP-LC-LCF
-  - ELEC-ME-HP-LC-HCF
-  - ELEC-RE-LP-LC-LCF
-  - ELEC-ME-LP-LC-HCF
-
-
-
-years:
-  - 2025
-  - 2030
-  - 2035
-  - 2040
-  - 2045
-  - 2050
+    ymax: 0.28
+    label: Emissions intensity
+    showCorridors:
+      NG:
+        label: NG
+        cases:
+          - NG-high-pess
+          - NG-high-opti
+          - NG-low-pess
+          - NG-low-opti
+      BLUE-pess:
+        label: Blue H<sub>2</sub> (Pessimistic)
+        cases:
+          - BLUE-high-pess
+          - BLUE-low-pess
+      BLUE-opti:
+        label: Blue H<sub>2</sub> (Optimistic)
+        cases:
+          - BLUE-high-opti
+          - BLUE-low-opti
+      GREEN:
+        label: Green H<sub>2</sub>
+        cases:
+          - GREEN-RE-pess
+          - GREEN-RE-opti
