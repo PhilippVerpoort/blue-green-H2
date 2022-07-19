@@ -16,7 +16,7 @@ fuels:
             2025: 15.0
             2030: 15.0
             2050: 15.0
-      pess-vs-opti:
+      pess_vs_opti:
         pess:
           desc: Pessimistic
           ghgi_ng_methaneleakage:
@@ -45,7 +45,7 @@ fuels:
             2025: 15.0
             2030: 15.0
             2050: 15.0
-      pess-vs-opti:
+      pess_vs_opti:
         pess:
           desc: Pessimistic
           colour: '#3647a3'
@@ -60,6 +60,13 @@ fuels:
           ghgi_ng_methaneleakage:
             2025: 1.0
             2050: 0.1
+      scco2:
+        none:
+          desc: ''
+        lowscco2:
+          desc: Low supply-chain CO<sub>2</sub>
+          blue_tech: atr-ccs-93%-lowscco2
+
 
   GREEN:
     name: Green H<sub>2</sub>
@@ -86,7 +93,7 @@ fuels:
           green_ocf:
             2025: 50
             2050: 50
-      pess-vs-opti:
+      pess_vs_opti:
         pess:
           desc: Pessimistic
           colour: '#38761d'

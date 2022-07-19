@@ -58,14 +58,15 @@ def getGHGIParamsBlue(pars: pd.DataFrame, options: dict):
     if options['blue_tech'] not in known_blue_techs:
         raise Exception(f"Unknown blue technology type: {options['blue_tech']}")
 
-    options_lowscco2 = options.copy()
+    options_scco2 = options.copy()
     if options['blue_tech'].endswith('-lowscco2'):
+        options = options.copy()
         options['blue_tech'] = options['blue_tech'].rstrip('-lowscco2')
 
     return dict(
         bdir=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'direct', **options}),
         bele=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'elec', **options}),
-        bscc=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'scco2', **(options_lowscco2 if options_lowscco2 else options)}),
+        bscc=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'scco2', **options_scco2}),
         bcts=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'cts', **options}),
         both=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'other', **options}),
         cr=__getVal(pars, 'ghgi_blue_capture_rate', options),

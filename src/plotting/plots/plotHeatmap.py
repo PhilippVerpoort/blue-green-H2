@@ -124,10 +124,15 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
     for fuel in plotData.fuel.unique():
         # line properties
-        name = config['fuelSpecs'][fuel]['name'].split(' (')[0] + f" ({'Pessimistic' if fuel.endswith('pess') else 'Optimistic'})"
+        descs = [
+            'Pessimistic' if fuel.endswith('pess') else 'Optimistic',
+            'low supply-chain CO<sub>2</sub>' if fuel.endswith('lowscco2') else None,
+            '75-to-100% RE share' if 'ME' in fuel else None,
+        ]
+        name = config['fuelSpecs'][fuel]['name'].split(' (')[0] + f" ({', '.join([d for d in descs if d])})"
         col = config['fuelSpecs'][fuel]['colour']
-        tech = fuel.split('-')[0]+'-'+fuel.split('-')[-1]
-        dashed = 'ME' in fuel
+        tech = fuel
+        dashed = any(t in fuel for t in config['tokensDashed'])
 
 
         # data
@@ -138,7 +143,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         traces.append(go.Scatter(
             x=thisData.ghgi*1000,
             y=thisData.cost,
-            text=thisData.year if fuel != 'blue LEB lowscco2' else None,
+            text=thisData.year if not fuel.endswith('lowscco2') else None,
             textposition='top left' if 'pess' in fuel else 'bottom right',
             textfont=dict(color=col),
             name=name,

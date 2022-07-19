@@ -1,5 +1,5 @@
 plotting:
-  ghgi_max: 0.2
+  ghgi_max: 0.22
   cost_max: 125.0
   n_samples: 301
 
@@ -47,6 +47,7 @@ showFuels:
   left:
     - BLUE-high-pess
     - BLUE-high-opti
+    - BLUE-high-opti-lowscco2
     - GREEN-RE-pess
     - GREEN-RE-opti
     - GREEN-ME-pess
@@ -54,6 +55,7 @@ showFuels:
   right:
     - BLUE-low-pess
     - BLUE-low-opti
+    - BLUE-low-opti-lowscco2
     - GREEN-RE-pess
     - GREEN-RE-opti
     - GREEN-ME-pess
@@ -65,3 +67,7 @@ showYears:
   - 2040
   - 2045
   - 2050
+
+tokensDashed:
+  - lowscco2
+  - ME

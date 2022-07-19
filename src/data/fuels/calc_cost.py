@@ -50,7 +50,7 @@ def getCostParamsBlue(pars: pd.DataFrame, options: dict):
         raise Exception(f"Unknown blue technology type: {options['blue_tech']}")
 
     if options['blue_tech'].endswith('-lowscco2'):
-        options['blue_tech_lowssco2'] = options['blue_tech']
+        options = options.copy()
         options['blue_tech'] = options['blue_tech'].rstrip('-lowscco2')
 
     i = __getVal(pars, 'irate', options)

@@ -120,10 +120,10 @@ def __mergeCases(overridden: dict):
         del overridden[key]
         r = __mergeCases(overridden)
         return {
-            f"{c1}-{c2}": {
+            '-'.join([c for c in [c1, c2] if not c == 'none']): {
                 'desc': f"{entry[c1]['desc']}, {r[c2]['desc']}",
                 'colour': entry[c1]['colour'] if entry[c1]['colour'] else r[c2]['colour'],
-                'blue_tech': entry[c1]['blue_tech'] if entry[c1]['blue_tech'] else r[c2]['blue_tech'],
+                'blue_tech': r[c2]['blue_tech'] if 'blue_tech' in r[c2] and r[c2]['blue_tech'] else entry[c1]['blue_tech'],
                 'params': pd.concat([entry[c1]['params'], r[c2]['params']]),
             }
             for c2 in r for c1 in entry
