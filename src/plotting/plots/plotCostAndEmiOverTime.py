@@ -47,7 +47,6 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
         cCases = corridor['cases']
         cLabel = corridor['label']
         cColour = fuelSpecs[cCases[0]]['colour']
-        print(cLabel, cColour)
 
         thisData = plotData.query('fuel in @cCases').reset_index(drop=True)
 
