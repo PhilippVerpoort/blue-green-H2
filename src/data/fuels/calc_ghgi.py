@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 from src.config_load import params_options
@@ -69,20 +70,24 @@ def getGHGIParamsBlue(pars: pd.DataFrame, options: dict):
         bscc=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'scco2', **options_scco2}),
         bcts=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'cts', **options}),
         both=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'other', **options}),
-        cr=__getVal(pars, 'ghgi_blue_capture_rate', options),
+        cr=__getValAndUnc(pars, 'ghgi_blue_capture_rate', options),
         crd=__getVal(pars, 'ghgi_blue_capture_rate_default', options),
         mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage', options),
-        mghgi=__getVal(pars, 'ghgi_blue_methaneleakage_perrate', options),
+        mghgi=__getValAndUnc(pars, 'ghgi_blue_methaneleakage_perrate', options),
         transp=__getVal(pars, 'ghgi_h2transp', options),
     )
 
 
 def getGHGIBlue(bdir, bele, bscc, bcts, both, cr, crd, mlr, mghgi, transp):
     r = {
-        'direct': tuple((1-cr)/(1-crd)*bdir[i] for i in range(3)),
+        'direct': (
+            (1 - cr[0]) / (1 - crd) * bdir[0],
+            np.sqrt( ((1 - cr[0]) / (1 - crd) * bdir[1])**2 + (cr[2] / (1 - crd) * bdir[0])**2 ),
+            np.sqrt( ((1 - cr[0]) / (1 - crd) * bdir[2])**2 + (cr[1] / (1 - crd) * bdir[0])**2 ),
+        ),
         'elec': bele,
         'scco2': bscc,
-        'scch4': tuple(mlr[i]*mghgi for i in range(3)),
+        'scch4': tuple(mlr[i]*mghgi[0] for i in range(3)),
         'other': tuple(bcts[i]+both[i] for i in range(3)),
     }
 

@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 from src.data.fuels.calc_ghgi import calcGHGI
@@ -76,12 +77,12 @@ def __calcFuel(full_params: pd.DataFrame, fuel_id_full: str, type: str, options:
             newFuel[f"ghgi_ul__{component}"] = levelisedGHGI[component][2]
 
         newFuel['cost'] = sum(newFuel[f"cost__{component}"] for component in levelisedCost)
-        newFuel['cost_uu'] = sum(newFuel[f"cost_uu__{component}"] for component in levelisedCost)
-        newFuel['cost_ul'] = sum(newFuel[f"cost_ul__{component}"] for component in levelisedCost)
+        newFuel['cost_uu'] = np.sqrt(sum(newFuel[f"cost_uu__{component}"]**2 for component in levelisedCost))
+        newFuel['cost_ul'] = np.sqrt(sum(newFuel[f"cost_ul__{component}"]**2 for component in levelisedCost))
 
         newFuel['ghgi'] = sum(newFuel[f"ghgi__{component}"] for component in levelisedGHGI)
-        newFuel['ghgi_uu'] = sum(newFuel[f"ghgi_uu__{component}"] for component in levelisedGHGI)
-        newFuel['ghgi_ul'] = sum(newFuel[f"ghgi_ul__{component}"] for component in levelisedGHGI)
+        newFuel['ghgi_uu'] = np.sqrt(sum(newFuel[f"ghgi_uu__{component}"]**2 for component in levelisedGHGI))
+        newFuel['ghgi_ul'] = np.sqrt(sum(newFuel[f"ghgi_ul__{component}"]**2 for component in levelisedGHGI))
 
         r.append(newFuel)
 

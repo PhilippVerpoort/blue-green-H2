@@ -20,13 +20,13 @@ fuels:
         pess:
           desc: Pessimistic
           ghgi_ng_methaneleakage:
-            2025: 1.66
-            2050: 1.66
+            2025: 1.5 +- 0.5
+            2050: 1.5 +- 0.5
         opti:
           desc: Optimistic
           ghgi_ng_methaneleakage:
-            2025: 1.0
-            2050: 0.1
+            2025: 1.0 +- 0.5
+            2050: 0.1 + 0.4 - 0.1
 
   BLUE:
     name: Blue H<sub>2</sub>
@@ -51,15 +51,15 @@ fuels:
           colour: '#3647a3'
           blue_tech: smr-ccs-56%
           ghgi_ng_methaneleakage:
-            2025: 1.66
-            2050: 1.66
+            2025: 1.5 +- 0.5
+            2050: 1.5 +- 0.5
         opti:
           desc: Optimistic
           colour: '#589ace'
           blue_tech: atr-ccs-93%
           ghgi_ng_methaneleakage:
-            2025: 1.0
-            2050: 0.1
+            2025: 1.0 +- 0.5
+            2050: 0.1 + 0.4 - 0.1
       scco2:
         none:
           desc: ''
@@ -102,10 +102,10 @@ fuels:
             2030: 60.0 +- 10.0
             2050: 40.0 + 5.0 - 10.0
           cost_green_capex:
-            2025: 800
-            2030: 600
-            2040: 400
-            2050: 300
+            2025: 800 +- 50
+            2030: 600 +- 50
+            2040: 400 +- 50
+            2050: 300 +- 50
         opti:
           desc: Optimistic
           colour: '#6ac100'
@@ -113,7 +113,7 @@ fuels:
             2025: 45.0 +- 10.0
             2050: 25.0 +- 10.0
           cost_green_capex:
-            2025: 500
-            2030: 400
-            2040: 200
-            2050: 110
+            2025: 500 +- 50
+            2030: 400 +- 50
+            2040: 200 +- 40
+            2050: 110 +- 20

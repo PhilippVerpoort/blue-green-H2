@@ -171,18 +171,17 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
 
         # error bars
-        # if fuel == 'blue LEB lowscco2': continue
-        # thisData = thisData.query(f"year==[2025,2030,2040,2050]")
-        # traces.append(go.Scatter(
-        #     x=thisData.ghgi*1000,
-        #     y=thisData.cost,
-        #     error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=config['global']['lw_thin']),
-        #     error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=config['global']['lw_thin']),
-        #     line_color=col,
-        #     marker_size=0.000001,
-        #     showlegend=False,
-        #     mode='markers',
-        # ))
+        thisData = thisData.query(f"year==[2025,2030,2040,2050]")
+        traces.append(go.Scatter(
+            x=thisData.ghgi*1000,
+            y=thisData.cost,
+            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=config['global']['lw_thin']),
+            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=config['global']['lw_thin']),
+            line_color=col,
+            marker_size=0.000001,
+            showlegend=False,
+            mode='markers',
+        ))
 
 
     return traces

@@ -49,8 +49,8 @@ params:
     short: CH4 Leakage
     type: linear
     value:
-      2025: 1.66
-      2050: 1.66
+      2025: 1.5 +- 0.5
+      2050: 1.5 +- 0.5
     unit: percent
     source:
       Based on today's range of leakage rates and the ambition of the industry to lower it significantly along with 
@@ -234,8 +234,8 @@ params:
     desc: Capture rate of blue-hydrogen technologies
     type: const
     value:
-      smr-ccs-56%: 56
-      atr-ccs-93%: 93
+      smr-ccs-56%: 56 +- 5
+      atr-ccs-93%: 93 +- 5
     options:
       - blue_tech
     unit: percent
