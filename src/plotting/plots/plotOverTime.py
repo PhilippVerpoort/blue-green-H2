@@ -304,7 +304,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             x=thisLine['year'],
             y=thisLine['fscp'],
             legendgroup=0 if isbluegreen else 1,
-            legendgrouptitle=dict(text=f"<b>{config['legendlabels'][0]}:</b>" if isbluegreen else f"<b>{config['legendlabels'][1]}:</b>"),
+            legendgrouptitle=dict(text=f"<b>{config['legendlabels'][1]}:</b>" if isbluegreen else f"<b>{config['legendlabels'][0]}:</b>"),
             name=name,
             mode='lines',
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuel_y in config['cases_dashed'] else 'solid'),
