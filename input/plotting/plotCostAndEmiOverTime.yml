@@ -62,3 +62,10 @@ ghgi:
           - BLUE-low-opti
         extended:
           - BLUE-low-opti-lowscco2
+      BLUE-opti-gwp20:
+        label: Blue H<sub>2</sub> (Optimistic, GWP20)
+        colour: '#38211d'
+        gwp: gwp20
+        cases:
+          - BLUE-high-opti
+          - BLUE-low-opti

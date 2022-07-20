@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.colors import hex_to_rgb
 
+from src.data.fuels.calc_fuels import __calcFuel
 from src.timeit import timeit
 
 
@@ -46,9 +47,20 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
     for cID, corridor in subConfig['showCorridors'].items():
         cCases = corridor['cases']
         cLabel = corridor['label']
-        cColour = fuelSpecs[cCases[0]]['colour']
+        cColour = corridor['colour'] if 'colour' in corridor else fuelSpecs[cCases[0]]['colour']
 
-        thisData = plotData.query('fuel in @cCases').reset_index(drop=True)
+        if 'gwp' in corridor:
+            fuels = []
+            for c in cCases:
+                options = fuelSpecs[c]['options'].copy()
+                options['gwp'] = corridor['gwp']
+                fuels.extend(
+                    __calcFuel(fuelSpecs[c]['params'], c, fuelSpecs[c]['type'], options, plotData.year.unique())
+                )
+
+            thisData = pd.DataFrame.from_records(fuels)
+        else:
+            thisData = plotData.query('fuel in @cCases').reset_index(drop=True)
 
         thisData['upper'] = thisData[type] + thisData[type + '_uu']
         thisData['lower'] = thisData[type] - thisData[type + '_ul']
