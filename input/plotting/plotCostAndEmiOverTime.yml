@@ -18,11 +18,11 @@ cost:
           - BLUE-low-pess
           - BLUE-low-opti
       GREEN-high:
-        label: Green H<sub>2</sub> (High elec. price)
+        label: Green H<sub>2</sub> (Pessimistic)
         cases:
           - GREEN-RE-pess
       GREEN-low:
-        label: Green H<sub>2</sub> (Low elec. price)
+        label: Green H<sub>2</sub> (Optimistic)
         cases:
           - GREEN-RE-opti
 
