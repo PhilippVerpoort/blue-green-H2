@@ -53,13 +53,13 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
         thisData['upper'] = thisData[type] + thisData[type + '_uu']
         thisData['lower'] = thisData[type] - thisData[type + '_ul']
 
-        thisData_max = thisData.loc[thisData.groupby('year')['upper'].idxmax()]
-        thisData_min = thisData.loc[thisData.groupby('year')['lower'].idxmin()]
+        thisData_max = thisData.groupby('year')['upper'].max().reset_index()
+        thisData_min = thisData.groupby('year')['lower'].min().reset_index()
 
         trace = go.Scatter(
             # The minimum (or maximum) line needs to be added before the below area plot can be applied.
             x=thisData_min.year,
-            y=thisData_min['upper']*scale,
+            y=thisData_min['lower']*scale,
             legendgroup=cID,
             mode='lines',
             line=dict(color=cColour, width=subConfig['global']['lw_default']),
@@ -69,7 +69,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
 
         corridor = go.Scatter(
             x=thisData_max.year,
-            y=thisData_max['lower']*scale,
+            y=thisData_max['upper']*scale,
             fill='tonexty',  # fill area between trace0 and trace1
             mode='lines',
             name=cLabel,
