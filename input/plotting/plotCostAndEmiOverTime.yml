@@ -21,10 +21,14 @@ cost:
         label: Green H<sub>2</sub> (Pessimistic)
         cases:
           - GREEN-RE-pess
+        extended:
+          - GREEN-ME-pess
       GREEN-low:
         label: Green H<sub>2</sub> (Optimistic)
         cases:
           - GREEN-RE-opti
+        extended:
+          - GREEN-ME-opti
 
 
 ghgi:
@@ -32,6 +36,13 @@ ghgi:
     ymax: 0.28
     label: Emissions intensity
     showCorridors:
+      GREEN:
+        label: Green H<sub>2</sub>
+        cases:
+          - GREEN-RE-pess
+          - GREEN-RE-opti
+        extended:
+          - GREEN-ME-opti
       NG:
         label: NG
         cases:
@@ -49,8 +60,5 @@ ghgi:
         cases:
           - BLUE-high-opti
           - BLUE-low-opti
-      GREEN:
-        label: Green H<sub>2</sub>
-        cases:
-          - GREEN-RE-pess
-          - GREEN-RE-opti
+        extended:
+          - BLUE-low-opti-lowscco2

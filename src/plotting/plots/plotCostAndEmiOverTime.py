@@ -56,28 +56,65 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
         thisData_max = thisData.groupby('year')['upper'].max().reset_index()
         thisData_min = thisData.groupby('year')['lower'].min().reset_index()
 
-        trace = go.Scatter(
+        fig.add_trace(go.Scatter(
             # The minimum (or maximum) line needs to be added before the below area plot can be applied.
             x=thisData_min.year,
             y=thisData_min['lower']*scale,
             legendgroup=cID,
             mode='lines',
             line=dict(color=cColour, width=subConfig['global']['lw_default']),
-            showlegend=False
-        )
-        fig.add_trace(trace)
+            showlegend=False,
+        ))
 
-        corridor = go.Scatter(
+        fig.add_trace(go.Scatter(
             x=thisData_max.year,
             y=thisData_max['upper']*scale,
-            fill='tonexty',  # fill area between trace0 and trace1
+            fill='tonexty', # fill area between traces
             mode='lines',
             name=cLabel,
             legendgroup=cID,
             line=dict(color=cColour, width=subConfig['global']['lw_default']),
             showlegend=True,
-        )
-        fig.add_trace(corridor)
+        ))
+
+        if 'extended' not in corridor: continue
+        for cExt in corridor['extended']:
+            extDesc = 'low supply-chain CO<sub>2</sub>' if 'lowscco2' in cExt else '75-to-100% RE share' if 'ME' in cExt else '???'
+
+            extData = plotData.query(f"fuel=='{cExt}'").reset_index(drop=True)
+
+            extData['upper'] = extData[type] + extData[type + '_uu']
+            extData['lower'] = extData[type] - extData[type + '_ul']
+
+            extData_max = extData.groupby('year')['upper'].max().reset_index()
+            extData_min = extData.groupby('year')['lower'].min().reset_index()
+
+            # extData_max = extData_max.loc[extData_max.upper > thisData_max.upper, ]
+            # extData_min = extData_min.loc[extData_min.lower < thisData_min.lower, ]
+
+            extHasLegend = False
+            if any(extData_max.upper > thisData_max.upper):
+                fig.add_trace(go.Scatter(
+                    x=extData_max.year,
+                    y=extData_max['upper'] * scale,
+                    legendgroup=cExt,
+                    name=f"{cLabel} ({extDesc})",
+                    mode='lines',
+                    line=dict(color=cColour, width=subConfig['global']['lw_default'], dash='dot'),
+                    showlegend=True,
+                ))
+                extHasLegend = True
+
+            if any(extData_min.lower < thisData_min.lower):
+                fig.add_trace(go.Scatter(
+                    x=extData_min.year,
+                    y=extData_min['lower'] * scale,
+                    legendgroup=cExt,
+                    name=f"{cLabel} ({extDesc})",
+                    mode='lines',
+                    line=dict(color=cColour, width=subConfig['global']['lw_default'], dash='dot'),
+                    showlegend=not extHasLegend,
+                ))
 
 
     # add label inside plot
