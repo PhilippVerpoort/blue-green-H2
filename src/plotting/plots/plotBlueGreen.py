@@ -444,7 +444,7 @@ def __addFSCPSubplotContoursTop(blueFuel: str, greenFuel: str, xmin: float, xmax
     GHGIBlueOtherBase, _ = __getGHGIs(pBlueOther, pGreen, baseOnly=True)
     # ghgi0_1 + p_1 * ghgim_1 = ghgi0_2 + p_2 * ghgim_2
     # p_2 = (p_1*ghgim_1+ghgi0_1-ghgi0_2)/ghgim_2
-    range2  = [(x*pBlue['mghgi']+GHGIBlueBase-GHGIBlueOtherBase) / pBlueOther['mghgi']
+    range2  = [(x*pBlue['mghgi'][0]+GHGIBlueBase-GHGIBlueOtherBase) / pBlueOther['mghgi'][0]
                for x in [xmin, xmax]]
 
 
