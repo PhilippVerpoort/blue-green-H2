@@ -307,7 +307,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             legendgrouptitle=dict(text=f"<b>{config['legendlabels'][1]}:</b>" if isbluegreen else f"<b>{config['legendlabels'][0]}:</b>"),
             name=name,
             mode='lines',
-            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuel_y in config['cases_dashed'] else 'solid'),
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuel_x in config['cases_dashed'] or fuel_y in config['cases_dashed'] else 'solid'),
         ))
 
         # uncertainity envelope
@@ -367,7 +367,7 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list,
         diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
         points.append(diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).head(1).assign(label=5))
 
-        if fuelGreen in config['cases_dashed']:
+        if fuelGreen in config['cases_dashed'] or fuelBlue in config['cases_dashed']:
             continue
 
         # markers 2-4
