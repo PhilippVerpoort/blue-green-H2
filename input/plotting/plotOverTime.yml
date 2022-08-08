@@ -25,28 +25,26 @@ selected_cases:
   high-pess:
     - NG-high-pess
     - BLUE-high-pess
-    - GREEN-RE-pess
-    - GREEN-ME-pess
+    - GREEN-pess
   low-pess:
     - NG-low-pess
     - BLUE-low-pess
-    - GREEN-RE-pess
-    - GREEN-ME-pess
+    - GREEN-pess
   high-opti:
     - NG-high-opti
     - BLUE-high-opti
-    - GREEN-RE-opti
-    - GREEN-ME-opti
+    - BLUE-high-opti-lowscco2
+    - GREEN-opti
   low-opti:
     - NG-low-opti
     - BLUE-low-opti
-    - GREEN-RE-opti
-    - GREEN-ME-opti
+    - BLUE-low-opti-lowscco2
+    - GREEN-opti
 
 uncertainity_cases:
   - NG-low-opti
   - BLUE-low-opti
-  - GREEN-RE-opti
+  - GREEN-opti
 
 show_cp_unc: False
 bgfscp_unc: False
@@ -58,8 +56,8 @@ selected_cases_labels:
   low-opti: Low gas price, optimistic
 
 cases_dashed:
-  - GREEN-ME-pess
-  - GREEN-ME-opti
+  - BLUE-high-opti-lowscco2
+  - BLUE-low-opti-lowscco2
 
 sidelabels:
   top:
@@ -82,6 +80,7 @@ annotationTexts:
 fscp_colour:
   pess: '#dc291a'
   opti: '#fc4b32'
+  lowscco2: '#fc4b32'
 
 co2price_traj:
   years: [2020,2025,2030,2035,2040,2045,2050,2055]

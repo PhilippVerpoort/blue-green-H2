@@ -43,8 +43,8 @@ fuels:
   - NG-high-opti
   - BLUE-high-pess
   - BLUE-high-opti
-  - GREEN-RE-pess
-  - GREEN-RE-opti
+  - GREEN-pess
+  - GREEN-opti
 
 years:
   - 2025

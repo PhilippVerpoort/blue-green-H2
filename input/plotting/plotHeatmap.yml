@@ -6,8 +6,6 @@ plotting:
 labels:
   ghgi: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
   cost: Direct Cost (EUR/MWh<sub>LHV</sub>)
-  ghgiSteel: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
-  costSteel: Direct Cost (EUR/t<sub>LS</sub>)
 
 annotationLabels:
   left: High gas prices
@@ -48,18 +46,18 @@ showFuels:
     - BLUE-high-pess
     - BLUE-high-opti
     - BLUE-high-opti-lowscco2
-    - GREEN-RE-pess
-    - GREEN-RE-opti
-    - GREEN-ME-pess
-    - GREEN-ME-opti
+    - GREEN-pess
+    - GREEN-opti
+    - GREEN-pess
+    - GREEN-opti
   right:
     - BLUE-low-pess
     - BLUE-low-opti
     - BLUE-low-opti-lowscco2
-    - GREEN-RE-pess
-    - GREEN-RE-opti
-    - GREEN-ME-pess
-    - GREEN-ME-opti
+    - GREEN-pess
+    - GREEN-opti
+    - GREEN-pess
+    - GREEN-opti
 
 showYears:
   - 2030

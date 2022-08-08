@@ -21,15 +21,11 @@ cost:
       GREEN-high:
         label: Green H<sub>2</sub> (Pessimistic)
         cases:
-          - GREEN-RE-pess
-        extended:
-          - GREEN-ME-pess
+          - GREEN-pess
       GREEN-low:
         label: Green H<sub>2</sub> (Optimistic)
         cases:
-          - GREEN-RE-opti
-        extended:
-          - GREEN-ME-opti
+          - GREEN-opti
 
 
 ghgi:
@@ -41,10 +37,8 @@ ghgi:
       GREEN:
         label: Green H<sub>2</sub>
         cases:
-          - GREEN-RE-pess
-          - GREEN-RE-opti
-        extended:
-          - GREEN-ME-opti
+          - GREEN-pess
+          - GREEN-opti
       NG:
         label: NG
         cases:

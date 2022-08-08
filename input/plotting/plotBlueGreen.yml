@@ -67,8 +67,8 @@ colourscale:
   FSCPmid: 400.0
 
 fuelsScatterGreen:
-    - GREEN-RE-pess
-    - GREEN-RE-opti
+    - GREEN-pess
+    - GREEN-opti
 
 fuelsScatterBlue:
     - BLUE-high-pess
@@ -76,7 +76,7 @@ fuelsScatterBlue:
     - BLUE-low-pess
     - BLUE-low-opti
 
-fuelGreen: GREEN-RE-opti
+fuelGreen: GREEN-opti
 fuelBlueLeft: BLUE-high-pess
 fuelBlueRight: BLUE-high-opti
 fuelYearTop: 2035
