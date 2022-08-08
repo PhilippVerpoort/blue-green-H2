@@ -23,6 +23,26 @@ def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict):
     return figs
 
 
+def __getThisData(plotData: pd.DataFrame, fuelSpecs: dict, cases: list):
+    ret = []
+
+    for c in cases:
+        if c.endswith('gwpOther'):
+            c = c.rstrip('-gwpOther')
+            options = fuelSpecs[c]['options'].copy()
+            options['gwp'] = 'gwp20' if options['gwp']=='gwp100' else 'gwp100'
+            ret.append(
+                pd.DataFrame.from_records(__calcFuel(fuelSpecs[c]['params'], c, fuelSpecs[c]['type'], options, plotData.year.unique()))
+            )
+        else:
+            ret.append(
+                plotData.query(f"fuel=='{c}'").reset_index(drop=True)
+            )
+
+    return pd.concat(ret)
+
+
+
 def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, type: str):
     scale = 1.0 if type == 'cost' else 1000.0
 
@@ -49,18 +69,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
         cLabel = corridor['label']
         cColour = corridor['colour'] if 'colour' in corridor else fuelSpecs[cCases[0]]['colour']
 
-        if 'gwp' in corridor:
-            fuels = []
-            for c in cCases:
-                options = fuelSpecs[c]['options'].copy()
-                options['gwp'] = corridor['gwp']
-                fuels.extend(
-                    __calcFuel(fuelSpecs[c]['params'], c, fuelSpecs[c]['type'], options, plotData.year.unique())
-                )
-
-            thisData = pd.DataFrame.from_records(fuels)
-        else:
-            thisData = plotData.query('fuel in @cCases').reset_index(drop=True)
+        thisData = __getThisData(plotData, fuelSpecs, cCases)
 
         thisData['upper'] = thisData[type] + thisData[type + '_uu']
         thisData['lower'] = thisData[type] - thisData[type + '_ul']
@@ -74,7 +83,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             y=thisData_min['lower']*scale,
             legendgroup=cID,
             mode='lines',
-            line=dict(color=cColour, width=subConfig['global']['lw_default']),
+            line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             showlegend=False,
         ))
 
@@ -85,15 +94,25 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             mode='lines',
             name=cLabel,
             legendgroup=cID,
-            line=dict(color=cColour, width=subConfig['global']['lw_default']),
+            line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             showlegend=True,
         ))
 
         if 'extended' not in corridor: continue
         for cExt in corridor['extended']:
-            extDesc = 'low supply-chain CO<sub>2</sub>' if 'lowscco2' in cExt else '75-to-100% RE share' if 'ME' in cExt else '???'
+            extData = __getThisData(plotData, fuelSpecs, [cExt])
 
-            extData = plotData.query(f"fuel=='{cExt}'").reset_index(drop=True)
+            if cExt.endswith('-gwpOther'):
+                cExt = cExt.rstrip('-gwpOther')
+                gwp = fuelSpecs[cExt]['options']['gwp']
+                gwpOther = 'GWP20' if gwp == 'gwp100' else 'GWP100'
+                extDesc = gwpOther
+            else:
+                descs = {
+                    'lowscco2': 'low supply-chain CO<sub>2</sub>',
+                    'ME': '75-to-100% RE share',
+                }
+                extDesc = next(val for key, val in descs.items() if key in cExt)
 
             extData['upper'] = extData[type] + extData[type + '_uu']
             extData['lower'] = extData[type] - extData[type + '_ul']
@@ -107,25 +126,48 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             extHasLegend = False
             if any(extData_max.upper > thisData_max.upper):
                 fig.add_trace(go.Scatter(
-                    x=extData_max.year,
-                    y=extData_max['upper'] * scale,
-                    legendgroup=cExt,
-                    name=f"{cLabel} ({extDesc})",
+                    x=thisData_max.year,
+                    y=thisData_max['upper']*scale,
                     mode='lines',
-                    line=dict(color=cColour, width=subConfig['global']['lw_default'], dash='dot'),
-                    showlegend=True,
+                    line=dict(color=cColour, width=0.0),
+                    legendgroup=cExt,
+                    showlegend=False,
                 ))
                 extHasLegend = True
 
+                fig.add_trace(go.Scatter(
+                    x=extData_max.year,
+                    y=extData_max['upper'] * scale,
+                    fill='tonexty', # fill area between traces
+                    mode='lines',
+                    line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
+                    fillpattern=dict(shape='+' if cExt.startswith('BLUE') else 'x'),
+                    name=f"{cLabel} ({extDesc})",
+                    legendgroup=cExt,
+                    showlegend=True,
+                ))
+
             if any(extData_min.lower < thisData_min.lower):
+                fig.add_trace(go.Scatter(
+                    x=thisData_min.year,
+                    y=thisData_min['lower']*scale,
+                    mode='lines',
+                    line=dict(color=cColour, width=0.0),
+                    legendgroup=cExt,
+                    showlegend=False,
+                ))
+                extHasLegend = True
+
                 fig.add_trace(go.Scatter(
                     x=extData_min.year,
                     y=extData_min['lower'] * scale,
-                    legendgroup=cExt,
-                    name=f"{cLabel} ({extDesc})",
+                    fill='tonexty', # fill area between traces
                     mode='lines',
-                    line=dict(color=cColour, width=subConfig['global']['lw_default'], dash='dot'),
-                    showlegend=not extHasLegend,
+                    line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
+                    fillpattern=dict(shape='+'),
+                    name=f"{cLabel} ({extDesc})",
+                    legendgroup=cExt,
+                    showlegend=True,
                 ))
 
 

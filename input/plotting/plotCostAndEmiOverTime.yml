@@ -2,6 +2,7 @@ cost:
     yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
     ymax: 160.0
     label: Direct cost
+    showLines: False
     showCorridors:
       NG:
         label: NG
@@ -35,6 +36,7 @@ ghgi:
     yaxislabel: Life-cycle GHGI of Energy (kg<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
     ymax: 0.28
     label: Emissions intensity
+    showLines: False
     showCorridors:
       GREEN:
         label: Green H<sub>2</sub>
@@ -62,10 +64,4 @@ ghgi:
           - BLUE-low-opti
         extended:
           - BLUE-low-opti-lowscco2
-      BLUE-opti-gwp20:
-        label: Blue H<sub>2</sub> (Optimistic, GWP20)
-        colour: '#38211d'
-        gwp: gwp20
-        cases:
-          - BLUE-high-opti
-          - BLUE-low-opti
+          - BLUE-low-opti-gwpOther
