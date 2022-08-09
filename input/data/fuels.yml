@@ -93,6 +93,9 @@ fuels:
           green_ocf:
             2025: 50
             2050: 50
+          cost_h2transp:
+            2025: 10 +- 2
+            2050: 5 +- 1
         opti:
           desc: Optimistic
           colour: '#6ac100'

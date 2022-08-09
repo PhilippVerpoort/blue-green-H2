@@ -36,12 +36,14 @@ def evalCost(p, type: str):
 def getCostParamsNG(pars: pd.DataFrame, options: dict):
     return dict(
         p_ng=__getValAndUnc(pars, 'cost_ng_price', options),
+        c_tr=__getVal(pars, 'cost_ng_grid', options),
     )
 
 
-def getCostNG(p_ng):
+def getCostNG(p_ng, c_tr):
     return {
         'fuel_cost': tuple(p for p in p_ng),
+        'tra_cost': (c_tr, 0.0, 0.0),
     }
 
 

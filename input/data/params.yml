@@ -12,6 +12,14 @@ params:
       fluctuations due to Ukraine conflict). This is followed by a potentially strong price decrease till 2050 due to 
       decreasing demand.
 
+  cost_ng_grid:
+    desc: Natural gas grid cost
+    type: const
+    value: 5.0
+    unit: EUR/MWh
+    source:
+      Scenario assumptions.
+
   ghgi_ng_base:
     desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
     type: linear
@@ -442,8 +450,8 @@ params:
     desc: Transp. cost
     type: linear
     value:
-      2025: 20.0
-      2050: 10.0
+      2025: 40.0 +- 10.0
+      2050: 20.0 +- 10.0
     unit: EUR/MWh
     source:
       Numbers encouraged by research results shared by Acatech.
