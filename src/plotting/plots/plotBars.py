@@ -17,7 +17,7 @@ def plotBars(fuelData: pd.DataFrame, config: dict):
         # styling figure
         __styling(fig, subFigName)
 
-        figs.update({f"fig1{subFigName}": fig})
+        figs.update({f"figS1{subFigName}": fig})
 
     return figs
 

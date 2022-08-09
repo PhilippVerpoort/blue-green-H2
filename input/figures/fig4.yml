@@ -1,6 +1,0 @@
-name: Figure 4
-title: Emission intensities and direct costs of different hydrogen fuel options (scatter plot for several years), along with FSCP estimates (contour plot and black lines) required to make hydrogen competitive with (a) natural gas for heating and (b) conventional steel production.
-desc: The hydrogen production cases shown are i) a high-emissions blue hydrogen based on SMR-CCS-56% technology with plant-wide CO2 capture rates of ~556 % and 90 % at the capture step, and ii) a low-emissions blue hydrogen based on ATR-CCS technology with plant-wide CO2 capture rates of ~93 % and 98 % at the capture step. Methane emission rates along the natural gas supply chains are assumed to reduce from ~1 % to ~0.5 %  in 2025-2050.
-display: [/, /advanced]
-width: 50%
-height: 550px

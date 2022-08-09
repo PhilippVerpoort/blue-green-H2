@@ -12,13 +12,11 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
 
     allPlotArgs = {
         'plotBars': (allData['fuelData'],),
+        'plotBlueGreen': (allData['fuelData'],),
+        'plotCostAndEmiOverTime': (allData['fuelData'],),
+        'plotHeatmap': (allData['fuelData'],),
         'plotLines': (allData['fuelData'], allData['FSCPData'],),
         'plotOverTime': (allData['FSCPData'],),
-        'plotHeatmap': (allData['fuelData'],),
-        'plotBlueGreen': (allData['fuelData'],),
-        'plotSensitivity': (input_data['fuels'],),
-        'plotSensitivityNG': (allData['fuelData'], allData['fullParams'],),
-        'plotCostAndEmiOverTime': (allData['fuelData'],),
         'plotSensitivityFSCP': (input_data['fuels'],),
     }
 

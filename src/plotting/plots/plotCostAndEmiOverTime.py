@@ -18,7 +18,7 @@ def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict):
         # styling figure
         __styling(fig)
 
-        figs.update({f"fig8{subFigName}": fig})
+        figs.update({f"fig1{subFigName}": fig})
 
     return figs
 

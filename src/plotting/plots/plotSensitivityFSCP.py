@@ -17,7 +17,7 @@ def plotSensitivityFSCP(fuels: dict, config: dict):
     # styling figure
     __styling(fig)
 
-    return {'fig9': fig}
+    return {'fig4': fig}
 
 
 def __produceFigure(fuels: dict, config: dict):

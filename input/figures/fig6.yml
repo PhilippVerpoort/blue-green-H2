@@ -1,4 +1,5 @@
-name: Figure 6
-title: Sensitivity analysis of difference between blue and green production cost in 2035 for key parameters.
+name: Figure 5
+title: Blue-to-green FSCPs are analysed in figure 6a. The axes show the two main determinants x) the mark-up in life-cycle emissions of blue compared to green hydrogen and y) the mark-up of in specific costs of green compared to blue hydrogen.
 desc: ''
-display: [/advanced]
+display: [/, /advanced]
+height: 600px

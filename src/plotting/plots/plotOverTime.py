@@ -28,7 +28,7 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict):
 
     return {
         'fig3': fig3,
-        'fig11': fig11,
+        'fig7': fig11,
     }
 
 

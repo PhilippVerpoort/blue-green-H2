@@ -34,7 +34,7 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict):
         # styling figure
         __styling(fig)
 
-        figs.update({f"fig4{subFigName}": fig})
+        figs.update({f"fig5{subFigName}": fig})
 
     return figs
 

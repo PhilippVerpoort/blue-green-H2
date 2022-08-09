@@ -1,4 +1,4 @@
-plotBars:
+plotCostAndEmiOverTime:
   fig1:
     - fig1a
     - fig1b
@@ -9,20 +9,16 @@ plotLines:
 plotOverTime:
   - fig3
   - fig11
-plotHeatmap:
-  fig4:
-    - fig4a
-    - fig4b
-plotBlueGreen:
-  - fig5
-  - fig10
-plotSensitivity:
-  - fig6
-plotSensitivityNG:
-  - fig7
-plotCostAndEmiOverTime:
-  fig8:
-    - fig8a
-    - fig8b
 plotSensitivityFSCP:
-  - fig9
+  - fig4
+plotHeatmap:
+  fig5:
+    - fig5a
+    - fig5b
+plotBlueGreen:
+  - fig6
+  - figS2
+plotBars:
+  figS1:
+    - figS1a
+    - figS1b

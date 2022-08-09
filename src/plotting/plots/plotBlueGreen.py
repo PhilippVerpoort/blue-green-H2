@@ -13,16 +13,16 @@ from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, paramsGHGI, getG
 @timeit
 def plotBlueGreen(fuelData: pd.DataFrame, config: dict):
     # produce figure
-    fig5 = __produceFigureSimple(fuelData, config)
+    fig6 = __produceFigureSimple(fuelData, config)
 
 
     # produce figure
-    fig10 = __produceFigureFull(fuelData, config)
+    figS2 = __produceFigureFull(fuelData, config)
 
 
     return {
-        'fig5': fig5,
-        'fig10': fig10,
+        'fig6': fig6,
+        'figS2': figS2,
     }
 
 
