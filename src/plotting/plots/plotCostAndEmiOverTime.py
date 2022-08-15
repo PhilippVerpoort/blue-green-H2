@@ -8,19 +8,26 @@ from src.timeit import timeit
 
 
 @timeit
-def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict):
+def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
     # produce figures
-    figs = {}
-    for subFigName, type in [('a', 'cost'), ('b', 'ghgi')]:
+    ret = {}
+    for sub, type in [('a', 'cost'), ('b', 'ghgi')]:
+        subfigName = f"fig1{sub}"
 
-        fig = __produceFigure(fuelData, config['fuelSpecs'], {**config[type], **{'global': config['global']}}, type)
+        # check if plotting is needed
+        if subfigName not in subfigs_needed:
+            ret.update({subfigName: None})
+            continue
+
+        # plot subfigure
+        subfig = __produceFigure(fuelData, config['fuelSpecs'], {**config[type], **{'global': config['global']}}, type)
 
         # styling figure
-        __styling(fig)
+        __styling(subfig)
 
-        figs.update({f"fig1{subFigName}": fig})
+        ret.update({subfigName: subfig})
 
-    return figs
+    return ret
 
 
 def __getThisData(plotData: pd.DataFrame, fuelSpecs: dict, cases: list):

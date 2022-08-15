@@ -7,10 +7,17 @@ from src.timeit import timeit
 
 
 @timeit
-def plotHeatmap(fuelData: pd.DataFrame, config: dict):
+def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+    ret = {}
+    for sub, type in [('a', 'left'), ('b', 'right')]:
+        subfigName = f"fig5{sub}"
 
-    figs = {}
-    for subFigName, type in [('a', 'left'), ('b', 'right')]:
+        # check if plotting is needed
+        if subfigName not in subfigs_needed:
+            ret.update({subfigName: None})
+            continue
+
+        # select data
         plotData, refData = __selectPlotData(fuelData, config['refFuel'][type], config['refYear'][type], config['showFuels'][type], config['showYears'])
 
         # define plotly figure
@@ -19,7 +26,7 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict):
         # subplot labels
         fig.add_annotation(
             showarrow=False,
-            text=f"<b>{subFigName}</b>",
+            text=f"<b>{sub}</b>",
             x=0.0,
             xanchor='left',
             xref='paper',
@@ -34,9 +41,9 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict):
         # styling figure
         __styling(fig)
 
-        figs.update({f"fig5{subFigName}": fig})
+        ret.update({subfigName: fig})
 
-    return figs
+    return ret
 
 
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, showYears: list):

@@ -1,15 +1,23 @@
 from typing import Union
 import importlib
 
-import pandas as pd
 import yaml
+import plotly.graph_objects as go
 
 from src.config_load import plots, plots_cfg_global
+from src.config_load_app import app_cfg
 
 
 def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
-                plot_list: Union[list, None] = None, global_cfg = 'print'):
+                figs_needed: Union[list, None] = None, global_cfg='print'):
 
+    # determine which plots need to be run based on the figures that are needed
+    plotsNeeded = {
+        plotName: [subfig for fig, subfigs in figs.items() if (figs_needed is None or fig in figs_needed) for subfig in subfigs]
+        for plotName, figs in plots.items()
+    }
+
+    # collect args for plot functions from data
     allPlotArgs = {
         'plotBars': (allData['fuelData'],),
         'plotBlueGreen': (allData['fuelData'],),
@@ -20,31 +28,37 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
         'plotSensitivityFSCP': (input_data['fuels'],),
     }
 
-    figs = {}
+    ret = {}
     for i, plotName in enumerate(plots):
-        if plot_list is not None and plotName not in plot_list:
-            if isinstance(plots[plotName], list):
-                figs.update({f"{fig}": None for fig in plots[plotName]})
-            elif isinstance(plots[plotName], dict):
-                figs.update({f"{subFig}": None for fig in plots[plotName] for subFig in plots[plotName][fig]})
-            else:
-                raise Exception('Unknown figure type.')
-
+        if plotName not in plotsNeeded:
+            ret.update({f"{subFig}": None for fig in plots[plotName] for subFig in plots[plotName][fig]})
         else:
             print(f"Plotting {plotName}...")
+
+            # get plot args
             plotArgs = allPlotArgs[plotName]
+
+            # get plot config
             config = yaml.load(plots_cfg[plotName], Loader=yaml.FullLoader)
             if 'import' in config:
                 for imp in config['import']:
                     config[imp] = yaml.load(plots_cfg[imp], Loader=yaml.FullLoader)
             config = {**config, 'fuelSpecs': allData['fuelSpecs'], 'global': plots_cfg_global[global_cfg]}
 
+            # load and execute plot function
             module = importlib.import_module(f"src.plotting.plots.{plotName}")
-            plotFigMethod = getattr(module, plotName)
+            plotFunc = getattr(module, plotName)
 
-            newFigs = plotFigMethod(*plotArgs, config)
-            figs.update(newFigs)
+            # execute plot function
+            newFigs = plotFunc(*plotArgs, config, plotsNeeded[plotName])
+            ret.update(newFigs)
 
     print('Plot creation complete...')
 
-    return figs
+    # insert empty figure for 'None' values
+    for subfig in ret:
+        if ret[subfig] is None:
+            if any(subfig in fs[fig] for plotName, fs in plots.items() for fig in fs if fig in app_cfg['figures']):
+                ret[subfig] = go.Figure()
+
+    return {subfigName: subfig for subfigName, subfig in ret.items() if subfig is not None}

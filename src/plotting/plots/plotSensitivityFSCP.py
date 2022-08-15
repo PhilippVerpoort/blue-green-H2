@@ -10,7 +10,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotSensitivityFSCP(fuels: dict, config: dict):
+def plotSensitivityFSCP(fuels: dict, config: dict, subfigs_needed: list):
     # produce figure
     fig = __produceFigure(fuels, config)
 

@@ -7,7 +7,7 @@ from flask import send_file
 from src.app.callbacks.init import figsDefault
 from src.app.app import dash_app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
-from src.config_load_app import figNames, figs_cfg, allSubFigNames, app_cfg
+from src.config_load_app import figNames, figs_cfg, subfigsDisplayed, app_cfg
 from src.data.data import getFullData
 from src.config_load import input_data, plots
 from src.filepaths import getFilePathAssets, getFilePath
@@ -17,7 +17,7 @@ from src.plotting.plot_all import plotAllFigs
 
 # general callback for (re-)generating plots
 @dash_app.callback(
-    [*(Output(subFigName, 'figure') for subFigName in allSubFigNames),],
+    [*(Output(subfigName, 'figure') for subfigName in subfigsDisplayed),],
     [Input('simple-update', 'n_clicks'),
      Input('advanced-update', 'n_clicks'),
      State('plots-cfg', 'data'),
@@ -39,13 +39,16 @@ def callbackUpdate(n1, n2, plots_cfg: dict,
         if btnPressed == 'simple-update':
             inputDataUpdated = updateScenarioInputSimple(input_data.copy(), simple_gwp, simple_important_params)
             outputData = getFullData(inputDataUpdated)
+            route = '/'
         elif btnPressed == 'advanced-update':
             inputDataUpdated = updateScenarioInputAdvanced(input_data.copy(), advanced_gwp, advanced_times, advanced_fuels, advanced_params)
             outputData = getFullData(inputDataUpdated)
+            route = '/advanced'
         else:
             raise Exception('Unknown button pressed!')
 
-    figs = plotAllFigs(outputData, inputDataUpdated, plots_cfg, global_cfg='webapp')
+    figsNeeded = [fig for fig, routes in app_cfg['figures'].items() if route in routes]
+    figs = plotAllFigs(outputData, inputDataUpdated, plots_cfg, global_cfg='webapp', figs_needed=figsNeeded)
 
     addWebappSpecificStyling(figs)
 
@@ -119,18 +122,21 @@ def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_m
 
 
 # update figure plotting settings
+settingsButtons = [plotName for plotName, figList in plots.items() if any(f in app_cfg['figures'] and not ('nosettings' in figs_cfg[f] and figs_cfg[f]['nosettings']) for f in figList)]
 @dash_app.callback(
     [Output('plot-config-modal', 'is_open'),
      Output('plots-cfg', 'data'),
      Output('plot-config-modal-textfield', 'value'),],
-    [*(Input(f'{plotName}-settings', 'n_clicks') for plotName in plots),
+    [*(Input(f'{plotName}-settings', 'n_clicks') for plotName in settingsButtons),
      Input('plot-config-modal-ok', 'n_clicks'),
      Input('plot-config-modal-cancel', 'n_clicks'),],
     [State('plot-config-modal-textfield', 'value'),
      State('plots-cfg', 'data'),],
 )
-def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, n7: int, n_ok: int, n_cancel: int,
-                          settings_modal_textfield: str, plots_cfg: dict):
+def callbackSettingsModal(*args):
+    settings_modal_textfield = args[-2]
+    plots_cfg = args[-1]
+
     ctx = dash.callback_context
     if not ctx.triggered:
         plots_cfg['last_btn_pressed'] = None
@@ -156,8 +162,8 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
     Output('simple-controls-card', 'style'),
     Output('advanced-controls-card-left', 'style'),
     Output('advanced-controls-card-right', 'style'),
-    *(Output(f"card-{figName}", 'style') for figName in figNames),
-    *(Output(f"{plotName}-settings-div", 'style') for plotName in plots),
+    *(Output(f"card-{f}", 'style') for f in figNames if f in app_cfg['figures']),
+    *(Output(f'{plotName}-settings-div', 'style') for plotName, figList in plots.items() if any(f in app_cfg['figures'] and not ('nosettings' in figs_cfg[f] and figs_cfg[f]['nosettings']) for f in figList)),
     [Input('url', 'pathname')]
 )
 def callbackDisplayForRoutes(route):
@@ -170,11 +176,12 @@ def callbackDisplayForRoutes(route):
 
     # display of figures for different routes
     for figName in figNames:
+        if figName not in app_cfg['figures']: continue
         r.append({'display': 'none'} if route not in app_cfg['figures'][figName] else {})
 
     # display plot config buttons only on advanced
     for figName in figNames:
-        if 'nosettings' in figs_cfg[figName] and figs_cfg[figName]['nosettings']: continue
+        if figName not in app_cfg['figures'] or  ('nosettings' in figs_cfg[figName] and figs_cfg[figName]['nosettings']): continue
         r.append({'display': 'none'} if route != '/advanced' else {})
 
     return r

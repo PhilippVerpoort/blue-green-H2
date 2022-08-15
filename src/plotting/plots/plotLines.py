@@ -7,9 +7,16 @@ from src.timeit import timeit
 
 
 @timeit
-def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
-    figs = {}
-    for subFigName, type in [('a', 'left'), ('b', 'right')]:
+def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, subfigs_needed: list):
+    ret = {}
+    for sub, type in [('a', 'left'), ('b', 'right')]:
+        subfigName = f"fig2{sub}"
+
+        # check if plotting is needed
+        if subfigName not in subfigs_needed:
+            ret.update({subfigName: None})
+            continue
+
         # select which lines to plot based on function argument
         plotData = __selectPlotData(fuelData, config['showFuels'][type])
 
@@ -17,14 +24,14 @@ def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict):
         plotFSCP = __selectPlotFSCPs(FSCPData, config['showFSCPs'][type])
 
         # produce figures
-        fig = __produceFigure(plotData, plotFSCP, config, type)
+        subfig = __produceFigure(plotData, plotFSCP, config, type)
 
         # styling figure
-        __styling(fig, subFigName)
+        __styling(subfig, sub)
 
-        figs.update({f"fig2{subFigName}": fig})
+        ret.update({subfigName: subfig})
 
-    return figs
+    return ret
 
 
 def __selectPlotData(fuelData: pd.DataFrame, showFuels: dict):

@@ -12,24 +12,29 @@ from src.timeit import timeit
 
 
 @timeit
-def plotOverTime(FSCPData: pd.DataFrame, config: dict):
+def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list):
+    ret = {}
+
     # select which lines to plot based on function argument
     plotScatter, plotLines = __selectPlotFSCPs(FSCPData, config['selected_cases'], config['n_samples'])
 
-    # produce figure
-    fig3 = __produceFigureFull(plotScatter, plotLines, config)
+    # produce figure 3
+    if 'fig3' in subfigs_needed:
+        fig = __produceFigureFull(plotScatter, plotLines, config)
+        __styling(fig, config)
+        ret['fig3'] = fig
+    else:
+        ret['fig3'] = None
 
-    # produce figure
-    fig11 = __produceFigureReduced(plotScatter, plotLines, config)
+    # produce figure 7
+    if 'fig7' in subfigs_needed:
+        fig = __produceFigureReduced(plotScatter, plotLines, config)
+        __styling(fig, config)
+        ret['fig7'] = fig
+    else:
+        ret['fig7'] = None
 
-    # styling of figures
-    __styling(fig3, config)
-    __styling(fig11, config)
-
-    return {
-        'fig3': fig3,
-        'fig7': fig11,
-    }
+    return ret
 
 
 def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: int):

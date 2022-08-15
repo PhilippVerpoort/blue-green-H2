@@ -9,9 +9,9 @@ from src.plotting.plot_all import plotAllFigs
 
 # Get list of figs to plot from command line args.
 if len(sys.argv) > 1:
-    plot_list = sys.argv[1:]
+    figs_needed = sys.argv[1:]
 else:
-    plot_list = None
+    figs_needed = None
 
 
 # Get full parameter, fuel, FSCP, and steel data based on input data.
@@ -27,7 +27,7 @@ exportDataXLS(input_data, outputData)
 
 
 # Run plotting routines to generate figures
-figs = plotAllFigs(outputData, input_data, plots_cfg, plot_list=plot_list)
+figs = plotAllFigs(outputData, input_data, plots_cfg, figs_needed=figs_needed)
 
 
 # Export figures to files

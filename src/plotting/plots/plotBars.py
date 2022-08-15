@@ -5,21 +5,30 @@ from src.timeit import timeit
 
 
 @timeit
-def plotBars(fuelData: pd.DataFrame, config: dict):
+def plotBars(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
     # plot data
     plotData = __obtainData(fuelData, config)
 
     # produce figures
-    figs = {}
-    for subFigName, type in [('a', 'cost'), ('b', 'ghgi')]:
+    ret = {}
+    for sub, type in [('a', 'cost'), ('b', 'ghgi')]:
+        subfigName = f"figS1{sub}"
+
+        # check if plotting is needed
+        if subfigName not in subfigs_needed:
+            ret.update({subfigName: None})
+            continue
+
+        # run plot function
         fig = __produceFigure(plotData, {**config[type], **{'global': config['global']}}, type)
 
         # styling figure
-        __styling(fig, subFigName)
+        __styling(fig, sub)
 
-        figs.update({f"figS1{subFigName}": fig})
+        # save in return dict
+        ret.update({subfigName: fig})
 
-    return figs
+    return ret
 
 
 def __obtainData(fuelData: pd.DataFrame, config: dict):

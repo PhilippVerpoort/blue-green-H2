@@ -7,23 +7,20 @@ from plotly.subplots import make_subplots
 
 from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
-from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, paramsGHGI, getGHGIParamsGreen, getGHGIParamsBlue
+from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, getGHGIParamsGreen, getGHGIParamsBlue
 
 
 @timeit
-def plotBlueGreen(fuelData: pd.DataFrame, config: dict):
-    # produce figure
-    fig6 = __produceFigureSimple(fuelData, config)
+def plotBlueGreen(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+    ret = {}
 
+    # produce figure 6
+    ret['fig6'] = __produceFigureSimple(fuelData, config) if 'fig6' in subfigs_needed else None
 
-    # produce figure
-    figS2 = __produceFigureFull(fuelData, config)
+    # produce figure S2
+    ret['figS2'] = __produceFigureFull(fuelData, config) if 'figS2' in subfigs_needed else None
 
-
-    return {
-        'fig6': fig6,
-        'figS2': figS2,
-    }
+    return ret
 
 
 def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):

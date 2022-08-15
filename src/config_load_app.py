@@ -9,13 +9,11 @@ __filePath = getFilePathInput('app.yml')
 app_cfg = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
 figNames = [figName for plotName in plots for figName in plots[plotName]]
-allSubFigNames = []
+subfigsDisplayed = []
 for plotName in plots:
     for figName in plots[plotName]:
-        if isinstance(plots[plotName], list):
-            allSubFigNames.append(figName)
-        else:
-            allSubFigNames.extend(plots[plotName][figName])
+        if figName in app_cfg['figures']:
+            subfigsDisplayed.extend(plots[plotName][figName])
 
 figs_cfg = {}
 for figList in plots.values():
