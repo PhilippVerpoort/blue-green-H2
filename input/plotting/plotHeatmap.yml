@@ -34,8 +34,8 @@ thickLines:
       end: 1500
 
 refFuel:
-  left: NG-high-pess
-  right: NG-low-pess
+  left: NG-high-cons
+  right: NG-low-cons
 
 refYear:
   left: 2030
@@ -43,21 +43,21 @@ refYear:
 
 showFuels:
   left:
-    - BLUE-high-pess
-    - BLUE-high-opti
-    - BLUE-high-opti-lowscco2
-    - GREEN-pess
-    - GREEN-opti
-    - GREEN-pess
-    - GREEN-opti
+    - BLUE-high-cons
+    - BLUE-high-prog
+    - BLUE-high-prog-lowscco2
+    - GREEN-cons
+    - GREEN-prog
+    - GREEN-cons
+    - GREEN-prog
   right:
-    - BLUE-low-pess
-    - BLUE-low-opti
-    - BLUE-low-opti-lowscco2
-    - GREEN-pess
-    - GREEN-opti
-    - GREEN-pess
-    - GREEN-opti
+    - BLUE-low-cons
+    - BLUE-low-prog
+    - BLUE-low-prog-lowscco2
+    - GREEN-cons
+    - GREEN-prog
+    - GREEN-cons
+    - GREEN-prog
 
 showYears:
   - 2030

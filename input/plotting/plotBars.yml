@@ -40,11 +40,11 @@ ghgi:
       ghgi__other: '#00813e'
 
 fuels:
-  - NG-high-opti
-  - BLUE-high-pess
-  - BLUE-high-opti
-  - GREEN-pess
-  - GREEN-opti
+  - NG-high-prog
+  - BLUE-high-cons
+  - BLUE-high-prog
+  - GREEN-cons
+  - GREEN-prog
 
 years:
   - 2025

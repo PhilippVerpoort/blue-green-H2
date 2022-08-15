@@ -7,25 +7,25 @@ cost:
       NG:
         label: NG
         cases:
-          - NG-high-pess
-          - NG-high-opti
-          - NG-low-pess
-          - NG-low-opti
+          - NG-high-cons
+          - NG-high-prog
+          - NG-low-cons
+          - NG-low-prog
       BLUE:
         label: Blue H<sub>2</sub>
         cases:
-          - BLUE-high-pess
-          - BLUE-high-opti
-          - BLUE-low-pess
-          - BLUE-low-opti
+          - BLUE-high-cons
+          - BLUE-high-prog
+          - BLUE-low-cons
+          - BLUE-low-prog
       GREEN-high:
         label: Green H<sub>2</sub> (Pessimistic)
         cases:
-          - GREEN-pess
+          - GREEN-cons
       GREEN-low:
         label: Green H<sub>2</sub> (Optimistic)
         cases:
-          - GREEN-opti
+          - GREEN-prog
 
 
 ghgi:
@@ -37,25 +37,25 @@ ghgi:
       GREEN:
         label: Green H<sub>2</sub>
         cases:
-          - GREEN-pess
-          - GREEN-opti
+          - GREEN-cons
+          - GREEN-prog
       NG:
         label: NG
         cases:
-          - NG-high-pess
-          - NG-high-opti
-          - NG-low-pess
-          - NG-low-opti
-      BLUE-pess:
+          - NG-high-cons
+          - NG-high-prog
+          - NG-low-cons
+          - NG-low-prog
+      BLUE-cons:
         label: Blue H<sub>2</sub> (Pessimistic)
         cases:
-          - BLUE-high-pess
-          - BLUE-low-pess
-      BLUE-opti:
+          - BLUE-high-cons
+          - BLUE-low-cons
+      BLUE-prog:
         label: Blue H<sub>2</sub> (Optimistic)
         cases:
-          - BLUE-high-opti
-          - BLUE-low-opti
+          - BLUE-high-prog
+          - BLUE-low-prog
         extended:
-          - BLUE-low-opti-lowscco2
-          - BLUE-low-opti-gwpOther
+          - BLUE-low-prog-lowscco2
+          - BLUE-low-prog-gwpOther

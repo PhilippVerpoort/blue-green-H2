@@ -28,7 +28,7 @@ def __getThisData(plotData: pd.DataFrame, fuelSpecs: dict, cases: list):
 
     for c in cases:
         if c.endswith('gwpOther'):
-            c = c.rstrip('-gwpOther')
+            c = c.replace('-gwpOther', '')
             options = fuelSpecs[c]['options'].copy()
             options['gwp'] = 'gwp20' if options['gwp']=='gwp100' else 'gwp100'
             ret.append(
@@ -103,7 +103,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             extData = __getThisData(plotData, fuelSpecs, [cExt])
 
             if cExt.endswith('-gwpOther'):
-                cExt = cExt.rstrip('-gwpOther')
+                cExt = cExt.replace('-gwpOther', '')
                 gwp = fuelSpecs[cExt]['options']['gwp']
                 gwpOther = 'GWP20' if gwp == 'gwp100' else 'GWP100'
                 extDesc = gwpOther

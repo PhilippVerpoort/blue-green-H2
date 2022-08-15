@@ -56,10 +56,10 @@ colours:
   heatmap_low: '#6ac100'
 
 fscp_colour:
-  pess-pess: '#dc291a'
-  pess-opti: '#dc291a'
-  opti-pess: '#fc4b32'
-  opti-opti: '#fc4b32'
+  cons-cons: '#dc291a'
+  cons-prog: '#dc291a'
+  prog-cons: '#fc4b32'
+  prog-prog: '#fc4b32'
 
 colourscale:
   FSCPmin: -200.0
@@ -67,18 +67,18 @@ colourscale:
   FSCPmid: 400.0
 
 fuelsScatterGreen:
-    - GREEN-pess
-    - GREEN-opti
+    - GREEN-cons
+    - GREEN-prog
 
 fuelsScatterBlue:
-    - BLUE-high-pess
-    - BLUE-high-opti
-    - BLUE-low-pess
-    - BLUE-low-opti
+    - BLUE-high-cons
+    - BLUE-high-prog
+    - BLUE-low-cons
+    - BLUE-low-prog
 
-fuelGreen: GREEN-opti
-fuelBlueLeft: BLUE-high-pess
-fuelBlueRight: BLUE-high-opti
+fuelGreen: GREEN-prog
+fuelBlueLeft: BLUE-high-cons
+fuelBlueRight: BLUE-high-prog
 fuelYearTop: 2035
 fuelYearBottom: 2030
 

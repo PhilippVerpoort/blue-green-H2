@@ -22,50 +22,50 @@ subplot_title_positions:
   - [0.5, 0.5]
 
 selected_cases:
-  high-pess:
-    - NG-high-pess
-    - BLUE-high-pess
-    - GREEN-pess
-  low-pess:
-    - NG-low-pess
-    - BLUE-low-pess
-    - GREEN-pess
-  high-opti:
-    - NG-high-opti
-    - BLUE-high-opti
-    - BLUE-high-opti-lowscco2
-    - GREEN-opti
-  low-opti:
-    - NG-low-opti
-    - BLUE-low-opti
-    - BLUE-low-opti-lowscco2
-    - GREEN-opti
+  high-cons:
+    - NG-high-cons
+    - BLUE-high-cons
+    - GREEN-cons
+  low-cons:
+    - NG-low-cons
+    - BLUE-low-cons
+    - GREEN-cons
+  high-prog:
+    - NG-high-prog
+    - BLUE-high-prog
+    - BLUE-high-prog-lowscco2
+    - GREEN-prog
+  low-prog:
+    - NG-low-prog
+    - BLUE-low-prog
+    - BLUE-low-prog-lowscco2
+    - GREEN-prog
 
 uncertainity_cases:
-  - NG-low-opti
-  - BLUE-low-opti
-  - GREEN-opti
+  - NG-low-prog
+  - BLUE-low-prog
+  - GREEN-prog
 
 show_cp_unc: False
 bgfscp_unc: False
 
 selected_cases_labels:
-  high-pess: High gas price, pessimistic
-  low-pess: Low gas price, pessimistic
-  high-opti: High gas price, optimistic
-  low-opti: Low gas price, optimistic
+  high-cons: High gas price, conservative
+  low-cons: Low gas price, conservative
+  high-prog: High gas price, progressive
+  low-prog: Low gas price, progressive
 
 cases_dashed:
-  - BLUE-high-opti-lowscco2
-  - BLUE-low-opti-lowscco2
+  - BLUE-high-prog-lowscco2
+  - BLUE-low-prog-lowscco2
 
 sidelabels:
   top:
     - High gas prices
     - Low gas prices
   left:
-    - Pessimistic assumptions
-    - Optimistic assumptions
+    - Conservative assumptions
+    - Progressive assumptions
 
 annotationTexts:
   heading1: Milestones that capture the expanding competitiveness of low-carbon hydrogen with fossil applications
@@ -78,8 +78,8 @@ annotationTexts:
   point6: Direct costs of green H<sub>2</sub> fall<br>below those of blue H<sub>2</sub>
 
 fscp_colour:
-  pess: '#dc291a'
-  opti: '#fc4b32'
+  cons: '#dc291a'
+  prog: '#fc4b32'
   lowscco2: '#fc4b32'
 
 co2price_traj:
