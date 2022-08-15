@@ -8,7 +8,7 @@ plotLines:
     - fig2b
 plotOverTime:
   - fig3
-  - fig11
+  - fig7
 plotSensitivityFSCP:
   - fig4
 plotHeatmap:

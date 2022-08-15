@@ -28,6 +28,7 @@ fuels:
             2025: 1.0 +- 0.5
             2050: 0.1 + 0.4 - 0.1
 
+
   BLUE:
     name: Blue H<sub>2</sub>
     colour: '#589ace'

@@ -62,13 +62,13 @@ def getElementAdvancedControlsCardLeft():
 
 def getElementAdvancedControlsCardRight():
     fuels = input_data['fuels']
-    fuels_data = [dict(fuel=fuel,
-                       desc=fuels[fuel]['desc'],
-                       colour=fuels[fuel]['colour'],
-                       type=fuels[fuel]['type'],
-                       tech_type=fuels[fuel]['tech_type'] if 'tech_type' in fuels[fuel] else None,
-                       include_capex=fuels[fuel]['include_capex'] if 'include_capex' in fuels[fuel] else None,
-                       ) for fuel in fuels]
+    fuels_data = [
+        dict(
+            fuel=fuel,
+            desc=fuels[fuel]['name'],
+            colour=fuels[fuel]['colour'],
+        ) for fuel in fuels
+    ]
 
     widget_advanced_fuels = html.Div(
         children=[
@@ -82,35 +82,17 @@ def getElementAdvancedControlsCardRight():
                     {'id': 'fuel', 'name': 'Fuel ID'},
                     {'id': 'desc', 'name': 'Fuel name'},
                     {'id': 'colour', 'name': 'Colour'},
-                    {'id': 'type', 'name': 'Fuel type', 'presentation': 'dropdown'},
-                    {'id': 'tech_type', 'name': 'Tech type', 'presentation': 'dropdown'},
-                    {'id': 'include_capex', 'name': 'Include CAPEX', 'presentation': 'dropdown'},
                 ],
                 data=fuels_data,
                 editable=True,
                 dropdown={
-                    'type': {
-                        'options': [
-                            {'value': 'ng', 'label': 'Natural Gas'},
-                            {'value': 'blue', 'label': 'Blue Hydrogen'},
-                            {'value': 'green', 'label': 'Green Hydrogen'},
-                        ]
-                    },
-                    'tech_type': {
-                        'options': [
-                            {'value': 'smr-ccs-56%', 'label': 'SMR-CCS-56%'},
-                            {'value': 'atr-ccs-93%', 'label': 'ATR-CCS-93%'},
-                            {'value': 'RE', 'label': 'Renewables'},
-                            {'value': 'fossil', 'label': 'Fossil'},
-                            {'value': 'share', 'label': 'Share of RE and Fos.'},
-                        ]
-                    },
-                    'include_capex': {
-                        'options': [
-                            {'value': True, 'label': 'True'},
-                            {'value': False, 'label': 'False'},
-                        ]
-                    },
+                    # 'type': {
+                    #     'options': [
+                    #         {'value': 'ng', 'label': 'Natural Gas'},
+                    #         {'value': 'blue', 'label': 'Blue Hydrogen'},
+                    #         {'value': 'green', 'label': 'Green Hydrogen'},
+                    #     ]
+                    # },
                 },
                 style_cell={'whiteSpace': 'pre-line'},
                 style_cell_conditional=[

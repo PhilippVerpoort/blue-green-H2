@@ -171,6 +171,7 @@ def callbackDisplayForRoutes(route):
         r.append({'display': 'none'} if route not in figs_cfg[figName]['display'] else {})
 
     for figName in figNames:
+        if 'nosettings' in figs_cfg[figName] and figs_cfg[figName]['nosettings']: continue
         r.append({'display': 'none'} if route != '/advanced' else {})
 
     return r

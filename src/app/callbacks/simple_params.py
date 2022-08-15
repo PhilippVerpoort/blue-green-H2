@@ -11,7 +11,7 @@ def getSimpleParamsTable():
     r = []
 
     subtypes = {
-        'cost_green_elec': ['RE'],
+        'cost_green_elec': [],
     }
 
     paramData = input_data['params']

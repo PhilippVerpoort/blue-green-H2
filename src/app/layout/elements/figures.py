@@ -51,13 +51,13 @@ def __getFigTemplate(figName: str, subFigNames: list, plotName: str):
             html.Hr(),
             html.B(f"{figCfg['name']} | {figCfg['title']}"),
             html.P(figCfg['desc']),
-            html.Div([
+            (html.Div([
                     html.Hr(),
                     html.Button(id=f"{plotName}-settings", children='Config', n_clicks=0,),
                 ],
                 id=f"{plotName}-settings-div",
                 style={'display': 'none'},
-            ),
+            ) if ('nosettings' not in figCfg or not figCfg['nosettings']) else None),
         ],
         style={} if display else {'display': 'none'},
     )
