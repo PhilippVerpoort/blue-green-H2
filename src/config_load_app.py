@@ -18,7 +18,7 @@ for plotName in plots:
             allSubFigNames.extend(plots[plotName][figName])
 
 figs_cfg = {}
-for plotName in plots:
-    for figName in plots[plotName]:
+for figList in plots.values():
+    for figName in figList:
         __filePath = getFilePathInput(f"figures/{figName}.yml")
         figs_cfg[figName] = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)

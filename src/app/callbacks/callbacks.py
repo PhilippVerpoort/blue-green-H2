@@ -7,7 +7,7 @@ from flask import send_file
 from src.app.callbacks.init import figsDefault
 from src.app.app import dash_app
 from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
-from src.config_load_app import figNames, figs_cfg, allSubFigNames
+from src.config_load_app import figNames, figs_cfg, allSubFigNames, app_cfg
 from src.data.data import getFullData
 from src.config_load import input_data, plots
 from src.filepaths import getFilePathAssets, getFilePath
@@ -163,13 +163,16 @@ def callbackSettingsModal(n1: int, n2: int, n3: int, n4: int, n5: int, n6: int, 
 def callbackDisplayForRoutes(route):
     r = []
 
+    # display of control cards
     r.append({'display': 'none'} if route != '/' else {})
     r.append({'display': 'none'} if route != '/advanced' else {})
     r.append({'display': 'none'} if route != '/advanced' else {})
 
+    # display of figures for different routes
     for figName in figNames:
-        r.append({'display': 'none'} if route not in figs_cfg[figName]['display'] else {})
+        r.append({'display': 'none'} if route not in app_cfg['figures'][figName] else {})
 
+    # display plot config buttons only on advanced
     for figName in figNames:
         if 'nosettings' in figs_cfg[figName] and figs_cfg[figName]['nosettings']: continue
         r.append({'display': 'none'} if route != '/advanced' else {})

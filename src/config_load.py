@@ -21,6 +21,9 @@ units = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)['units']
 # load config data for plots and figures
 __filePath = getFilePathInput('plots.yml')
 plots = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
+for plotName in plots:
+    if isinstance(plots[plotName], list):
+        plots[plotName] = {f: [f] for f in plots[plotName]}
 
 __filePath = getFilePathInput('figure_print.yml')
 figure_print = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)

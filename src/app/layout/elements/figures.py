@@ -1,27 +1,25 @@
 from dash import html, dcc
 
 from src.config_load import plots
-from src.config_load_app import figs_cfg
+from src.config_load_app import figs_cfg, app_cfg
 
 
 def getFigures():
-    figs = []
-    for plotName in plots:
-        if isinstance(plots[plotName], list):
-            figs.extend([__getFigTemplate(fig, [fig], plotName) for fig in plots[plotName]])
-        elif isinstance(plots[plotName], dict):
-            figs.extend([__getFigTemplate(fig, plots[plotName][fig], plotName) for fig in plots[plotName]])
-        else:
-            raise Exception('Unknown figure type.')
+    cards = []
 
-    return figs
+    for fig in app_cfg['figures']:
+        plotName = next(plotName for plotName in plots if fig in plots[plotName])
+        figCard = __getFigTemplate(fig, plots[plotName][fig], plotName)
+        cards.append(figCard)
+
+    return cards
 
 
 def __getFigTemplate(figName: str, subFigNames: list, plotName: str):
     figCfg = figs_cfg[figName]
     width = figCfg['width'] if 'width' in figCfg else '100%'
     height = figCfg['height'] if 'height' in figCfg else '450px'
-    display = '/' in figCfg['display']
+    display = False
 
     return html.Div(
         id=f"card-{figName}",
