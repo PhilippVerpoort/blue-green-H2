@@ -33,12 +33,12 @@ selected_cases:
   high-prog:
     - NG-high-prog
     - BLUE-high-prog
-    - BLUE-high-prog-lowscco2
+#    - BLUE-high-prog-lowscco2
     - GREEN-prog
   low-prog:
     - NG-low-prog
     - BLUE-low-prog
-    - BLUE-low-prog-lowscco2
+#    - BLUE-low-prog-lowscco2
     - GREEN-prog
 
 uncertainity_cases:
