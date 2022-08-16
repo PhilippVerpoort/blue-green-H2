@@ -30,7 +30,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
 
     ret = {}
     for i, plotName in enumerate(plots):
-        if plotName not in plotsNeeded:
+        if plotName not in plotsNeeded or not plotsNeeded[plotName]:
             ret.update({f"{subFig}": None for fig in plots[plotName] for subFig in plots[plotName][fig]})
         else:
             print(f"Plotting {plotName}...")
@@ -56,9 +56,10 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
     print('Plot creation complete...')
 
     # insert empty figure for 'None' values
-    for subfig in ret:
-        if ret[subfig] is None:
-            if any(subfig in fs[fig] for plotName, fs in plots.items() for fig in fs if fig in app_cfg['figures']):
-                ret[subfig] = go.Figure()
+    if global_cfg=='webapp':
+        for subfig in ret:
+            if ret[subfig] is None:
+                if any(subfig in fs[fig] for plotName, fs in plots.items() for fig in fs if fig in app_cfg['figures']):
+                    ret[subfig] = go.Figure()
 
     return {subfigName: subfig for subfigName, subfig in ret.items() if subfig is not None}
