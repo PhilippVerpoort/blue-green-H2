@@ -323,7 +323,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
         fuel_x = thisScatter.iloc[thisScatter.first_valid_index()]['fuel_x']
         fuel_y = thisScatter.iloc[thisScatter.first_valid_index()]['fuel_y']
         name_x = 'NG' if fuel_x.startswith('NG') else config['fuelSpecs'][fuel_x]['shortname']
-        name_y = config['fuelSpecs'][fuel_y]['shortname'] + f" ({'Pessimistic' if fuel_x.endswith('pess') else 'Optimistic'})"
+        name_y = config['fuelSpecs'][fuel_y]['shortname'] + f" ({'Conservative' if fuel_x.endswith('cons') else 'Progressive'})"
         name = f"{name_x}→{name_y}"
         col = config['fscp_colour'][fuel_x.split('-')[-1]] if 'NG' not in tid else config['fuelSpecs'][fuel_y]['colour']
         isbluegreen = 'NG' not in fuel_x

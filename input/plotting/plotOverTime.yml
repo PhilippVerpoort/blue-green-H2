@@ -41,11 +41,6 @@ selected_cases:
 #    - BLUE-low-prog-lowscco2
     - GREEN-prog
 
-uncertainity_cases:
-  - NG-low-prog
-  - BLUE-low-prog
-  - GREEN-prog
-
 show_cp_unc: False
 bgfscp_unc: False
 
