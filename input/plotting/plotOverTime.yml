@@ -3,8 +3,8 @@ plotting:
   t_max: 2051.5
   fscp_min: -100.0
   fscp_max: 1000.0
-  fscp_unc_min: -30.0
-  fscp_unc_max: 600.0
+  fscp_unc_min: -100.0
+  fscp_unc_max: 1000.0
 
 labels:
   time: ''

@@ -114,17 +114,32 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
 
 def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
     # plot
-    fig = go.Figure()
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        subplot_titles=ascii_lowercase,
+        shared_yaxes=True,
+        horizontal_spacing=0.025,
+        vertical_spacing=0.1,
+    )
+
+    subfigs = [(k//2+1, k%2+1, scid) for k, scid in enumerate(config['selected_cases'])]
 
 
     # add FSCP traces
     all_traces = __addFSCPTraces(plotScatter, plotLines, config, uncertainity=True)
-    for tid, traces in all_traces.items():
-        if not config['bgfscp_unc'] and 'NG' not in tid: continue
-        if all(fuel in config['uncertainity_cases'] for fuel in tid.split(' to ')):
-            for trace in traces:
-                trace.showlegend = False
-                fig.add_trace(trace)
+    hasLegend = []
+    for i, j, scid in subfigs:
+        for tid, traces in all_traces.items():
+            if not config['bgfscp_unc'] and 'NG' not in tid: continue
+            tid_techs = '-'.join([fuel.split('-')[0]+'-'+fuel.split('-')[-1] for fuel in tid.split(' to ')])
+            if all(fuel in config['selected_cases'][scid] for fuel in tid.split(' to ')):
+                for trace in traces:
+                    if tid_techs in hasLegend:
+                        trace.showlegend = False
+                    fig.add_trace(trace, row=i, col=j)
+                if tid_techs not in hasLegend:
+                    hasLegend.append(tid_techs)
 
 
     # compute and plot carbon price tracjetory
@@ -137,19 +152,47 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
 
 
     # zero y line
-    fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black')
+    for i, j, _ in subfigs:
+        fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=i, col=j)
+
+
+    # add top and left annotation
+    annotationStyling = dict(xanchor='center', yanchor='middle', showarrow=False,
+                             bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+
+    for i in range(2):
+        fig.add_annotation(
+            x=0.50,
+            xref=f"x{str(i+1) if i else ''} domain",
+            y=1.15,
+            yref=f"y domain",
+            text=config['sidelabels']['top'][i],
+            **annotationStyling
+        )
+
+        fig.add_annotation(
+            x=-0.17,
+            xref=f"x domain",
+            y=0.5,
+            yref=f"y{str(i+2) if i else ''} domain",
+            text=config['sidelabels']['left'][i],
+            textangle=-90,
+            **annotationStyling
+        )
 
 
     # update axes titles and ranges
     fig.update_layout(
-        xaxis=dict(
+        **{f"xaxis{i+1 if i else ''}": dict(
             title=config['labels']['time'],
             range=[config['plotting']['t_min'], config['plotting']['t_max']]
-        ),
-        yaxis=dict(
-            title=config['labels']['fscp'],
-            range=[config['plotting']['fscp_unc_min'], config['plotting']['fscp_unc_max']]
-        ),
+        ) for i in range(4)},
+        **{f"yaxis{i+1 if i else ''}": dict(
+            title=config['labels']['fscp'] if (i+1)%2 else '',
+            range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
+        ) for i in range(4)},
+        margin_l=180.0,
+        # margin_b=520.0,
     )
 
     return fig
