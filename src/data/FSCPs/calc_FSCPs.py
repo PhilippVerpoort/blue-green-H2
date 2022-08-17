@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 from src.timeit import timeit
@@ -13,7 +14,7 @@ def calcFSCPs(fuelData: pd.DataFrame):
                   .drop(columns=['code_x', 'code_y'])
 
     tmp['correlated'] = 0.0
-    tmp.loc[(tmp['type_x'] != 'green') & (tmp['type_y'] != 'green'), 'correlated'] = 1.0
+    tmp.loc[(tmp['type_x'] != 'GREEN') & (tmp['type_y'] != 'GREEN'), 'correlated'] = 1.0
 
     fscp, fscpu = calcFSCPFromCostAndGHGI(
         tmp['cost_x'],
@@ -24,7 +25,7 @@ def calcFSCPs(fuelData: pd.DataFrame):
         [tmp[f"ghgi_{i}_x"] for i in ['uu', 'ul']],
         [tmp[f"cost_{i}_y"] for i in ['uu', 'ul']],
         [tmp[f"ghgi_{i}_y"] for i in ['uu', 'ul']],
-        correlated=tmp['correlated'],
+        corr=tmp['correlated'],
     )
 
     tmp['fscp'] = fscp
@@ -40,7 +41,7 @@ def calcFSCPs(fuelData: pd.DataFrame):
     return FSCPData
 
 
-def calcFSCPFromCostAndGHGI(cx, gx, cy, gy, cxu, gxu, cyu, gyu, correlated = 0.0):
+def calcFSCPFromCostAndGHGI(cx, gx, cy, gy, cxu, gxu, cyu, gyu, corr = 0.0):
     fscp = (cy - cx) / (gx - gy)
 
     fscpu = [0.0, 0.0]
@@ -49,11 +50,7 @@ def calcFSCPFromCostAndGHGI(cx, gx, cy, gy, cxu, gxu, cyu, gyu, correlated = 0.0
         for i in range(2):
             j = 0 if i else 1
 
-            fscpu[i] = (1.0 / (gx-gy)) * (cxu[i] + cyu[i])
-
-            delta_gu = gyu[i] + (1.0 - correlated) * gxu[j] - correlated * gxu[i]
-
-            fscpu[i] += (cy - cx) / (gx - gy) ** 2 * delta_gu
+            fscpu[i] += np.sqrt((fscp / (cy-cx)) ** 2 * (cyu[i] ** 2 + cxu[j] ** 2 - corr * 2 * cyu[i] * cxu[j]))
+            fscpu[i] += np.sqrt((fscp / (gx-gy)) ** 2 * (gyu[i] ** 2 + gxu[j] ** 2 - corr * 2 * gyu[i] * gxu[j]))
 
     return fscp, fscpu
-

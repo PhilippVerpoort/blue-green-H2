@@ -7,26 +7,26 @@ fuels:
         high:
           desc: High gas prices
           cost_ng_price:
-            2025: 40.0
-            2030: 30.0
-            2050: 30.0
+            2025: 40.0 +- 2
+            2030: 30.0 +- 1.5
+            2050: 30.0 +- 1.5
         low:
           desc: Low gas prices
           cost_ng_price:
-            2025: 15.0
-            2030: 15.0
-            2050: 15.0
+            2025: 15.0 +- 0.75
+            2030: 15.0 +- 0.75
+            2050: 15.0 +- 0.75
       cons_vs_prog:
         cons:
           desc: Conservative
           ghgi_ng_methaneleakage:
-            2025: 1.5 +- 0.5
-            2050: 1.5 +- 0.5
+            2025: 1.5 +- 0.25
+            2050: 1.5 +- 0.25
         prog:
           desc: Pessimistic
           ghgi_ng_methaneleakage:
-            2025: 1.0 +- 0.5
-            2050: 0.1 + 0.4 - 0.1
+            2025: 1.0 +- 0.25
+            2050: 0.1 +- 0.1
 
 
   BLUE:
@@ -37,30 +37,30 @@ fuels:
         high:
           desc: High gas prices
           cost_ng_price:
-            2025: 40.0
-            2030: 30.0
-            2050: 30.0
+            2025: 40.0 +- 5
+            2030: 30.0 +- 4
+            2050: 30.0 +- 4
         low:
           desc: Low gas prices
           cost_ng_price:
-            2025: 15.0
-            2030: 15.0
-            2050: 15.0
+            2025: 15.0 +- 2
+            2030: 15.0 +- 2
+            2050: 15.0 +- 2
       cons_vs_prog:
         cons:
           desc: Conservative
           colour: '#3647a3'
           blue_tech: smr-ccs-56%
           ghgi_ng_methaneleakage:
-            2025: 1.5 +- 0.5
-            2050: 1.5 +- 0.5
+            2025: 1.5 +- 0.25
+            2050: 1.5 +- 0.25
         prog:
           desc: Progressive
           colour: '#589ace'
           blue_tech: atr-ccs-93%
           ghgi_ng_methaneleakage:
-            2025: 1.0 +- 0.5
-            2050: 0.1 + 0.4 - 0.1
+            2025: 1.0 +- 0.25
+            2050: 0.1 +- 0.1
       scco2:
         none:
           desc: ''
@@ -78,14 +78,14 @@ fuels:
           desc: Conservative
           colour: '#38761d'
           cost_green_elec:
-            2025: 70.0 +- 10.0
-            2030: 60.0 +- 10.0
-            2050: 40.0 + 5.0 - 10.0
+            2025: 70.0 +- 3.5
+            2030: 60.0 +- 3.0
+            2050: 40.0 +- 2.0
           cost_green_capex:
-            2025: 800 +- 50
-            2030: 600 +- 50
-            2040: 400 +- 50
-            2050: 300 +- 50
+            2025: 800 +- 40
+            2030: 600 +- 30
+            2040: 400 +- 20
+            2050: 300 +- 15
           green_share:
             2025: 75.0
             2030: 90.0
@@ -101,13 +101,13 @@ fuels:
           desc: Progressive
           colour: '#6ac100'
           cost_green_elec:
-            2025: 45.0 +- 10.0
-            2050: 25.0 +- 10.0
+            2025: 45.0 +- 2.25
+            2050: 25.0 +- 1.25
           cost_green_capex:
-            2025: 500 +- 50
-            2030: 400 +- 50
-            2040: 200 +- 40
-            2050: 110 +- 20
+            2025: 500 +- 25
+            2030: 400 +- 20
+            2040: 200 +- 10
+            2050: 110 +- 5.5
           green_share:
             2025: 100.0
             2050: 100.0

@@ -3,22 +3,14 @@ params:
   cost_ng_price:
     desc: Natural gas price (per LHV)
     type: linear
-    value:
-      2025: 30.0 +- 5.0
-      2050: 30.0 +- 10.0
+    value: cases
     unit: EUR/MWh
-    source:
-      6 €/GJ = 21.6 €/MWh taken from IEA GHG report. Uncertainty remains small in 2025 (ignoring current strong 
-      fluctuations due to Ukraine conflict). This is followed by a potentially strong price decrease till 2050 due to 
-      decreasing demand.
 
   cost_ng_grid:
     desc: Natural gas grid cost
     type: const
     value: 5.0
     unit: EUR/MWh
-    source:
-      Scenario assumptions.
 
   ghgi_ng_base:
     desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
@@ -56,9 +48,7 @@ params:
     desc: Amount of methane leakage in production chain (relative to total amount used)
     short: CH4 Leakage
     type: linear
-    value:
-      2025: 1.5 +- 0.5
-      2050: 1.5 +- 0.5
+    value: cases
     unit: percent
     source:
       Based on today's range of leakage rates and the ambition of the industry to lower it significantly along with 
@@ -309,13 +299,8 @@ params:
   cost_green_capex:
     desc: Green CAPEX
     type: linear
-    value:
-      2025: 900 +- 200
-      2030: 600 +- 200
-      2040: 400 +- 150
-      2050: 200 + 100 - 70
+    value: cases
     unit: USD/kW
-    source: Own assumptions based on various sources.
 
   cost_green_fixedonm:
     desc: Fixed Operation and Maintenance Cost
@@ -336,23 +321,21 @@ params:
     short: Elec. price
     type: linear
     value:
-      2025: 45.0 +- 10.0
-      2050: 25.0 +- 10.0
+      2025: 70.0 +- 3.5
+      2030: 60.0 +- 3.0
+      2050: 40.0 +- 2.0
     unit: USD/MWh
-    source:
-      RE number assuming own estimates based on various sources. Mixed numbers based on Agora/Bloomberg(2021) till 2030 
-      and with own estimated extrapolation for 2050.
 
   ghgi_green_base:
     desc: CI of electrolysis
     type: linear
     value:
       gwp100:
-        2025: 0.12 +- 0.02
-        2050: 0.06 +- 0.01
+        2025: 0.12 +- 0.012
+        2050: 0.06 +- 0.006
       gwp20:
-        2025: 0.14 +- 0.02
-        2050: 0.07 +- 0.01
+        2025: 0.14 +- 0.014
+        2050: 0.07 +- 0.007
     options:
       - gwp
     unit: kgCO2eq/kgH2
@@ -365,18 +348,18 @@ params:
     value:
       RE:
         gwp100:
-          2025: 0.027 +- 0.010
-          2050: 0.016 +- 0.005
+          2025: 0.027 +- 0.0054
+          2050: 0.016 +- 0.0032
         gwp20:
-          2025: 0.033 +- 0.010
-          2050: 0.020 +- 0.005
+          2025: 0.033 +- 0.0066
+          2050: 0.020 +- 0.0040
       fossil:
         gwp100:
-          2025: 0.400 +- 0.05
-          2050: 0.400 +- 0.05
+          2025: 0.400 +- 0.040
+          2050: 0.400 +- 0.040
         gwp20:
-          2025: 0.650 +- 0.05
-          2050: 0.650 +- 0.05
+          2025: 0.650 +- 0.065
+          2050: 0.650 +- 0.065
     options:
       - elec_src
       - gwp

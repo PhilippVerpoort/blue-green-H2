@@ -12,6 +12,8 @@ def getFullParams(basicData: dict, times: list):
     pars = []
 
     for parId, par in basicData.items():
+        if par['value'] == 'cases': continue
+
         newPars = __calcValues(parId, par['value'], par['type'], times)
         for newPar in newPars:
             if 'unit' in par and par['unit'] is not None:

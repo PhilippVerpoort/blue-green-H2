@@ -91,7 +91,7 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
     plotLinesInterpolated = pd.concat(allEntries, ignore_index=True)
 
     plotLinesInterpolated['correlated'] = 0.0
-    plotLinesInterpolated.loc[(plotLinesInterpolated['type_x'] != 'green') & (plotLinesInterpolated['type_y'] != 'green'), 'correlated'] = 1.0
+    plotLinesInterpolated.loc[(plotLinesInterpolated['type_x'] != 'GREEN') & (plotLinesInterpolated['type_y'] != 'GREEN'), 'correlated'] = 1.0
 
     fscp, fscpu = calcFSCPFromCostAndGHGI(
         plotLinesInterpolated['cost_x'],
@@ -102,7 +102,7 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
         [plotLinesInterpolated[f"ghgi_{i}_x"] for i in ['uu', 'ul']],
         [plotLinesInterpolated[f"cost_{i}_y"] for i in ['uu', 'ul']],
         [plotLinesInterpolated[f"ghgi_{i}_y"] for i in ['uu', 'ul']],
-        correlated=plotLinesInterpolated['correlated'],
+        corr=plotLinesInterpolated['correlated'],
     )
 
     plotLinesInterpolated['fscp'] = fscp
