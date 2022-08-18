@@ -26,11 +26,11 @@ params:
         gwp100:
           2025: 8.3 +- 0.4
           2035: 8.3 +- 0.4
-          2050: 4.2 +- 3.1
+          2050: 4.2 +- 0.2
         gwp20:
           2025: 9.3 +- 0.5
           2035: 9.3 +- 0.5
-          2050: 4.7 +- 3.5
+          2050: 4.7 +- 0.25
       other:
         gwp100: 0.7 +- 0.04
         gwp20: 0.7 +- 0.04
@@ -178,20 +178,20 @@ params:
           gwp100:
             2025: 10.7 +- 0.5
             2035: 10.7 +- 0.5
-            2050: 5.4 +- 4.0
+            2050: 5.4 +- 0.25
           gwp20:
             2025: 10.7 +- 0.5
             2035: 10.7 +- 0.5
-            2050: 5.4 +- 4.0
+            2050: 5.4 +- 0.25
         atr-ccs-93%:
           gwp100:
             2025: 10.9 +- 0.5
             2035: 10.9 +- 0.5
-            2050: 5.5 +- 4.1
+            2050: 5.5 +- 0.25
           gwp20:
             2025: 10.9 +- 0.5
             2035: 10.9 +- 0.5
-            2050: 5.5 +- 4.1
+            2050: 5.5 +- 0.25
         atr-ccs-93%-lowscco2:
           gwp100:
             2025: 10.9 +- 0.5
@@ -253,7 +253,7 @@ params:
       Value given by assumed technology.
 
   ghgi_blue_methaneleakage_perrate:
-    desc: Methan leakage emissions per CH4 emission rate (per LHV)
+    desc: Methane leakage emissions per CH4 emission rate (per LHV)
     type: const
     value:
       smr-ccs-56%:
@@ -433,8 +433,8 @@ params:
     desc: Transp. cost
     type: linear
     value:
-      2025: 40.0 +- 10.0
-      2050: 20.0 +- 10.0
+      2025: 30.0 +- 10.0
+      2050: 15.0 +- 10.0
     unit: EUR/MWh
     source:
       Numbers encouraged by research results shared by Acatech.

@@ -1,6 +1,6 @@
 cost:
     yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
-    ymax: 160.0
+    ymax: 180.0
     label: Direct cost
     showLines: False
     showCorridors:
@@ -57,5 +57,5 @@ ghgi:
           - BLUE-high-prog
           - BLUE-low-prog
         extended:
-          - BLUE-low-prog-lowscco2
+ #         - BLUE-low-prog-lowscco2
           - BLUE-low-prog-gwpOther
