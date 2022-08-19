@@ -73,9 +73,10 @@ annotationTexts:
   point6: Direct costs of green H<sub>2</sub> fall<br>below those of blue H<sub>2</sub>
 
 fscp_colour:
-  cons: '#dc291a'
-  prog: '#fc4b32'
-  lowscco2: '#fc4b32'
+  cons-cons: '#dc291a'
+  cons-prog: '#d63ff6'
+  prog-cons: '#bb1adc'
+  prog-prog: '#fc4b32'
 
 co2price_traj:
   years: [2020,2025,2030,2035,2040,2045,2050,2055]
