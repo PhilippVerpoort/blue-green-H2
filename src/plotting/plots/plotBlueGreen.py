@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.express as px
 
 from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
@@ -39,7 +40,7 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
 
 
     # add scatter curves for main plot
-    traces = __addFSCPScatterCurves(fuelData, config)
+    traces = __addFSCPScatterCurves(fuelData, config, colourfull=True)
     for trace in traces:
         fig.add_trace(trace)
 
@@ -313,15 +314,17 @@ def __addFSCPContours(config: dict, zmin: float, zmax: float, colourscale: list,
     return traces
 
 
-def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict):
+def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=False):
     traces = []
 
     hasYearMarker = []
+    colIndex = 0
     for fuelBlue, fuelGreen in [(fB, fG) for fB in config['fuelsScatterBlue'] for fG in config['fuelsScatterGreen']]:
         thisData = __convertFuelData(fuelData, fuelBlue, fuelGreen)
 
         name = f"Comparing {fuelBlue} with {fuelGreen}"
-        col = config['fscp_colour'][fuelBlue.split('-')[-1] + '-' + fuelBlue.split('-')[-1]]
+        col = px.colors.qualitative.Plotly[colIndex] if colourfull else config['fscp_colour'][fuelBlue.split('-')[-1] + '-' + fuelBlue.split('-')[-1]]
+        colIndex += 1
 
 
         # points and lines
