@@ -342,13 +342,23 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             legendgroup='low' if 'low' in fuelBlue else 'high',
             legendgrouptitle=dict(text=f"<b>{legendgrouptitle}</b>"),
             showlegend=True,
-            marker_size=config['global']['highlight_marker_sm'],
-            marker_symbol='x' if 'cons' in fuelBlue else None,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if 'low' in fuelBlue else None),
-            mode='markers+lines',
+            mode='lines',
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>"
                           f"Direct cost difference (w/o CP): %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
+        ))
+
+
+        # lines
+        traces.append(go.Scatter(
+            x=thisData.delta_ghgi * 1000,
+            y=thisData.delta_cost,
+            legendgroup='low' if 'low' in fuelBlue else 'high',
+            showlegend=False,
+            line=dict(color=col, width=config['global']['lw_default']),
+            marker_size=config['global']['highlight_marker_sm'],
+            mode='markers',
         ))
 
 
@@ -365,19 +375,6 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             showlegend=False,
             mode='text',
         ))
-
-
-        # lines
-        # traces.append(go.Scatter(
-        #     x=thisData.delta_ghgi * 1000,
-        #     y=thisData.delta_cost,
-        #     name=name,
-        #     legendgroup='low' if 'low' in fuelBlue else 'high',
-        #     legendgrouptitle=dict(text=f"<b>{legendgrouptitle}</b>"),
-        #     showlegend=True,
-        #     line=dict(color=col, width=config['global']['lw_default']),
-        #     mode='lines',
-        # ))
 
 
         # error bars
