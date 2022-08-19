@@ -39,7 +39,7 @@ def __getThisData(plotData: pd.DataFrame, fuelSpecs: dict, cases: list):
             options = fuelSpecs[c]['options'].copy()
             options['gwp'] = 'gwp20' if options['gwp']=='gwp100' else 'gwp100'
             ret.append(
-                pd.DataFrame.from_records(__calcFuel(fuelSpecs[c]['params'], c, fuelSpecs[c]['type'], options, plotData.year.unique()))
+                pd.DataFrame.from_records(__calcFuel(fuelSpecs[c]['params'], c+'-gwpOther', fuelSpecs[c]['type'], options, plotData.year.unique()))
             )
         else:
             ret.append(
@@ -72,11 +72,15 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
 
 
     for cID, corridor in subConfig['showCorridors'].items():
-        cCases = corridor['cases']
-        cLabel = corridor['label']
-        cColour = corridor['colour'] if 'colour' in corridor else fuelSpecs[cCases[0]]['colour']
+        corrCases = corridor['cases']
+        corrColour = corridor['colour'] if 'colour' in corridor else fuelSpecs[list(corrCases.keys())[0].replace('-gwpOther', '')]['colour']
 
-        thisData = __getThisData(plotData, fuelSpecs, cCases)
+        allCases = list(corrCases.keys()) + [cExt for c in corrCases.values() for cExt in (c['extended'] if 'extended' in c else [])]
+        casesColours = {c: corrCases[c.replace('-gwpOther', '')]['colour'] if 'colour' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['colour'] for c in allCases}
+        casesLabels = {c: f"{fuelSpecs[c.replace('-gwpOther', '')]['shortname']} ({corrCases[c]['desc']})" if 'desc' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['name'] for c in allCases}
+
+        # select data and determine max and min of corridor
+        thisData = __getThisData(plotData, fuelSpecs, corrCases)
 
         thisData['upper'] = thisData[type] + thisData[type + '_uu']
         thisData['lower'] = thisData[type] - thisData[type + '_ul']
@@ -84,13 +88,14 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
         thisData_max = thisData.groupby('year')['upper'].max().reset_index()
         thisData_min = thisData.groupby('year')['lower'].min().reset_index()
 
+        # add corridor
         fig.add_trace(go.Scatter(
             # The minimum (or maximum) line needs to be added before the below area plot can be applied.
             x=thisData_min.year,
             y=thisData_min['lower']*scale,
             legendgroup=cID,
             mode='lines',
-            line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
+            line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             showlegend=False,
         ))
 
@@ -99,83 +104,26 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             y=thisData_max['upper']*scale,
             fill='tonexty', # fill area between traces
             mode='lines',
-            name=cLabel,
             legendgroup=cID,
-            line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
-            showlegend=True,
+            line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
+            fillpattern=dict(shape='/') if cID.endswith('-gwpOther') else None,
+            showlegend=False,
         ))
 
-        if 'extended' not in corridor: continue
-        for cExt in corridor['extended']:
-            extData = __getThisData(plotData, fuelSpecs, [cExt])
+        # add lines
+        for c in corrCases:
+            cData = __getThisData(thisData, fuelSpecs, [c])
 
-            if cExt.endswith('-gwpOther'):
-                cExt = cExt.replace('-gwpOther', '')
-                gwp = fuelSpecs[cExt]['options']['gwp']
-                gwpOther = 'GWP20' if gwp == 'gwp100' else 'GWP100'
-                extDesc = gwpOther
-            else:
-                descs = {
-                    'lowscco2': 'low supply-chain CO<sub>2</sub>',
-                    'ME': '75-to-100% RE share',
-                }
-                extDesc = next(val for key, val in descs.items() if key in cExt)
-
-            extData['upper'] = extData[type] + extData[type + '_uu']
-            extData['lower'] = extData[type] - extData[type + '_ul']
-
-            extData_max = extData.groupby('year')['upper'].max().reset_index()
-            extData_min = extData.groupby('year')['lower'].min().reset_index()
-
-            # extData_max = extData_max.loc[extData_max.upper > thisData_max.upper, ]
-            # extData_min = extData_min.loc[extData_min.lower < thisData_min.lower, ]
-
-            extHasLegend = False
-            if any(extData_max.upper > thisData_max.upper):
-                fig.add_trace(go.Scatter(
-                    x=thisData_max.year,
-                    y=thisData_max['upper']*scale,
-                    mode='lines',
-                    line=dict(color=cColour, width=0.0),
-                    legendgroup=cExt,
-                    showlegend=False,
-                ))
-                extHasLegend = True
-
-                fig.add_trace(go.Scatter(
-                    x=extData_max.year,
-                    y=extData_max['upper'] * scale,
-                    fill='tonexty', # fill area between traces
-                    mode='lines',
-                    line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
-                    fillpattern=dict(shape='+' if cExt.startswith('BLUE') else 'x'),
-                    name=f"{cLabel} ({extDesc})",
-                    legendgroup=cExt,
-                    showlegend=True,
-                ))
-
-            if any(extData_min.lower < thisData_min.lower):
-                fig.add_trace(go.Scatter(
-                    x=thisData_min.year,
-                    y=thisData_min['lower']*scale,
-                    mode='lines',
-                    line=dict(color=cColour, width=0.0),
-                    legendgroup=cExt,
-                    showlegend=False,
-                ))
-                extHasLegend = True
-
-                fig.add_trace(go.Scatter(
-                    x=extData_min.year,
-                    y=extData_min['lower'] * scale,
-                    fill='tonexty', # fill area between traces
-                    mode='lines',
-                    line=dict(color=cColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
-                    fillpattern=dict(shape='+'),
-                    name=f"{cLabel} ({extDesc})",
-                    legendgroup=cExt,
-                    showlegend=True,
-                ))
+            fig.add_trace(go.Scatter(
+                # The minimum (or maximum) line needs to be added before the below area plot can be applied.
+                x=cData.year,
+                y=cData[type]*scale,
+                legendgroup=c,
+                mode='lines',
+                name=casesLabels[c],
+                line=dict(color=casesColours[c], width=subConfig['global']['lw_thin'], dash='dot' if c.endswith('-gwpOther') else None),
+                showlegend=True,
+            ))
 
 
     # add label inside plot
@@ -186,7 +134,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
         x=0.01,
         yanchor='bottom',
         yref='y domain',
-        y=0.015,
+        y=0.025,
         showarrow=False,
         bordercolor='black',
         borderwidth=2,
@@ -211,9 +159,9 @@ def __styling(fig: go.Figure):
     fig.update_layout(
         legend=dict(
             yanchor='top',
-            y=1.00,
-            xanchor='right',
-            x=1.00,
+            y=-0.1,
+            xanchor='left',
+            x=0.0,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,

@@ -5,27 +5,24 @@ cost:
     showLines: False
     showCorridors:
       NG:
-        label: NG
         cases:
-          - NG-high-cons
-          - NG-high-prog
-          - NG-low-cons
-          - NG-low-prog
+          NG-high-cons:
+            desc: high gas price
+          NG-low-cons:
+            desc: low gas price
       BLUE:
-        label: Blue H<sub>2</sub>
         cases:
-          - BLUE-high-cons
-          - BLUE-high-prog
-          - BLUE-low-cons
-          - BLUE-low-prog
-      GREEN-high:
-        label: Green H<sub>2</sub> (Pessimistic)
+          BLUE-high-cons:
+            desc: high gas price
+          BLUE-low-cons:
+            desc: low gas price
+            colour: '#589ace'
+      GREEN:
         cases:
-          - GREEN-cons
-      GREEN-low:
-        label: Green H<sub>2</sub> (Optimistic)
-        cases:
-          - GREEN-prog
+          GREEN-cons:
+            desc: conservative
+          GREEN-prog:
+            desc: progressive
 
 
 ghgi:
@@ -35,27 +32,26 @@ ghgi:
     showLines: False
     showCorridors:
       GREEN:
-        label: Green H<sub>2</sub>
         cases:
-          - GREEN-cons
-          - GREEN-prog
+          GREEN-cons:
+            desc: conservative
+          GREEN-prog:
+            desc: progressive
       NG:
-        label: NG
         cases:
-          - NG-high-cons
-          - NG-high-prog
-          - NG-low-cons
-          - NG-low-prog
+          NG-low-cons:
+            desc: conservative
+          NG-low-prog:
+            desc: progressive
       BLUE-cons:
-        label: Blue H<sub>2</sub> (Pessimistic)
         cases:
-          - BLUE-high-cons
-          - BLUE-low-cons
+          BLUE-low-cons:
+            desc: conservative
       BLUE-prog:
-        label: Blue H<sub>2</sub> (Optimistic)
         cases:
-          - BLUE-high-prog
-          - BLUE-low-prog
-        extended:
- #         - BLUE-low-prog-lowscco2
-          - BLUE-low-prog-gwpOther
+          BLUE-low-prog:
+            desc: progressive
+      BLUE-prog-gwpOther:
+        cases:
+          BLUE-low-prog-gwpOther:
+            desc: progressive, GWP20
