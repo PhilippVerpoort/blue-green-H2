@@ -56,8 +56,9 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            yanchor='bottom',
-            y=1.1,
+            orientation='h',
+            yanchor='top',
+            y=-0.2,
             xanchor='left',
             x=0.0,
             bgcolor='rgba(255,255,255,1.0)',
@@ -186,7 +187,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     # add white annotation labels
     annotationStyling = dict(x=0.01, y=0.985, xanchor='left', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
     for k, f in enumerate(['fuelBlueLeft', 'fuelBlueRight'] * 2):
-        t = 'Pessimistic' if config[f].endswith('pess') else 'Optimistic'
+        t = 'Conservative' if config[f].endswith('cons') else 'Progressive'
         fig.add_annotation(xref=f"x{k+2} domain", yref=f"y{k+2} domain", text=t, **annotationStyling)
 
 
@@ -224,10 +225,11 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     # update legend styling
     fig.update_layout(
         legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="right",
-            x=0.485,
+            orientation='h',
+            yanchor='top',
+            y=-0.2,
+            xanchor='left',
+            x=0.0,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
@@ -322,12 +324,14 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
     for fuelBlue, fuelGreen in [(fB, fG) for fB in config['fuelsScatterBlue'] for fG in config['fuelsScatterGreen']]:
         thisData = __convertFuelData(fuelData, fuelBlue, fuelGreen)
 
-        name = f"Comparing {fuelBlue} with {fuelGreen}"
-        col = px.colors.qualitative.Plotly[colIndex] if colourfull else config['fscp_colour'][fuelBlue.split('-')[-1] + '-' + fuelBlue.split('-')[-1]]
+        name = ('Conservative' if 'cons' in fuelBlue else 'Progressive') + ' to ' + ('conservative' if 'cons' in fuelGreen else 'progressive')
+        legendgrouptitle = 'Low gas price' if 'low' in fuelBlue else 'High gas price'
+        # col = px.colors.qualitative.Plotly[colIndex] if colourfull else config['fscp_colour'][fuelBlue.split('-')[-1] + '-' + fuelBlue.split('-')[-1]]
+        col = config['fscp_colour'][fuelBlue.split('-')[-1] + '-' + fuelGreen.split('-')[-1]]
         colIndex += 1
 
 
-        # points and lines
+        # markers
         traces.append(go.Scatter(
             x=thisData.delta_ghgi * 1000,
             y=thisData.delta_cost,
@@ -335,28 +339,45 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             textposition="top right",
             textfont=dict(color=col),
             name=name,
-            legendgroup=f"{fuelBlue}__{fuelGreen}",
-            showlegend=False,
+            legendgroup='low' if 'low' in fuelBlue else 'high',
+            legendgrouptitle=dict(text=f"<b>{legendgrouptitle}</b>"),
+            showlegend=True,
             marker_size=config['global']['highlight_marker_sm'],
-            line_color=col,
-            mode='markers+text' if fuelBlue.split('-')[0] not in hasYearMarker else 'markers',
+            marker_symbol='x' if 'cons' in fuelBlue else None,
+            line=dict(color=col, width=config['global']['lw_default'], dash='dot' if 'low' in fuelBlue else None),
+            mode='markers+lines',
             customdata=thisData.year,
             hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>"
                           f"Direct cost difference (w/o CP): %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
         ))
 
-        if fuelBlue.split('-')[0] not in hasYearMarker:
-            hasYearMarker.append(fuelBlue.split('-')[0])
 
+        # year text
+        textData = thisData.query(f"year in {config['showYearNumbers']}")
         traces.append(go.Scatter(
-            x=thisData.delta_ghgi * 1000,
-            y=thisData.delta_cost,
+            x=textData.delta_ghgi * 1000,
+            y=textData.delta_cost,
+            text=textData.year,
+            textposition="top right",
+            textfont=dict(color=col),
             name=name,
-            legendgroup=f"{fuelBlue}__{fuelGreen}",
-            showlegend=True,
-            line=dict(color=col, width=config['global']['lw_default']),
-            mode='lines',
+            legendgroup='low' if 'low' in fuelBlue else 'high',
+            showlegend=False,
+            mode='text',
         ))
+
+
+        # lines
+        # traces.append(go.Scatter(
+        #     x=thisData.delta_ghgi * 1000,
+        #     y=thisData.delta_cost,
+        #     name=name,
+        #     legendgroup='low' if 'low' in fuelBlue else 'high',
+        #     legendgrouptitle=dict(text=f"<b>{legendgrouptitle}</b>"),
+        #     showlegend=True,
+        #     line=dict(color=col, width=config['global']['lw_default']),
+        #     mode='lines',
+        # ))
 
 
         # error bars
