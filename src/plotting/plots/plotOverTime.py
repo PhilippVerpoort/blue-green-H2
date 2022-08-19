@@ -570,7 +570,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
 
     errorBand = go.Scatter(
         name='Uncertainty Range',
-        legendgroup=1,
+        legendgroup=3,
         x=pd.concat([data_x, data_x[::-1]], ignore_index=True),
         y=pd.concat([data_yl, data_yu[::-1]], ignore_index=True),
         mode='lines',
