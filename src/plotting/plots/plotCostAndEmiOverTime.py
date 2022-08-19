@@ -97,6 +97,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             mode='lines',
             line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             showlegend=False,
+            hoverinfo='none',
         ))
 
         fig.add_trace(go.Scatter(
@@ -108,6 +109,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             fillpattern=dict(shape='/') if cID.endswith('-gwpOther') else None,
             showlegend=False,
+            hoverinfo='none',
         ))
 
         # add lines
@@ -123,6 +125,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
                 name=casesLabels[c],
                 line=dict(color=casesColours[c], width=subConfig['global']['lw_thin'], dash='dot' if c.endswith('-gwpOther') else None),
                 showlegend=True,
+                hovertemplate=f"<b>{casesLabels[c]}</b><br>Time: %{{x:.2f}}<br>{subConfig['label']}: %{{y:.2f}}<extra></extra>",
             ))
 
 
