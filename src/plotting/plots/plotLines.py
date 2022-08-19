@@ -131,8 +131,8 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         # line properties
         fuel = row['fuel']
         year = row['year']
-        name = config['names'][fuel]
-        col = config['colours'][fuel]
+        name = config['fuelSpecs'][fuel]['name']
+        col = config['fuelSpecs'][fuel]['colour']
 
         # update line type
         if fuel not in occurrence: occurrence[fuel] = 1

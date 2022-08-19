@@ -13,16 +13,15 @@ headings:
 
 showFuels:
   left:
-    - [2035, NG-HL-LP]
-    - [2025, ELEC-RE-LP-HC-LCF]
-    - [2035, ELEC-RE-LP-LC-LCF]
-    - [2025, ATR93-HL-LP]
-  #  - [2040, ATR93-HL-LP]
+    - [2035, NG-high-cons]
+    - [2025, GREEN-cons]
+    - [2035, GREEN-prog]
+    - [2025, BLUE-high-cons]
   right:
-    - [2035, NG-HL-LP]
-    - [2025, ELEC-RE-LP-HC-LCF]
-    - [2035, ELEC-RE-LP-LC-LCF]
-    - [2025, ATR93-HL-LP]
+    - [2035, NG-low-prog]
+    - [2025, GREEN-prog]
+    - [2035, GREEN-cons]
+    - [2025, BLUE-low-prog]
   #  - [2035, ATR93-HL-LP]
 
 showFSCPs:
