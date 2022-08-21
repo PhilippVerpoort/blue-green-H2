@@ -344,9 +344,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             showlegend=True,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if 'low' in fuelBlue else None),
             mode='lines',
-            customdata=thisData.year,
-            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>"
-                          f"Direct cost difference (w/o CP): %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
+            hoverinfo='skip',
         ))
 
 
@@ -359,6 +357,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             line=dict(color=col, width=config['global']['lw_default']),
             marker_size=config['global']['highlight_marker_sm'],
             mode='markers',
+            hoverinfo='skip',
         ))
 
 
@@ -374,6 +373,23 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             legendgroup='low' if 'low' in fuelBlue else 'high',
             showlegend=False,
             mode='text',
+            hoverinfo='skip',
+        ))
+
+
+        # hover template
+        traces.append(go.Scatter(
+            x=thisData.delta_ghgi * 1000,
+            y=thisData.delta_cost,
+            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=0.0),
+            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=0.0),
+            line_color=col,
+            marker_size=0.000001,
+            showlegend=False,
+            mode='markers',
+            customdata=thisData.year,
+            hovertemplate=f"<b>{name}</b><br>Year: %{{customdata}}<br>Carbon intensity difference: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>"
+                          f"Direct cost difference (w/o CP): %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
         ))
 
 
@@ -389,6 +405,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
                 marker_size=0.000001,
                 showlegend=False,
                 mode='markers',
+                hoverinfo='skip',
             ))
 
     return traces
