@@ -159,8 +159,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             mode='markers+text',# if tech not in hasLegend else 'markers',
             line=dict(color=col),
             marker_size=config['global']['highlight_marker_sm'],
-            customdata=thisData.year,
-            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"
+            hoverinfo='skip',
         ))
 
         traces.append(go.Scatter(
@@ -171,10 +170,26 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             showlegend=tech not in hasLegend,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
             mode='lines',
+            hoverinfo='skip',
         ))
 
         if tech not in hasLegend:
             hasLegend.append(tech)
+
+
+        # hover template
+        traces.append(go.Scatter(
+            x=thisData.ghgi*1000,
+            y=thisData.cost,
+            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=0.0),
+            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=0.0),
+            line_color=col,
+            showlegend=False,
+            mode='lines',
+            line_width=0.000001,
+            customdata=thisData.year,
+            hovertemplate=f"<b>{name}</b><br>Year: %{{customdata}}<br>Carbon intensity: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>Direct cost: %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
+        ))
 
 
         # error bars
@@ -188,6 +203,8 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             marker_size=0.000001,
             showlegend=False,
             mode='markers',
+            customdata=thisData.year,
+            hoverinfo='skip',
         ))
 
 
