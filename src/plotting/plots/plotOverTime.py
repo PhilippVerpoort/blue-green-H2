@@ -344,7 +344,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             mode='markers',
             line=dict(color=col, width=config['global']['lw_default']),
             marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': col}, ),
-            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
+            hoverinfo='none',
         ))
 
         # line plot
@@ -356,6 +356,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             name=name,
             mode='lines',
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuel_x in config['cases_dashed'] or fuel_y in config['cases_dashed'] else 'solid'),
+            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}<extra></extra>",
         ))
 
         # uncertainity envelope
@@ -384,16 +385,17 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
         points = __calcPoints(cpTrajData, plotLines, config['selected_cases'][scid], config)
         data = points.query(f"delta < 5.0")
 
-        fig.add_trace(go.Scatter(
-            x=data.year,
-            y=data.fscp,
-            text=data.label,
-            mode='markers+text',
-            marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
-            textposition='bottom center',
-            showlegend=False,
-            # hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<extra></extra>",
-        ), row=i, col=j)
+        for _, row in data.iterrows():
+            fig.add_trace(go.Scatter(
+                x=[row.year],
+                y=[row.fscp],
+                text=[int(row.label)],
+                mode='markers+text',
+                marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
+                textposition='bottom center',
+                showlegend=False,
+                hovertemplate = f"Milestone {int(row.label)}: {config['annotationTexts'][f'point{int(row.label)-1}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+            ), row=i, col=j)
 
 
 def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list, config: dict) -> dict:
@@ -561,7 +563,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         line_color=colour,
         line_width=config['global']['lw_thin'],
         showlegend=True,
-        hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>"
+        hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>",
     ))
 
     data_x = cpTrajData['year']
@@ -579,7 +581,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         fill='toself',
         line=dict(width=config['global']['lw_ultrathin']),
         showlegend=False,
-        hoverinfo='skip'
+        hoverinfo='none'
     )
     traces.append(errorBand)
 
