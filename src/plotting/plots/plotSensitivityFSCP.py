@@ -65,10 +65,10 @@ def __produceFigure(fuels: dict, config: dict):
                 go.Scatter(
                     x=x*settings['scale'],
                     y=fscp,
-                    hoverinfo='skip',
                     mode='lines',
                     showlegend=False,
                     line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
+                    hovertemplate=f"<b>FSCP in {year}</b><br>{settings['label'].split('<')[0]}: %{{x:.2f}}<br>FSCP: %{{y: .2f}}<extra></extra>",
                 ),
                 row=1, col=j+1,
             )
@@ -155,7 +155,7 @@ def __produceFigure(fuels: dict, config: dict):
             fill='toself',
             line=dict(width=0.0),
             showlegend=False,
-            hoverinfo="none"
+            hoverinfo='none',
         ), row=1, col=j+1)
 
 
