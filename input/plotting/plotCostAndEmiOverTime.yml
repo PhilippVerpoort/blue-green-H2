@@ -35,13 +35,6 @@ ghgi:
     label: Emissions intensity
     showLines: False
     showCorridors:
-      GREEN:
-        colour: '#519c0f'
-        cases:
-          GREEN-prog:
-            desc: Progressive
-          GREEN-cons:
-            desc: Conservative
       NG:
         colour: '#d66000'
         cases:
@@ -60,4 +53,11 @@ ghgi:
       BLUE-cons:
         cases:
           BLUE-low-cons:
+            desc: Conservative
+      GREEN:
+        colour: '#519c0f'
+        cases:
+          GREEN-prog:
+            desc: Progressive
+          GREEN-cons:
             desc: Conservative
