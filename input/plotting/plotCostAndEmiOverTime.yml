@@ -7,26 +7,26 @@ cost:
       NG:
         colour: '#d66000'
         cases:
-          NG-high-cons:
-            desc: high gas price
           NG-low-cons:
-            desc: low gas price
+            desc: Low gas price
             colour: '#ef7500'
+          NG-high-cons:
+            desc: High gas price
       BLUE:
         colour: '#4771b9'
         cases:
-          BLUE-high-cons:
-            desc: high gas price
           BLUE-low-cons:
-            desc: low gas price
+            desc: Low gas price
             colour: '#589ace'
+          BLUE-high-cons:
+            desc: High gas price
       GREEN:
         colour: '#519c0f'
         cases:
-          GREEN-cons:
-            desc: conservative
           GREEN-prog:
-            desc: progressive
+            desc: Progressive
+          GREEN-cons:
+            desc: Conservative
 
 
 ghgi:
@@ -38,26 +38,26 @@ ghgi:
       GREEN:
         colour: '#519c0f'
         cases:
-          GREEN-cons:
-            desc: conservative
           GREEN-prog:
-            desc: progressive
+            desc: Progressive
+          GREEN-cons:
+            desc: Conservative
       NG:
         colour: '#d66000'
         cases:
-          NG-low-cons:
-            desc: conservative
           NG-low-prog:
-            desc: progressive
-      BLUE-cons:
-        cases:
-          BLUE-low-cons:
-            desc: conservative
-      BLUE-prog:
-        cases:
-          BLUE-low-prog:
-            desc: progressive
+            desc: Progressive
+          NG-low-cons:
+            desc: Conservative
       BLUE-prog-gwpOther:
         cases:
           BLUE-low-prog-gwpOther:
-            desc: progressive, GWP20
+            desc: Progressive, GWP20
+      BLUE-prog:
+        cases:
+          BLUE-low-prog:
+            desc: Progressive
+      BLUE-cons:
+        cases:
+          BLUE-low-cons:
+            desc: Conservative

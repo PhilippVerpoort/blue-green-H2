@@ -77,7 +77,10 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
 
         allCases = list(corrCases.keys()) + [cExt for c in corrCases.values() for cExt in (c['extended'] if 'extended' in c else [])]
         casesColours = {c: corrCases[c.replace('-gwpOther', '')]['colour'] if 'colour' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['colour'] for c in allCases}
-        casesLabels = {c: f"{fuelSpecs[c.replace('-gwpOther', '')]['shortname']} ({corrCases[c]['desc']})" if 'desc' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['name'] for c in allCases}
+        caseGroupLabel = fuelSpecs[allCases[0].replace('-gwpOther', '')]['shortname']
+        casesLabels = {c: corrCases[c]['desc'] if 'desc' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['name'] for c in allCases}
+
+        legendID = cID.rstrip('-')[0]
 
         # select data and determine max and min of corridor
         thisData = __getThisData(plotData, fuelSpecs, corrCases)
@@ -93,7 +96,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             # The minimum (or maximum) line needs to be added before the below area plot can be applied.
             x=thisData_min.year,
             y=thisData_min['lower']*scale,
-            legendgroup=cID,
+            legendgroup=legendID,
             mode='lines',
             line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             showlegend=False,
@@ -105,7 +108,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             y=thisData_max['upper']*scale,
             fill='tonexty', # fill area between traces
             mode='lines',
-            legendgroup=cID,
+            legendgroup=legendID,
             line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             fillpattern=dict(shape='/') if cID.endswith('-gwpOther') else None,
             fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(corrColour), .3)),
@@ -121,7 +124,8 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
                 # The minimum (or maximum) line needs to be added before the below area plot can be applied.
                 x=cData.year,
                 y=cData[type]*scale,
-                legendgroup=c,
+                legendgrouptitle=dict(text=f"<b>{caseGroupLabel}</b>"),
+                legendgroup=legendID,
                 mode='lines',
                 name=casesLabels[c],
                 line=dict(color=casesColours[c], width=subConfig['global']['lw_thin'], dash='dot' if c.endswith('-gwpOther') else None),
@@ -162,14 +166,16 @@ def __styling(fig: go.Figure):
     # update legend styling
     fig.update_layout(
         legend=dict(
+            orientation='h',
             yanchor='top',
-            y=-0.1,
+            y=-0.15,
             xanchor='left',
             x=0.0,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
         ),
+        margin_b=250.0,
     )
 
     # update axis styling
