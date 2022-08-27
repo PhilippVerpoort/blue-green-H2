@@ -7,15 +7,6 @@ from src.config_load import input_data
 
 
 def getElementAdvancedControlsCardRight():
-    fuels = input_data['fuels']
-    fuels_data = [
-        dict(
-            fuel=fuel,
-            desc=fuels[fuel]['name'],
-            colour=fuels[fuel]['colour'],
-        ) for fuel in fuels
-    ]
-
     params = input_data['params']
     params_data = [dict(param=param,
                        desc=params[param]['desc'],
