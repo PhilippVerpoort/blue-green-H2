@@ -14,9 +14,6 @@ def plotSensitivityFSCP(fuels: dict, config: dict, subfigs_needed: list, is_weba
     # produce figure
     fig = __produceFigure(fuels, config)
 
-    # styling figure
-    __styling(fig)
-
     return {'fig4': fig}
 
 
@@ -165,6 +162,18 @@ def __produceFigure(fuels: dict, config: dict):
         range=config['yrange'],
     ))
 
+
+    # update legend styling
+    fig.update_layout(
+        legend=dict(
+            yanchor='top',
+            y=1.00,
+            xanchor='left',
+            x=1.02,
+        ),
+    )
+
+
     return fig
 
 
@@ -218,41 +227,3 @@ def __getFSCP(pAC, pAG, pBC, pBG, typeA, typeB):
         fscp = max(cost_diff, 0.0) / ghgi_diff
 
     return fscp
-
-
-def __styling(fig: go.Figure):
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            yanchor='top',
-            y=1.00,
-            xanchor='left',
-            x=1.02,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'xaxis5', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4', 'yaxis5']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )

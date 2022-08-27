@@ -2,10 +2,15 @@ from typing import Union
 import importlib
 
 import yaml
+import plotly.io as pio
 import plotly.graph_objects as go
 
 from src.config_load import plots, plots_cfg_global
 from src.config_load_app import app_cfg
+from src.plotting.styling.template import defineTemplate
+
+
+pio.templates['pik'] = defineTemplate()
 
 
 def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
@@ -27,6 +32,9 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
         'plotOverTime': (allData['FSCPData'],),
         'plotSensitivityFSCP': (input_data['fuels'],),
     }
+
+    # set default theme
+    pio.templates.default = "pik"
 
     ret = {}
     for i, plotName in enumerate(plots):

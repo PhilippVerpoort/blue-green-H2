@@ -22,9 +22,6 @@ def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed:
         # plot subfigure
         subfig = __produceFigure(fuelData, config['fuelSpecs'], {**config[type], **{'global': config['global']}}, type)
 
-        # styling figure
-        __styling(subfig)
-
         ret.update({subfigName: subfig})
 
     return ret
@@ -159,11 +156,8 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
     )
     fig.update_yaxes(rangemode= "tozero")
 
-    return fig
 
-
-def __styling(fig: go.Figure):
-    # update legend styling
+    # set legend position
     fig.update_layout(
         legend=dict(
             orientation='h',
@@ -171,31 +165,9 @@ def __styling(fig: go.Figure):
             y=-0.15,
             xanchor='left',
             x=0.0,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
         ),
         margin_b=250.0,
     )
 
-    # update axis styling
-    for axis in ['xaxis', 'yaxis']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
 
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
+    return fig

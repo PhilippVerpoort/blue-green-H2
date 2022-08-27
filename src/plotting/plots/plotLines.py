@@ -119,6 +119,17 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict
     )
 
 
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            yanchor='top',
+            y=1.00,
+            xanchor='left',
+            x=0.00,
+        ),
+    )
+
+
     return fig
 
 
@@ -229,43 +240,6 @@ def __addFSCPLabels(plotFSCP: pd.DataFrame, config: dict):
 
 
 def __styling(fig: go.Figure, subFigName: str):
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            yanchor='top',
-            y=1.00,
-            xanchor='left',
-            x=0.00,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
-
-
     # margins
     if subFigName == 'a':
         fig.update_layout(

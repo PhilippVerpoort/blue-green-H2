@@ -53,7 +53,7 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
     fig.update_xaxes(title=config['labels']['xaxis1'], range=[config['plotting']['xaxis1_min'] * 1000, config['plotting']['xaxis1_max'] * 1000])
 
 
-    # update legend styling
+    # set legend position
     fig.update_layout(
         legend=dict(
             orientation='h',
@@ -61,34 +61,7 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
             y=-0.2,
             xanchor='left',
             x=0.0,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
         ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-    fig.update_xaxes(ticks='outside')
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
     )
 
 
@@ -222,7 +195,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     fig.update_layout(**newAxes)
 
 
-    # update legend styling
+    # set legend position
     fig.update_layout(
         legend=dict(
             orientation='h',
@@ -230,34 +203,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
             y=-0.2,
             xanchor='left',
             x=0.0,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
         ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'xaxis5', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4', 'yaxis5']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-    fig.update_xaxes(ticks='outside')
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
     )
 
 

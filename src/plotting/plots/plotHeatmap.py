@@ -12,16 +12,20 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_w
     for sub, type in [('a', 'left'), ('b', 'right')]:
         subfigName = f"fig5{sub}"
 
+
         # check if plotting is needed
         if subfigName not in subfigs_needed:
             ret.update({subfigName: None})
             continue
 
+
         # select data
         plotData, refData = __selectPlotData(fuelData, config['refFuel'][type], config['refYear'][type], config['showFuels'][type], config['showYears'])
 
+
         # define plotly figure
         fig = go.Figure()
+
 
         # subplot labels
         fig.add_annotation(
@@ -35,11 +39,10 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_w
             yref='paper',
         )
 
+
         # produce figures
         fig = __produceFigure(fig, plotData, refData, config, type)
 
-        # styling figure
-        __styling(fig)
 
         ret.update({subfigName: fig})
 
@@ -49,6 +52,7 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_w
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, showYears: list):
     plotData = fuelsData.query('fuel in @showFuels and year in @showYears')
     refData = fuelsData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
+
 
     return plotData, refData
 
@@ -119,6 +123,17 @@ def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, 
         xref="x", yref="y", text='Price of natural gas',
         **annotationStylingB,
         **argsRowCol,
+    )
+
+
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            yanchor='bottom',
+            y=0.00,
+            xanchor='right',
+            x=1.00,
+        ),
     )
 
 
@@ -297,41 +312,3 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
 
 
     return traces
-
-
-def __styling(fig: go.Figure):
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            yanchor='bottom',
-            y=0.00,
-            xanchor='right',
-            x=1.00,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis', 'xaxis2', 'yaxis2']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
