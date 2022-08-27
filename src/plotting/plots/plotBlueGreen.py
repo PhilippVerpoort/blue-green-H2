@@ -160,7 +160,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     # add white annotation labels
     annotationStyling = dict(x=0.01, y=0.985, xanchor='left', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
     for k, f in enumerate(['fuelBlueLeft', 'fuelBlueRight'] * 2):
-        t = 'Conservative' if config[f].endswith('cons') else 'Progressive'
+        t = ('Conservative' if config[f].endswith('cons') else 'Progressive') + ' to ' + ('conservative' if config['fuelGreen'].endswith('cons') else 'progressive')
         fig.add_annotation(xref=f"x{k+2} domain", yref=f"y{k+2} domain", text=t, **annotationStyling)
 
 
@@ -184,7 +184,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
 
 
     # set y axes titles and ranges
-    fig.update_yaxes(title="", range=[config['plotting']['yaxis2_min'], config['plotting']['yaxis2_max']])
+    fig.update_yaxes(title='', range=[config['plotting']['yaxis2_min'], config['plotting']['yaxis2_max']])
     fig.update_yaxes(title=config['labels']['yaxis1'], range=[config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max']], ticks='outside', row=1, col=1)
     fig.update_yaxes(ticks='outside', row=1, col=3)
     fig.update_yaxes(ticks='outside', row=2, col=3)
