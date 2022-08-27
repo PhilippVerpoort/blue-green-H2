@@ -5,12 +5,15 @@ cost:
     showLines: False
     showCorridors:
       NG:
+        colour: '#d66000'
         cases:
           NG-high-cons:
             desc: high gas price
           NG-low-cons:
             desc: low gas price
+            colour: '#ef7500'
       BLUE:
+        colour: '#4771b9'
         cases:
           BLUE-high-cons:
             desc: high gas price
@@ -18,6 +21,7 @@ cost:
             desc: low gas price
             colour: '#589ace'
       GREEN:
+        colour: '#519c0f'
         cases:
           GREEN-cons:
             desc: conservative
@@ -32,12 +36,14 @@ ghgi:
     showLines: False
     showCorridors:
       GREEN:
+        colour: '#519c0f'
         cases:
           GREEN-cons:
             desc: conservative
           GREEN-prog:
             desc: progressive
       NG:
+        colour: '#d66000'
         cases:
           NG-low-cons:
             desc: conservative

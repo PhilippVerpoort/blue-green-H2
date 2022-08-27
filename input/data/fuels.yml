@@ -1,7 +1,6 @@
 fuels:
   NG:
     name: Natural gas
-    colour: '#ef7500'
     cases:
       gas_prices:
         high:
@@ -19,11 +18,13 @@ fuels:
       cons_vs_prog:
         cons:
           desc: Conservative
+          colour: '#bd4b00'
           ghgi_ng_methaneleakage:
             2025: 1.5 +- 0.075
             2050: 1.5 +- 0.075
         prog:
           desc: Pessimistic
+          colour: '#ef7500'
           ghgi_ng_methaneleakage:
             2025: 1.0 +- 0.05
             2050: 0.1 +- 0.005

@@ -108,6 +108,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             legendgroup=cID,
             line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             fillpattern=dict(shape='/') if cID.endswith('-gwpOther') else None,
+            fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(corrColour), .3)),
             showlegend=False,
             hoverinfo='none',
         ))
