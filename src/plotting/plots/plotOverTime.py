@@ -20,8 +20,8 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_
 
     # produce figure 3
     if 'fig3' in subfigs_needed:
-        fig = __produceFigureFull(plotScatter, plotLines, config)
-        __styling(fig, config)
+        fig = __produceFigureFull(plotScatter, plotLines, config, is_webapp)
+        __styling(fig, config, is_webapp)
         ret['fig3'] = fig
     else:
         ret['fig3'] = None
@@ -29,7 +29,7 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_
     # produce figure 7
     if 'fig7' in subfigs_needed:
         fig = __produceFigureReduced(plotScatter, plotLines, config)
-        __styling(fig, config)
+        __styling(fig, config, is_webapp)
         ret['fig7'] = fig
     else:
         ret['fig7'] = None
@@ -198,7 +198,7 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
     return fig
 
 
-def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
+def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False):
     # plot
     fig = make_subplots(
         rows=2,
@@ -241,21 +241,6 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
         fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=i, col=j)
 
 
-    # add text annotations explaining figure content
-    annotationStyling = dict(xanchor='right', yanchor='top', showarrow=False,
-                             bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-
-    for k, scid in enumerate(config['selected_cases']):
-        axisNumb = str(k+1) if k else ''
-        fig.add_annotation(
-            x=0.99,
-            xref=f"x{axisNumb} domain",
-            y=0.98,
-            yref=f"y{axisNumb} domain",
-            text=f"{config['selected_cases_labels'][scid]}: {config['selected_cases'][scid][-2]} vs. {config['selected_cases'][scid][-1]}",
-            **annotationStyling
-        )
-
     # add circles on intersects
     __addAnnotations(fig, cpTrajData, plotLines, config)
 
@@ -265,7 +250,8 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
 
 
     # add legend for annotations
-    __addAnnotationsLegend(fig, config)
+    if not is_webapp:
+        __addAnnotationsLegend(fig, config)
 
 
     # add top and left annotation
@@ -276,15 +262,17 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
         fig.add_annotation(
             x=0.50,
             xref=f"x{str(i+1) if i else ''} domain",
-            y=1.15,
-            yref=f"y domain",
+            y=1.0,
+            yref='y domain',
+            yshift=40,
             text=config['sidelabels']['top'][i],
             **annotationStyling
         )
 
         fig.add_annotation(
-            x=-0.17,
-            xref=f"x domain",
+            x=0.0,
+            xref='x domain',
+            xshift=-100.0 if is_webapp else -150.0,
             y=0.5,
             yref=f"y{str(i+2) if i else ''} domain",
             text=config['sidelabels']['left'][i],
@@ -304,7 +292,7 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
             range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
         ) for i in range(4)},
         margin_l=180.0,
-        margin_b=520.0,
+        margin_b=500.0 if not is_webapp else None,
     )
 
     return fig
@@ -394,7 +382,7 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
                 marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
                 textposition='bottom center',
                 showlegend=False,
-                hovertemplate = f"Milestone {int(row.label)}: {config['annotationTexts'][f'point{int(row.label)-1}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+                hovertemplate = f"<b>Milestone {int(row.label)}:</b> {config['annotationTexts'][f'point{int(row.label)-1}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
             ), row=i, col=j)
 
 
@@ -473,13 +461,13 @@ def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: in
 
 
 def __addAnnotationsLegend(fig: go.Figure, config: dict):
-    y0 = -0.40
+    y0 = -0.35
 
     fig.add_shape(
         type='rect',
         x0=0.0,
         y0=y0,
-        x1=0.80,
+        x1=0.92,
         y1=y0-0.2,
         xref='paper',
         yref='paper',
@@ -488,12 +476,24 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
     )
 
     fig.add_annotation(
-        text=f"<b>{config['annotationTexts']['heading1']}:</b><br><br><br><b>{config['annotationTexts']['heading2']}:</b>",
+        text=f"<b>{config['annotationTexts']['heading1']}:</b>",
         align='left',
         xanchor='left',
         x=0.0,
         yanchor='top',
         y=y0,
+        xref='paper',
+        yref='paper',
+        showarrow=False,
+    )
+
+    fig.add_annotation(
+        text=f"<b>{config['annotationTexts']['heading2']}:</b>",
+        align='left',
+        xanchor='left',
+        x=0.0,
+        yanchor='top',
+        y=y0-0.095,
         xref='paper',
         yref='paper',
         showarrow=False,
@@ -588,7 +588,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
     return traces
 
 
-def __styling(fig: go.Figure, config: dict):
+def __styling(fig: go.Figure, config: dict, is_webapp: bool):
     # update legend styling
     fig.update_layout(
         legend=dict(
@@ -596,7 +596,7 @@ def __styling(fig: go.Figure, config: dict):
             xanchor='left',
             x=0.0,
             yanchor='top',
-            y=-0.1,
+            y=-0.2 if is_webapp else -0.1,
             bgcolor='rgba(255,255,255,1.0)',
             bordercolor='black',
             borderwidth=2,
