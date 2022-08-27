@@ -15,8 +15,5 @@ for plotName in plots:
         if figName in app_cfg['figures']:
             subfigsDisplayed.extend(plots[plotName][figName])
 
-figs_cfg = {}
-for figList in plots.values():
-    for figName in figList:
-        __filePath = getFilePathInput(f"figures/{figName}.yml")
-        figs_cfg[figName] = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
+__filePath = getFilePathInput(f"display_config/webapp.yml")
+figs_cfg = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
