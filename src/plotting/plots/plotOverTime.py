@@ -28,7 +28,7 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_
 
     # produce figure 7
     if 'fig7' in subfigs_needed:
-        fig = __produceFigureReduced(plotScatter, plotLines, config)
+        fig = __produceFigureReduced(plotScatter, plotLines, config, is_webapp)
         __styling(fig, config, is_webapp)
         ret['fig7'] = fig
     else:
@@ -112,7 +112,7 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
     return plotScatter, plotLinesInterpolated
 
 
-def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
+def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False):
     # plot
     fig = make_subplots(
         rows=2,
@@ -164,15 +164,17 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
         fig.add_annotation(
             x=0.50,
             xref=f"x{str(i+1) if i else ''} domain",
-            y=1.15,
-            yref=f"y domain",
+            y=1.0,
+            yref='y domain',
+            yshift=40,
             text=config['sidelabels']['top'][i],
             **annotationStyling
         )
 
         fig.add_annotation(
-            x=-0.17,
-            xref=f"x domain",
+            x=0.0,
+            xref='x domain',
+            xshift=-100.0 if is_webapp else -150.0,
             y=0.5,
             yref=f"y{str(i+2) if i else ''} domain",
             text=config['sidelabels']['left'][i],
