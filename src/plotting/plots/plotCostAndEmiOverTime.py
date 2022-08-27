@@ -8,7 +8,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     # produce figures
     ret = {}
     for sub, type in [('a', 'cost'), ('b', 'ghgi')]:

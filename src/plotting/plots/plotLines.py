@@ -7,7 +7,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
     for sub, type in [('a', 'left'), ('b', 'right')]:
         subfigName = f"fig2{sub}"

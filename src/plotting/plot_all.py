@@ -50,7 +50,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
             plotFunc = getattr(module, plotName)
 
             # execute plot function
-            newFigs = plotFunc(*plotArgs, config, plotsNeeded[plotName])
+            newFigs = plotFunc(*plotArgs, config, plotsNeeded[plotName], is_webapp=(global_cfg=='webapp'))
             ret.update(newFigs)
 
     print('Plot creation complete...')

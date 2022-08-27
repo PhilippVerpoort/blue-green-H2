@@ -12,7 +12,7 @@ from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, getGHGIParamsGre
 
 
 @timeit
-def plotBlueGreen(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotBlueGreen(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
 
     # produce figure 6

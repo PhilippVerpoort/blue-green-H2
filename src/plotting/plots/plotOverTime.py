@@ -12,7 +12,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
 
     # select which lines to plot based on function argument

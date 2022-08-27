@@ -7,7 +7,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
     for sub, type in [('a', 'left'), ('b', 'right')]:
         subfigName = f"fig5{sub}"
