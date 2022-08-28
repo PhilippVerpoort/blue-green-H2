@@ -68,6 +68,21 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
         for subfig in ret:
             if ret[subfig] is None:
                 if any(subfig in fs[fig] for plotName, fs in plots.items() for fig in fs if fig in app_cfg['figures']):
-                    ret[subfig] = go.Figure()
+                    f = go.Figure()
+                    f.add_annotation(
+                        text='<b>Press GENERATE to<br>display this plot.</b>',
+                        xanchor='center',
+                        xref='x domain',
+                        x=0.5,
+                        yanchor='middle',
+                        yref='y domain',
+                        y=0.5,
+                        showarrow=False,
+                        bordercolor='black',
+                        borderwidth=2,
+                        borderpad=3,
+                        bgcolor='white',
+                    )
+                    ret[subfig] = f
 
     return {subfigName: subfig for subfigName, subfig in ret.items() if subfig is not None}

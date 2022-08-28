@@ -112,7 +112,7 @@ def getElementSimpleControlsCard():
             ),
             html.Div(
                 children=[
-                    html.Button(id='simple-update', n_clicks=0, children='Update', className='scenario-buttons'),
+                    html.Button(id='simple-update', n_clicks=0, children='GENERATE', className='scenario-buttons'),
                     html.Button(id='download-config', n_clicks=0, children='Download config', className='scenario-buttons'),
                     html.Form(
                         action='/download/data.xlsx',
