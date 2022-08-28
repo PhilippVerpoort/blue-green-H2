@@ -372,7 +372,7 @@ params:
     desc: Operational capacity factor
     short: OCF
     type: linear
-    value: 10
+    value: cases
     unit: percent
     source:
       Feasible OCF for RE-only operation mode.
