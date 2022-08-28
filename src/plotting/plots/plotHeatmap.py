@@ -27,19 +27,6 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_w
         fig = go.Figure()
 
 
-        # subplot labels
-        fig.add_annotation(
-            showarrow=False,
-            text=f"<b>{sub}</b>",
-            x=0.0,
-            xanchor='left',
-            xref='paper',
-            y=1.15,
-            yanchor='top',
-            yref='paper',
-        )
-
-
         # produce figures
         fig = __produceFigure(fig, plotData, refData, config, type)
 

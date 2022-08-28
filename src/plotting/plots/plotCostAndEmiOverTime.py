@@ -55,19 +55,6 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
     fig = go.Figure()
 
 
-    # subplot labels
-    fig.add_annotation(
-        showarrow=False,
-        text=f"<b>{'a' if type=='cost' else 'b'}</b>",
-        x=0.0,
-        xanchor='left',
-        xref='paper',
-        y=1.2,
-        yanchor='top',
-        yref='paper',
-    )
-
-
     for cID, corridor in subConfig['showCorridors'].items():
         corrCases = corridor['cases']
         corrColour = corridor['colour'] if 'colour' in corridor else fuelSpecs[list(corrCases.keys())[0].replace('-gwpOther', '')]['colour']

@@ -26,9 +26,6 @@ def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, subf
         # produce figures
         subfig = __produceFigure(plotData, plotFSCP, config, type)
 
-        # styling figure
-        __styling(subfig, sub)
-
         ret.update({subfigName: subfig})
 
     return ret
@@ -58,19 +55,6 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict):
 def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict, type: str):
     # plot
     fig = go.Figure()
-
-
-    # subplot labels
-    fig.add_annotation(
-        showarrow=False,
-        text=f"<b>{'a' if type=='left' else 'b'}</b>",
-        x=0.0,
-        xanchor='left',
-        xref='paper',
-        y=1.15,
-        yanchor='top',
-        yref='paper',
-    )
 
 
     # add line traces
@@ -237,16 +221,3 @@ def __addFSCPLabels(plotFSCP: pd.DataFrame, config: dict):
         ))
 
     return labels
-
-
-def __styling(fig: go.Figure, subFigName: str):
-    # margins
-    if subFigName == 'a':
-        fig.update_layout(
-            margin_r=0.0
-        )
-    elif subFigName == 'b':
-        fig.update_layout(
-            margin_l=0.0,
-            yaxis=dict(title=None, ticks=None, showticklabels=False),
-        )

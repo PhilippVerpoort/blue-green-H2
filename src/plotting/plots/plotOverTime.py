@@ -19,20 +19,10 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_
     plotScatter, plotLines = __selectPlotFSCPs(FSCPData, config['selected_cases'], config['n_samples'])
 
     # produce figure 3
-    if 'fig3' in subfigs_needed:
-        fig = __produceFigureFull(plotScatter, plotLines, config, is_webapp)
-        __styling(fig, config, is_webapp)
-        ret['fig3'] = fig
-    else:
-        ret['fig3'] = None
+    ret['fig3'] = __produceFigureFull(plotScatter, plotLines, config, is_webapp) if 'fig3' in subfigs_needed else None
 
     # produce figure 7
-    if 'fig7' in subfigs_needed:
-        fig = __produceFigureReduced(plotScatter, plotLines, config, is_webapp)
-        __styling(fig, config, is_webapp)
-        ret['fig7'] = fig
-    else:
-        ret['fig7'] = None
+    ret['fig7'] = __produceFigureReduced(plotScatter, plotLines, config, is_webapp) if 'fig7' in subfigs_needed else None
 
     return ret
 
@@ -117,7 +107,6 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
     fig = make_subplots(
         rows=2,
         cols=2,
-        subplot_titles=ascii_lowercase,
         shared_yaxes=True,
         horizontal_spacing=0.025,
         vertical_spacing=0.1,
@@ -197,6 +186,19 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
         # margin_b=520.0,
     )
 
+
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            orientation='h',
+            xanchor='left',
+            x=0.0,
+            yanchor='top',
+            y=-0.2 if is_webapp else -0.1,
+        ),
+    )
+
+
     return fig
 
 
@@ -205,7 +207,6 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
     fig = make_subplots(
         rows=2,
         cols=2,
-        subplot_titles=ascii_lowercase,
         shared_yaxes=True,
         horizontal_spacing=0.025,
         vertical_spacing=0.1,
@@ -296,6 +297,19 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
         margin_l=180.0,
         margin_b=500.0 if not is_webapp else None,
     )
+
+
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            orientation='h',
+            xanchor='left',
+            x=0.0,
+            yanchor='top',
+            y=-0.2 if is_webapp else -0.1,
+        ),
+    )
+
 
     return fig
 
@@ -588,29 +602,3 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
     traces.append(errorBand)
 
     return traces
-
-
-def __styling(fig: go.Figure, config: dict, is_webapp: bool):
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            orientation='h',
-            xanchor='left',
-            x=0.0,
-            yanchor='top',
-            y=-0.2 if is_webapp else -0.1,
-        ),
-    )
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])

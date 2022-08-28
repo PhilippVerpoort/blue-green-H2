@@ -10,11 +10,3 @@ def addWebappSpecificStyling(figs: dict):
         fs_lg = 14
 
         adjustFontSizes(subfigName, plotlyFigure, fs_sm, fs_md, fs_lg)
-
-        if subfigName in ['fig2a', 'fig2b', 'fig4a', 'fig4b']:
-            plotlyFigure.update_layout(legend=dict(
-                yanchor=None,
-                y=None,
-                xanchor=None,
-                x=None,
-            ))

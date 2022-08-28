@@ -70,16 +70,18 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
 
 def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     # plot
-    fig = make_subplots(rows=2,
-                        cols=4,
-                        specs=[
-                            [{"rowspan": 2, "colspan": 2}, None, {}, {}],
-                            [None, None, {}, {}],
-                        ],
-                        subplot_titles=ascii_lowercase,
-                        horizontal_spacing=0.02,
-                        vertical_spacing=config['vertical_spacing'],
-                        shared_yaxes=True)
+    fig = make_subplots(
+        rows=2,
+        cols=4,
+        specs=[
+            [{"rowspan": 2, "colspan": 2}, None, {}, {}],
+            [None, None, {}, {}],
+        ],
+        horizontal_spacing=0.02,
+        vertical_spacing=config['vertical_spacing'],
+        shared_yaxes=True,
+    )
+
     rowcol_mapping = [
         dict(row=1, col=1),
         dict(row=1, col=3),
@@ -205,20 +207,6 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
             x=0.0,
         ),
     )
-
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
 
 
     return fig
