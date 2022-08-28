@@ -19,7 +19,7 @@ def getElementAdvancedControlsCardRight():
     widget_advanced_params = html.Div(
         children=[
             dbc.Label(
-                'Parameters',
+                'Default parameters',
                 html_for='advanced-params',
             ),
             dash_table.DataTable(
