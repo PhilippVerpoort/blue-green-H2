@@ -48,7 +48,7 @@ fig5:
   display:
   - /
   - /advanced
-  height: 550px
+  height: 600px
   name: Figure 5
   title: Emission intensities and direct costs of different hydrogen fuel options
     (scatter plot for several years), along with FSCP estimates (contour plot and

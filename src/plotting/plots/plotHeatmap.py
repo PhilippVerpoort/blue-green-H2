@@ -117,10 +117,10 @@ def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, 
     # set legend position
     fig.update_layout(
         legend=dict(
-            yanchor='bottom',
-            y=0.00,
-            xanchor='right',
-            x=1.00,
+            yanchor='top',
+            y=-0.2,
+            xanchor='left',
+            x=0.0,
         ),
     )
 
