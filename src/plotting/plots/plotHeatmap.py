@@ -135,7 +135,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
     for fuel in plotData.fuel.unique():
         # line properties
         descs = [
-            'Pessimistic' if fuel.endswith('pess') else 'Optimistic',
+            'progressive' if 'prog' in fuel else 'conservative',
             'low supply-chain CO<sub>2</sub>' if fuel.endswith('lowscco2') else None,
             '75-to-100% RE share' if 'ME' in fuel else None,
         ]
