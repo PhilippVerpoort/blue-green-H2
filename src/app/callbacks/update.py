@@ -9,7 +9,7 @@ from src.data.params.full_params import convertValue
 
 
 # simple update
-def updateScenarioInput(scenarioInput: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: dict):
+def updateScenarioInput(scenarioInput: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
     # update gwp option
     scenarioInput['options']['gwp'] = simple_gwp
 

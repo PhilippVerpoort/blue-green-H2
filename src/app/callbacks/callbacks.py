@@ -26,7 +26,7 @@ from src.plotting.plot_all import plotAllFigs
      State('simple-important-params', 'data'),
      State('simple-gas-prices', 'data'),
      State('advanced-params', 'data'),])
-def callbackUpdate(n1, route, plots_cfg: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
+def callbackUpdate(n1, route: str, plots_cfg: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
     ctx = dash.callback_context
 
     if not ctx.triggered:
@@ -57,9 +57,9 @@ def callbackUpdate(n1, route, plots_cfg: dict, simple_gwp: str, simple_important
      State('simple-gas-prices', 'data'),
      State('advanced-params', 'data'),],
      prevent_initial_call=True,)
-def callbackDownloadConfig(n, *args):
-    scenarioInputUpdated = updateScenarioInputAdvanced(input_data.copy(), *args)
-    return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename='scenario.yml')
+def callbackDownloadConfig(n, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
+    inputDataUpdated = updateScenarioInput(input_data.copy(), simple_gwp, simple_important_params, simple_gas_prices, advanced_params)
+    return dict(content=yaml.dump(inputDataUpdated, sort_keys=False), filename='input_data.yml')
 
 
 # update parameter values in advanced tab

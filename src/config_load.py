@@ -25,7 +25,7 @@ for plotName in plots:
     if isinstance(plots[plotName], list):
         plots[plotName] = {f: [f] for f in plots[plotName]}
 
-__filePath = getFilePathInput('display_config/print.yml')
+__filePath = getFilePathInput('figure_config/print.yml')
 figure_print = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
 __filePath = getFilePathInput('plot_config/global.yml')
