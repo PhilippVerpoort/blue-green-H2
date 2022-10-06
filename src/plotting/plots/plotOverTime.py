@@ -73,9 +73,9 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
             type_y=n_samples * [type_y],
             year=t,
         )
-        tmp = pd.DataFrame(new, columns=plotLines.keys())
+        tmp = pd.DataFrame(new, columns=plotLines.keys()).astype(dtypes)
         tmp.index = np.arange(len(samples), len(tmp) + len(samples))
-        tmp = tmp.merge(samples, how='outer').sort_values(by=['year']).astype(dtypes)
+        tmp = tmp.merge(samples, how='outer').sort_values(by=['year'])
         allEntries.append(tmp.interpolate())
 
     plotLinesInterpolated = pd.concat(allEntries, ignore_index=True)
