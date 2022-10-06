@@ -116,7 +116,7 @@ def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, p_el, eff, transp):
 
 def __getValAndUnc(pars: pd.DataFrame, pname: str, options: dict):
     pname_full = __getFullPname(pname, options)
-    return tuple(val for idx, val in pars.loc[pname_full, ['val', 'uu', 'ul']].iteritems())
+    return tuple(val for idx, val in pars.loc[pname_full, ['val', 'uu', 'ul']].items())
 
 
 def __getVal(pars: pd.DataFrame, pname: str, options: dict):
