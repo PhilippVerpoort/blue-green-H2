@@ -9,7 +9,7 @@ sensitivity_params:
   p_el:
     range:
       - 20.0
-      - 45.0
+      - 60.0
     scale: 1.0
     label: Electricity price<br>(EUR/MWh)
     mode: absolute
@@ -19,7 +19,7 @@ sensitivity_params:
       - top right
   sh:
     range:
-      - 0.95
+      - 0.10
       - 1.00
     scale: 100.0
     label: Share of renewable elec.<br>(%)
@@ -67,7 +67,7 @@ colour: '#fc4b32'
 
 
 fuels:
-  - BLUE-low-prog to GREEN-prog
+  - BLUE-high-prog to GREEN-prog
 
 
 years:
