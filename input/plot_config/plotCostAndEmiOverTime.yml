@@ -1,0 +1,63 @@
+cost:
+    yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
+    ymax: 180.0
+    label: Direct cost
+    showLines: False
+    showCorridors:
+      NG:
+        colour: '#d66000'
+        cases:
+          NG-low-cons:
+            desc: Low gas price
+            colour: '#ef7500'
+          NG-high-cons:
+            desc: High gas price
+      BLUE:
+        colour: '#4771b9'
+        cases:
+          BLUE-low-cons:
+            desc: Low gas price
+            colour: '#589ace'
+          BLUE-high-cons:
+            desc: High gas price
+      GREEN:
+        colour: '#519c0f'
+        cases:
+          GREEN-prog:
+            desc: Progressive
+          GREEN-cons:
+            desc: Conservative
+
+
+ghgi:
+    yaxislabel: Life-cycle GHGI of Energy (kg<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+    ymax: 0.28
+    label: Emissions intensity
+    showLines: False
+    showCorridors:
+      NG:
+        colour: '#d66000'
+        cases:
+          NG-low-prog:
+            desc: Progressive
+          NG-low-cons:
+            desc: Conservative
+      BLUE-prog-gwpOther:
+        cases:
+          BLUE-low-prog-gwpOther:
+            desc: Progressive, GWP20
+      BLUE-prog:
+        cases:
+          BLUE-low-prog:
+            desc: Progressive
+      BLUE-cons:
+        cases:
+          BLUE-low-cons:
+            desc: Conservative
+      GREEN:
+        colour: '#519c0f'
+        cases:
+          GREEN-prog:
+            desc: Progressive
+          GREEN-cons:
+            desc: Conservative

@@ -1,0 +1,93 @@
+fig1:
+  desc: (a) Direct costs and (b) emission intensities for all defined cases of green
+    and blue hydrogen production options, including uncertainties of key parameters,
+    in 2025-2050.
+  display:
+  - /
+  - /advanced
+  height: 550px
+  name: Figure 1
+  title: (a) Direct costs and (b) emission intensities of hydrogen fuel options.
+  width: 50%
+fig2:
+  desc: 'We distinguish two technology options for blue hydrogen production: SMR-CCS
+    technology (left) with plant-wide CO2 capture rates of 56 % and based on ATR-CCS
+    technology (right) with plant-wide CO2 capture rates of 93 %.'
+  display:
+  - /
+  - /advanced
+  name: Figure 2
+  title: Total levelised cost as a function of CO<sub>2</sub> prices for green and
+    blue hydrogen as well as for natural gas for 2025 (solid lines) and 2035 (dashed
+    lines).
+  width: 50%
+fig3:
+  desc: ''
+  display:
+  - /
+  - /advanced
+  height: 900px
+  name: Figure 3
+  title: Decreasing FSCPs in time for high (left) and low (right) gas prices and for
+    conservative (top) and progressive (bottom) assumptions.
+fig4:
+  desc: Sensitivity of blue-to-green FSCP for the key five parameters.
+  display:
+  - /
+  - /advanced
+  height: 550px
+  name: Figure 4
+  title: Sensitivity analysis
+fig5:
+  desc: The hydrogen production cases shown are i) a high-emissions blue hydrogen
+    based on SMR-CCS-56% technology with plant-wide CO2 capture rates of ~556 % and
+    90 % at the capture step, and ii) a low-emissions blue hydrogen based on ATR-CCS
+    technology with plant-wide CO2 capture rates of ~93 % and 98 % at the capture
+    step. Methane emission rates along the natural gas supply chains are assumed to
+    reduce from ~1 % to ~0.5 %  in 2025-2050.
+  display:
+  - /
+  - /advanced
+  height: 600px
+  name: Figure 5
+  title: Emission intensities and direct costs of different hydrogen fuel options
+    (scatter plot for several years), along with FSCP estimates (contour plot and
+    black lines) required to make hydrogen competitive with (a) natural gas for heating
+    and (b) conventional steel production.
+  width: 50%
+fig6:
+  desc: ''
+  display:
+  - /
+  - /advanced
+  height: 550px
+  name: Figure 6
+  title: Blue-to-green FSCPs are analysed in Fig. 6a. The axes show the two main determinants
+    x) the mark-up in life-cycle emissions of blue compared to green hydrogen and
+    y) the mark-up of in specific costs of green compared to blue hydrogen.
+fig7:
+  desc: ''
+  display:
+  - /
+  - /advanced
+  height: 900px
+  name: Figure 7
+  nosettings: true
+  title: As in bottom-right panel of Fig. 3 but with focus on uncertainties.
+figS1:
+  desc: a, focusing on SMR technology with 56% capture rate, b, focusing on ATR technology
+    with 93% capture rate.
+  display:
+  - /advanced
+  name: Figure S1
+  title: Levelised cost (left) and life-cycle GHG intensity (right) of natural gas
+    and hydrogen from different supply technologies.
+  width: 50%
+figS2:
+  desc: ''
+  height: 600px
+  name: Figure S2
+  nosettings: true
+  title: Blue-to-green FSCPs are analysed in Fig. 6a. The axes show the two main determinants
+    x) the mark-up in life-cycle emissions of blue compared to green hydrogen and
+    y) the mark-up of in specific costs of green compared to blue hydrogen.

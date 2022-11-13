@@ -7,39 +7,29 @@ from src.timeit import timeit
 
 
 @timeit
-def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
     for sub, type in [('a', 'left'), ('b', 'right')]:
         subfigName = f"fig5{sub}"
+
 
         # check if plotting is needed
         if subfigName not in subfigs_needed:
             ret.update({subfigName: None})
             continue
 
+
         # select data
         plotData, refData = __selectPlotData(fuelData, config['refFuel'][type], config['refYear'][type], config['showFuels'][type], config['showYears'])
+
 
         # define plotly figure
         fig = go.Figure()
 
-        # subplot labels
-        fig.add_annotation(
-            showarrow=False,
-            text=f"<b>{sub}</b>",
-            x=0.0,
-            xanchor='left',
-            xref='paper',
-            y=1.15,
-            yanchor='top',
-            yref='paper',
-        )
 
         # produce figures
         fig = __produceFigure(fig, plotData, refData, config, type)
 
-        # styling figure
-        __styling(fig)
 
         ret.update({subfigName: fig})
 
@@ -49,6 +39,7 @@ def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
 def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFuels: list, showYears: list):
     plotData = fuelsData.query('fuel in @showFuels and year in @showYears')
     refData = fuelsData.query(f"fuel=='{refFuel}' & year=={refYear}").iloc[0]
+
 
     return plotData, refData
 
@@ -105,8 +96,9 @@ def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, 
     fig.add_annotation(
         x=0.50,
         xref='x domain',
-        y=1.15,
+        y=1.0,
         yref='y domain',
+        yshift=20.0,
         text=topLabel,
         **annotationStylingA,
         **argsRowCol,
@@ -116,9 +108,20 @@ def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, 
     fig.add_annotation(
         x=0.01*config['plotting']['ghgi_max']*1000,
         y=refData.cost,
-        xref="x", yref="y", text='Price of natural gas',
+        xref='x', yref='y', text='Price of natural gas',
         **annotationStylingB,
         **argsRowCol,
+    )
+
+
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            yanchor='top',
+            y=-0.2,
+            xanchor='left',
+            x=0.0,
+        ),
     )
 
 
@@ -132,7 +135,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
     for fuel in plotData.fuel.unique():
         # line properties
         descs = [
-            'Pessimistic' if fuel.endswith('pess') else 'Optimistic',
+            'progressive' if 'prog' in fuel else 'conservative',
             'low supply-chain CO<sub>2</sub>' if fuel.endswith('lowscco2') else None,
             '75-to-100% RE share' if 'ME' in fuel else None,
         ]
@@ -159,8 +162,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             mode='markers+text',# if tech not in hasLegend else 'markers',
             line=dict(color=col),
             marker_size=config['global']['highlight_marker_sm'],
-            customdata=thisData.year,
-            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity: %{{x:.2f}}<br>Direct cost: %{{y:.2f}}<extra></extra>"
+            hoverinfo='skip',
         ))
 
         traces.append(go.Scatter(
@@ -171,10 +173,26 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             showlegend=tech not in hasLegend,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if dashed else 'solid'),
             mode='lines',
+            hoverinfo='skip',
         ))
 
         if tech not in hasLegend:
             hasLegend.append(tech)
+
+
+        # hover template
+        traces.append(go.Scatter(
+            x=thisData.ghgi*1000,
+            y=thisData.cost,
+            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=0.0),
+            error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=0.0),
+            line_color=col,
+            showlegend=False,
+            mode='lines',
+            line_width=0.000001,
+            customdata=thisData.year,
+            hovertemplate=f"<b>{name}</b><br>Year: %{{customdata}}<br>Carbon intensity: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>Direct cost: %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
+        ))
 
 
         # error bars
@@ -188,6 +206,8 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
             marker_size=0.000001,
             showlegend=False,
             mode='markers',
+            customdata=thisData.year,
+            hoverinfo='skip',
         ))
 
 
@@ -280,41 +300,3 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
 
 
     return traces
-
-
-def __styling(fig: go.Figure):
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            yanchor='bottom',
-            y=0.00,
-            xanchor='right',
-            x=1.00,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis', 'xaxis2', 'yaxis2']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )

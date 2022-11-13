@@ -6,7 +6,8 @@ from flask import send_file
 
 from src.app.callbacks.init import figsDefault
 from src.app.app import dash_app
-from src.app.callbacks.update import updateScenarioInputSimple, updateScenarioInputAdvanced
+from src.app.callbacks.simple_params import editTablesModal
+from src.app.callbacks.update import updateScenarioInput
 from src.config_load_app import figNames, figs_cfg, subfigsDisplayed, app_cfg
 from src.data.data import getFullData
 from src.config_load import input_data, plots
@@ -19,33 +20,25 @@ from src.plotting.plot_all import plotAllFigs
 @dash_app.callback(
     [*(Output(subfigName, 'figure') for subfigName in subfigsDisplayed),],
     [Input('simple-update', 'n_clicks'),
-     Input('advanced-update', 'n_clicks'),
+     State('url', 'pathname'),
      State('plots-cfg', 'data'),
      State('simple-gwp', 'value'),
      State('simple-important-params', 'data'),
-     State('advanced-gwp', 'value'),
-     State('advanced-times', 'data'),
-     State('advanced-fuels', 'data'),
+     State('simple-gas-prices', 'data'),
      State('advanced-params', 'data'),])
-def callbackUpdate(n1, n2, plots_cfg: dict,
-                   simple_gwp: str, simple_important_params: list,
-                   advanced_gwp: str, advanced_times: list, advanced_fuels: list, advanced_params: list):
+def callbackUpdate(n1, route: str, plots_cfg: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
     ctx = dash.callback_context
+
     if not ctx.triggered:
         print("Loading figures from default values")
         return *figsDefault.values(),
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
-            inputDataUpdated = updateScenarioInputSimple(input_data.copy(), simple_gwp, simple_important_params)
+            inputDataUpdated = updateScenarioInput(input_data.copy(), simple_gwp, simple_important_params, simple_gas_prices, advanced_params)
             outputData = getFullData(inputDataUpdated)
-            route = '/'
-        elif btnPressed == 'advanced-update':
-            inputDataUpdated = updateScenarioInputAdvanced(input_data.copy(), advanced_gwp, advanced_times, advanced_fuels, advanced_params)
-            outputData = getFullData(inputDataUpdated)
-            route = '/advanced'
         else:
-            raise Exception('Unknown button pressed!')
+            raise Exception(f"Unknown button pressed: {btnPressed}")
 
     figsNeeded = [fig for fig, routes in app_cfg['figures'].items() if route in routes]
     figs = plotAllFigs(outputData, inputDataUpdated, plots_cfg, global_cfg='webapp', figs_needed=figsNeeded)
@@ -58,65 +51,59 @@ def callbackUpdate(n1, n2, plots_cfg: dict,
 # callback for YAML config download
 @dash_app.callback(
     Output('download-config-yaml', 'data'),
-    [Input('advanced-download-config', 'n_clicks'),
-     State('advanced-gwp', 'value'),
-     State('advanced-times', 'data'),
-     State('advanced-fuels', 'data'),
+    [Input('download-config', 'n_clicks'),
+     State('simple-gwp', 'value'),
+     State('simple-important-params', 'data'),
+     State('simple-gas-prices', 'data'),
      State('advanced-params', 'data'),],
      prevent_initial_call=True,)
-def callbackDownloadConfig(n, *args):
-    scenarioInputUpdated = updateScenarioInputAdvanced(input_data.copy(), *args)
-    return dict(content=yaml.dump(scenarioInputUpdated, sort_keys=False), filename='scenario.yml')
-
-
-# this callback sets the background colour of the rows in the fue table in the advanced tab
-@dash_app.callback(
-   Output(component_id='advanced-fuels', component_property='style_data_conditional'),
-   [Input(component_id='advanced-fuels', component_property='data')])
-def callbackTableColour(data: list):
-    defaultCondStyle = [
-        {'if': {'state': 'active'},
-         'backgroundColor': '#80d4ff'},
-        {'if': {'state': 'selected'},
-         'backgroundColor': '#80d4ff'},
-        {'if': {'row_index': 'odd'},
-         'backgroundColor': '#FFFFFF'},
-        {'if': {'row_index': 'even'},
-         'backgroundColor': '#DDDDDD'}
-    ]
-
-    for i, row in enumerate(data):
-        defaultCondStyle.append({'if': {'row_index': i}, 'backgroundColor': row['colour']})
-
-    return defaultCondStyle
+def callbackDownloadConfig(n, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
+    inputDataUpdated = updateScenarioInput(input_data.copy(), simple_gwp, simple_important_params, simple_gas_prices, advanced_params)
+    return dict(content=yaml.dump(inputDataUpdated, sort_keys=False), filename='input_data.yml')
 
 
 # update parameter values in advanced tab
 @dash_app.callback(
-    [Output('advanced-modal', 'is_open'),
-     Output('advanced-modal-textfield', 'value'),
-     Output('advanced-params', 'data'),],
-    [Input('advanced-modal-ok', 'n_clicks'),
-     Input('advanced-modal-cancel', 'n_clicks'),
-     Input('advanced-params', 'active_cell')],
-    [State('advanced-modal-textfield', 'value'),
-     State('advanced-params', 'data'),],
+    [*(Output(t, 'data') for t in editTablesModal),
+     Output('advanced-modal', 'is_open'),
+     Output('table-modal-open', 'data'),
+     Output('advanced-modal-textfield', 'value'),],
+    [*(Input(t, 'active_cell') for t in editTablesModal),
+     Input('advanced-modal-ok', 'n_clicks'),
+     Input('advanced-modal-cancel', 'n_clicks'),],
+    [*(State(t, 'data') for t in editTablesModal),
+     State('advanced-modal-textfield', 'value'),
+     State('table-modal-open', 'data'),],
 )
-def callbackAdvancedModal(n_ok: int, n_cancel: int, active_cell: int, advanced_modal_textfield: str, data: list):
+def callbackAdvancedModal(*args):
+    active_cell = {p: args[i] for i, p in enumerate(list(editTablesModal.keys()))}
+    current_data = {p: args[i - len(editTablesModal) - 2] for i, p in enumerate(list(editTablesModal.keys()))}
+    text_field_data = args[-2]
+    origin_saved = args[-1]
+
     ctx = dash.callback_context
 
-    if not ctx.triggered or active_cell['column_id']!='value':
-        return False, '', data
+    if not ctx.triggered:
+        return *current_data.values(), False, '', ''
     else:
-        btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
-        row = active_cell['row']
-        if btnPressed == 'advanced-params':
-            return True, str(data[row]['value']), data
-        elif btnPressed == 'advanced-modal-cancel':
-            return False, '', data
-        elif btnPressed == 'advanced-modal-ok':
-            data[row]['value'] = advanced_modal_textfield
-            return False, '', data
+        origin = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if origin in editTablesModal:
+            row = active_cell[origin]['row']
+            col = active_cell[origin]['column_id']
+
+            if col not in editTablesModal[origin]:
+                return *current_data.values(), False, '', ''
+            else:
+                return *current_data.values(), True, origin, str(current_data[origin][row][col])
+        elif origin == 'advanced-modal-cancel':
+            return *current_data.values(), False, '', ''
+        elif origin == 'advanced-modal-ok':
+            row = active_cell[origin_saved]['row']
+            col = active_cell[origin_saved]['column_id']
+
+            current_data[origin_saved][row][col] = text_field_data
+            return *current_data.values(), False, '', ''
         else:
             raise Exception('Unknown button pressed!')
 
@@ -159,8 +146,6 @@ def callbackSettingsModal(*args):
 
 # display of simple or advanced controls
 @dash_app.callback(
-    Output('simple-controls-card', 'style'),
-    Output('advanced-controls-card-left', 'style'),
     Output('advanced-controls-card-right', 'style'),
     *(Output(f"card-{f}", 'style') for f in figNames if f in app_cfg['figures']),
     *(Output(f'{plotName}-settings-div', 'style') for plotName, figList in plots.items() if any(f in app_cfg['figures'] and not ('nosettings' in figs_cfg[f] and figs_cfg[f]['nosettings']) for f in figList)),
@@ -170,8 +155,6 @@ def callbackDisplayForRoutes(route):
     r = []
 
     # display of control cards
-    r.append({'display': 'none'} if route != '/' else {})
-    r.append({'display': 'none'} if route != '/advanced' else {})
     r.append({'display': 'none'} if route != '/advanced' else {})
 
     # display of figures for different routes

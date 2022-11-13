@@ -1,7 +1,7 @@
 from dash import dcc, html
 
 from src.config_load_app import app_cfg
-from src.app.layout.elements.advanced import getElementAdvancedControlsCardLeft, getElementAdvancedControlsCardRight
+from src.app.layout.elements.advanced import getElementAdvancedControlsCardRight
 from src.app.layout.modals.advanced_modal import getModalUpdateAdvancedTable
 from src.app.layout.modals.plot_settings_modal import getModalPlotConfig
 from src.app.layout.elements.figures import getFigures
@@ -82,7 +82,7 @@ def getLayout(logo_url: str):
             html.Div(
                 id='left-column',
                 className='four columns',
-                children=[getElementSummaryCard(), getElementSimpleControlsCard(), getElementAdvancedControlsCardLeft()]
+                children=[getElementSummaryCard(), getElementSimpleControlsCard()]
             ),
 
             # right column
@@ -99,6 +99,7 @@ def getLayout(logo_url: str):
             # dcc locations, stores, and downloads
             dcc.Location(id='url', refresh=False),
             dcc.Store(id='plots-cfg', storage_type='session', data=plots_cfg),
+            dcc.Store(id='table-modal-open', storage_type='session', data=''),
             dcc.Download(id='download-config-yaml'),
             dcc.Download(id='download-results-xlsx'),
         ],

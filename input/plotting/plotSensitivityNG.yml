@@ -1,7 +1,0 @@
-import:
-  - plotOverTime
-  - plotHeatmap
-
-# value to be added to NG price and elec price in EUR/MWh
-addNGPrice: 20.0
-addElPrice: 20.0

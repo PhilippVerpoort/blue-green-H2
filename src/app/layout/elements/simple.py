@@ -1,13 +1,101 @@
 from dash import dcc, html, dash_table
 import dash_bootstrap_components as dbc
 
-from src.app.callbacks.simple_params import getSimpleParamsTable
+from src.app.callbacks.simple_params import getSimpleParamsTable, cons_vs_prog_params, gas_prices_params
 
 
 def getElementSimpleControlsCard():
     return html.Div(
         id='simple-controls-card',
         children=[
+            html.Div(
+                [
+                    dbc.Label(
+                        'Most important parameters and selected cases:',
+                        html_for='simple-important-params',
+                    ),
+                    dash_table.DataTable(
+                        id='simple-important-params',
+                        columns=[
+                            {'id': 'name', 'name': 'Name', 'editable': False,},
+                            {'id': 'desc', 'name': 'Parameter', 'editable': False,},
+                            {'id': 'unit', 'name': 'Unit', 'editable': False,},
+                            {'id': 'cons', 'name': 'Conservative cases'},
+                            {'id': 'prog', 'name': 'Proressive cases'},
+                        ],
+                        data=getSimpleParamsTable(cons_vs_prog_params, ['cons', 'prog'], 'cons_vs_prog'),
+                        editable=False,
+                        style_cell={'whiteSpace': 'pre-line'},
+                        style_cell_conditional=[
+                            {
+                                'if': {'column_id': 'name'},
+                                'display': 'none',
+                            },
+                            {
+                                'if': {'column_id': 'desc'},
+                                'width': '25%',
+                            },
+                            {
+                                'if': {'column_id': 'unit'},
+                                'width': '15%',
+                            },
+                            {
+                                'if': {'column_id': 'cons'},
+                                'width': '30%',
+                            },
+                            {
+                                'if': {'column_id': 'prog'},
+                                'width': '30%',
+                            },
+                        ],
+                    ),
+                ],
+                className='card-element',
+            ),
+            html.Div(
+                [
+                    dbc.Label(
+                        'Gas price cases:',
+                        html_for='simple-gas-prices',
+                    ),
+                    dash_table.DataTable(
+                        id='simple-gas-prices',
+                        columns=[
+                            {'id': 'name', 'name': 'Name', 'editable': False,},
+                            {'id': 'desc', 'name': 'Parameter', 'editable': False,},
+                            {'id': 'unit', 'name': 'Unit', 'editable': False,},
+                            {'id': 'high', 'name': 'High price'},
+                            {'id': 'low', 'name': 'Low price'},
+                        ],
+                        data=getSimpleParamsTable(gas_prices_params, ['high', 'low'], 'gas_prices'),
+                        editable=False,
+                        style_cell={'whiteSpace': 'pre-line'},
+                        style_cell_conditional=[
+                            {
+                                'if': {'column_id': 'name'},
+                                'display': 'none',
+                            },
+                            {
+                                'if': {'column_id': 'desc'},
+                                'width': '25%',
+                            },
+                            {
+                                'if': {'column_id': 'unit'},
+                                'width': '15%',
+                            },
+                            {
+                                'if': {'column_id': 'cons'},
+                                'width': '30%',
+                            },
+                            {
+                                'if': {'column_id': 'prog'},
+                                'width': '30%',
+                            },
+                        ],
+                    ),
+                ],
+                className='card-element',
+            ),
             html.Div(
                 [
                     dbc.Label(
@@ -23,32 +111,18 @@ def getElementSimpleControlsCard():
                 className='card-element',
             ),
             html.Div(
-                [
-                    dbc.Label(
-                        'Most important parameters and assumptions:',
-                        html_for='simple-important-params',
-                    ),
-                    dash_table.DataTable(
-                        id='simple-important-params',
-                        columns=[
-                            {'id': 'name', 'name': 'Name', 'editable': False},
-                            {'id': 'desc', 'name': 'Parameter', 'editable': False,},
-                            {'id': 'unit', 'name': 'Unit', 'editable': False,},
-                            {'id': 'val_2025', 'name': 'Value 2025', 'type': 'numeric'},
-                            {'id': 'val_2050', 'name': 'Value 2050', 'type': 'numeric'},
+                children=[
+                    html.Button(id='simple-update', n_clicks=0, children='GENERATE', className='scenario-buttons'),
+                    html.Button(id='download-config', n_clicks=0, children='Download input data', className='scenario-buttons'),
+                    html.Form(
+                        action='/download/data.xlsx',
+                        method='get',
+                        children=[
+                            dbc.Button(id='results-download', type='submit', children='Download data', className='scenario-buttons')
                         ],
-                        data=getSimpleParamsTable(),
-                        editable=True,
-                        style_cell_conditional=[{
-                            'if': {'column_id': 'name'},
-                            'display': 'none',
-                        }],
+                        style={'float': 'right'},
                     ),
                 ],
-                className='card-element',
-            ),
-            html.Div(
-                children=html.Button(id='simple-update', n_clicks=0, children='Update', className='scenario-buttons'),
                 className='card-element',
             ),
         ],

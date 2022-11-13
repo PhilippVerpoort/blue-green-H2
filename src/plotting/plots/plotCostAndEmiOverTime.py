@@ -8,7 +8,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     # produce figures
     ret = {}
     for sub, type in [('a', 'cost'), ('b', 'ghgi')]:
@@ -21,9 +21,6 @@ def plotCostAndEmiOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed:
 
         # plot subfigure
         subfig = __produceFigure(fuelData, config['fuelSpecs'], {**config[type], **{'global': config['global']}}, type)
-
-        # styling figure
-        __styling(subfig)
 
         ret.update({subfigName: subfig})
 
@@ -58,26 +55,16 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
     fig = go.Figure()
 
 
-    # subplot labels
-    fig.add_annotation(
-        showarrow=False,
-        text=f"<b>{'a' if type=='cost' else 'b'}</b>",
-        x=0.0,
-        xanchor='left',
-        xref='paper',
-        y=1.2,
-        yanchor='top',
-        yref='paper',
-    )
-
-
     for cID, corridor in subConfig['showCorridors'].items():
         corrCases = corridor['cases']
         corrColour = corridor['colour'] if 'colour' in corridor else fuelSpecs[list(corrCases.keys())[0].replace('-gwpOther', '')]['colour']
 
         allCases = list(corrCases.keys()) + [cExt for c in corrCases.values() for cExt in (c['extended'] if 'extended' in c else [])]
         casesColours = {c: corrCases[c.replace('-gwpOther', '')]['colour'] if 'colour' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['colour'] for c in allCases}
-        casesLabels = {c: f"{fuelSpecs[c.replace('-gwpOther', '')]['shortname']} ({corrCases[c]['desc']})" if 'desc' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['name'] for c in allCases}
+        caseGroupLabel = fuelSpecs[allCases[0].replace('-gwpOther', '')]['shortname']
+        casesLabels = {c: corrCases[c]['desc'] if 'desc' in corrCases[c] else fuelSpecs[c.replace('-gwpOther', '')]['name'] for c in allCases}
+
+        legendID = cID.rstrip('-')[0]
 
         # select data and determine max and min of corridor
         thisData = __getThisData(plotData, fuelSpecs, corrCases)
@@ -93,7 +80,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             # The minimum (or maximum) line needs to be added before the below area plot can be applied.
             x=thisData_min.year,
             y=thisData_min['lower']*scale,
-            legendgroup=cID,
+            legendgroup=legendID,
             mode='lines',
             line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             showlegend=False,
@@ -105,9 +92,10 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
             y=thisData_max['upper']*scale,
             fill='tonexty', # fill area between traces
             mode='lines',
-            legendgroup=cID,
+            legendgroup=legendID,
             line=dict(color=corrColour, width=subConfig['global']['lw_thin'] if subConfig['showLines'] else 0.0),
             fillpattern=dict(shape='/') if cID.endswith('-gwpOther') else None,
+            fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(corrColour), .3)),
             showlegend=False,
             hoverinfo='none',
         ))
@@ -120,7 +108,8 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
                 # The minimum (or maximum) line needs to be added before the below area plot can be applied.
                 x=cData.year,
                 y=cData[type]*scale,
-                legendgroup=c,
+                legendgrouptitle=dict(text=f"<b>{caseGroupLabel}</b>"),
+                legendgroup=legendID,
                 mode='lines',
                 name=casesLabels[c],
                 line=dict(color=casesColours[c], width=subConfig['global']['lw_thin'], dash='dot' if c.endswith('-gwpOther') else None),
@@ -154,41 +143,18 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
     )
     fig.update_yaxes(rangemode= "tozero")
 
-    return fig
 
-
-def __styling(fig: go.Figure):
-    # update legend styling
+    # set legend position
     fig.update_layout(
         legend=dict(
+            orientation='h',
             yanchor='top',
-            y=-0.1,
+            y=-0.15,
             xanchor='left',
             x=0.0,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
         ),
+        margin_b=250.0,
     )
 
-    # update axis styling
-    for axis in ['xaxis', 'yaxis']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
 
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
+    return fig

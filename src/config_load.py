@@ -25,13 +25,13 @@ for plotName in plots:
     if isinstance(plots[plotName], list):
         plots[plotName] = {f: [f] for f in plots[plotName]}
 
-__filePath = getFilePathInput('figure_print.yml')
+__filePath = getFilePathInput('figure_config/print.yml')
 figure_print = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
-__filePath = getFilePathInput('plotting/global.yml')
+__filePath = getFilePathInput('plot_config/global.yml')
 plots_cfg_global = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
 plots_cfg = {}
 for plotName in plots:
-    __filePath = getFilePathInput(f"plotting/{plotName}.yml")
+    __filePath = getFilePathInput(f"plot_config/{plotName}.yml")
     plots_cfg[plotName] = open(__filePath, 'r').read()

@@ -11,8 +11,8 @@ dash_app.layout = getLayout(dash_app.get_asset_url("logo.png"))
 
 
 # import and list callbacks (list so they don't get removed as unused imports)
-from src.app.callbacks.callbacks import callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
-callbackUpdate, callbackDownloadConfig, callbackTableColour, callbackDownloadExportdata
+from src.app.callbacks.callbacks import callbackUpdate, callbackDownloadConfig, callbackDownloadExportdata
+callbackUpdate, callbackDownloadConfig, callbackDownloadExportdata
 
 
 # define flask_app for wsgi

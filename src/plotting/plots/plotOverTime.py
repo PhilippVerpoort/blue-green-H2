@@ -12,27 +12,17 @@ from src.timeit import timeit
 
 
 @timeit
-def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
 
     # select which lines to plot based on function argument
     plotScatter, plotLines = __selectPlotFSCPs(FSCPData, config['selected_cases'], config['n_samples'])
 
     # produce figure 3
-    if 'fig3' in subfigs_needed:
-        fig = __produceFigureFull(plotScatter, plotLines, config)
-        __styling(fig, config)
-        ret['fig3'] = fig
-    else:
-        ret['fig3'] = None
+    ret['fig3'] = __produceFigureFull(plotScatter, plotLines, config, is_webapp) if 'fig3' in subfigs_needed else None
 
     # produce figure 7
-    if 'fig7' in subfigs_needed:
-        fig = __produceFigureReduced(plotScatter, plotLines, config)
-        __styling(fig, config)
-        ret['fig7'] = fig
-    else:
-        ret['fig7'] = None
+    ret['fig7'] = __produceFigureReduced(plotScatter, plotLines, config, is_webapp) if 'fig7' in subfigs_needed else None
 
     return ret
 
@@ -83,9 +73,9 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
             type_y=n_samples * [type_y],
             year=t,
         )
-        tmp = pd.DataFrame(new, columns=plotLines.keys())
+        tmp = pd.DataFrame(new, columns=plotLines.keys()).astype(dtypes)
         tmp.index = np.arange(len(samples), len(tmp) + len(samples))
-        tmp = tmp.merge(samples, how='outer').sort_values(by=['year']).astype(dtypes)
+        tmp = tmp.merge(samples, how='outer').sort_values(by=['year'])
         allEntries.append(tmp.interpolate())
 
     plotLinesInterpolated = pd.concat(allEntries, ignore_index=True)
@@ -112,12 +102,11 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
     return plotScatter, plotLinesInterpolated
 
 
-def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
+def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False):
     # plot
     fig = make_subplots(
         rows=2,
         cols=2,
-        subplot_titles=ascii_lowercase,
         shared_yaxes=True,
         horizontal_spacing=0.025,
         vertical_spacing=0.1,
@@ -164,15 +153,17 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
         fig.add_annotation(
             x=0.50,
             xref=f"x{str(i+1) if i else ''} domain",
-            y=1.15,
-            yref=f"y domain",
+            y=1.0,
+            yref='y domain',
+            yshift=40,
             text=config['sidelabels']['top'][i],
             **annotationStyling
         )
 
         fig.add_annotation(
-            x=-0.17,
-            xref=f"x domain",
+            x=0.0,
+            xref='x domain',
+            xshift=-100.0 if is_webapp else -150.0,
             y=0.5,
             yref=f"y{str(i+2) if i else ''} domain",
             text=config['sidelabels']['left'][i],
@@ -195,15 +186,27 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
         # margin_b=520.0,
     )
 
+
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            orientation='h',
+            xanchor='left',
+            x=0.0,
+            yanchor='top',
+            y=-0.2 if is_webapp else -0.1,
+        ),
+    )
+
+
     return fig
 
 
-def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
+def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False):
     # plot
     fig = make_subplots(
         rows=2,
         cols=2,
-        subplot_titles=ascii_lowercase,
         shared_yaxes=True,
         horizontal_spacing=0.025,
         vertical_spacing=0.1,
@@ -241,21 +244,6 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
         fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=i, col=j)
 
 
-    # add text annotations explaining figure content
-    annotationStyling = dict(xanchor='right', yanchor='top', showarrow=False,
-                             bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-
-    for k, scid in enumerate(config['selected_cases']):
-        axisNumb = str(k+1) if k else ''
-        fig.add_annotation(
-            x=0.99,
-            xref=f"x{axisNumb} domain",
-            y=0.98,
-            yref=f"y{axisNumb} domain",
-            text=f"{config['selected_cases_labels'][scid]}: {config['selected_cases'][scid][-2]} vs. {config['selected_cases'][scid][-1]}",
-            **annotationStyling
-        )
-
     # add circles on intersects
     __addAnnotations(fig, cpTrajData, plotLines, config)
 
@@ -265,7 +253,8 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
 
 
     # add legend for annotations
-    __addAnnotationsLegend(fig, config)
+    if not is_webapp:
+        __addAnnotationsLegend(fig, config)
 
 
     # add top and left annotation
@@ -276,15 +265,17 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
         fig.add_annotation(
             x=0.50,
             xref=f"x{str(i+1) if i else ''} domain",
-            y=1.15,
-            yref=f"y domain",
+            y=1.0,
+            yref='y domain',
+            yshift=40,
             text=config['sidelabels']['top'][i],
             **annotationStyling
         )
 
         fig.add_annotation(
-            x=-0.17,
-            xref=f"x domain",
+            x=0.0,
+            xref='x domain',
+            xshift=-100.0 if is_webapp else -150.0,
             y=0.5,
             yref=f"y{str(i+2) if i else ''} domain",
             text=config['sidelabels']['left'][i],
@@ -304,8 +295,21 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
             range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
         ) for i in range(4)},
         margin_l=180.0,
-        margin_b=520.0,
+        margin_b=500.0 if not is_webapp else None,
     )
+
+
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            orientation='h',
+            xanchor='left',
+            x=0.0,
+            yanchor='top',
+            y=-0.2 if is_webapp else -0.1,
+        ),
+    )
+
 
     return fig
 
@@ -344,7 +348,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             mode='markers',
             line=dict(color=col, width=config['global']['lw_default']),
             marker=dict(symbol='x-thin', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': col}, ),
-            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
+            hoverinfo='none',
         ))
 
         # line plot
@@ -356,6 +360,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
             name=name,
             mode='lines',
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if fuel_x in config['cases_dashed'] or fuel_y in config['cases_dashed'] else 'solid'),
+            hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}<extra></extra>",
         ))
 
         # uncertainity envelope
@@ -384,16 +389,17 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
         points = __calcPoints(cpTrajData, plotLines, config['selected_cases'][scid], config)
         data = points.query(f"delta < 5.0")
 
-        fig.add_trace(go.Scatter(
-            x=data.year,
-            y=data.fscp,
-            text=data.label,
-            mode='markers+text',
-            marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
-            textposition='bottom center',
-            showlegend=False,
-            # hovertemplate = f"{name}<br>Carbon price: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<extra></extra>",
-        ), row=i, col=j)
+        for _, row in data.iterrows():
+            fig.add_trace(go.Scatter(
+                x=[row.year],
+                y=[row.fscp],
+                text=[int(row.label)],
+                mode='markers+text',
+                marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
+                textposition='bottom center',
+                showlegend=False,
+                hovertemplate = f"<b>Milestone {int(row.label)}:</b> {config['annotationTexts'][f'point{int(row.label)-1}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+            ), row=i, col=j)
 
 
 def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list, config: dict) -> dict:
@@ -471,13 +477,13 @@ def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: in
 
 
 def __addAnnotationsLegend(fig: go.Figure, config: dict):
-    y0 = -0.40
+    y0 = -0.35
 
     fig.add_shape(
         type='rect',
         x0=0.0,
         y0=y0,
-        x1=0.80,
+        x1=0.92,
         y1=y0-0.2,
         xref='paper',
         yref='paper',
@@ -486,12 +492,24 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
     )
 
     fig.add_annotation(
-        text=f"<b>{config['annotationTexts']['heading1']}:</b><br><br><br><b>{config['annotationTexts']['heading2']}:</b>",
+        text=f"<b>{config['annotationTexts']['heading1']}:</b>",
         align='left',
         xanchor='left',
         x=0.0,
         yanchor='top',
         y=y0,
+        xref='paper',
+        yref='paper',
+        showarrow=False,
+    )
+
+    fig.add_annotation(
+        text=f"<b>{config['annotationTexts']['heading2']}:</b>",
+        align='left',
+        xanchor='left',
+        x=0.0,
+        yanchor='top',
+        y=y0-0.095,
         xref='paper',
         yref='paper',
         showarrow=False,
@@ -561,7 +579,7 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         line_color=colour,
         line_width=config['global']['lw_thin'],
         showlegend=True,
-        hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>"
+        hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>",
     ))
 
     data_x = cpTrajData['year']
@@ -579,58 +597,8 @@ def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
         fill='toself',
         line=dict(width=config['global']['lw_ultrathin']),
         showlegend=False,
-        hoverinfo='skip'
+        hoverinfo='none'
     )
     traces.append(errorBand)
 
     return traces
-
-
-def __styling(fig: go.Figure, config: dict):
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            orientation='h',
-            xanchor='left',
-            x=0.0,
-            yanchor='top',
-            y=-0.1,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-    # update axis styling
-    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])

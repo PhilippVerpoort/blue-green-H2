@@ -7,7 +7,7 @@ from src.timeit import timeit
 
 
 @timeit
-def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
     for sub, type in [('a', 'left'), ('b', 'right')]:
         subfigName = f"fig2{sub}"
@@ -25,9 +25,6 @@ def plotLines(fuelData: pd.DataFrame, FSCPData: pd.DataFrame, config: dict, subf
 
         # produce figures
         subfig = __produceFigure(plotData, plotFSCP, config, type)
-
-        # styling figure
-        __styling(subfig, sub)
 
         ret.update({subfigName: subfig})
 
@@ -58,19 +55,6 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, showFSCPs: dict):
 def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict, type: str):
     # plot
     fig = go.Figure()
-
-
-    # subplot labels
-    fig.add_annotation(
-        showarrow=False,
-        text=f"<b>{'a' if type=='left' else 'b'}</b>",
-        x=0.0,
-        xanchor='left',
-        xref='paper',
-        y=1.15,
-        yanchor='top',
-        yref='paper',
-    )
 
 
     # add line traces
@@ -115,6 +99,17 @@ def __produceFigure(plotData: pd.DataFrame, plotFSCP: pd.DataFrame, config: dict
         yaxis=dict(
             title=config['labels']['total_cost'],
             range=[0.0, config['plotting']['fuel_cost_max']],
+        ),
+    )
+
+
+    # set legend position
+    fig.update_layout(
+        legend=dict(
+            yanchor='top',
+            y=1.00,
+            xanchor='left',
+            x=0.00,
         ),
     )
 
@@ -226,53 +221,3 @@ def __addFSCPLabels(plotFSCP: pd.DataFrame, config: dict):
         ))
 
     return labels
-
-
-def __styling(fig: go.Figure, subFigName: str):
-    # update legend styling
-    fig.update_layout(
-        legend=dict(
-            yanchor='top',
-            y=1.00,
-            xanchor='left',
-            x=0.00,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
-        ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
-
-
-    # margins
-    if subFigName == 'a':
-        fig.update_layout(
-            margin_r=0.0
-        )
-    elif subFigName == 'b':
-        fig.update_layout(
-            margin_l=0.0,
-            yaxis=dict(title=None, ticks=None, showticklabels=False),
-        )

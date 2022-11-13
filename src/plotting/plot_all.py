@@ -2,10 +2,15 @@ from typing import Union
 import importlib
 
 import yaml
+import plotly.io as pio
 import plotly.graph_objects as go
 
 from src.config_load import plots, plots_cfg_global
 from src.config_load_app import app_cfg
+from src.plotting.styling.template import defineTemplate
+
+
+pio.templates['pik'] = defineTemplate()
 
 
 def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
@@ -27,6 +32,9 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
         'plotOverTime': (allData['FSCPData'],),
         'plotSensitivityFSCP': (input_data['fuels'],),
     }
+
+    # set default theme
+    pio.templates.default = "pik"
 
     ret = {}
     for i, plotName in enumerate(plots):
@@ -50,7 +58,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
             plotFunc = getattr(module, plotName)
 
             # execute plot function
-            newFigs = plotFunc(*plotArgs, config, plotsNeeded[plotName])
+            newFigs = plotFunc(*plotArgs, config, plotsNeeded[plotName], is_webapp=(global_cfg=='webapp'))
             ret.update(newFigs)
 
     print('Plot creation complete...')
@@ -60,6 +68,21 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
         for subfig in ret:
             if ret[subfig] is None:
                 if any(subfig in fs[fig] for plotName, fs in plots.items() for fig in fs if fig in app_cfg['figures']):
-                    ret[subfig] = go.Figure()
+                    f = go.Figure()
+                    f.add_annotation(
+                        text='<b>Press GENERATE to<br>display this plot.</b>',
+                        xanchor='center',
+                        xref='x domain',
+                        x=0.5,
+                        yanchor='middle',
+                        yref='y domain',
+                        y=0.5,
+                        showarrow=False,
+                        bordercolor='black',
+                        borderwidth=2,
+                        borderpad=3,
+                        bgcolor='white',
+                    )
+                    ret[subfig] = f
 
     return {subfigName: subfig for subfigName, subfig in ret.items() if subfig is not None}

@@ -12,7 +12,7 @@ from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, getGHGIParamsGre
 
 
 @timeit
-def plotBlueGreen(fuelData: pd.DataFrame, config: dict, subfigs_needed: list):
+def plotBlueGreen(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
 
     # produce figure 6
@@ -53,7 +53,7 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
     fig.update_xaxes(title=config['labels']['xaxis1'], range=[config['plotting']['xaxis1_min'] * 1000, config['plotting']['xaxis1_max'] * 1000])
 
 
-    # update legend styling
+    # set legend position
     fig.update_layout(
         legend=dict(
             orientation='h',
@@ -61,34 +61,7 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
             y=-0.2,
             xanchor='left',
             x=0.0,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
         ),
-    )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'yaxis']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-    fig.update_xaxes(ticks='outside')
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
     )
 
 
@@ -97,16 +70,18 @@ def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
 
 def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     # plot
-    fig = make_subplots(rows=2,
-                        cols=4,
-                        specs=[
-                            [{"rowspan": 2, "colspan": 2}, None, {}, {}],
-                            [None, None, {}, {}],
-                        ],
-                        subplot_titles=ascii_lowercase,
-                        horizontal_spacing=0.02,
-                        vertical_spacing=config['vertical_spacing'],
-                        shared_yaxes=True)
+    fig = make_subplots(
+        rows=2,
+        cols=4,
+        specs=[
+            [{"rowspan": 2, "colspan": 2}, None, {}, {}],
+            [None, None, {}, {}],
+        ],
+        horizontal_spacing=0.02,
+        vertical_spacing=config['vertical_spacing'],
+        shared_yaxes=True,
+    )
+
     rowcol_mapping = [
         dict(row=1, col=1),
         dict(row=1, col=3),
@@ -187,7 +162,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     # add white annotation labels
     annotationStyling = dict(x=0.01, y=0.985, xanchor='left', yanchor='top', showarrow=False, bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
     for k, f in enumerate(['fuelBlueLeft', 'fuelBlueRight'] * 2):
-        t = 'Conservative' if config[f].endswith('cons') else 'Progressive'
+        t = ('Conservative' if config[f].endswith('cons') else 'Progressive') + ' to ' + ('conservative' if config['fuelGreen'].endswith('cons') else 'progressive')
         fig.add_annotation(xref=f"x{k+2} domain", yref=f"y{k+2} domain", text=t, **annotationStyling)
 
 
@@ -211,7 +186,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
 
 
     # set y axes titles and ranges
-    fig.update_yaxes(title="", range=[config['plotting']['yaxis2_min'], config['plotting']['yaxis2_max']])
+    fig.update_yaxes(title='', range=[config['plotting']['yaxis2_min'], config['plotting']['yaxis2_max']])
     fig.update_yaxes(title=config['labels']['yaxis1'], range=[config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max']], ticks='outside', row=1, col=1)
     fig.update_yaxes(ticks='outside', row=1, col=3)
     fig.update_yaxes(ticks='outside', row=2, col=3)
@@ -222,7 +197,7 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
     fig.update_layout(**newAxes)
 
 
-    # update legend styling
+    # set legend position
     fig.update_layout(
         legend=dict(
             orientation='h',
@@ -230,49 +205,8 @@ def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
             y=-0.2,
             xanchor='left',
             x=0.0,
-            bgcolor='rgba(255,255,255,1.0)',
-            bordercolor='black',
-            borderwidth=2,
         ),
     )
-
-
-    # update axis styling
-    for axis in ['xaxis', 'xaxis2', 'xaxis3', 'xaxis4', 'xaxis5', 'yaxis', 'yaxis2', 'yaxis3', 'yaxis4', 'yaxis5']:
-        update = {axis: dict(
-            showline=True,
-            linewidth=2,
-            linecolor='black',
-            showgrid=False,
-            zeroline=False,
-            mirror=True,
-            ticks='outside',
-        )}
-        fig.update_layout(**update)
-    fig.update_xaxes(ticks='outside')
-
-
-    # update figure background colour and font colour and type
-    fig.update_layout(
-        paper_bgcolor='rgba(255, 255, 255, 1.0)',
-        plot_bgcolor='rgba(255, 255, 255, 0.0)',
-        font_color='black',
-        font_family='Helvetica',
-    )
-
-
-    # move title annotations
-    for i, annotation in enumerate(fig['layout']['annotations'][:len(config['subplot_title_positions'])]):
-        x_pos, y_pos = config['subplot_title_positions'][i]
-        annotation['xanchor'] = 'left'
-        annotation['yanchor'] = 'top'
-        annotation['xref'] = 'paper'
-        annotation['yref'] = 'paper'
-
-        annotation['x'] = x_pos
-        annotation['y'] = y_pos
-
-        annotation['text'] = "<b>{0}</b>".format(annotation['text'])
 
 
     return fig
@@ -344,9 +278,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             showlegend=True,
             line=dict(color=col, width=config['global']['lw_default'], dash='dot' if 'low' in fuelBlue else None),
             mode='lines',
-            customdata=thisData.year,
-            hovertemplate=f"<b>{name}</b> (%{{customdata}})<br>Carbon intensity difference: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>"
-                          f"Direct cost difference (w/o CP): %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
+            hoverinfo='skip',
         ))
 
 
@@ -359,6 +291,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             line=dict(color=col, width=config['global']['lw_default']),
             marker_size=config['global']['highlight_marker_sm'],
             mode='markers',
+            hoverinfo='skip',
         ))
 
 
@@ -374,6 +307,23 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
             legendgroup='low' if 'low' in fuelBlue else 'high',
             showlegend=False,
             mode='text',
+            hoverinfo='skip',
+        ))
+
+
+        # hover template
+        traces.append(go.Scatter(
+            x=thisData.delta_ghgi * 1000,
+            y=thisData.delta_cost,
+            error_x=dict(type='data', array=thisData.delta_ghgi_uu*1000, arrayminus=thisData.delta_ghgi_ul*1000, thickness=0.0),
+            error_y=dict(type='data', array=thisData.delta_cost_uu, arrayminus=thisData.delta_cost_ul, thickness=0.0),
+            line_color=col,
+            marker_size=0.000001,
+            showlegend=False,
+            mode='markers',
+            customdata=thisData.year,
+            hovertemplate=f"<b>{name}</b><br>Year: %{{customdata}}<br>Carbon intensity difference: %{{x:.2f}}&plusmn;%{{error_x.array:.2f}}<br>"
+                          f"Direct cost difference (w/o CP): %{{y:.2f}}&plusmn;%{{error_y.array:.2f}}<extra></extra>",
         ))
 
 
@@ -389,6 +339,7 @@ def __addFSCPScatterCurves(fuelData: pd.DataFrame, config: dict, colourfull=Fals
                 marker_size=0.000001,
                 showlegend=False,
                 mode='markers',
+                hoverinfo='skip',
             ))
 
     return traces
