@@ -9,7 +9,7 @@ sensitivity_params:
   p_el:
     range:
       - 20.0
-      - 60.0
+      - 80.0
     scale: 1.0
     label: Electricity price<br>(EUR/MWh)
     mode: absolute
@@ -71,6 +71,7 @@ fuels:
 
 
 years:
+  - 2025
   - 2035
   - 2040
   - 2045
