@@ -1,5 +1,5 @@
 plotting:
-  ghgi_max: 0.22
+  ghgi_max: 0.23
   cost_max: 125.0
   n_samples: 301
 
