@@ -65,12 +65,11 @@ sidelabels:
 annotationTexts:
   heading1: Milestones that capture the expanding competitiveness of low-carbon hydrogen with fossil applications
   heading2: Milestones that capture the inversion of competitiveness within the hydrogen supply, such that green H<sub>2</sub> becomes the most competitive option
-  point1: Low-carbon hydrogen is currently not<br>competitive based solely on CO<sub>2</sub> prices
-  point2: Blue hydrogen becomes competitive<br>with natural gas
-  point3: Green H<sub>2</sub> becomes competitive<br>with the natural gas
-  point4: Green H<sub>2</sub> becomes competitive<br>with blue H<sub>2</sub>
-  point5: FSCPs of green H<sub>2</sub> fall below<br>those of blue H<sub>2</sub>
-  point6: Direct costs of green H<sub>2</sub> fall<br>below those of blue H<sub>2</sub>
+  point1: Blue hydrogen becomes competitive<br>with natural gas
+  point2: Green H<sub>2</sub> becomes competitive<br>with the natural gas
+  point3: Green H<sub>2</sub> becomes competitive<br>with blue H<sub>2</sub>
+  point4: FSCPs of green H<sub>2</sub> fall below<br>those of blue H<sub>2</sub>
+  point5: Direct costs of green H<sub>2</sub> fall<br>below those of blue H<sub>2</sub>
 
 fscp_colour:
   cons-cons: '#dc291a'

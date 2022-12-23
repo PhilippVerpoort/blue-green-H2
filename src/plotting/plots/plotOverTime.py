@@ -248,10 +248,6 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
     __addAnnotations(fig, cpTrajData, plotLines, config)
 
 
-    # # add arrows in 2025
-    # __addAnnotationArrows(fig, config)
-
-
     # add legend for annotations
     if not is_webapp:
         __addAnnotationsLegend(fig, config)
@@ -398,7 +394,7 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
                 marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
                 textposition='bottom center',
                 showlegend=False,
-                hovertemplate = f"<b>Milestone {int(row.label)}:</b> {config['annotationTexts'][f'point{int(row.label)-1}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+                hovertemplate = f"<b>Milestone {int(row.label)}:</b> {config['annotationTexts'][f'point{int(row.label)}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
             ), row=i, col=j)
 
 
@@ -419,7 +415,7 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list,
         # marker 5
         diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
         diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
-        points.append(diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).head(1).assign(label=5))
+        points.append(diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).head(1).assign(label=4))
 
         if fuelGreen in config['cases_dashed'] or fuelBlue in config['cases_dashed']:
             continue
@@ -428,28 +424,12 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list,
         for i, line in enumerate([blueLine, greenLine, redLine]):
             diffLines = pd.merge(line, purpleLine, on=['year'])
             diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
-            points.append(diffLines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i+2))
+            points.append(diffLines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i+1))
 
         # marker 6
-        points.append(redLine.abs().nsmallest(1, 'fscp').assign(delta=lambda r: r.fscp).head(1).assign(label=6))
+        points.append(redLine.abs().nsmallest(1, 'fscp').assign(delta=lambda r: r.fscp).head(1).assign(label=5))
 
     return pd.concat(points)
-
-
-def __addAnnotationArrows(fig: go.Figure, config: dict):
-    __addArrow(fig, 2025.0, 150.0, 600.0, 1, 1, config)
-    __addArrow(fig, 2025.5, 150.0, 800.0, 1, 1, config)
-    fig.add_annotation(text='1', x=2024.5, y=200.0, row=1, col=1, showarrow=False)
-
-    __addArrow(fig, 2025.0, 150.0, 300.0, 1, 2, config)
-    __addArrow(fig, 2025.5, 150.0, 800.0, 1, 2, config)
-    fig.add_annotation(text='1', x=2024.5, y=200.0, row=1, col=2, showarrow=False)
-
-    __addArrow(fig, 2024.5, 90.0, 200.0, 2, 1, config)
-    fig.add_annotation(text='1', x=2024.0, y=150.0, row=2, col=1, showarrow=False)
-
-    __addArrow(fig, 2024.5, 90.0, 200.0, 2, 2, config)
-    fig.add_annotation(text='1', x=2024.0, y=150.0, row=2, col=2, showarrow=False)
 
 
 def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: int, config: dict):
@@ -515,7 +495,7 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
         showarrow=False,
     )
 
-    for i in range(6):
+    for i in range(5):
         fig.add_annotation(
             text=f"{i+1}: "+config['annotationTexts'][f"point{i+1}"],
             align='left',
