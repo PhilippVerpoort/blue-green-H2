@@ -1,6 +1,7 @@
 import yaml
 
 import dash
+import copy
 from dash.dependencies import Input, Output, State
 from flask import send_file
 
@@ -35,7 +36,7 @@ def callbackUpdate(n1, route: str, plots_cfg: dict, simple_gwp: str, simple_impo
     else:
         btnPressed = ctx.triggered[0]['prop_id'].split('.')[0]
         if btnPressed == 'simple-update':
-            inputDataUpdated = updateScenarioInput(input_data.copy(), simple_gwp, simple_important_params, simple_gas_prices, advanced_params)
+            inputDataUpdated = updateScenarioInput(copy.deepcopy(input_data), simple_gwp, simple_important_params, simple_gas_prices, advanced_params)
             outputData = getFullData(inputDataUpdated)
         else:
             raise Exception(f"Unknown button pressed: {btnPressed}")

@@ -9,9 +9,9 @@ from src.data.params.full_params import convertValue
 
 
 # simple update
-def updateScenarioInput(scenarioInput: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
+def updateScenarioInput(input_data: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
     # update gwp option
-    scenarioInput['options']['gwp'] = simple_gwp
+    input_data['options']['gwp'] = simple_gwp
 
     for casesType, paramList, tableName, data in [('cons_vs_prog', cons_vs_prog_params, 'simple-important-params', simple_important_params),
                                                   ('gas_prices', gas_prices_params, 'simple-gas-prices', simple_gas_prices)]:
@@ -19,9 +19,9 @@ def updateScenarioInput(scenarioInput: dict, simple_gwp: str, simple_important_p
             for fuel in fuels:
                 for caseName in editTablesModal[tableName]:
                     row = next(i for i in range(len(data)) if data[i]['name']==param)
-                    scenarioInput['fuels'][fuel]['cases'][casesType][caseName][param] = yaml.load(data[row][caseName], Loader=yaml.FullLoader)
+                    input_data['fuels'][fuel]['cases'][casesType][caseName][param] = yaml.load(data[row][caseName], Loader=yaml.FullLoader)
 
-    scenarioInput['params'] = {}
+    input_data['params'] = {}
     for row in advanced_params:
         newParam = {
             'desc': row['desc'],
@@ -34,6 +34,6 @@ def updateScenarioInput(scenarioInput: dict, simple_gwp: str, simple_important_p
         else:
             newParam['value'] = row['value']
 
-        scenarioInput['params'][row['param']] = newParam
+        input_data['params'][row['param']] = newParam
 
-    return scenarioInput
+    return input_data
