@@ -23,7 +23,7 @@ fuels:
             2025: 1.5 +- 0.075
             2050: 1.5 +- 0.075
         prog:
-          desc: Pessimistic
+          desc: Progressive
           colour: '#ef7500'
           ghgi_ng_methaneleakage:
             2025: 1.0 +- 0.05
