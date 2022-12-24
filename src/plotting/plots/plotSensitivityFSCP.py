@@ -51,7 +51,7 @@ def __produceFigure(config: dict):
             allLines[var]['y'].append(fscp)
 
 
-            # cut off line going from infinity to minus infinity
+            # cut-off line going from infinity to minus infinity
             cutoff = 2000.0
             if j == 1 and fscp.max() > cutoff:
                 fscp[:fscp.argmax()] = cutoff
