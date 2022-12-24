@@ -3,6 +3,7 @@ yrange:
   - -10.0
   - +1000.0
 ylabel: Blue-to-green fuel-switching carbon price (EUR)
+lastxaxislabel: CO<sub>2</sub> price
 
 
 sensitivity_params:
@@ -63,7 +64,15 @@ sensitivity_params:
       - top left
 
 
-colour: '#fc4b32'
+colours:
+  fscp: '#fc4b32'
+  co2price: '#7c2089'
+legend:
+  fscp: Blue-to green fuel-switching CO<sub>2</sub> price
+  co2price: CO<sub>2</sub> price in years
+
+
+show_co2price_unc: True
 
 
 fuels:

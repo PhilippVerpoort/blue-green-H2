@@ -19,11 +19,14 @@ def plotSensitivityFSCP(config: dict, subfigs_needed: list, is_webapp: bool = Fa
 
 def __produceFigure(config: dict):
     # plot
+    lastColWidth = 0.04
+    numSensitivityPlots = len(config['sensitivity_params'])
     fig = make_subplots(
         rows=1,
-        cols=len(config['sensitivity_params']),
+        cols=numSensitivityPlots+1,
         shared_yaxes=True,
-        horizontal_spacing=0.02
+        horizontal_spacing=0.015,
+        column_widths=numSensitivityPlots*[(1.0-lastColWidth)/numSensitivityPlots] + [lastColWidth],
     )
 
 
@@ -31,6 +34,7 @@ def __produceFigure(config: dict):
     has_vline = []
     hasLegend = []
     allLines = {var: {'y': []} for var in config['sensitivity_params']}
+    addToLegend = True
 
     for fid, fuelA, fuelB, year in [(fid, *f.split(' to '), y) for fid, f in enumerate(config['fuels']) for y in config['years']]:
         typeA = config['fuelSpecs'][fuelA]['type']
@@ -62,13 +66,17 @@ def __produceFigure(config: dict):
                 go.Scatter(
                     x=x*settings['scale'],
                     y=fscp,
+                    name=config['legend']['fscp'],
                     mode='lines',
-                    showlegend=False,
-                    line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
+                    showlegend=not j and addToLegend,
+                    legendgroup=1,
+                    line=dict(width=config['global']['lw_thin'], color=config['colours']['fscp'], dash='dash' if fid else None),
                     hovertemplate=f"<b>FSCP in {year}</b><br>{settings['label'].split('<')[0]}: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
                 ),
                 row=1, col=j+1,
             )
+            if not j:
+                addToLegend = False
 
 
             # markers and vertical lines at x=0 for mode relative
@@ -86,10 +94,11 @@ def __produceFigure(config: dict):
                     hoverinfo='skip',
                     mode='markers+text',
                     showlegend=False,
-                    line=dict(width=config['global']['lw_default'], color=config['colour'], dash='dash' if fid else None),
-                    marker=dict(symbol='circle-open', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': config['colour']},),
+                    legendgroup=1,
+                    line=dict(width=config['global']['lw_default'], color=config['colours']['fscp'], dash='dash' if fid else None),
+                    marker=dict(symbol='circle-open', size=config['global']['highlight_marker_sm'], line={'width': config['global']['lw_thin'], 'color': config['colours']['fscp']},),
                     textposition=settings['textpos'][fid],
-                    textfont=dict(color=config['colour']),
+                    textfont=dict(color=config['colours']['fscp']),
                 ),
                 row=1, col=j+1,
             )
@@ -148,12 +157,82 @@ def __produceFigure(config: dict):
             x=np.concatenate((x*settings['scale'], x[::-1]*settings['scale'])),
             y=np.concatenate((yu, yl[::-1])),
             mode='lines',
-            fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(config['colour']), .2)),
+            fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(config['colours']['fscp']), .2)),
             fill='toself',
             line=dict(width=0.0),
             showlegend=False,
+            legendgroup=1,
             hoverinfo='none',
         ), row=1, col=j+1)
+
+
+    # add CO2 price
+    co2prices_show = __getCO2Prices(config['co2price_traj'], config['years'])
+
+    yearsInLabel = [str(y) for y in config['years']]
+    yearsInLabel[-1] = 'and ' + yearsInLabel[-1]
+    legendLabel = config['legend']['co2price'] + ' ' + ', '.join(yearsInLabel)
+
+    for k, price in enumerate(co2prices_show):
+        fig.add_trace(
+            go.Scatter(
+                x=[0.0, 3.0],
+                y=2*[price['default']],
+                name=legendLabel,
+                showlegend=not k,
+                legendgroup=2,
+                mode='lines',
+                line=dict(width=config['global']['lw_thin'], color=config['colours']['co2price']),
+                hovertemplate=f"<b>FSCP in {year}</b><br>{settings['label'].split('<')[0]}: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+            ),
+            row=1,
+            col=numSensitivityPlots+1,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=[1.0],
+                y=[price['default']],
+                text=[config['years'][k]],
+                showlegend=False,
+                legendgroup=2,
+                hoverinfo='skip',
+                mode='text',
+                textposition='top right',
+                textfont=dict(color=config['colours']['co2price']),
+            ),
+            row=1,
+            col=numSensitivityPlots+1,
+        )
+
+        if config['show_co2price_unc']:
+            fig.add_trace(
+                go.Scatter(
+                    name='Uncertainty Range',
+                    x=[0.0, 3.0, 3.0, 0.0],
+                    y=2*[price['lower']] + 2*[price['upper']],
+                    showlegend=False,
+                    legendgroup=2,
+                    mode='lines',
+                    marker=dict(color=config['colours']['co2price']),
+                    fillcolor=("rgba({}, {}, {}, 0.1)".format(*hex_to_rgb(config['colours']['co2price']))),
+                    fill='toself',
+                    line=dict(width=config['global']['lw_ultrathin']),
+                    hoverinfo='none'
+                ),
+                row=1,
+                col=numSensitivityPlots+1,
+            )
+
+    fig.update_layout(
+        **{f"xaxis{numSensitivityPlots+1}": dict(
+            showticklabels=False,
+            title=config['lastxaxislabel'],
+            tickmode='array',
+            tickvals=[],
+            range=[1.0, 2.0],
+        ),}
+    )
 
 
     # set y axis range and label
@@ -167,9 +246,9 @@ def __produceFigure(config: dict):
     fig.update_layout(
         legend=dict(
             yanchor='top',
-            y=1.00,
+            y=-0.3,
             xanchor='left',
-            x=1.02,
+            x=0.0,
         ),
     )
 
@@ -227,3 +306,21 @@ def __getFSCP(pAC, pAG, pBC, pBG, typeA, typeB):
         fscp = max(cost_diff, 0.0) / ghgi_diff
 
     return fscp
+
+
+def __getCO2Prices(co2price_traj, years):
+    co2prices_show = []
+
+    for y in years:
+        vals = [co2price_traj['values'][t][co2price_traj['years'].index(y)] for t in co2price_traj['values']]
+        valUp = min(vals)
+        valLo = max(vals)
+        valDef = next(v for v in vals if v not in [valUp, valLo])
+
+        co2prices_show.append({
+            'upper': valUp,
+            'lower': valLo,
+            'default': valDef,
+        })
+
+    return co2prices_show

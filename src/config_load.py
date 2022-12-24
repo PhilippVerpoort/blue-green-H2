@@ -31,6 +31,9 @@ figure_print = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 __filePath = getFilePathInput('plot_config/global.yml')
 plots_cfg_global = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
 
+__filePath = getFilePathInput('plot_config/co2price_traj.yml')
+co2price_traj = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
+
 plots_cfg = {}
 for plotName in plots:
     __filePath = getFilePathInput(f"plot_config/{plotName}.yml")

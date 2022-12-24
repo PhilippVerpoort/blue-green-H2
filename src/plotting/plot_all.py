@@ -5,7 +5,7 @@ import yaml
 import plotly.io as pio
 import plotly.graph_objects as go
 
-from src.config_load import plots, plots_cfg_global, gwp_labels
+from src.config_load import plots, plots_cfg_global, gwp_labels, co2price_traj
 from src.config_load_app import app_cfg
 from src.plotting.styling.template import defineTemplate
 
@@ -51,7 +51,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict, figs_needed: U
             if 'import' in config:
                 for imp in config['import']:
                     config[imp] = yaml.load(plots_cfg[imp], Loader=yaml.FullLoader)
-            config = {**config, 'fuelSpecs': allData['fuelSpecs'], 'global': plots_cfg_global[global_cfg]}
+            config = {**config, 'fuelSpecs': allData['fuelSpecs'], 'global': plots_cfg_global[global_cfg], **co2price_traj}
 
             # load and execute plot function
             module = importlib.import_module(f"src.plotting.plots.{plotName}")
