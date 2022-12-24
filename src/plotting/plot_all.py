@@ -30,7 +30,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict,
         'plotHeatmap': (allData['fuelData'],),
         'plotLines': (allData['fuelData'], allData['FSCPData'],),
         'plotOverTime': (allData['FSCPData'],),
-        'plotSensitivityFSCP': (input_data['fuels'],),
+        'plotSensitivityFSCP': (),
     }
 
     # set default theme

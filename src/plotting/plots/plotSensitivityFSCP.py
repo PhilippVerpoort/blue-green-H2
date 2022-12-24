@@ -10,14 +10,14 @@ from src.timeit import timeit
 
 
 @timeit
-def plotSensitivityFSCP(fuels: dict, config: dict, subfigs_needed: list, is_webapp: bool = False):
+def plotSensitivityFSCP(config: dict, subfigs_needed: list, is_webapp: bool = False):
     # produce figure
-    fig = __produceFigure(fuels, config)
+    fig = __produceFigure(config)
 
     return {'fig5': fig}
 
 
-def __produceFigure(fuels: dict, config: dict):
+def __produceFigure(config: dict):
     # plot
     fig = make_subplots(
         rows=1,
