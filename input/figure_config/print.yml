@@ -6,35 +6,19 @@ fig1b:
   size:
     - 90.0
     - 61.0
-fig2a:
-  size:
-    - 90.0
-    - 61.0
-fig2b:
-  size:
-    - 90.0
-    - 61.0
 fig3:
   size:
     - 180.0
     - 122.0
-fig4:
-  size:
-    - 180.0
-    - 100.0
-fig5a:
+fig4a:
   size:
     - 90.0
     - 100.0
-fig5b:
+fig4b:
   size:
     - 90.0
     - 100.0
-fig6:
-  size:
-    - 90.0
-    - 100.0
-fig7:
+fig5:
   size:
     - 180.0
     - 100.0
@@ -49,4 +33,8 @@ figS1b:
 figS2:
   size:
     - 180.0
-    - 81.0
+    - 100.0
+figS3:
+  size:
+    - 180.0
+    - 100.0

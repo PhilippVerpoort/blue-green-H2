@@ -22,7 +22,7 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_
     ret['fig3'] = __produceFigureFull(plotScatter, plotLines, config, is_webapp) if 'fig3' in subfigs_needed else None
 
     # produce figure 7
-    ret['fig7'] = __produceFigureReduced(plotScatter, plotLines, config, is_webapp) if 'fig7' in subfigs_needed else None
+    ret['figS2'] = __produceFigureReduced(plotScatter, plotLines, config, is_webapp) if 'figS2' in subfigs_needed else None
 
     return ret
 

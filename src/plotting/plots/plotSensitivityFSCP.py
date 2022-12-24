@@ -14,7 +14,7 @@ def plotSensitivityFSCP(fuels: dict, config: dict, subfigs_needed: list, is_weba
     # produce figure
     fig = __produceFigure(fuels, config)
 
-    return {'fig4': fig}
+    return {'fig5': fig}
 
 
 def __produceFigure(fuels: dict, config: dict):

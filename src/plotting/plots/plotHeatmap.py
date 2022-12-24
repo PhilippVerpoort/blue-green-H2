@@ -10,7 +10,7 @@ from src.timeit import timeit
 def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
     for sub, type in [('a', 'left'), ('b', 'right')]:
-        subfigName = f"fig5{sub}"
+        subfigName = f"fig4{sub}"
 
 
         # check if plotting is needed

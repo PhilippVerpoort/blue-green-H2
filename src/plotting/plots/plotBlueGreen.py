@@ -1,10 +1,7 @@
-from string import ascii_lowercase
-
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import plotly.express as px
 
 from src.timeit import timeit
 from src.data.fuels.calc_cost import getCostBlue, getCostGreen, calcCost
@@ -15,57 +12,10 @@ from src.data.fuels.calc_ghgi import getGHGIGreen, getGHGIBlue, getGHGIParamsGre
 def plotBlueGreen(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
 
-    # produce figure 6
-    ret['fig6'] = __produceFigureSimple(fuelData, config) if 'fig6' in subfigs_needed else None
-
     # produce figure S2
-    ret['figS2'] = __produceFigureFull(fuelData, config) if 'figS2' in subfigs_needed else None
+    ret['figS3'] = __produceFigureFull(fuelData, config) if 'figS3' in subfigs_needed else None
 
     return ret
-
-
-def __produceFigureSimple(fuelData: pd.DataFrame, config: dict):
-    # plot
-    fig = go.Figure()
-
-
-    # get colour scale config
-    zmin, zmax, colourscale = __getColourScale(config)
-
-
-    # add FSCP traces for main plot
-    traces = __addFSCPContours(config, zmin, zmax, colourscale, config['global']['lw_ultrathin'])
-    for trace in traces:
-        fig.add_trace(trace)
-
-
-    # add scatter curves for main plot
-    traces = __addFSCPScatterCurves(fuelData, config, colourfull=True)
-    for trace in traces:
-        fig.add_trace(trace)
-
-
-    # set y axes titles and ranges
-    fig.update_yaxes(title=config['labels']['yaxis1'], range=[config['plotting']['yaxis1_min'], config['plotting']['yaxis1_max']])
-
-
-    # set x axes titles and ranges
-    fig.update_xaxes(title=config['labels']['xaxis1'], range=[config['plotting']['xaxis1_min'] * 1000, config['plotting']['xaxis1_max'] * 1000])
-
-
-    # set legend position
-    fig.update_layout(
-        legend=dict(
-            orientation='h',
-            yanchor='top',
-            y=-0.2,
-            xanchor='left',
-            x=0.0,
-        ),
-    )
-
-
-    return fig
 
 
 def __produceFigureFull(fuelData: pd.DataFrame, config: dict):
