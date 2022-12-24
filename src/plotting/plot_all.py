@@ -5,7 +5,7 @@ import yaml
 import plotly.io as pio
 import plotly.graph_objects as go
 
-from src.config_load import plots, plots_cfg_global
+from src.config_load import plots, plots_cfg_global, gwp_labels
 from src.config_load_app import app_cfg
 from src.plotting.styling.template import defineTemplate
 
@@ -86,21 +86,12 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict, figs_needed: U
                     ret[subfig] = f
 
     # insert labels indicating GWP value used
-    gwp_label = {
-        'fig1b': dict(x=1.0, y=-0.15, xanchor='right', yanchor='top', align='right'),
-        'fig3': dict(x=1.0, y=-0.1, xanchor='right', yanchor='top', align='right'),
-        'fig4b': dict(x=1.0, y=-0.2, xanchor='right', yanchor='top', align='right'),
-        'fig5': dict(x=1.0, y=-0.2, xanchor='right', yanchor='top', align='right'),
-        'figS1b': dict(x=1.02, y=0.0, xanchor='left', yanchor='bottom', align='left'),
-        'figS2': dict(x=1.0, y=-0.1, xanchor='right', yanchor='top', align='right'),
-        'figS3': dict(x=1.0, y=-0.2, xanchor='right', yanchor='top', align='right'),
-    }
     if global_cfg=='print':
         if not gwp_used:
             raise Exception('Please specify GWP value used for plot generation in plotAllFigs function as parameter gwp_used.')
 
         for subfig in ret:
-            if ret[subfig] is not None and subfig in gwp_label:
+            if ret[subfig] is not None and subfig in gwp_labels:
                 ret[subfig] = ret[subfig].add_annotation(
                         text=f"Default GWP<br>used in this figure:<br><b>{gwp_used.upper()}</b>",
                         xref='paper',
@@ -110,7 +101,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict, figs_needed: U
                         borderwidth=2,
                         borderpad=3,
                         bgcolor='white',
-                        **gwp_label[subfig],
+                        **gwp_labels[subfig],
                     )
 
     return {subfigName: subfig for subfigName, subfig in ret.items() if subfig is not None}

@@ -35,3 +35,8 @@ plots_cfg = {}
 for plotName in plots:
     __filePath = getFilePathInput(f"plot_config/{plotName}.yml")
     plots_cfg[plotName] = open(__filePath, 'r').read()
+
+
+# gwp labels
+__filePath = getFilePathInput(f"plot_config/gwp_labels.yml")
+gwp_labels = yaml.load(open(__filePath, 'r').read(), Loader=yaml.FullLoader)
