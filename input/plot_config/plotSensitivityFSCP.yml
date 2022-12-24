@@ -11,7 +11,7 @@ sensitivity_params:
       - 10.0
       - 100.0
     scale: 1.0
-    label: Electricity price<br>(EUR/MWh)
+    label: Electricity price<br>paid by electrolyser<br>(EUR/MWh)
     mode: absolute
     vline: peryear
     textpos:
@@ -22,7 +22,7 @@ sensitivity_params:
       - 0.90
       - 1.00
     scale: 100.0
-    label: Share of renewable elec.<br>(%)
+    label: Share of renewable<br>electricity used by electrolyser<br>(%)
     mode: absolute
     vline: once
     textpos:
@@ -33,7 +33,7 @@ sensitivity_params:
       - 10.0
       - 70.0
     scale: 1.0
-    label: Natural-gas price<br>(EUR/MWh)
+    label: Natural-gas price<br>paid by SMR/ATR plant<br>(EUR/MWh)
     mode: absolute
     vline: once
     textpos:
@@ -44,7 +44,7 @@ sensitivity_params:
       - 0.00
       - 0.05
     scale: 100.0
-    label: Methane-leakage rate<br>(%)
+    label: Methane-leakage rate of<br>the blue H<sub>2</sub> supply chain<br>(%)
     mode: absolute
     vline: peryear
     textpos:
@@ -55,7 +55,7 @@ sensitivity_params:
       - 0.6
       - 1.0
     scale: 100.0
-    label: Capture rate<br>(%)
+    label: CO<sub>2</sub> capture rate of<br>the SMR/ATR plant<br>(%)
     mode: absolute
     vline: once
     textpos:
