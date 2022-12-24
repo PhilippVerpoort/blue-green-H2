@@ -65,7 +65,7 @@ def __produceFigure(config: dict):
                     mode='lines',
                     showlegend=False,
                     line=dict(width=config['global']['lw_thin'], color=config['colour'], dash='dash' if fid else None),
-                    hovertemplate=f"<b>FSCP in {year}</b><br>{settings['label'].split('<')[0]}: %{{x:.2f}}<br>FSCP: %{{y: .2f}}<extra></extra>",
+                    hovertemplate=f"<b>FSCP in {year}</b><br>{settings['label'].split('<')[0]}: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
                 ),
                 row=1, col=j+1,
             )
