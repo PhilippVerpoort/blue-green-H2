@@ -21,7 +21,7 @@ def getElementSimpleControlsCard():
                             {'id': 'desc', 'name': 'Parameter', 'editable': False,},
                             {'id': 'unit', 'name': 'Unit', 'editable': False,},
                             {'id': 'cons', 'name': 'Conservative cases'},
-                            {'id': 'prog', 'name': 'Proressive cases'},
+                            {'id': 'prog', 'name': 'Progressive cases'},
                         ],
                         data=getSimpleParamsTable(cons_vs_prog_params, ['cons', 'prog'], 'cons_vs_prog'),
                         editable=False,
