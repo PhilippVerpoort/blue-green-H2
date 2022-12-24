@@ -27,7 +27,7 @@ exportDataXLS(input_data, outputData)
 
 
 # Run plotting routines to generate figures
-figs = plotAllFigs(outputData, input_data, plots_cfg, figs_needed=figs_needed)
+figs = plotAllFigs(outputData, input_data, plots_cfg, figs_needed=figs_needed, gwp_used=input_data['options']['gwp'])
 
 
 # Export figures to files
