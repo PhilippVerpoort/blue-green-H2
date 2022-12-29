@@ -1,7 +1,7 @@
 n_samples: 51
 yrange:
   - -10.0
-  - +1000.0
+  - +600.0
 ylabel: Blue-to-green fuel-switching carbon price (EUR)
 lastxaxislabel: CO<sub>2</sub> price
 
@@ -76,10 +76,10 @@ show_co2price_unc: True
 
 
 fuels:
-  - BLUE-high-prog to GREEN-prog
+  - BLUE-low-prog to GREEN-prog
 
 
 years:
-  - 2025
-  - 2030
   - 2035
+  - 2040
+  - 2045
