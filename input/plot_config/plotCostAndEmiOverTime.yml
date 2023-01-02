@@ -32,9 +32,16 @@ cost:
 ghgi:
     yaxislabel: Life-cycle GHGI of Energy (kg<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
     ymax: 0.28
+#    ymax: 0.35
     label: Emissions intensity
     showLines: False
     showCorridors:
+#      NG-gwpOther:
+#        cases:
+#          NG-low-prog-gwpOther:
+#            desc: Progressive, GWP20
+#          NG-low-cons-gwpOther:
+#            desc: Conservative, GWP20
       NG:
         colour: '#d66000'
         cases:
@@ -50,6 +57,10 @@ ghgi:
         cases:
           BLUE-low-prog:
             desc: Progressive
+#      BLUE-cons-gwpOther:
+#        cases:
+#          BLUE-low-cons-gwpOther:
+#            desc: Conservative, GWP20
       BLUE-cons:
         cases:
           BLUE-low-cons:
