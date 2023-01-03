@@ -524,7 +524,7 @@ def __computeCPTraj(years: list, values: dict, n_samples: int):
 
     # create data frame with time and cp values
     cpData = pd.DataFrame({
-        'year': years,
+        'year': [float(y) for y in years],
         'CP': v_mean,
         'CP_u': v_upper,
         'CP_l': v_lower,
