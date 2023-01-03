@@ -1,7 +1,7 @@
 cost:
     yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
 
-    ymax: 170.0
+    ymax: 200.0
 
     labels:
       cost__cap_cost: Capital cost
@@ -41,8 +41,11 @@ ghgi:
 
 fuels:
   - NG-high-prog
+  - NG-low-prog
   - BLUE-high-cons
   - BLUE-high-prog
+  - BLUE-low-cons
+  - BLUE-low-prog
   - GREEN-cons
   - GREEN-prog
 
