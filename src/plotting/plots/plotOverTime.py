@@ -386,16 +386,21 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
         data = points.query(f"delta < 5.0")
 
         for _, row in data.iterrows():
-            fig.add_trace(go.Scatter(
-                x=[row.year],
-                y=[row.fscp],
-                text=[int(row.label)],
-                mode='markers+text',
-                marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='Black'),
-                textposition='bottom center',
-                showlegend=False,
-                hovertemplate = f"<b>Milestone {int(row.label)}:</b> {config['annotationTexts'][f'point{int(row.label)}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
-            ), row=i, col=j)
+            fig.add_trace(
+                go.Scatter(
+                    x=[row.year],
+                    y=[row.fscp],
+                    text=[int(row.label)],
+                    mode='markers+text',
+                    marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color=row.colour),
+                    textfont_color=row.colour,
+                    textposition='bottom center',
+                    showlegend=False,
+                    hovertemplate = f"<b>Milestone {int(row.label)}:</b> {config['annotationTexts'][f'point{int(row.label)}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+                ),
+                row=i,
+                col=j,
+            )
 
 
 def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list, config: dict) -> dict:
@@ -405,29 +410,33 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list,
     groupedFuels = {t: [f for f in fuels if not plotLines.query(f"(fuel_x=='{f}' and type_x=='{t}') or (fuel_y=='{f}' and type_y=='{t}')").empty] for t in types}
 
     for fuelRef, fuelBlue, fuelGreen in [(r,b,g) for r in groupedFuels['NG'] for b in groupedFuels['BLUE'] for g in groupedFuels['GREEN']]:
-        dropCols = ['tid', 'fuel_x', 'fuel_y', 'type_x', 'type_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
+        dropCols = ['tid', 'type_x', 'type_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
         greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
         blueLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)
         redLine = plotLines.query(f"fuel_x=='{fuelBlue}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
 
         purpleLine = cpTrajData.drop(columns=['name', 'CP_u', 'CP_l'])
 
-        # marker 5
+        # marker 4
         diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
         diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
-        points.append(diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).head(1).assign(label=4))
+        points.append(diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).head(1).assign(label=4, colour='black'))
 
         if fuelGreen in config['cases_dashed'] or fuelBlue in config['cases_dashed']:
             continue
 
-        # markers 2-4
+        # markers 1-3
         for i, line in enumerate([blueLine, greenLine, redLine]):
+            fuel_x = line.fuel_x.iloc[1]
+            fuel_y = line.fuel_y.iloc[1]
+            col = config['fscp_colour'][fuel_x.split('-')[-1] + '-' + fuel_y.split('-')[-1]] if 'NG' not in fuel_x else config['fuelSpecs'][fuel_y]['colour']
             diffLines = pd.merge(line, purpleLine, on=['year'])
             diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
-            points.append(diffLines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i+1))
+            points.append(diffLines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i+1, colour=col))
 
-        # marker 6
-        points.append(redLine.abs().nsmallest(1, 'fscp').assign(delta=lambda r: r.fscp).head(1).assign(label=5))
+        # marker 5
+        redLine['abs'] = redLine['fscp'].abs()
+        points.append(redLine.nsmallest(1, 'abs').assign(delta=lambda r: r.fscp).head(1).assign(label=5, colour='black'))
 
     return pd.concat(points)
 
