@@ -1,5 +1,3 @@
-from string import ascii_lowercase
-
 import numpy as np
 import pandas as pd
 
@@ -19,10 +17,10 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_
     plotScatter, plotLines = __selectPlotFSCPs(FSCPData, config['selected_cases'], config['n_samples'])
 
     # produce figure 3
-    ret['fig3'] = __produceFigureFull(plotScatter, plotLines, config, is_webapp) if 'fig3' in subfigs_needed else None
+    ret['fig3'] = __produceFigure(plotScatter, plotLines, config, is_webapp) if 'fig3' in subfigs_needed else None
 
-    # produce figure 7
-    ret['figS2'] = __produceFigureReduced(plotScatter, plotLines, config, is_webapp) if 'figS2' in subfigs_needed else None
+    # produce figure S2
+    ret['figS2'] = __produceFigure(plotScatter, plotLines, config, is_webapp, is_uncertainty=True) if 'figS2' in subfigs_needed else None
 
     return ret
 
@@ -102,7 +100,7 @@ def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: i
     return plotScatter, plotLinesInterpolated
 
 
-def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False):
+def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False, is_uncertainty: bool = False):
     # plot
     fig = make_subplots(
         rows=2,
@@ -112,15 +110,19 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
         vertical_spacing=0.1,
     )
 
+    # list of subfigs including row and col count for easy access
     subfigs = [(k//2+1, k%2+1, scid) for k, scid in enumerate(config['selected_cases'])]
+
+    # whether to show the box with a legend explaining the cricle annotations
+    showAnnotationLegend = False if is_webapp else not is_uncertainty
 
 
     # add FSCP traces
-    all_traces = __addFSCPTraces(plotScatter, plotLines, config, uncertainity=True)
+    all_traces = __addFSCPTraces(plotScatter, plotLines, config, uncertainity=is_uncertainty)
     hasLegend = []
     for i, j, scid in subfigs:
         for tid, traces in all_traces.items():
-            if not config['bgfscp_unc'] and 'NG' not in tid: continue
+            if is_uncertainty and (not config['bgfscp_unc'] and 'NG' not in tid): continue
             tid_techs = '-'.join([fuel.split('-')[0]+'-'+fuel.split('-')[-1] for fuel in tid.split(' to ')])
             if all(fuel in config['selected_cases'][scid] for fuel in tid.split(' to ')):
                 for trace in traces:
@@ -132,111 +134,13 @@ def __produceFigureReduced(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, c
 
 
     # compute and plot carbon price tracjetory
-    if config['show_cp_unc']:
+    if not is_uncertainty or config['show_cp_unc']:
         cpTrajData = __computeCPTraj(config['co2price_traj']['years'], config['co2price_traj']['values'], config['n_samples'])
         traces = __addCPTraces(cpTrajData, config)
         for trace in traces:
-            trace.showlegend = False
-            fig.add_trace(trace)
-
-
-    # zero y line
-    for i, j, _ in subfigs:
-        fig.add_hline(0.0, line_width=config['global']['lw_thin'], line_color='black', row=i, col=j)
-
-
-    # add top and left annotation
-    annotationStyling = dict(xanchor='center', yanchor='middle', showarrow=False,
-                             bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
-
-    for i in range(2):
-        fig.add_annotation(
-            x=0.50,
-            xref=f"x{str(i+1) if i else ''} domain",
-            y=1.0,
-            yref='y domain',
-            yshift=40,
-            text=config['sidelabels']['top'][i],
-            **annotationStyling
-        )
-
-        fig.add_annotation(
-            x=0.0,
-            xref='x domain',
-            xshift=-100.0 if is_webapp else -150.0,
-            y=0.5,
-            yref=f"y{str(i+2) if i else ''} domain",
-            text=config['sidelabels']['left'][i],
-            textangle=-90,
-            **annotationStyling
-        )
-
-
-    # update axes titles and ranges
-    fig.update_layout(
-        **{f"xaxis{i+1 if i else ''}": dict(
-            title=config['labels']['time'],
-            range=[config['plotting']['t_min'], config['plotting']['t_max']]
-        ) for i in range(4)},
-        **{f"yaxis{i+1 if i else ''}": dict(
-            title=config['labels']['fscp'] if (i+1)%2 else '',
-            range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
-        ) for i in range(4)},
-        margin_l=180.0,
-        # margin_b=520.0,
-    )
-
-
-    # set legend position
-    fig.update_layout(
-        legend=dict(
-            orientation='h',
-            xanchor='left',
-            x=0.0,
-            yanchor='top',
-            y=-0.2 if is_webapp else -0.1,
-        ),
-    )
-
-
-    return fig
-
-
-def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False):
-    # plot
-    fig = make_subplots(
-        rows=2,
-        cols=2,
-        shared_yaxes=True,
-        horizontal_spacing=0.025,
-        vertical_spacing=0.1,
-    )
-
-    subfigs = [(k//2+1, k%2+1, scid) for k, scid in enumerate(config['selected_cases'])]
-
-
-    # add FSCP traces
-    all_traces = __addFSCPTraces(plotScatter, plotLines, config)
-    hasLegend = []
-    for i, j, scid in subfigs:
-        for tid, traces in all_traces.items():
-            tid_techs = '-'.join([fuel.split('-')[0]+'-'+fuel.split('-')[-1] for fuel in tid.split(' to ')])
-            if all(fuel in config['selected_cases'][scid] for fuel in tid.split(' to ')):
-                for trace in traces:
-                    if tid_techs in hasLegend:
-                        trace.showlegend = False
-                    fig.add_trace(trace, row=i, col=j)
-                if tid_techs not in hasLegend:
-                    hasLegend.append(tid_techs)
-
-
-    # compute and plot carbon price tracjetory
-    cpTrajData = __computeCPTraj(config['co2price_traj']['years'], config['co2price_traj']['values'], config['n_samples'])
-    traces = __addCPTraces(cpTrajData, config)
-    for trace in traces:
-        for i, j, scid in subfigs:
-            if i>1 or j>1: trace.showlegend = False
-            fig.add_trace(trace, row=i, col=j)
+            for i, j, scid in subfigs:
+                if i>1 or j>1: trace.showlegend = False
+                fig.add_trace(trace, row=i, col=j)
 
 
     # zero y line
@@ -245,17 +149,15 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
 
 
     # add circles on intersects
-    __addAnnotations(fig, cpTrajData, plotLines, config)
-
-
-    # add legend for annotations
-    if not is_webapp:
-        __addAnnotationsLegend(fig, config)
+    if not is_uncertainty:
+        __addAnnotations(fig, cpTrajData, plotLines, config)
 
 
     # add top and left annotation
-    annotationStyling = dict(xanchor='center', yanchor='middle', showarrow=False,
-                             bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white')
+    annotationStyling = dict(
+        xanchor='center', yanchor='middle', showarrow=False,
+        bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white'
+    )
 
     for i in range(2):
         fig.add_annotation(
@@ -284,14 +186,13 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
     fig.update_layout(
         **{f"xaxis{i+1 if i else ''}": dict(
             title=config['labels']['time'],
-            range=[config['plotting']['t_min'], config['plotting']['t_max']]
+            range=[config['plotting']['t_min'], config['plotting']['t_max']],
         ) for i in range(4)},
         **{f"yaxis{i+1 if i else ''}": dict(
             title=config['labels']['fscp'] if (i+1)%2 else '',
-            range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']]
+            range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']],
         ) for i in range(4)},
         margin_l=180.0,
-        margin_b=500.0 if not is_webapp else None,
     )
 
 
@@ -302,9 +203,37 @@ def __produceFigureFull(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, conf
             xanchor='left',
             x=0.0,
             yanchor='top',
-            y=-0.2 if is_webapp else -0.1,
+            y=config['spacings']['legendPosY'] if showAnnotationLegend else -0.1,
         ),
     )
+
+
+    # add legend for annotations
+    if showAnnotationLegend:
+        __addAnnotationsLegend(fig, config)
+
+        fig.update_layout(
+            **{f"yaxis{i+1 if i else ''}": dict(
+                domain=[
+                    1.0-config['spacings']['yShareTop'] if i >= 2 else 1.0-(config['spacings']['yShareTop']-config['spacings']['spacingTop'])/2,
+                    1.0-(config['spacings']['yShareTop']-config['spacings']['spacingTop'])/2-config['spacings']['spacingTop'] if i >= 2 else 1.0,
+                ],
+            ) for i in range(4)},
+            xaxis5=dict(
+                range=[0, 1],
+                domain=[0.0, config['spacings']['annotationsLegendWidth']],
+                anchor='y5',
+                showticklabels=False,
+                ticks='',
+            ),
+            yaxis5=dict(
+                range=[0, 1],
+                domain=[0.0, config['spacings']['annotationsLegendHeight']],
+                anchor='x5',
+                showticklabels=False,
+                ticks='',
+            ),
+        )
 
 
     return fig
@@ -466,54 +395,61 @@ def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: in
 
 
 def __addAnnotationsLegend(fig: go.Figure, config: dict):
-    y0 = -0.35
+    xmargin = 0.01
+    ymargin = 0.05
+    lineheight = 0.2
+    spacing = 0.02
 
-    fig.add_shape(
-        type='rect',
-        x0=0.0,
-        y0=y0,
-        x1=0.92,
-        y1=y0-0.2,
-        xref='paper',
-        yref='paper',
-        line_width=2,
-        fillcolor='white',
-    )
-
-    fig.add_annotation(
-        text=f"<b>{config['annotationTexts']['heading1']}:</b>",
-        align='left',
-        xanchor='left',
-        x=0.0,
-        yanchor='top',
-        y=y0,
-        xref='paper',
-        yref='paper',
-        showarrow=False,
-    )
-
-    fig.add_annotation(
-        text=f"<b>{config['annotationTexts']['heading2']}:</b>",
-        align='left',
-        xanchor='left',
-        x=0.0,
-        yanchor='top',
-        y=y0-0.095,
-        xref='paper',
-        yref='paper',
-        showarrow=False,
-    )
-
-    for i in range(5):
+    for i in range(2):
+        t = config['annotationTexts'][f"heading{i+1}"]
         fig.add_annotation(
-            text=f"{i+1}: "+config['annotationTexts'][f"point{i+1}"],
+            text=f"<b>{t}:</b>",
             align='left',
             xanchor='left',
-            x=0.0 + (i%2 + (2 if i==4 else 0)) * 0.33,
+            x=xmargin,
             yanchor='top',
-            y=y0-(0.03 if i<2 else 0.13),
-            xref='paper',
-            yref='paper',
+            y=(0.5 if i else 1.0) - ymargin,
+            xref='x5 domain',
+            yref='y5 domain',
+            showarrow=False,
+        )
+
+    labels = [
+        [
+            i+1,
+            (i%2 + (2 if i==4 else 0)) * 0.33 + 2*xmargin,
+            (1.0 if i<2 else 0.5) - ymargin - lineheight,
+        ]
+        for i in range(5)
+    ]
+
+    psi, psx, psy = zip(*labels)
+    fig.add_trace(
+        go.Scatter(
+            x=psx,
+            y=psy,
+            text=psi,
+            mode='markers+text',
+            marker=dict(symbol='circle-open', size=config['global']['highlight_marker'], line={'width': config['global']['lw_thin']}, color='black'),
+            textposition='bottom center',
+            showlegend=False,
+            hoverinfo='skip',
+            xaxis='x5',
+            yaxis='y5',
+        )
+    )
+
+    for i, x, y in labels:
+        t = config['annotationTexts'][f"point{i}"]
+        fig.add_annotation(
+            text=f"{t}",
+            align='left',
+            xanchor='left',
+            x=x+spacing,
+            yanchor='top',
+            y=y+0.05,
+            xref='x5 domain',
+            yref='y5 domain',
             showarrow=False,
         )
 
