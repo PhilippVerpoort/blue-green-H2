@@ -70,7 +70,7 @@ def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, 
 
     # determine y-axis plot range
     shift = 0.1
-    ylow = refData.cost - shift * (config['plotting']['cost_max'] - refData.cost)
+    ylow = 0.0 #refData.cost - shift * (config['plotting']['cost_max'] - refData.cost)
 
 
     # set plotting ranges

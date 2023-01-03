@@ -1,6 +1,6 @@
 plotting:
   ghgi_max: 0.23
-  cost_max: 125.0
+  cost_max: 205.0
   n_samples: 301
 
 labels:
@@ -60,6 +60,7 @@ showFuels:
     - GREEN-prog
 
 showYears:
+  - 2025
   - 2030
   - 2035
   - 2040
