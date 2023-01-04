@@ -13,12 +13,12 @@ params:
     unit: EUR/MWh
 
   ghgi_ng_base:
-    desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
+    desc: Base Emissions of NG (per LHV; supply-chain and combustion)
     type: linear
     value:
       direct:
-        gwp100: 56.0 +- 0.28
-        gwp20: 56.0 +- 0.28
+        gwp100: 56.0 +- 2.8
+        gwp20: 56.0 +- 2.8
       elec:
         gwp100: 0.0
         gwp20: 0.0
