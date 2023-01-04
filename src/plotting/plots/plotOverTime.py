@@ -5,16 +5,16 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from plotly.colors import hex_to_rgb
 
-from src.data.FSCPs.calc_FSCPs import calcFSCPFromCostAndGHGI
+from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.timeit import timeit
 
 
 @timeit
-def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
+def plotOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
 
     # select which lines to plot based on function argument
-    plotScatter, plotLines = __selectPlotFSCPs(FSCPData, config['selected_cases'], config['n_samples'])
+    plotScatter, plotLines = __selectPlotFSCPs(fuelData, config['selected_cases'], config['n_samples'])
 
     # produce figure 3
     ret['fig3'] = __produceFigure(plotScatter, plotLines, config, is_webapp) if 'fig3' in subfigs_needed else None
@@ -25,79 +25,49 @@ def plotOverTime(FSCPData: pd.DataFrame, config: dict, subfigs_needed: list, is_
     return ret
 
 
-def __selectPlotFSCPs(FSCPData: pd.DataFrame, selected_cases: dict, n_samples: int):
-    listOfFSCPs = []
+def __selectPlotFSCPs(fuelData: pd.DataFrame, selected_cases: dict, n_samples: int):
+    plotScatter = {}
+    plotInterpolation = {}
 
-    for fuels in selected_cases.values():
-        selected_FSCPs = FSCPData.query(f"fuel_x in @fuels & fuel_y in @fuels & year_x==year_y")\
-                                 .rename(columns={'year_x': 'year'})\
-                                 .drop(columns=['year_y'])\
-                                 .assign(tid=lambda r: r.fuel_x + ' to ' + r.fuel_y)\
-                                 .reset_index(drop=True)
-        listOfFSCPs.append(selected_FSCPs)
+    for scid, fuels in selected_cases.items():
+        # insert interpolation points
+        t = np.linspace(fuelData['year'].min(), fuelData['year'].max(), n_samples)
 
-    plotFSCPs = pd.concat(listOfFSCPs)
-    plotScatter = plotFSCPs[['tid', 'fuel_x', 'type_x', 'fuel_y', 'type_y', 'year', 'fscp', 'fscp_uu', 'fscp_ul']]
-    plotLines = plotFSCPs[[
-        'tid', 'fuel_x', 'type_x', 'fuel_y', 'type_y', 'year',
-        'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y',
-        'cost_uu_x', 'cost_uu_y', 'ghgi_uu_x', 'ghgi_uu_y',
-        'cost_ul_x', 'cost_ul_y', 'ghgi_ul_x', 'ghgi_ul_y'
-    ]]
+        tmp = []
+        for f in fuels:
+            support = fuelData \
+                .query(f"fuel=='{f}'") \
+                .reset_index(drop=True) \
+                .astype({'year': float})
 
-    # interpolation of plotLines
-    t = np.linspace(plotLines['year'].min(), plotLines['year'].max(), n_samples)
-    dtypes = {
-        'year': float,
-        'cost_x': float, 'cost_y': float, 'ghgi_x': float, 'ghgi_y': float,
-        'cost_uu_x': float, 'cost_uu_y': float, 'ghgi_uu_x': float, 'ghgi_uu_y': float,
-        'cost_ul_x': float, 'cost_ul_y': float, 'ghgi_ul_x': float, 'ghgi_ul_y': float
-    }
-    allEntries = []
+            interpolation = dict(
+                year=t,
+                fuel=n_samples * [f],
+                type=n_samples * [support.type.iloc[0]],
+            )
 
-    for tid in plotLines.tid.unique():
-        fuel_x, fuel_y = tid.split(' to ')
-        type_x = plotLines.query(f"fuel_x=='{fuel_x}'").type_x.tolist()[0]
-        type_y = plotLines.query(f"fuel_y=='{fuel_y}'").type_y.tolist()[0]
+            tmp.append(
+                pd.merge(
+                    support,
+                    pd.DataFrame(interpolation, columns=support.keys()),
+                    on=['year', 'fuel', 'type'],
+                    how='outer',
+                    suffixes=('', '_drop'),
+                ) \
+                .sort_values(by=['year']) \
+                .reset_index(drop=True) \
+                .interpolate() \
+                .dropna(axis='columns')
+            )
 
-        samples = plotLines.query(f"fuel_x=='{fuel_x}' & fuel_y=='{fuel_y}'")\
-                           .reset_index(drop=True)\
-                           .astype(dtypes)
-        new = dict(
-            tid=n_samples * [tid],
-            fuel_x=n_samples * [fuel_x],
-            type_x=n_samples * [type_x],
-            fuel_y=n_samples * [fuel_y],
-            type_y=n_samples * [type_y],
-            year=t,
-        )
-        tmp = pd.DataFrame(new, columns=plotLines.keys()).astype(dtypes)
-        tmp.index = np.arange(len(samples), len(tmp) + len(samples))
-        tmp = tmp.merge(samples, how='outer').sort_values(by=['year'])
-        allEntries.append(tmp.interpolate())
+        fuelDataInterpolated = pd.concat(tmp)
 
-    plotLinesInterpolated = pd.concat(allEntries, ignore_index=True)
+        # compute FSCPs
+        plotInterpolation[scid] = calcFSCPs(fuelDataInterpolated).assign(tid=lambda r: r.fuel_y + ' to ' + r.fuel_x)
+        years = fuelData.year.unique()
+        plotScatter[scid] = plotInterpolation[scid].query(f"year in @years")
 
-    plotLinesInterpolated['correlated'] = 0.0
-    plotLinesInterpolated.loc[(plotLinesInterpolated['type_x'] != 'GREEN') & (plotLinesInterpolated['type_y'] != 'GREEN'), 'correlated'] = 1.0
-
-    fscp, fscpu = calcFSCPFromCostAndGHGI(
-        plotLinesInterpolated['cost_x'],
-        plotLinesInterpolated['ghgi_x'],
-        plotLinesInterpolated['cost_y'],
-        plotLinesInterpolated['ghgi_y'],
-        [plotLinesInterpolated[f"cost_{i}_x"] for i in ['uu', 'ul']],
-        [plotLinesInterpolated[f"ghgi_{i}_x"] for i in ['uu', 'ul']],
-        [plotLinesInterpolated[f"cost_{i}_y"] for i in ['uu', 'ul']],
-        [plotLinesInterpolated[f"ghgi_{i}_y"] for i in ['uu', 'ul']],
-        corr=plotLinesInterpolated['correlated'],
-    )
-
-    plotLinesInterpolated['fscp'] = fscp
-    plotLinesInterpolated['fscp_uu'] = fscpu[0]
-    plotLinesInterpolated['fscp_ul'] = fscpu[1]
-
-    return plotScatter, plotLinesInterpolated
+    return plotScatter, plotInterpolation
 
 
 def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, is_webapp: bool = False, is_uncertainty: bool = False):
@@ -118,9 +88,9 @@ def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
 
 
     # add FSCP traces
-    all_traces = __addFSCPTraces(plotScatter, plotLines, config, uncertainity=is_uncertainty)
     hasLegend = []
     for i, j, scid in subfigs:
+        all_traces = __addFSCPTraces(plotScatter[scid], plotLines[scid], config, uncertainity=is_uncertainty)
         for tid, traces in all_traces.items():
             if is_uncertainty and (not config['bgfscp_unc'] and 'NG' not in tid): continue
             tid_techs = '-'.join([fuel.split('-')[0]+'-'+fuel.split('-')[-1] for fuel in tid.split(' to ')])
@@ -239,7 +209,7 @@ def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
     return fig
 
 
-def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, sensitivityNG: bool = False, uncertainity: bool = False):
+def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, uncertainity: bool = False):
     traces = {}
 
     for tid in plotScatter.tid.unique():
@@ -249,13 +219,14 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
         thisLine = plotLines.query(f"tid=='{tid}'").reset_index(drop=True)
 
         # line properties
-        fuel_x = thisScatter.iloc[thisScatter.first_valid_index()]['fuel_x']
-        fuel_y = thisScatter.iloc[thisScatter.first_valid_index()]['fuel_y']
-        name_x = 'NG' if fuel_x.startswith('NG') else config['fuelSpecs'][fuel_x]['shortname']
-        name_y = config['fuelSpecs'][fuel_y]['shortname'] + f" ({'Conservative' if fuel_x.endswith('cons') else 'Progressive'})"
-        name = f"{name_x}→{name_y}"
-        col = config['fscp_colour'][fuel_x.split('-')[-1] + '-' + fuel_y.split('-')[-1]] if 'NG' not in tid else config['fuelSpecs'][fuel_y]['colour']
-        isbluegreen = 'NG' not in fuel_x
+        fuel_x = thisScatter.fuel_x.iloc[0]
+        fuel_y = thisScatter.fuel_y.iloc[0]
+        name_x = config['fuelSpecs'][fuel_x]['shortname']
+        name_y = 'NG' if fuel_y.startswith('NG') else config['fuelSpecs'][fuel_y]['shortname']
+        name_case = 'progressive' if fuel_x.endswith('prog') else 'conservative'
+        name = f"{name_y}→{name_x} ({name_case})"
+        col = config['fscp_colour'][fuel_y.split('-')[-1] + '-' + fuel_x.split('-')[-1]] if 'NG' not in tid else config['fuelSpecs'][fuel_x]['colour']
+        isbluegreen = 'NG' not in fuel_y
 
         if isbluegreen and thisLine.fscp.max() > 2000.0:
             y = thisLine.loc[thisLine.fscp.idxmax(), 'year']
@@ -311,7 +282,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
 
 def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
     for i, j, scid in [(k//2+1, k%2+1, scid) for k, scid in enumerate(config['selected_cases'])]:
-        points = __calcPoints(cpTrajData, plotLines, config['selected_cases'][scid], config)
+        points = __calcPoints(cpTrajData, plotLines[scid], config['selected_cases'][scid], config)
         data = points.query(f"delta < 5.0")
 
         for _, row in data.iterrows():
@@ -340,9 +311,9 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list,
 
     for fuelRef, fuelBlue, fuelGreen in [(r,b,g) for r in groupedFuels['NG'] for b in groupedFuels['BLUE'] for g in groupedFuels['GREEN']]:
         dropCols = ['tid', 'type_x', 'type_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
-        greenLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
-        blueLine = plotLines.query(f"fuel_x=='{fuelRef}' & fuel_y=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)
-        redLine = plotLines.query(f"fuel_x=='{fuelBlue}' & fuel_y=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
+        greenLine = plotLines.query(f"fuel_y=='{fuelRef}' & fuel_x=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
+        blueLine = plotLines.query(f"fuel_y=='{fuelRef}' & fuel_x=='{fuelBlue}'").drop(columns=dropCols).reset_index(drop=True)
+        redLine = plotLines.query(f"fuel_y=='{fuelBlue}' & fuel_x=='{fuelGreen}'").drop(columns=dropCols).reset_index(drop=True)
 
         purpleLine = cpTrajData.drop(columns=['name', 'CP_u', 'CP_l'])
 
@@ -356,9 +327,9 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list,
 
         # markers 1-3
         for i, line in enumerate([blueLine, greenLine, redLine]):
-            fuel_x = line.fuel_x.iloc[1]
-            fuel_y = line.fuel_y.iloc[1]
-            col = config['fscp_colour'][fuel_x.split('-')[-1] + '-' + fuel_y.split('-')[-1]] if 'NG' not in fuel_x else config['fuelSpecs'][fuel_y]['colour']
+            fuel_x = line.fuel_x.iloc[0]
+            fuel_y = line.fuel_y.iloc[0]
+            col = config['fscp_colour'][fuel_y.split('-')[-1] + '-' + fuel_x.split('-')[-1]] if 'NG' not in fuel_y else config['fuelSpecs'][fuel_x]['colour']
             diffLines = pd.merge(line, purpleLine, on=['year'])
             diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
             points.append(diffLines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i+1, colour=col))

@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from src.data.fuels.calc_ghgi import calcGHGI
 from src.data.fuels.calc_cost import calcCost
+from src.data.fuels.calc_ghgi import calcGHGI
 from src.data.params.full_params import getFullParams
 from src.timeit import timeit
 
@@ -62,29 +62,44 @@ def __calcFuel(full_params: pd.DataFrame, fuel_id_full: str, type: str, options:
     for t in times:
         currentParams = full_params.query(f"year=={t}").droplevel(level=1)
 
-        levelisedCost = calcCost(currentParams, type, options)
-        levelisedGHGI = calcGHGI(currentParams, type, options)
-
         newFuel = {'fuel': fuel_id_full, 'type': type, 'year': t}
 
-        for component in levelisedCost:
-            newFuel[f"cost__{component}"] = levelisedCost[component][0]
-            newFuel[f"cost_uu__{component}"] = levelisedCost[component][1]
-            newFuel[f"cost_ul__{component}"] = levelisedCost[component][2]
-        for component in levelisedGHGI:
-            newFuel[f"ghgi__{component}"] = levelisedGHGI[component][0]
-            newFuel[f"ghgi_uu__{component}"] = levelisedGHGI[component][1]
-            newFuel[f"ghgi_ul__{component}"] = levelisedGHGI[component][2]
-
-        newFuel['cost'] = sum(newFuel[f"cost__{component}"] for component in levelisedCost)
-        newFuel['cost_uu'] = np.sqrt(sum(newFuel[f"cost_uu__{component}"]**2 for component in levelisedCost))
-        newFuel['cost_ul'] = np.sqrt(sum(newFuel[f"cost_ul__{component}"]**2 for component in levelisedCost))
-
-        newFuel['ghgi'] = sum(newFuel[f"ghgi__{component}"] for component in levelisedGHGI)
-        newFuel['ghgi_uu'] = np.sqrt(sum(newFuel[f"ghgi_uu__{component}"]**2 for component in levelisedGHGI))
-        newFuel['ghgi_ul'] = np.sqrt(sum(newFuel[f"ghgi_ul__{component}"]**2 for component in levelisedGHGI))
+        levelisedCost = calcCost(currentParams, type, options)
+        newFuel |= __getComponents(levelisedCost, 'cost')
+        levelisedGHGI = calcGHGI(currentParams, type, options)
+        newFuel |= __getComponents(levelisedGHGI, 'ghgi')
 
         r.append(newFuel)
+
+    return r
+
+
+def __getComponents(levelised: dict, mode: str):
+    r = {}
+
+    # value components
+    r_val = {}
+    for component in levelised:
+        r_val[f"{mode}__{component}"] = levelised[component]['val']
+
+    r_val[mode] = sum(c for c in r_val.values())
+
+    r |= r_val
+
+    # uncertainty for all params and total
+    for ut in ['uu', 'ul']:
+        r_unc = {}
+        for component in levelised:
+            for pname in levelised[component][ut]:
+                varname = f"{mode}_{ut}__{pname}"
+                if varname not in r_unc:
+                    r_unc[varname] = levelised[component][ut][pname]
+                else:
+                    r_unc[varname] += levelised[component][ut][pname]
+
+        r_unc[f"{mode}_{ut}"] = np.sqrt(sum(c**2 for c in r_unc.values()))
+
+        r |= r_unc
 
     return r
 

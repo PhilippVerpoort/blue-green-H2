@@ -137,7 +137,6 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         descs = [
             'progressive' if 'prog' in fuel else 'conservative',
             'low supply-chain CO<sub>2</sub>' if fuel.endswith('lowscco2') else None,
-            '75-to-100% RE share' if 'ME' in fuel else None,
         ]
         name = config['fuelSpecs'][fuel]['name'].split(' (')[0] + f" ({', '.join([d for d in descs if d])})"
         col = config['fuelSpecs'][fuel]['colour']

@@ -18,16 +18,11 @@ def getFullData(input_data: dict):
     print('Calculating fuel cost and GHGI data...')
     fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, params, options['gwp'])
 
-    # calculate FSCPs
-    print('Calculating FSCPs...')
-    FSCPData = calcFSCPs(fuelData)
-
     # return all output data
     return {
         'fullParams': fullParams,
         'fuelSpecs': fuelSpecs,
         'fuelData': fuelData,
-        'FSCPData': FSCPData,
     }
 
 

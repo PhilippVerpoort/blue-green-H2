@@ -16,17 +16,33 @@ def getFullParams(basicData: dict, times: list):
 
         newPars = __calcValues(parId, par['value'], par['type'], times)
         for newPar in newPars:
+            # set relative uncertainty if not provided explicitly
+            if newPar['unc_upper'] is None or newPar['unc_lower'] is None:
+                if 'uncertainty' in par and par['uncertainty']:
+                    if isinstance(par['uncertainty'], float):
+                        unc_rel = par['uncertainty']
+                    elif isinstance(par['uncertainty'], str) and re.match(r'([0-9]*\.?[0-9]*)\s*%', par['uncertainty']):
+                        unc_rel = float(par['uncertainty'].rstrip('%'))/100.0
+                    else:
+                        raise Exception(f"Unknown relative uncertainty format: {par['uncertainty']}")
+                    newPar['unc_upper'] = unc_rel * newPar['value']
+                    newPar['unc_lower'] = unc_rel * newPar['value']
+
+            # convert unit
             if 'unit' in par and par['unit'] is not None:
                 conversionFactor, newUnit = __convertUnit(par['unit'], units)
+
                 newPar['value'] = conversionFactor * newPar['value']
-                newPar['uncertainty'] = conversionFactor * newPar['uncertainty'] if newPar['uncertainty'] is not None else 0.0
-                newPar['uncertainty_lower'] = conversionFactor * newPar['uncertainty_lower'] if newPar['uncertainty_lower'] is not None else newPar['uncertainty']
+                newPar['unc_upper'] = conversionFactor * newPar['unc_upper'] if newPar['unc_upper'] is not None else None
+                newPar['unc_lower'] = conversionFactor * newPar['unc_lower'] if newPar['unc_lower'] is not None else None
+
                 newPar['unit'] = newUnit
+
             pars.append(newPar)
 
-    r = pd.DataFrame.from_records(pars, columns=['name', 'year', 'unit', 'value', 'uncertainty', 'uncertainty_lower'])\
+    r = pd.DataFrame.from_records(pars, columns=['name', 'year', 'unit', 'value', 'unc_upper', 'unc_lower'])\
                     .set_index(['name', 'year'])\
-                    .rename(columns={'value': 'val', 'uncertainty': 'uu', 'uncertainty_lower': 'ul'})
+                    .rename(columns={'value': 'val', 'unc_upper': 'uu', 'unc_lower': 'ul'})
 
     return r
 
@@ -44,10 +60,10 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
         if not (isinstance(value, float) or isinstance(value, int) or isinstance(value, str)):
             raise Exception('Unknown type of value variable. Must be string (including uncertainty) or float.')
 
-        value, uncertainty, uncertainty_lower = convertValue(value)
+        value, unc_upper, unc_lower = __convertValue(value)
 
         for t in times:
-            r = {'name': id, 'year': t, 'value': value, 'uncertainty': uncertainty, 'uncertainty_lower': uncertainty_lower}
+            r = {'name': id, 'year': t, 'value': value, 'unc_upper': unc_upper, 'unc_lower': unc_lower}
             rs.append(r)
 
     elif type == 'linear' and isinstance(value, dict):
@@ -56,12 +72,12 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
 
         points = []
         for key, val in value.items():
-            value, uncertainty, uncertainty_lower = convertValue(val)
-            points.append((key, value, uncertainty, uncertainty_lower))
+            value, unc_upper, unc_lower = __convertValue(val)
+            points.append((key, value, unc_upper, unc_lower))
 
         for t in times:
-            value, uncertainty, uncertainty_lower = __linearInterpolate(t, points)
-            r = {'name': id, 'year': t, 'value': value, 'uncertainty': uncertainty, 'uncertainty_lower': uncertainty_lower}
+            value, unc_upper, unc_lower = __linearInterpolate(t, points)
+            r = {'name': id, 'year': t, 'value': value, 'unc_upper': unc_upper, 'unc_lower': unc_lower}
             rs.append(r)
 
     else:
@@ -71,21 +87,33 @@ def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list)
 
 
 # Convert strings to floats with uncertainty, e.g. string '1.0 +- 0.1' becomes tuple (1.0, 0.1, 0.1).
-def convertValue(value: Union[str, float, int]):
+def __convertValue(value: Union[str, float, int]):
     if isinstance(value, float) or isinstance(value, int):
         return value, None, None
     elif isinstance(value, str):
         if ' +- ' in value:
             nums = value.split(' +- ')
-            value = float(nums[0])
-            uncertainty = float(nums[1])
-            return value, uncertainty, None
+
+            if len(nums) != 2:
+                raise Exception(f"Incorrect formatting of value: {value}")
+
+            val = float(nums[0])
+            unc = float(nums[1])
+            return val, unc, unc
         elif ' + ' in value and ' - ' in value:
             nums = re.split(r' [+-] ', value)
-            value = float(nums[0])
-            uncertainty = float(nums[1])
-            uncertainty_lower = float(nums[2])
-            return value, uncertainty, uncertainty_lower
+
+            if len(nums) != 3:
+                raise Exception(f"Incorrect formatting of value: {value}")
+
+            val = float(nums[0])
+            if value.index('+') < value.index('-'):
+                unc_upper = float(nums[1])
+                unc_lower = float(nums[2])
+            else:
+                unc_upper = float(nums[2])
+                unc_lower = float(nums[1])
+            return val, unc_upper, unc_lower
         else:
             raise Exception('Incorrect syntax for uncertainty.')
     else:
