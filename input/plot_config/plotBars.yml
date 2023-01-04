@@ -10,7 +10,7 @@ cost:
       cost__fonm_cost: Fixed operation<br>and maintenance cost
       cost__vonm_cost: Variable operation<br>and maintenance cost
       cost__cts_cost: CO<sub>2</sub> transport<br>and storage cost
-      cost__tra_cost: H<sub>2</sub> transport cost
+      cost__tra_cost: Transport and<br>distribution cost
 
     colours:
       cost__cap_cost: '#f36f21'
