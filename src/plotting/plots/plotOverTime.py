@@ -417,7 +417,7 @@ def __addAnnotationsLegend(fig: go.Figure, config: dict):
     labels = [
         [
             i+1,
-            (i%2 + (2 if i==4 else 0)) * 0.33 + 2*xmargin,
+            (i%2 + (2 if i==4 else 0)) * 0.33 * 1.13 + 2*xmargin,
             (1.0 if i<2 else 0.5) - ymargin - lineheight,
         ]
         for i in range(5)
