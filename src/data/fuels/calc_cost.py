@@ -35,17 +35,17 @@ def evalCost(p, type: str):
 def getCostParamsNG(pars: pd.DataFrame, options: dict):
     return dict(
         p_ng=getValAndUnc(pars, 'cost_ng_price', options),
-        c_tr=getValAndUnc(pars, 'cost_ng_grid', options),
+        c_tnd=getValAndUnc(pars, 'cost_ng_grid', options),
     )
 
 
-def getCostNG(p_ng, c_tr, calc_unc: bool = True):
+def getCostNG(p_ng, c_tnd, calc_unc: bool = True):
     return {
         # fuel cost = natural-gas price
         'fuel': simpleRetValUnc(*p_ng, 'cost_ng_price', calc_unc),
 
         # transport and distribution cost
-        'tnd': simpleRetValUnc(*c_tr, 'cost_ng_grid', calc_unc),
+        'tnd': simpleRetValUnc(*c_tnd, 'cost_ng_grid', calc_unc),
     }
 
 

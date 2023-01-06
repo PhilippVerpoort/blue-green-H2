@@ -14,7 +14,7 @@ def plotOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_
     ret = {}
 
     # select which lines to plot based on function argument
-    plotScatter, plotLines = __selectPlotFSCPs(fuelData, config['selected_cases'], config['n_samples'])
+    plotScatter, plotLines = __selectPlotFSCPs(fuelData, config['selected_cases'], config['n_samples'], calc_unc=('figS2' in subfigs_needed))
 
     # produce figure 3
     ret['fig3'] = __produceFigure(plotScatter, plotLines, config, is_webapp) if 'fig3' in subfigs_needed else None
@@ -25,7 +25,7 @@ def plotOverTime(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_
     return ret
 
 
-def __selectPlotFSCPs(fuelData: pd.DataFrame, selected_cases: dict, n_samples: int):
+def __selectPlotFSCPs(fuelData: pd.DataFrame, selected_cases: dict, n_samples: int, calc_unc: bool = True):
     plotScatter = {}
     plotInterpolation = {}
 
@@ -63,7 +63,7 @@ def __selectPlotFSCPs(fuelData: pd.DataFrame, selected_cases: dict, n_samples: i
         fuelDataInterpolated = pd.concat(tmp)
 
         # compute FSCPs
-        plotInterpolation[scid] = calcFSCPs(fuelDataInterpolated).assign(tid=lambda r: r.fuel_y + ' to ' + r.fuel_x)
+        plotInterpolation[scid] = calcFSCPs(fuelDataInterpolated, calc_unc).assign(tid=lambda r: r.fuel_y + ' to ' + r.fuel_x)
         years = fuelData.year.unique()
         plotScatter[scid] = plotInterpolation[scid].query(f"year in @years")
 

@@ -2,7 +2,6 @@ import pandas as pd
 
 from src.filepaths import getFilePathOutput
 from src.data.params.full_params import getFullParams
-from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.fuels.calc_fuels import calcFuelData
 
 

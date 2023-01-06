@@ -6,7 +6,7 @@ from src.timeit import timeit
 
 
 @timeit
-def calcFSCPs(fuelData: pd.DataFrame):
+def calcFSCPs(fuelData: pd.DataFrame, calc_unc: bool = True):
     fuelCrossData = fuelData.assign(code=lambda r: r.type.map({'NG': 0, 'BLUE': 1, 'GREEN': 2}))
 
     fuelCrossData = fuelCrossData.merge(fuelCrossData, on='year', how='outer', suffixes=('_x', '_y'))\
@@ -15,16 +15,26 @@ def calcFSCPs(fuelData: pd.DataFrame):
         .sort_values(by=['fuel_x', 'fuel_y', 'year'])\
         .reset_index(drop=True)
 
-    return calcFSCPFromCostAndGHGI(fuelCrossData)
+    return calcFSCPFromCostAndGHGI(fuelCrossData, calc_unc)
 
 
-def calcFSCPFromCostAndGHGI(fuelCrossData: pd.DataFrame):
+def calcFSCPFromCostAndGHGI(fuelCrossData: pd.DataFrame, calc_unc: bool = True):
     # calc cost diff and ghgi diff
     fuelCrossData['cost_diff'] = fuelCrossData['cost_x'] - fuelCrossData['cost_y']
     fuelCrossData['ghgi_diff'] = fuelCrossData['ghgi_y'] - fuelCrossData['ghgi_x']
 
     # calc FSCPs from above diffs
     fuelCrossData['fscp'] = fuelCrossData['cost_diff'] / fuelCrossData['ghgi_diff']
+
+    # only proceed if uncertainty needs to be calculated
+    if not calc_unc:
+        return fuelCrossData[[
+            'year',
+            'fuel_x', 'type_x', 'fuel_y', 'type_y',
+            'cost_x', 'cost_y', 'cost_uu_x', 'cost_uu_y', 'cost_ul_x', 'cost_ul_y',
+            'ghgi_x', 'ghgi_y', 'ghgi_uu_x', 'ghgi_uu_y', 'ghgi_ul_x', 'ghgi_ul_y',
+            'fscp',
+        ]]
 
     # find all parameters with uncertainty
     pat = re.compile(r"^(cost|ghgi)_(uu|ul)__(.*)_[xy]")
