@@ -409,10 +409,7 @@ params:
     desc: Share of renewable and grey electricity. 100% means RE only.
     short: Share of RE
     type: linear
-    value:
-      2025: 100.0
-      2050: 100.0
-    uncertainty: 5%
+    value: cases
     unit: percent
     source:
       Assuming dedicated RE production.

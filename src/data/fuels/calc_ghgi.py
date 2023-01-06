@@ -157,7 +157,7 @@ def getGHGIGreen(base, eff, sh, elre, elfos, transp, calc_unc: bool = True):
         } if calc_unc else {}),
 
         # other emissions
-        'other': simpleRetValUnc(*base, 'ghgi_blue_base__elec', calc_unc),
+        'other': simpleRetValUnc(*base, 'ghgi_green_base', calc_unc),
     }
 
     # transport emissions relative to all other emissions
