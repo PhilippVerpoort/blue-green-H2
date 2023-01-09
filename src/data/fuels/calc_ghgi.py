@@ -90,15 +90,15 @@ def getGHGIBlue(bdir, bele, bscc, bcts, both, cr, crd, mlr, mghgi, transp, calc_
     r = {
         # direct emissions
         'direct': {
-            'val': cr[0] / crd * bdir[0],
+            'val': (1 - cr[0]) / (1 - crd) * bdir[0],
         } | ({
             'uu': {
-                'blue_capture_rate': cr[1] / crd * bdir[0],
-                'ghgi_blue_base__direct': cr[0] / crd * bdir[1],
+                'blue_capture_rate': - cr[1] / (1 - crd) * bdir[0],
+                'ghgi_blue_base__direct': (1 - cr[0]) / (1 - crd) * bdir[1],
             },
             'ul': {
-                'blue_capture_rate': cr[2] / crd * bdir[0],
-                'ghgi_blue_base__direct': cr[0] / crd * bdir[2],
+                'blue_capture_rate': - cr[2] / (1 - crd) * bdir[0],
+                'ghgi_blue_base__direct': (1 - cr[0]) / (1 - crd) * bdir[2],
             },
         } if calc_unc else {}),
 
