@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 import pandas as pd
 
@@ -118,7 +120,7 @@ def __getCases(cases: dict, params: dict, times: list):
                 'blue_tech': cases[dim][c]['blue_tech'] if 'blue_tech' in cases[dim][c] else None,
             }
 
-            overridden_params = {p: params[p] for p in cases[dim][c] if p not in overridden[dim][c]}
+            overridden_params = {p: copy.deepcopy(params[p]) for p in cases[dim][c] if p not in overridden[dim][c]}
 
             for p in overridden_params:
                 overridden_params[p]['value'] = cases[dim][c][p]
