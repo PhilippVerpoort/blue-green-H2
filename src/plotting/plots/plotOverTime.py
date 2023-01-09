@@ -209,6 +209,7 @@ def __produceFigure(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
     return fig
 
 
+# add FSCP traces
 def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: dict, uncertainity: bool = False):
     traces = {}
 
@@ -280,6 +281,7 @@ def __addFSCPTraces(plotScatter: pd.DataFrame, plotLines: pd.DataFrame, config: 
     return traces
 
 
+# add annotations explaining intersections of lines with markers
 def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, config: dict):
     for i, j, scid in [(k//2+1, k%2+1, scid) for k, scid in enumerate(config['selected_cases'])]:
         points = __calcPoints(cpTrajData, plotLines[scid], config['selected_cases'][scid], config)
@@ -303,6 +305,7 @@ def __addAnnotations(fig: go.Figure, cpTrajData: pd.DataFrame, plotLines: pd.Dat
             )
 
 
+# compute where annotations should be added
 def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list, config: dict) -> dict:
     points = []
 
@@ -341,30 +344,7 @@ def __calcPoints(cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuels: list,
     return pd.concat(points)
 
 
-def __addArrow(fig: go.Figure, x: float, y1: float, y2: float, row: int, col: int, config: dict):
-    xaxes = [['x', 'x2'], ['x3', 'x4']]
-    yaxes = [['y', 'y2'], ['y3', 'y4']]
-    
-    for ay, y in [(y1, y2), (y2, y1)]:
-        fig.add_annotation(
-            axref=xaxes[row-1][col-1],
-            xref=xaxes[row-1][col-1],
-            ayref=yaxes[row-1][col-1],
-            yref=yaxes[row-1][col-1],
-            ax=x,
-            x=x,
-            ay=ay,
-            y=y,
-            arrowcolor='black',
-            arrowwidth=config['global']['lw_thin'],
-            #arrowsize=config['global']['highlight_marker_sm'],
-            arrowhead=2,
-            showarrow=True,
-            row=row,
-            col=col,
-        )
-
-
+# plot legend for annotations explaining intersections of lines with markers
 def __addAnnotationsLegend(fig: go.Figure, config: dict):
     xmargin = 0.01
     ymargin = 0.05
@@ -457,7 +437,7 @@ def __computeCPTraj(years: list, values: dict, n_samples: int):
     return cpData
 
 
-# plot traces
+# plot carbon-price traces
 def __addCPTraces(cpTrajData: pd.DataFrame, config: dict):
     traces = []
 

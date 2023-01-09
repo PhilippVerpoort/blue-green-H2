@@ -48,24 +48,24 @@ def calcFSCPFromCostAndGHGI(fuelCrossData: pd.DataFrame, calc_unc: bool = True):
 
     # compute upper and lower uncertainties
     uts = ['uu', 'ul']
-    for ut in uts:
-        uto = next(uto for uto in uts if uto != ut)
+    for ut_this in uts:
+        ut_other = next(uto for uto in uts if uto != ut_this)
 
         for pname in pnames:
-            newColName = f"fscp_{ut}__{pname}"
+            newColName = f"fscp_{ut_this}__{pname}"
             fuelCrossData[newColName] = 0.0
 
             for mode in ['cost', 'ghgi']:
                 for suffix in['x', 'y']:
-                    utc = ut if suffix=='x' else uto
-                    componentColName = f"{mode}_{utc}__{pname}_{suffix}"
+                    ut_comp = ut_this if suffix=='x' else ut_other
+                    componentColName = f"{mode}_{ut_comp}__{pname}_{suffix}"
 
                     if componentColName not in fuelCrossData.columns:
                         continue
 
                     fuelCrossData[newColName] += (+1 if suffix == 'x' else -1) * fuelCrossData[componentColName].fillna(0.0) / fuelCrossData[f"{mode}_diff"]
 
-        fuelCrossData[f"fscp_{ut}"] = fuelCrossData['fscp'] * fuelCrossData[[f"fscp_{ut}__{pname}" for pname in pnames]].pow(2).sum(axis=1).pow(1/2)
+        fuelCrossData[f"fscp_{ut_this}"] = fuelCrossData['fscp'] * fuelCrossData[[f"fscp_{ut_this}__{pname}" for pname in pnames]].pow(2).sum(axis=1).pow(1/2)
 
     return fuelCrossData[[
         'year',

@@ -66,6 +66,7 @@ def getGHGIParamsBlue(pars: pd.DataFrame, options: dict):
     if options['blue_tech'] not in known_blue_techs:
         raise Exception(f"Unknown blue technology type: {options['blue_tech']}")
 
+    # special treatment for the assumption of low supply-chain CO2
     options_scco2 = options.copy()
     if options['blue_tech'].endswith('-lowscco2'):
         options = options.copy()

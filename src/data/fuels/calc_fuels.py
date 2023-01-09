@@ -82,11 +82,12 @@ def __getComponents(levelised: dict, mode: str):
     for component in levelised:
         r_val[f"{mode}__{component}"] = levelised[component]['val']
 
+    # value total
     r_val[mode] = sum(c for c in r_val.values())
 
     r |= r_val
 
-    # uncertainty for all params and total
+    # uncertainty total and parameter-specific components
     for ut in ['uu', 'ul']:
         r_unc = {}
         for component in levelised:
