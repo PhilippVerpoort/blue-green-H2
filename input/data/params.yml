@@ -341,7 +341,7 @@ params:
     unit: EUR/MWh
 
   ghgi_green_base:
-    desc: CI of electrolysis
+    desc: GHGI of electrolysis
     type: linear
     value:
       gwp100:
@@ -358,7 +358,7 @@ params:
       Based on LCA data provided by Christian Bauer at PSI.
 
   ghgi_green_elec:
-    desc: CI of electricity
+    desc: GHGI of electricity
     type: linear
     value:
       RE:
