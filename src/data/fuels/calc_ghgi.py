@@ -111,11 +111,8 @@ def getGHGIBlue(bdir, bele, bscc, bcts, both, cr, crd, mlr, mghgi, transp, calc_
         # supply-chain CH4 emissions
         'scch4': simpleRetValUnc(*(rate*mghgi for rate in mlr), 'ghgi_ng_methaneleakage', calc_unc),
 
-        # cts emissions
-        'cts': simpleRetValUnc(*bcts, 'ghgi_blue_base__cts', calc_unc),
-
         # other emissions
-        'other': simpleRetValUnc(*both, 'ghgi_blue_base__other', calc_unc),
+        'other': simpleRetValUnc(*[both[i]+bcts[i] for i in range(3)], 'ghgi_blue_base__other', calc_unc),
     }
 
     # transport emissions relative to all other emissions
