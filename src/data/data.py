@@ -32,7 +32,7 @@ def exportDataXLS(input_data, output_data):
     options, params, fuels = (input_data['options'], input_data['params'], input_data['fuels'])
     fullParams, fuelData = (output_data['fullParams'], output_data['fuelData'])
 
-    filePath = getFilePathOutput('data.xlsx')
+    filePath = getFilePathOutput('results_full.xlsx')
     writer = pd.ExcelWriter(filePath)
 
     columnOrder = ['description', 'type', 'value', 'unit', 'source']

@@ -19,7 +19,7 @@ outputData = getFullData(input_data)
 
 
 # Export params to CSV table for presenting in the paper.
-exportInputData(input_data['params'])
+exportInputData(input_data)
 
 
 # export selected input and output data as XLS

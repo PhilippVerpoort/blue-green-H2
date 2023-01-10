@@ -289,6 +289,14 @@ MarkupSafe = ">=2.1.1"
 watchdog = ["watchdog"]
 
 [[package]]
+name = "xlsxwriter"
+version = "3.0.6"
+description = "A Python module for creating Excel XLSX files."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "zipp"
 version = "3.8.1"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -303,7 +311,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "3c86a487790e22fdceb4f7bcdd3f03a64b6da777b789172bb2a7c7a2c9079dd0"
+content-hash = "d6163f5f673f0a79be336b9937dc0940de4a67fa7abd4671b977dfa208292c4d"
 
 [metadata.files]
 brotli = [
@@ -436,4 +444,5 @@ six = [
 ]
 tenacity = []
 werkzeug = []
+xlsxwriter = []
 zipp = []
