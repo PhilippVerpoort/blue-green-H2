@@ -4,39 +4,42 @@ params:
     desc: Natural gas price (per LHV)
     type: linear
     value: cases
+    uncertainty: 5%
     unit: EUR/MWh
 
   cost_ng_grid:
     desc: Natural gas grid cost
     type: const
     value: 5.0
+    uncertainty: 5%
     unit: EUR/MWh
 
   ghgi_ng_base:
-    desc: Base Emissions of NG (per LHV; suppy-chain and combustion)
+    desc: Base Emissions of NG (per LHV; supply-chain and combustion)
     type: linear
     value:
       direct:
-        gwp100: 56.0 +- 0.28
-        gwp20: 56.0 +- 0.28
+        gwp100: 56.0
+        gwp20: 56.0
       elec:
         gwp100: 0.0
         gwp20: 0.0
       scco2:
         gwp100:
-          2025: 8.3 +- 0.4
-          2035: 8.3 +- 0.4
-          2050: 4.2 +- 0.2
+          2025: 8.3
+          2035: 8.3
+          2050: 4.2
         gwp20:
-          2025: 9.3 +- 0.5
-          2035: 9.3 +- 0.5
-          2050: 4.7 +- 0.25
+          2025: 9.3
+          2035: 9.3
+          2050: 4.7
       other:
-        gwp100: 0.7 +- 0.04
-        gwp20: 0.7 +- 0.04
+        gwp100: 0.7
+        gwp20: 0.7
     options:
       - component
       - gwp
+    uncertainty: 5%
     unit: gCO2eq/MJ
     source:
       LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
@@ -49,6 +52,7 @@ params:
     short: CH4 Leakage
     type: linear
     value: cases
+    uncertainty: 5%
     unit: percent
     source:
       Based on today's range of leakage rates and the ambition of the industry to lower it significantly along with 
@@ -72,15 +76,16 @@ params:
     type: linear
     value:
       smr-ccs-56%:
-        2025: 673.0 +- 67.3
-        2050: 593.7 +- 59.4
+        2025: 673.0
+        2050: 593.7
       atr-ccs-93%:
-        2025: 1200.0 +- 120.0
-        2030: 900.0 +- 80.0
-        2040: 700.0 +- 70.0
-        2050: 700.0 +- 70.0
+        2025: 1200.0
+        2030: 900.0
+        2040: 700.0
+        2050: 700.0
     options:
       - blue_tech
+    uncertainty: 5%
     unit: EUR/kW
     source:
       SMR data from IEAGHG report, Sec. 8.1.3, Table 2, Sheet 84. Assuming a 0.5% yearly learning rate, i.e.
@@ -91,15 +96,16 @@ params:
     type: linear
     value:
       smr-ccs-56%:
-        2025: 29.0 +- 2.9
-        2050: 29.0 +- 2.9
+        2025: 29.0
+        2050: 29.0
       atr-ccs-93%:
-        2025: 32.0 +- 3.2
-        2030: 24.0 +- 2.4
-        2040: 21.0 +- 2.1
-        2050: 21.0 +- 2.1
+        2025: 32.0
+        2030: 24.0
+        2040: 21.0
+        2050: 21.0
     options:
       - blue_tech
+    uncertainty: 5%
     unit: EUR/kW
     source:
       SMR data from IEAGHG report, p. 18, Table 4. ATR data provided by Simon Roussanaly at Sintef. Assuming 
@@ -113,11 +119,12 @@ params:
         2025: 0.209
         2050: 0.209
       atr-ccs-93%:
-        2025: 1.908 +- 0.19
-        2030: 0.252 +- 0.025
-        2050: 0.252 +- 0.025
+        2025: 1.908
+        2030: 0.252
+        2050: 0.252
     options:
       - blue_tech
+    uncertainty: 5%
     unit: EUR/MWh
     source:
       SMR data from IEAGHG report, p. 18, Table 4. ATR data provided by Simon Roussanaly at Sintef. Assuming 
@@ -148,9 +155,10 @@ params:
     desc: Carbon transport and storage cost
     type: linear
     value: # (per tCO2, i.e. independent of capture rate)
-      2025: 15.0 +- 5.0
-      2030: 10.0 + 10.0 - 5.0
-      2050: 10.0 + 10.0 - 5.0
+      2025: 15.0
+      2030: 10.0
+      2050: 10.0
+    uncertainty: 5%
     unit: EUR/tCO2
     source:
       Own estimates.
@@ -161,66 +169,67 @@ params:
     value:
       direct:
         smr-ccs-56%:
-          gwp100: 33.5 +- 1.7
-          gwp20: 33.5 +- 1.7
+          gwp100: 33.5 +- 0.0
+          gwp20: 33.5 +- 0.0
         atr-ccs-93%:
-          gwp100: 4.9 +- 0.2
-          gwp20: 4.9 +- 0.2
+          gwp100: 4.9 +- 0.0
+          gwp20: 4.9 +- 0.0
       elec:
         smr-ccs-56%:
-          gwp100: 0.03 +- 0.002
-          gwp20: 0.04 +- 0.002
+          gwp100: 0.03
+          gwp20: 0.04
         atr-ccs-93%:
-          gwp100: 0.2 +- 0.01
-          gwp20: 0.2 +- 0.01
+          gwp100: 0.2
+          gwp20: 0.2
       scco2:
         smr-ccs-56%:
           gwp100:
-            2025: 10.7 +- 0.5
-            2035: 10.7 +- 0.5
-            2050: 5.4 +- 0.25
+            2025: 10.7
+            2035: 10.7
+            2050: 5.4
           gwp20:
-            2025: 10.7 +- 0.5
-            2035: 10.7 +- 0.5
-            2050: 5.4 +- 0.25
+            2025: 10.7
+            2035: 10.7
+            2050: 5.4
         atr-ccs-93%:
           gwp100:
-            2025: 10.9 +- 0.5
-            2035: 10.9 +- 0.5
-            2050: 5.5 +- 0.25
+            2025: 10.9
+            2035: 10.9
+            2050: 5.5
           gwp20:
-            2025: 10.9 +- 0.5
-            2035: 10.9 +- 0.5
-            2050: 5.5 +- 0.25
+            2025: 10.9
+            2035: 10.9
+            2050: 5.5
         atr-ccs-93%-lowscco2:
           gwp100:
-            2025: 10.9 +- 0.5
-            2030: 7.09 +- 0.4
-            2040: 3.82 +- 0.2
-            2050: 1.09 +- 0.1
+            2025: 10.9
+            2030: 7.09
+            2040: 3.82
+            2050: 1.09
           gwp20:
-            2025: 10.9 +- 0.5
-            2030: 7.09 +- 0.4
-            2040: 3.82 +- 0.2
-            2050: 1.09 +- 0.1
+            2025: 10.9
+            2030: 7.09
+            2040: 3.82
+            2050: 1.09
       cts:
         smr-ccs-56%:
-          gwp100: 0.2 +- 0.01
-          gwp20: 0.2 +- 0.01
+          gwp100: 0.2
+          gwp20: 0.2
         atr-ccs-93%:
-          gwp100: 0.3 +- 0.01
-          gwp20: 0.3 +- 0.01
+          gwp100: 0.3
+          gwp20: 0.3
       other:
         smr-ccs-56%:
-          gwp100: 1.0 +- 0.05
-          gwp20: 1.3 +- 0.07
+          gwp100: 1.0
+          gwp20: 1.3
         atr-ccs-93%:
-          gwp100: 1.0 +- 0.05
-          gwp20: 1.3 +- 0.07
+          gwp100: 1.0
+          gwp20: 1.3
     options:
       - component
       - blue_tech
       - gwp
+    uncertainty: 5%
     unit: gCO2eq/MJ
     source:
       LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
@@ -277,6 +286,7 @@ params:
       atr-ccs-93%: 73.53
     options:
       - blue_tech
+    uncertainty: 5%
     unit: percent
     source:
       SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. 
@@ -290,6 +300,7 @@ params:
       atr-ccs-93%: 25.0
     options:
       - blue_tech
+    uncertainty: 5%
     unit: ~
     source:
       SMR data from IEAGHG report, p.16, Table 4 (Plant Performance Summary), total energy of inlet & outlet stream. 
@@ -300,6 +311,7 @@ params:
     desc: Green CAPEX
     type: linear
     value: cases
+    uncertainty: 5%
     unit: EUR/kW
 
   cost_green_fixedonm:
@@ -314,6 +326,7 @@ params:
     type: const
     value: 0.4 +- 0.1
     unit: EUR/MWh
+    uncertainty: 5%
     source: Assuming USD 0.01-0.02/kg H2 from IEA for water consumption.
 
   cost_green_elec:
@@ -321,48 +334,51 @@ params:
     short: Elec. price
     type: linear
     value:
-      2025: 70.0 +- 3.5
-      2030: 60.0 +- 3.0
-      2050: 40.0 +- 2.0
+      2025: 70.0
+      2030: 60.0
+      2050: 40.0
+    uncertainty: 5%
     unit: EUR/MWh
 
   ghgi_green_base:
-    desc: CI of electrolysis
+    desc: GHGI of electrolysis
     type: linear
     value:
       gwp100:
-        2025: 0.12 +- 0.012
-        2050: 0.06 +- 0.006
+        2025: 0.12
+        2050: 0.06
       gwp20:
-        2025: 0.14 +- 0.014
-        2050: 0.07 +- 0.007
+        2025: 0.14
+        2050: 0.07
     options:
       - gwp
+    uncertainty: 5%
     unit: kgCO2eq/kgH2
     source:
       Based on LCA data provided by Christian Bauer at PSI.
 
   ghgi_green_elec:
-    desc: CI of electricity
+    desc: GHGI of electricity
     type: linear
     value:
       RE:
         gwp100:
-          2025: 0.027 +- 0.0054
-          2050: 0.016 +- 0.0032
+          2025: 0.027
+          2050: 0.016
         gwp20:
-          2025: 0.033 +- 0.0066
-          2050: 0.020 +- 0.0040
+          2025: 0.033
+          2050: 0.020
       fossil:
         gwp100:
-          2025: 0.400 +- 0.040
-          2050: 0.400 +- 0.040
+          2025: 0.400 +- 0.0
+          2050: 0.400 +- 0.0
         gwp20:
-          2025: 0.650 +- 0.065
-          2050: 0.650 +- 0.065
+          2025: 0.650 +- 0.0
+          2050: 0.650 +- 0.0
     options:
       - elec_src
       - gwp
+    uncertainty: 5%
     unit: kgCO2eq/kWh
     source:
       Based on LCA data provided by Christian Bauer at PSI. Fossil is assuming natural gas as a source for power 
@@ -393,9 +409,7 @@ params:
     desc: Share of renewable and grey electricity. 100% means RE only.
     short: Share of RE
     type: linear
-    value:
-      2025: 100.0
-      2050: 100.0
+    value: cases
     unit: percent
     source:
       Assuming dedicated RE production.
@@ -433,8 +447,9 @@ params:
     desc: Transp. cost
     type: linear
     value:
-      2025: 30.0 +- 10.0
-      2050: 15.0 +- 10.0
+      2025: 30.0
+      2050: 15.0
+    uncertainty: 5%
     unit: EUR/MWh
     source:
       Numbers encouraged by research results shared by Acatech.

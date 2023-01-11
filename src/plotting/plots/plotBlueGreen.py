@@ -363,14 +363,13 @@ def __addFSCPSubplotContoursTop(blueFuel: str, greenFuel: str, xmin: float, xmax
     GHGIBlueOtherBase, _ = __getGHGIs(pBlueOther, pGreen, baseOnly=True)
     # ghgi0_1 + p_1 * ghgim_1 = ghgi0_2 + p_2 * ghgim_2
     # p_2 = (p_1*ghgim_1+ghgi0_1-ghgi0_2)/ghgim_2
-    range2  = [(x*pBlue['mghgi'][0]+GHGIBlueBase-GHGIBlueOtherBase) / pBlueOther['mghgi'][0]
-               for x in [xmin, xmax]]
+    range2 = [(x*pBlue['mghgi']+GHGIBlueBase-GHGIBlueOtherBase) / pBlueOther['mghgi'] for x in [xmin, xmax]]
 
 
     # add scatter traces
     x_vals = [pBlue['mlr'][0]*100, xmax*(pBlue['mlr'][0]-range2[0])/(range2[1]-range2[0])*100]
-    y_val = sum(e[0] for e in calcCost(currentParamsGreen, 'GREEN', fuelSpecs[greenFuel]['options']).values())\
-          - sum(e[0] for e in calcCost(currentParamsBlue, 'BLUE', fuelSpecs[blueFuel]['options']).values())
+    y_val = sum(e['val'] for e in calcCost(currentParamsGreen, 'GREEN', fuelSpecs[greenFuel]['options']).values())\
+          - sum(e['val'] for e in calcCost(currentParamsBlue, 'BLUE', fuelSpecs[blueFuel]['options']).values())
 
     name = f"Comparing {fuelSpecs[blueFuel]['name']} with {fuelSpecs[greenFuel]['name']}"
     col = config['fscp_colour'][blueFuel.split('-')[-1] + '-' + greenFuel.split('-')[-1]]
@@ -459,7 +458,7 @@ def __addFSCPSubplotContoursBottom(blueFuel: str, greenFuel: str, xmin: float, x
 
     # calculate FSCPs for grid
     share_v, delta_cost_v = np.meshgrid(share, delta_cost)
-    pGreen['sh'] = share_v
+    pGreen['sh'] = (share_v, 0, 0)
     GHGIBlue, GHGIGreen = __getGHGIs(pBlue, pGreen)
     fscp = delta_cost_v / (GHGIBlue - GHGIGreen)
 
@@ -514,8 +513,8 @@ def __addFSCPSubplotContoursBottom(blueFuel: str, greenFuel: str, xmin: float, x
 
     # add scatter traces
     x_val = pGreen['sh']*100
-    y_val = sum(e[0] for e in calcCost(currentParamsGreen, 'GREEN', fuelSpecs[greenFuel]['options']).values())\
-          - sum(e[0] for e in calcCost(currentParamsBlue, 'BLUE', fuelSpecs[blueFuel]['options']).values())
+    y_val = sum(e['val'] for e in calcCost(currentParamsGreen, 'GREEN', fuelSpecs[greenFuel]['options']).values())\
+          - sum(e['val'] for e in calcCost(currentParamsBlue, 'BLUE', fuelSpecs[blueFuel]['options']).values())
 
     name = f"Comparing {fuelSpecs[blueFuel]['name']} with {fuelSpecs[greenFuel]['name']}"
     col = config['fscp_colour'][blueFuel.split('-')[-1] + '-' + greenFuel.split('-')[-1]]
@@ -641,15 +640,15 @@ def __getGHGIs(pBlue, pGreen, baseOnly=False):
     GHGIBlue = getGHGIBlue(**pBlue)
     GHGIGreen = getGHGIGreen(**pGreen)
 
-    return sum(GHGIBlue[comp][0] for comp in GHGIBlue if not baseOnly or comp!='scch4'),\
-           sum(GHGIGreen[comp][0] for comp in GHGIGreen if not baseOnly or comp!='elec')
+    return sum(GHGIBlue[comp]['val'] for comp in GHGIBlue if not baseOnly or comp!='scch4'),\
+           sum(GHGIGreen[comp]['val'] for comp in GHGIGreen if not baseOnly or comp!='elec')
 
 
 def __getCostDiff(pBlue, pGreen):
     costBlue = getCostBlue(**pBlue)
     costGreen = getCostGreen(**pGreen)
 
-    return sum(costBlue[comp][0] for comp in costGreen) - sum(costBlue[comp][0] for comp in costBlue)
+    return sum(costBlue[comp]['val'] for comp in costGreen) - sum(costBlue[comp]['val'] for comp in costBlue)
 
 
 def __getColourScale(config: dict):

@@ -2,7 +2,6 @@ import pandas as pd
 
 from src.filepaths import getFilePathOutput
 from src.data.params.full_params import getFullParams
-from src.data.FSCPs.calc_FSCPs import calcFSCPs
 from src.data.fuels.calc_fuels import calcFuelData
 
 
@@ -18,16 +17,11 @@ def getFullData(input_data: dict):
     print('Calculating fuel cost and GHGI data...')
     fuelData, fuelSpecs = calcFuelData(options['times'], fullParams, fuels, params, options['gwp'])
 
-    # calculate FSCPs
-    print('Calculating FSCPs...')
-    FSCPData = calcFSCPs(fuelData)
-
     # return all output data
     return {
         'fullParams': fullParams,
         'fuelSpecs': fuelSpecs,
         'fuelData': fuelData,
-        'FSCPData': FSCPData,
     }
 
 
@@ -38,7 +32,7 @@ def exportDataXLS(input_data, output_data):
     options, params, fuels = (input_data['options'], input_data['params'], input_data['fuels'])
     fullParams, fuelData = (output_data['fullParams'], output_data['fuelData'])
 
-    filePath = getFilePathOutput('data.xlsx')
+    filePath = getFilePathOutput('results_full.xlsx')
     writer = pd.ExcelWriter(filePath)
 
     columnOrder = ['description', 'type', 'value', 'unit', 'source']

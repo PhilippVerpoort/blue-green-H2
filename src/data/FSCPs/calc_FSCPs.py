@@ -1,56 +1,76 @@
-import numpy as np
+import re
+
 import pandas as pd
 
 from src.timeit import timeit
 
 
 @timeit
-def calcFSCPs(fuelData: pd.DataFrame):
-    fuelData = fuelData.filter(['fuel', 'type', 'year', 'cost', 'cost_uu', 'cost_ul', 'ghgi', 'ghgi_uu', 'ghgi_ul']) \
-                       .assign(code=lambda r: r.type.map({'NG': 0, 'BLUE': 1, 'GREEN': 2}))
+def calcFSCPs(fuelData: pd.DataFrame, calc_unc: bool = True):
+    fuelCrossData = fuelData.assign(code=lambda r: r.type.map({'NG': 0, 'BLUE': 1, 'GREEN': 2}))
 
-    tmp = fuelData.merge(fuelData, how='cross', suffixes=('_x', '_y'))\
-                  .query(f"code_x < code_y")\
-                  .drop(columns=['code_x', 'code_y'])
+    fuelCrossData = fuelCrossData.merge(fuelCrossData, on='year', how='outer', suffixes=('_x', '_y'))\
+        .query(f"code_y < code_x")\
+        .drop(columns=['code_x', 'code_y'])\
+        .sort_values(by=['fuel_x', 'fuel_y', 'year'])\
+        .reset_index(drop=True)
 
-    tmp['correlated'] = 0.0
-    tmp.loc[(tmp['type_x'] != 'GREEN') & (tmp['type_y'] != 'GREEN'), 'correlated'] = 1.0
-
-    fscp, fscpu = calcFSCPFromCostAndGHGI(
-        tmp['cost_x'],
-        tmp['ghgi_x'],
-        tmp['cost_y'],
-        tmp['ghgi_y'],
-        [tmp[f"cost_{i}_x"] for i in ['uu', 'ul']],
-        [tmp[f"ghgi_{i}_x"] for i in ['uu', 'ul']],
-        [tmp[f"cost_{i}_y"] for i in ['uu', 'ul']],
-        [tmp[f"ghgi_{i}_y"] for i in ['uu', 'ul']],
-        corr=tmp['correlated'],
-    )
-
-    tmp['fscp'] = fscp
-    tmp['fscp_uu'] = fscpu[0]
-    tmp['fscp_ul'] = fscpu[1]
-
-    tmp['fscp_tc'] = tmp['cost_x'] + tmp['fscp'] * tmp['ghgi_x']
-
-    FSCPData = tmp[['fuel_x', 'type_x', 'year_x', 'fuel_y', 'type_y', 'year_y', 'fscp', 'fscp_uu', 'fscp_ul', 'fscp_tc',
-                    'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y', 'cost_uu_x', 'cost_uu_y', 'ghgi_uu_x', 'ghgi_uu_y', 'cost_ul_x',
-                    'cost_ul_y', 'ghgi_ul_x', 'ghgi_ul_y']]
-
-    return FSCPData
+    return calcFSCPFromCostAndGHGI(fuelCrossData, calc_unc)
 
 
-def calcFSCPFromCostAndGHGI(cx, gx, cy, gy, cxu, gxu, cyu, gyu, corr = 0.0):
-    fscp = (cy - cx) / (gx - gy)
+def calcFSCPFromCostAndGHGI(fuelCrossData: pd.DataFrame, calc_unc: bool = True):
+    # calc cost diff and ghgi diff
+    fuelCrossData['cost_diff'] = fuelCrossData['cost_x'] - fuelCrossData['cost_y']
+    fuelCrossData['ghgi_diff'] = fuelCrossData['ghgi_y'] - fuelCrossData['ghgi_x']
 
-    fscpu = [0.0, 0.0]
+    # calc FSCPs from above diffs
+    fuelCrossData['fscp'] = fuelCrossData['cost_diff'] / fuelCrossData['ghgi_diff']
 
-    if all(l and len(l) == 2 for l in [cxu, gxu, cyu, gyu]):
-        for i in range(2):
-            j = 0 if i else 1
+    # only proceed if uncertainty needs to be calculated
+    if not calc_unc:
+        return fuelCrossData[[
+            'year',
+            'fuel_x', 'type_x', 'fuel_y', 'type_y',
+            'cost_x', 'cost_y', 'cost_uu_x', 'cost_uu_y', 'cost_ul_x', 'cost_ul_y',
+            'ghgi_x', 'ghgi_y', 'ghgi_uu_x', 'ghgi_uu_y', 'ghgi_ul_x', 'ghgi_ul_y',
+            'fscp',
+        ]]
 
-            fscpu[i] += np.sqrt((fscp / (cy-cx)) ** 2 * (cyu[i] ** 2 + cxu[j] ** 2 - corr * 2 * cyu[i] * cxu[j]))
-            fscpu[i] += np.sqrt((fscp / (gx-gy)) ** 2 * (gyu[i] ** 2 + gxu[j] ** 2 - corr * 2 * gyu[i] * gxu[j]))
+    # find all parameters with uncertainty
+    pat = re.compile(r"^(cost|ghgi)_(uu|ul)__(.*)_[xy]")
+    pnames = []
+    for componentColName in fuelCrossData.columns:
+        m = pat.match(componentColName)
+        if m is not None:
+            pname = m.group(3)
+            if pname not in pnames:
+                pnames.append(pname)
 
-    return fscp, fscpu
+    # compute upper and lower uncertainties
+    uts = ['uu', 'ul']
+    for ut_this in uts:
+        ut_other = next(uto for uto in uts if uto != ut_this)
+
+        for pname in pnames:
+            newColName = f"fscp_{ut_this}__{pname}"
+            fuelCrossData[newColName] = 0.0
+
+            for mode in ['cost', 'ghgi']:
+                for suffix in['x', 'y']:
+                    ut_comp = ut_this if suffix=='x' else ut_other
+                    componentColName = f"{mode}_{ut_comp}__{pname}_{suffix}"
+
+                    if componentColName not in fuelCrossData.columns:
+                        continue
+
+                    fuelCrossData[newColName] += (+1 if suffix == 'x' else -1) * fuelCrossData[componentColName].fillna(0.0) / fuelCrossData[f"{mode}_diff"]
+
+        fuelCrossData[f"fscp_{ut_this}"] = fuelCrossData['fscp'] * fuelCrossData[[f"fscp_{ut_this}__{pname}" for pname in pnames]].pow(2).sum(axis=1).pow(1/2)
+
+    return fuelCrossData[[
+        'year',
+        'fuel_x', 'type_x', 'fuel_y', 'type_y',
+        'cost_x', 'cost_y', 'cost_uu_x', 'cost_uu_y', 'cost_ul_x', 'cost_ul_y',
+        'ghgi_x', 'ghgi_y', 'ghgi_uu_x', 'ghgi_uu_y', 'ghgi_ul_x', 'ghgi_ul_y',
+        'fscp', 'fscp_uu', 'fscp_ul',
+    ]]

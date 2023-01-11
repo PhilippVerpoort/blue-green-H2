@@ -4,22 +4,22 @@ cost:
     ymax: 200.0
 
     labels:
-      cost__cap_cost: Capital cost
-      cost__fuel_cost: Fuel cost (non-elec.)
-      cost__elec_cost: Electricity cost
-      cost__fonm_cost: Fixed operation<br>and maintenance cost
-      cost__vonm_cost: Variable operation<br>and maintenance cost
-      cost__cts_cost: CO<sub>2</sub> transport<br>and storage cost
-      cost__tra_cost: H<sub>2</sub> transport cost
+      cost__cap: Capital cost
+      cost__fuel: Fuel cost (non-elec.)
+      cost__elec: Electricity cost
+      cost__fonm: Fixed operation<br>and maintenance cost
+      cost__vonm: Variable operation<br>and maintenance cost
+      cost__cts: CO<sub>2</sub> transport<br>and storage cost
+      cost__tnd: Transport and<br>distribution cost
 
     colours:
-      cost__cap_cost: '#f36f21'
-      cost__elec_cost: '#e6af2e'
-      cost__fuel_cost: '#3745a3'
-      cost__fonm_cost: '#00813e'
-      cost__vonm_cost: '#db2a1a'
-      cost__cts_cost: '#589ace'
-      cost__tra_cost: '#7c1f8a'
+      cost__cap: '#f36f21'
+      cost__elec: '#e6af2e'
+      cost__fuel: '#3745a3'
+      cost__fonm: '#00813e'
+      cost__vonm: '#db2a1a'
+      cost__cts: '#589ace'
+      cost__tnd: '#7c1f8a'
 ghgi:
     yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 

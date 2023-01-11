@@ -1,8 +1,6 @@
-import numpy as np
 import pandas as pd
 
-from src.config_load import params_options
-
+from src.data.fuels.helper_funcs import getValAndUnc, getVal, simpleRetValUnc
 
 known_blue_techs = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
 
@@ -36,22 +34,31 @@ def evalGHGI(p, type: str):
 
 def getGHGIParamsNG(pars: pd.DataFrame, options: dict):
     return dict(
-        bdir=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'direct', **options}),
-        bele=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'elec', **options}),
-        bscc=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'scco2', **options}),
-        both=__getValAndUnc(pars, 'ghgi_ng_base', {'component': 'other', **options}),
-        mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage', options),
-        mghgi=__getVal(pars, 'ghgi_ng_methaneleakage_perrate', options),
+        bdir=getValAndUnc(pars, 'ghgi_ng_base', {'component': 'direct', **options}),
+        bele=getValAndUnc(pars, 'ghgi_ng_base', {'component': 'elec', **options}),
+        bscc=getValAndUnc(pars, 'ghgi_ng_base', {'component': 'scco2', **options}),
+        both=getValAndUnc(pars, 'ghgi_ng_base', {'component': 'other', **options}),
+        mlr=getValAndUnc(pars, 'ghgi_ng_methaneleakage', options),
+        mghgi=getVal(pars, 'ghgi_ng_methaneleakage_perrate', options),
     )
 
 
-def getGHGING(bdir, bele, bscc, both, mlr, mghgi):
+def getGHGING(bdir, bele, bscc, both, mlr, mghgi, calc_unc: bool = True):
     return {
-        'direct': bdir,
-        'elec': bele,
-        'scco2': bscc,
-        'scch4': tuple(e*mghgi for e in mlr),
-        'other': both,
+        # direct emissions
+        'direct': simpleRetValUnc(*bdir, 'ghgi_ng_base__direct', calc_unc),
+
+        # elec emissions
+        'elec': simpleRetValUnc(*bele, 'ghgi_ng_base__elec', calc_unc),
+
+        # supply-chain CO2 emissions
+        'scco2': simpleRetValUnc(*bscc, 'ghgi_ng_base__scco2', calc_unc),
+
+        # supply-chain CH4 emissions
+        'scch4': simpleRetValUnc(*(rate*mghgi for rate in mlr), 'ghgi_ng_methaneleakage', calc_unc),
+
+        # other emissions
+        'other': simpleRetValUnc(*both, 'ghgi_ng_base__other', calc_unc),
     }
 
 
@@ -59,74 +66,105 @@ def getGHGIParamsBlue(pars: pd.DataFrame, options: dict):
     if options['blue_tech'] not in known_blue_techs:
         raise Exception(f"Unknown blue technology type: {options['blue_tech']}")
 
+    # special treatment for the assumption of low supply-chain CO2
     options_scco2 = options.copy()
     if options['blue_tech'].endswith('-lowscco2'):
         options = options.copy()
         options['blue_tech'] = options['blue_tech'].rstrip('-lowscco2')
 
     return dict(
-        bdir=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'direct', **options}),
-        bele=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'elec', **options}),
-        bscc=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'scco2', **options_scco2}),
-        bcts=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'cts', **options}),
-        both=__getValAndUnc(pars, 'ghgi_blue_base', {'component': 'other', **options}),
-        cr=__getValAndUnc(pars, 'ghgi_blue_capture_rate', options),
-        crd=__getVal(pars, 'ghgi_blue_capture_rate_default', options),
-        mlr=__getValAndUnc(pars, 'ghgi_ng_methaneleakage', options),
-        mghgi=__getValAndUnc(pars, 'ghgi_blue_methaneleakage_perrate', options),
-        transp=__getVal(pars, 'ghgi_h2transp', options),
+        bdir=getValAndUnc(pars, 'ghgi_blue_base', {'component': 'direct', **options}),
+        bele=getValAndUnc(pars, 'ghgi_blue_base', {'component': 'elec', **options}),
+        bscc=getValAndUnc(pars, 'ghgi_blue_base', {'component': 'scco2', **options_scco2}),
+        bcts=getValAndUnc(pars, 'ghgi_blue_base', {'component': 'cts', **options}),
+        both=getValAndUnc(pars, 'ghgi_blue_base', {'component': 'other', **options}),
+        cr=getValAndUnc(pars, 'ghgi_blue_capture_rate', options),
+        crd=getVal(pars, 'ghgi_blue_capture_rate_default', options),
+        mlr=getValAndUnc(pars, 'ghgi_ng_methaneleakage', options),
+        mghgi=getVal(pars, 'ghgi_blue_methaneleakage_perrate', options),
+        transp=getVal(pars, 'ghgi_h2transp', options),
     )
 
 
-def getGHGIBlue(bdir, bele, bscc, bcts, both, cr, crd, mlr, mghgi, transp):
+def getGHGIBlue(bdir, bele, bscc, bcts, both, cr, crd, mlr, mghgi, transp, calc_unc: bool = True):
     r = {
-        'direct': (
-            (1 - cr[0]) / (1 - crd) * bdir[0],
-            np.sqrt( ((1 - cr[0]) / (1 - crd) * bdir[1])**2 + (cr[2] / (1 - crd) * bdir[0])**2 ),
-            np.sqrt( ((1 - cr[0]) / (1 - crd) * bdir[2])**2 + (cr[1] / (1 - crd) * bdir[0])**2 ),
-        ),
-        'elec': bele,
-        'scco2': bscc,
-        'scch4': tuple(mlr[i]*mghgi[0] for i in range(3)),
-        'other': tuple(bcts[i]+both[i] for i in range(3)),
+        # direct emissions
+        'direct': {
+            'val': (1 - cr[0]) / (1 - crd) * bdir[0],
+        } | ({
+            'uu': {
+                'blue_capture_rate': - cr[1] / (1 - crd) * bdir[0],
+                'ghgi_blue_base__direct': (1 - cr[0]) / (1 - crd) * bdir[1],
+            },
+            'ul': {
+                'blue_capture_rate': - cr[2] / (1 - crd) * bdir[0],
+                'ghgi_blue_base__direct': (1 - cr[0]) / (1 - crd) * bdir[2],
+            },
+        } if calc_unc else {}),
+
+        # elec emissions
+        'elec': simpleRetValUnc(*bele, 'ghgi_blue_base__elec', calc_unc),
+
+        # supply-chain CO2 emissions
+        'scco2': simpleRetValUnc(*bscc, 'ghgi_blue_base__scco2', calc_unc),
+
+        # supply-chain CH4 emissions
+        'scch4': simpleRetValUnc(*(rate*mghgi for rate in mlr), 'ghgi_ng_methaneleakage', calc_unc),
+
+        # other emissions
+        'other': simpleRetValUnc(*[both[i]+bcts[i] for i in range(3)], 'ghgi_blue_base__other', calc_unc),
     }
 
-    r['transp'] = tuple(transp*sum(e[i] for e in r.values()) for i in range(3))
+    # transport emissions relative to all other emissions
+    r['transp'] = {
+            'val': transp * sum(r[component]['val'] for component in r),
+        } | ({
+            ut: {
+                pname: transp * r[component][ut][pname] for component in r for pname in r[component][ut]
+            } for ut in ['uu', 'ul']
+        } if calc_unc else {})
 
     return r
 
 
 def getGHGIParamsGreen(pars: pd.DataFrame, options: dict):
     return dict(
-        b=__getValAndUnc(pars, 'ghgi_green_base', options),
-        eff=__getVal(pars, 'green_eff', options),
-        sh=__getVal(pars, 'green_share', options),
-        elre=__getValAndUnc(pars, 'ghgi_green_elec', {'elec_src': 'RE', **options}),
-        elfos=__getValAndUnc(pars, 'ghgi_green_elec', {'elec_src': 'fossil', **options}),
-        transp=__getVal(pars, 'ghgi_h2transp', options),
+        base=getValAndUnc(pars, 'ghgi_green_base', options),
+        eff=getVal(pars, 'green_eff', options),
+        sh=getValAndUnc(pars, 'green_share', options),
+        elre=getValAndUnc(pars, 'ghgi_green_elec', {'elec_src': 'RE', **options}),
+        elfos=getValAndUnc(pars, 'ghgi_green_elec', {'elec_src': 'fossil', **options}),
+        transp=getVal(pars, 'ghgi_h2transp', options),
     )
 
 
-def getGHGIGreen(b, eff, sh, elre, elfos, transp):
+def getGHGIGreen(base, eff, sh, elre, elfos, transp, calc_unc: bool = True):
     r = {
-        'elec': tuple((sh * elre[i] + (1.0-sh) * elfos[i]) / eff for i in range(3)),
-        'other': b,
+        # elec emissions
+        'elec': {
+            'val': (sh[0] * elre[0] + (1.0-sh[0]) * elfos[0]) / eff,
+        } | ({
+            'uu': {
+                'green_share': sh[2] * (elre[0] - elfos[0]) / eff,
+                'ghgi_green_elec__RE': sh[0] * elre[1] / eff,
+            },
+            'ul': {
+                'green_share': sh[1] * (elre[0] - elfos[0]) / eff,
+                'ghgi_green_elec__RE': sh[0] * elre[2] / eff,
+            },
+        } if calc_unc else {}),
+
+        # other emissions
+        'other': simpleRetValUnc(*base, 'ghgi_green_base', calc_unc),
     }
 
-    r['transp'] = tuple(transp*sum(e[i] for e in r.values()) for i in range(3))
+    # transport emissions relative to all other emissions
+    r['transp'] = {
+            'val': transp * sum(r[component]['val'] for component in r),
+        } | ({
+            ut: {
+                pname: transp * r[component][ut][pname] for component in r for pname in r[component][ut]
+            } for ut in ['uu', 'ul']
+        } if calc_unc else {})
 
     return r
-
-
-def __getValAndUnc(pars: pd.DataFrame, pname: str, options: dict):
-    pname_full = __getFullPname(pname, options)
-    return tuple(val for idx, val in pars.loc[pname_full, ['val', 'uu', 'ul']].items())
-
-
-def __getVal(pars: pd.DataFrame, pname: str, options: dict):
-    pname_full = __getFullPname(pname, options)
-    return pars.loc[pname_full].val
-
-
-def __getFullPname(pname: str, options: dict):
-    return '_'.join([pname] + [options[t] for t in params_options[pname]])

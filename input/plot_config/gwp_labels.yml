@@ -8,7 +8,7 @@ fig3:
   align: right
   x: 1.0
   xanchor: right
-  y: -0.1
+  y: 0.33
   yanchor: top
 fig4b:
   align: right

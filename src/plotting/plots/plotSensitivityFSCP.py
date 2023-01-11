@@ -297,8 +297,8 @@ def __getFSCP(pAC, pAG, pBC, pBG, typeA, typeB):
     costB = evalCost(pBC, typeB)
     ghgiB = evalGHGI(pBG, typeB)
 
-    cost_diff = sum(costB[comp][0] for comp in costB) - sum(costA[comp][0] for comp in costA)
-    ghgi_diff = sum(ghgiA[comp][0] for comp in ghgiA) - sum(ghgiB[comp][0] for comp in ghgiB)
+    cost_diff = sum(costB[comp]['val'] for comp in costB) - sum(costA[comp]['val'] for comp in costA)
+    ghgi_diff = sum(ghgiA[comp]['val'] for comp in ghgiA) - sum(ghgiB[comp]['val'] for comp in ghgiB)
 
     if isinstance(cost_diff, np.ndarray):
         fscp = np.maximum(cost_diff, [0.0]*len(cost_diff)) / ghgi_diff
