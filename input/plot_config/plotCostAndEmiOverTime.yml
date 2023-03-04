@@ -30,7 +30,7 @@ cost:
 
 
 ghgi:
-    yaxislabel: Life-cycle GHGI of Energy (kg<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+    yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
     ymax: 0.28
 #    ymax: 0.35
     label: Emissions intensity
