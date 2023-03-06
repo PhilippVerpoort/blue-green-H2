@@ -1,71 +1,82 @@
 fig1:
-  desc: (a) Direct costs and (b) emission intensities for all defined cases of green
-    and blue hydrogen production options, including uncertainties of key parameters,
-    in 2025-2050.
+  desc:
+    a) Levelised costs of (gaseous) hydrogen supply (production, transport and distribution) and natural gas prices 
+    (including gas grid fees) and b) life-cycle GHG intensity of green (electrolytic) and blue hydrogen as well as 
+    natural gas. The corridors illustrate the ranges for the main technology and additional sensitivity cases analysed 
+    in this paper (see Table 1). See Extended Data Figure 1 for a breakdown of both costs and emissions.
   display:
   - /
   - /advanced
   height: 550px
   name: Figure 1
-  title: (a) Direct costs and (b) emission intensities of hydrogen fuel options.
+  title: ' '
   width: 50%
 fig3:
-  desc: ''
+  desc:
+    'Same as conceptual Figure 2c, now estimated for four cases derived by combining technology cases (top: 
+    conservative, bottom: progressive) with natural gas prices (left: high, right: low). From the intersections of 
+    FSCPs in time, fuel-switching points can be derived that determine the improving competitiveness of hydrogen with 
+    fossil fuels as well as the increasing competitiveness of green hydrogen with blue hydrogen.'
   display:
   - /
   - /advanced
   height: 900px
   name: Figure 3
-  title: Decreasing FSCPs in time for high (left) and low (right) gas prices and for
-    conservative (top) and progressive (bottom) assumptions.
+  title: ' '
 fig4:
-  desc: The hydrogen production cases shown are i) a high-emissions blue hydrogen
-    based on SMR-CCS-56% technology with plant-wide CO2 capture rates of ~556 % and
-    90 % at the capture step, and ii) a low-emissions blue hydrogen based on ATR-CCS
-    technology with plant-wide CO2 capture rates of ~93 % and 98 % at the capture
-    step. Methane emission rates along the natural gas supply chains are assumed to
-    reduce from ~1 % to ~0.5 %  in 2025-2050.
+  desc:
+    Emission intensities (x axis) and direct costs (y axis) of different hydrogen fuel options (scatter plot for 
+    several years), along with FSCP estimates (contour plot) required to make hydrogen competitive with natural gas for 
+    a) high natural gas prices and b) low natural gas prices. In addition to the progressive and conservative 
+    technology cases, we here include a sensitivity case with very high upstream CO2 emission reductions, which 
+    reflects the high ambitions of the oil and gas industry in Norway26, dotted). We use GWP100 here. For a sensitivity 
+    case with GWP 20, see Extended Data Figure 4.
   display:
   - /
   - /advanced
   height: 600px
   name: Figure 4
-  title: Emission intensities and direct costs of different hydrogen fuel options
-    (scatter plot for several years), along with FSCP estimates (contour plot and
-    black lines) required to make hydrogen competitive with (a) natural gas for heating
-    and (b) conventional steel production.
+  title: ' '
   width: 50%
 fig5:
-  desc: Sensitivity of blue-to-green FSCP for the key five parameters.
+  desc:
+    A sensitivity analysis varying five key parameter to evaluate their impact on blue-to-green fuel-switching carbon 
+    prices. The analysis is conducted for GWP100 and centered around low natural gas prices, progressive technology 
+    assumptions. For sensitivity analyses for GWP20 and centered around high natural gas prices see Extended Data 
+    figures 3 and 4. The color bar on the left side indicates how low (or high) blue-to-green FSCPs would translate 
+    into a competitiveness advantage for green (or blue) hydrogen given the CO2 price range shown on the right side.
   display:
   - /
   - /advanced
   height: 550px
   name: Figure 5
-  title: Sensitivity analysis
+  title: ' '
 figS1:
-  desc: a, focusing on SMR technology with 56% capture rate, b, focusing on ATR technology
-    with 93% capture rate.
+  desc:
+    a) Breakdown of levelised costs and b) breakdown of life-cycle GHG intensity of green (electrolytic) and blue 
+    hydrogen as well as natural gas (NG) for 2025 and 2050. We distinguish progressive and conservative parameter 
+    developments as well as low and high gas prices (see Table 1). See Figure 1 for the development of aggregated costs 
+    and emissions in time.
   display:
   - /advanced
   name: Figure S1
-  title: Levelised cost (left) and life-cycle GHG intensity (right) of natural gas
-    and hydrogen from different supply technologies.
+  title: ' '
   width: 50%
 figS2:
-  desc: ''
+  desc:
+    'Same as Figure 3 but reduced to only FSCP of green and blue hydrogen (with natural gas) also including uncertainty 
+    ranges from parameter variations of 5%. The four cases are derived by combining technology cases (top: 
+    conservative, bottom: progressive) with natural gas prices (left: high, right: low).'
   display:
   - /
   - /advanced
   height: 900px
   name: Figure 7
   nosettings: true
-  title: As in bottom-right panel of Fig. 3 but with focus on uncertainties.
+  title: ' '
 figS3:
-  desc: ''
+  desc: 'Extended data figure not included in manuscript.'
   height: 600px
   name: Figure S2
   nosettings: true
-  title: Blue-to-green FSCPs are analysed in Fig. 6a. The axes show the two main determinants
-    x) the mark-up in life-cycle emissions of blue compared to green hydrogen and
-    y) the mark-up of in specific costs of green compared to blue hydrogen.
+  title: ' '
