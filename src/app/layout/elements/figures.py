@@ -47,7 +47,7 @@ def __getFigTemplate(figName: str, subFigNames: list, plotName: str):
                 for subFigName in subFigNames
             ),
             html.Hr(),
-            html.B(f"{figCfg['name']} | {figCfg['title']}"),
+            html.B(f"{figCfg['name']} {figCfg['title']}"),
             html.P(figCfg['desc']),
             (html.Div([
                     html.Hr(),
