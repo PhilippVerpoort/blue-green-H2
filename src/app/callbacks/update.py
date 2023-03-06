@@ -2,6 +2,8 @@ import yaml
 
 from src.app.callbacks.simple_params import cons_vs_prog_params, gas_prices_params, editTablesModal
 
+from src.config_load import input_data as default_input_data
+
 
 # simple update
 def updateScenarioInput(input_data: dict, simple_gwp: str, simple_important_params: list, simple_gas_prices: list, advanced_params: list):
@@ -23,6 +25,9 @@ def updateScenarioInput(input_data: dict, simple_gwp: str, simple_important_para
             'type': row['type'],
             'unit': row['unit'],
         }
+
+        if 'uncertainty' in default_input_data['params'][row['param']]:
+            newParam['uncertainty'] = default_input_data['params'][row['param']]['uncertainty']
 
         if isinstance(row['value'], str) and ':' in row['value']:
             newParam['value'] = yaml.load(row['value'], Loader=yaml.FullLoader)
