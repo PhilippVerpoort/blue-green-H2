@@ -114,14 +114,14 @@ def getElementSimpleControlsCard():
                 children=[
                     html.Button(id='simple-update', n_clicks=0, children='GENERATE', className='scenario-buttons'),
                     html.Button(id='download-config', n_clicks=0, children='Download input data', className='scenario-buttons'),
-                    html.Form(
-                        action='/download/data.xlsx',
-                        method='get',
-                        children=[
-                            dbc.Button(id='results-download', type='submit', children='Download data', className='scenario-buttons')
-                        ],
-                        style={'float': 'right'},
-                    ),
+                    # html.Form(
+                    #     action='/download/data.xlsx',
+                    #     method='get',
+                    #     children=[
+                    #         dbc.Button(id='results-download', type='submit', children='Download data', className='scenario-buttons')
+                    #     ],
+                    #     style={'float': 'right'},
+                    # ),
                 ],
                 className='card-element',
             ),
