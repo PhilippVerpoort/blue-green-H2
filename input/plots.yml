@@ -9,6 +9,9 @@ plotHeatmap:
   fig4:
     - fig4a
     - fig4b
+  figS4:
+    - figS4a
+    - figS4b
 plotSensitivityFSCP:
   - fig5
 plotBars:

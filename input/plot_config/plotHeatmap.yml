@@ -1,37 +1,71 @@
 plotting:
-  ghgi_max: 0.23
-  cost_max: 205.0
+  heating:
+    ghgi_max: 0.23
+    cost_max: 205.0
+    zmax: 500
+    zdticks: 100
+    zdeltalines: 50.0
+  steel:
+    ghgi_max: 0.23
+    cost_max: 700.0
+    zmax: 200
+    zdticks: 25
+    zdeltalines: 25.0
   n_samples: 301
 
 labels:
-  ghgi: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
-  cost: Direct Cost (EUR/MWh<sub>LHV</sub>)
+  heating:
+    ghgi: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+    cost: Direct Cost (EUR/MWh<sub>LHV</sub>)
+  steel:
+    ghgi: GHG Intensity (t<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
+    cost: Direct Cost (EUR/t<sub>LS</sub>)
 
 annotationLabels:
   left: High gas prices
   right: Low gas prices
 
+baselineLabels:
+  heating: Price of natural gas
+  steel: Cost of BF/BOF-Steel
+
+steelAssumptions:
+  idreaf_demand_h2: 1.91 # H2 demand of H-DR in MWh_H2LHV / t_LS
+  idreaf_cost: 457.0 # Other production cost in DR route in EUR / t_LS
+  bfbof_cost: 389.0 # Blast furnace cost in EUR / t_LS
+  bfbof_ghgi: 1.8 # Blast furnace GHGI in tCO2eq / t_LS
+
 thickLines:
-  left:
-    - size: 100
-      start: 100
-      end: 600
-    - size: 250
-      start: 750
-      end: 1000
-    - size: 300
-      start: 1200
-      end: 1500
-  right:
-    - size: 100
-      start: 100
-      end: 600
-    - size: 250
-      start: 750
-      end: 1000
-    - size: 300
-      start: 1200
-      end: 1500
+  heating:
+    left:
+      - size: 100
+        start: 100
+        end: 600
+      - size: 250
+        start: 750
+        end: 1000
+      - size: 300
+        start: 1200
+        end: 1500
+    right:
+      - size: 100
+        start: 100
+        end: 600
+      - size: 250
+        start: 750
+        end: 1000
+      - size: 300
+        start: 1200
+        end: 1500
+  steel:
+    left:
+      - size: 100
+        start: 100
+        end: 300
+    right:
+      - size: 100
+        start: 100
+        end: 300
 
 refFuel:
   left: NG-high-cons

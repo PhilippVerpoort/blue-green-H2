@@ -80,3 +80,14 @@ figS3:
   name: Figure S2
   nosettings: true
   title: ' '
+figS4:
+  desc:
+    Same as Fig. 4 but showing steel as an application, assuming a 'grey' production route based on a blast furnace/ 
+    basic oxygen furnace, and a 'green' or 'blue' production route based on H<sub>2</sub>-based direct reduction.
+  display:
+  - /
+  - /advanced
+  height: 600px
+  name: Figure S4
+  title: ' '
+  width: 50%

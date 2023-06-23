@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 import pandas as pd
 
@@ -9,29 +11,45 @@ from src.timeit import timeit
 @timeit
 def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
-    for sub, type in [('a', 'left'), ('b', 'right')]:
-        subfigName = f"fig4{sub}"
+    for application in ['heating', 'steel']:
+        for sub, type in [('a', 'left'), ('b', 'right')]:
+            subfigName = f"fig4{sub}" if application=='heating' else f"figS4{sub}"
 
+            # check if plotting is needed
+            if subfigName not in subfigs_needed:
+                ret.update({subfigName: None})
+                continue
 
-        # check if plotting is needed
-        if subfigName not in subfigs_needed:
-            ret.update({subfigName: None})
-            continue
+            # select data
+            plotData, refData = __selectPlotData(fuelData, config['refFuel'][type], config['refYear'][type], config['showFuels'][type], config['showYears'])
 
+            # throw away all components
+            plotData = plotData.drop(
+                columns=plotData.filter(regex=r"^(cost|ghgi)(_uu|_ul)?__.*$").columns.to_list(),
+                axis=1,
+            )
+            refData = refData.drop(
+                index=refData.filter(regex=r"^(cost|ghgi)(_uu|_ul)?__.*$").keys().to_list()
+            )
 
-        # select data
-        plotData, refData = __selectPlotData(fuelData, config['refFuel'][type], config['refYear'][type], config['showFuels'][type], config['showYears'])
+            # add steel data for fig S4
+            if application == 'steel':
+                steel = config['steelAssumptions']
 
+                for t in [f"{comp}_{unc}" for comp in ['cost', 'ghgi'] for unc in ['uu', 'ul']]:
+                    plotData[t] *= steel['idreaf_demand_h2']
+                plotData['cost'] += steel['idreaf_cost']
 
-        # define plotly figure
-        fig = go.Figure()
+                refData['cost'] = steel['bfbof_cost']
+                refData['ghgi'] = steel['bfbof_ghgi']
 
+            # define plotly figure
+            fig = go.Figure()
 
-        # produce figures
-        fig = __produceFigure(fig, plotData, refData, config, type)
+            # produce figures
+            fig = __produceFigure(fig, plotData, refData, config, type, application)
 
-
-        ret.update({subfigName: fig})
+            ret.update({subfigName: fig})
 
     return ret
 
@@ -44,44 +62,59 @@ def __selectPlotData(fuelsData: pd.DataFrame, refFuel: str, refYear: int, showFu
     return plotData, refData
 
 
-def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, config: dict, type: str, row=None, col=None):
-    argsRowCol = dict(row=row, col=col) if row is not None and col is not None else dict()
+def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, config: dict, type: str, application: str):
+    # apply scaling
+    if application=='heating':
+        config = copy.deepcopy(config)
+        plotData = plotData.copy()
+        refData = refData.copy()
 
-    plotConf = {
+        config['plotting'][application]['ghgi_max'] *= 1000.0
+        plotData[['ghgi', 'ghgi_uu', 'ghgi_ul']] *= 1000.0
+        refData[['ghgi', 'ghgi_uu', 'ghgi_ul']] *= 1000.0
+
+
+    # configure FSCP plotting
+    FSCPConf = {
         'ghgi_min': 0.0,
-        'ghgi_max': config['plotting']['ghgi_max'],
+        'ghgi_max': config['plotting'][application]['ghgi_max'],
         'cost_min': 0.0,
-        'cost_max': config['plotting']['cost_max'],
+        'cost_max': config['plotting'][application]['cost_max'],
+        'fscp_scaling': 1000.0 if application=='heating' else 1.0,
+        'zmax': config['plotting'][application]['zmax'],
+        'zdticks': config['plotting'][application]['zdticks'],
+        'zdeltalines': config['plotting'][application]['zdeltalines'],
         'n_samples': config['plotting']['n_samples'],
+        'colorbarTitle': '<i>FSCP</i><sub>NG→H<sub>2</sub></sub>' if application=='heating' else '<i>FSCP</i><sub>BF-BOF→H<sub>2</sub>-DR</sub>'
     }
 
 
     # add line traces
     traces = __addLineTraces(plotData, config)
     for trace in traces:
-        fig.add_trace(trace, **argsRowCol)
+        fig.add_trace(trace)
 
 
     # add FSCP traces
-    traces = __addFSCPTraces(refData, config['thickLines'][type], plotConf, config['global']['lw_thin'], config['global']['lw_ultrathin'], type=='right')
+    traces = __addFSCPTraces(refData, config['thickLines'][application][type], FSCPConf, config['global']['lw_thin'], config['global']['lw_ultrathin'], type=='right')
     for trace in traces:
-        fig.add_trace(trace, **argsRowCol)
+        fig.add_trace(trace)
 
 
     # determine y-axis plot range
     shift = 0.1
-    ylow = 0.0 #refData.cost - shift * (config['plotting']['cost_max'] - refData.cost)
+    ylow = 0.0 if application=='heating' else refData.cost - shift * (config['plotting']['steel']['cost_max'] - refData.cost)
 
 
     # set plotting ranges
     fig.update_layout(
         xaxis=dict(
-            title=config['labels']['ghgi'],
-            range=[0.0, config['plotting']['ghgi_max']*1000],
+            title=config['labels'][application]['ghgi'],
+            range=[0.0, config['plotting'][application]['ghgi_max']],
         ),
         yaxis=dict(
-            title=config['labels']['cost'],
-            range=[ylow, config['plotting']['cost_max']],
+            title=config['labels'][application]['cost'],
+            range=[ylow, config['plotting'][application]['cost_max']],
         ),
         margin_t=160.0,
         margin_r=200.0,
@@ -101,16 +134,14 @@ def __produceFigure(fig: go.Figure, plotData: pd.DataFrame, refData: pd.Series, 
         yshift=20.0,
         text=topLabel,
         **annotationStylingA,
-        **argsRowCol,
     )
 
     annotationStylingB = dict(xanchor='left', yanchor='top', showarrow=False)
     fig.add_annotation(
-        x=0.01*config['plotting']['ghgi_max']*1000,
+        x=0.01*config['plotting'][application]['ghgi_max'],
         y=refData.cost,
-        xref='x', yref='y', text='Price of natural gas',
+        xref='x', yref='y', text=config['baselineLabels'][application],
         **annotationStylingB,
-        **argsRowCol,
     )
 
 
@@ -150,7 +181,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
         # points and lines
         traces.append(go.Scatter(
-            x=thisData.ghgi*1000,
+            x=thisData.ghgi,
             y=thisData.cost,
             text=thisData.year if not fuel.endswith('lowscco2') else None,
             textposition='top left' if 'pess' in fuel else 'bottom right',
@@ -165,7 +196,7 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         ))
 
         traces.append(go.Scatter(
-            x=thisData.ghgi*1000,
+            x=thisData.ghgi,
             y=thisData.cost,
             name=name,
             legendgroup=tech,
@@ -181,9 +212,9 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
 
         # hover template
         traces.append(go.Scatter(
-            x=thisData.ghgi*1000,
+            x=thisData.ghgi,
             y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=0.0),
+            error_x=dict(type='data', array=thisData.ghgi_uu, arrayminus=thisData.ghgi_ul, thickness=0.0),
             error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=0.0),
             line_color=col,
             showlegend=False,
@@ -197,9 +228,9 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
         # error bars
         thisData = thisData.query(f"year==[2025,2030,2040,2050]")
         traces.append(go.Scatter(
-            x=thisData.ghgi*1000,
+            x=thisData.ghgi,
             y=thisData.cost,
-            error_x=dict(type='data', array=thisData.ghgi_uu*1000, arrayminus=thisData.ghgi_ul*1000, thickness=config['global']['lw_thin']),
+            error_x=dict(type='data', array=thisData.ghgi_uu, arrayminus=thisData.ghgi_ul, thickness=config['global']['lw_thin']),
             error_y=dict(type='data', array=thisData.cost_uu, arrayminus=thisData.cost_ul, thickness=config['global']['lw_thin']),
             line_color=col,
             marker_size=0.000001,
@@ -213,26 +244,27 @@ def __addLineTraces(plotData: pd.DataFrame, config: dict):
     return traces
 
 
-def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thin: float, lw_ultrathin: float, showscale: bool):
+def __addFSCPTraces(refData: pd.Series, thickLines: list, FSCPConf: dict, lw_thin: float, lw_ultrathin: float, showscale: bool):
     traces = []
 
-    ghgi_samples = np.linspace(plotConf['ghgi_min'], plotConf['ghgi_max'], plotConf['n_samples'])
-    cost_samples = np.linspace(plotConf['cost_min'], plotConf['cost_max'], plotConf['n_samples'])
+    ghgi_samples = np.linspace(FSCPConf['ghgi_min'], FSCPConf['ghgi_max'], FSCPConf['n_samples'])
+    cost_samples = np.linspace(FSCPConf['cost_min'], FSCPConf['cost_max'], FSCPConf['n_samples'])
     ghgi_v, cost_v = np.meshgrid(ghgi_samples, cost_samples)
 
     ghgi_ref = refData.ghgi
     cost_ref = refData.cost
 
-    fscp = (cost_v - cost_ref)/(ghgi_ref - ghgi_v)
+    fscp = (cost_v - cost_ref)/(ghgi_ref - ghgi_v) * FSCPConf['fscp_scaling']
 
     # heatmap
-    tickvals = [100*i for i in range(6)]
+    tickvals = [FSCPConf['zdticks']*i for i in range(int(FSCPConf['zmax']/FSCPConf['zdticks'])+1)]
     ticktext = [str(v) for v in tickvals]
-    ticktext[-1] = '> 500'
+    ticktext[0] = f"≤ {ticktext[0]}"
+    ticktext[-1] = f"≥ {ticktext[-1]}"
     traces.append(go.Heatmap(
-        x=ghgi_samples*1000, y=cost_samples, z=fscp,
+        x=ghgi_samples, y=cost_samples, z=fscp,
         zsmooth='best', hoverinfo='skip',
-        zmin=0.0, zmax=500.0,
+        zmin=0.0, zmax=FSCPConf['zmax'],
         colorscale=[
             [0.0, '#c6dbef'],
             [1.0, '#f7bba1'],
@@ -241,7 +273,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
             x=1.05,
             y=0.25,
             len=0.5,
-            title='<i>FSCP</i><sub>NG→H<sub>2</sub></sub>',
+            title=FSCPConf['colorbarTitle'],
             titleside='top',
             tickvals=tickvals,
             ticktext=ticktext,
@@ -250,7 +282,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
     ))
 
     # thin lines every 50
-    traces.append(go.Contour(x=ghgi_samples*1000, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ghgi_samples, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -261,11 +293,11 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
                                  showlabels=False,
                                  start=0,
                                  end=3000,
-                                 size=50,
+                                 size=FSCPConf['zdeltalines'],
                              )))
 
     # zero line
-    traces.append(go.Contour(x=ghgi_samples*1000, y=cost_samples, z=fscp,
+    traces.append(go.Contour(x=ghgi_samples, y=cost_samples, z=fscp,
                              showscale=False, contours_coloring='lines', hoverinfo='skip',
                              colorscale=[
                                  [0.0, '#000000'],
@@ -282,7 +314,7 @@ def __addFSCPTraces(refData: pd.Series, thickLines: list, plotConf: dict, lw_thi
     # thick lines
     for kwargs in thickLines:
         traces.append(go.Contour(
-            x=ghgi_samples*1000, y=cost_samples, z=fscp,
+            x=ghgi_samples, y=cost_samples, z=fscp,
             showscale=False, contours_coloring='lines', hoverinfo='skip',
             colorscale=[
                 [0.0, '#000000'],
