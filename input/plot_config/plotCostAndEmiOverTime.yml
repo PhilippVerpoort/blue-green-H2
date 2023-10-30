@@ -1,7 +1,7 @@
 cost:
     yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
     ymax: 200.0
-    ymaxS5: 320.0
+    ymaxS5: 350.0
     label: Direct cost
     showLines: False
     showCorridors:

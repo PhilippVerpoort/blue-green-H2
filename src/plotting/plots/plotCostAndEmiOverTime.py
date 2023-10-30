@@ -200,8 +200,11 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
                     array=plot_data['delta'],
                     visible=True,
                 ),
-                marker_color=colour,
-                # marker_size=0.0001,
+                marker=dict(
+                    color=colour,
+                    size=10.0,
+                    symbol='circle',
+                ),
                 legendgroup='iea',
                 legendgrouptitle_text='<b>IEA H<sub>2</sub></b>',
                 name=f"{tech} H<sub>2</sub>" if not isinstance(subtech, str) else f"{tech} H<sub>2</sub> ({subtech})",
