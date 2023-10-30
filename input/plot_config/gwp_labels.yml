@@ -40,3 +40,9 @@ figS3:
   xanchor: right
   y: -0.2
   yanchor: top
+figS4b:
+  align: right
+  x: 1.0
+  xanchor: right
+  y: -0.2
+  yanchor: top
