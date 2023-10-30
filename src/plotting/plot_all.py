@@ -26,7 +26,7 @@ def plotAllFigs(allData: dict, input_data: dict, plots_cfg: dict, figs_needed: U
     allPlotArgs = {
         'plotBars': (allData['fuelData'],),
         'plotBlueGreen': (allData['fuelData'],),
-        'plotCostAndEmiOverTime': (allData['fuelData'],),
+        'plotCostAndEmiOverTime': (allData['fuelData'], allData['fullParams']),
         'plotHeatmap': (allData['fuelData'],),
         'plotOverTime': (allData['fuelData'],),
         'plotSensitivityFSCP': (),

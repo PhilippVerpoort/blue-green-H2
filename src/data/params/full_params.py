@@ -30,7 +30,7 @@ def getFullParams(basicData: dict, times: list):
 
             # convert unit
             if 'unit' in par and par['unit'] is not None:
-                conversionFactor, newUnit = __convertUnit(par['unit'], units)
+                conversionFactor, newUnit = convert_unit(par['unit'])
 
                 newPar['value'] = conversionFactor * newPar['value']
                 newPar['unc_upper'] = conversionFactor * newPar['unc_upper'] if newPar['unc_upper'] is not None else None
@@ -121,14 +121,14 @@ def __convertValue(value: Union[str, float, int]):
 
 
 # Convert all units to standard units for straightforward calculation later on.
-def __convertUnit(unit: str, units: dict):
+def convert_unit(unit: str, value: float = 1.0):
     for unitType, unitOptions in units['types'].items():
         if unit in unitOptions:
             newUnit = unitOptions[0]
             if unit == newUnit:
-                return 1.0, unit
+                return value, unit
             else:
-                return units['conversion'][f"{unit}__to__{newUnit}"], newUnit
+                return units['conversion'][f"{unit}__to__{newUnit}"] * value, newUnit
 
     raise Exception(f"Unit not found: {unit}")
 

@@ -1,0 +1,17 @@
+variable,technology,subtechnology,period,case,reported_value,reported_unit,comment,src_ref
+Production Cost|Hydrogen,Blue,,2030,lower,0.9,USD/kgH2,very low due to very low gas prices assumed by the NZE scenario,IEA NZE
+Production Cost|Hydrogen,Blue,,2030,upper,2.2,USD/kgH2,,IEA NZE
+Production Cost|Hydrogen,Green,Solar PV,2030,lower,1.6,USD/kgH2,,IEA NZE
+Production Cost|Hydrogen,Green,Solar PV,2030,upper,5.1,USD/kgH2,,IEA NZE
+Production Cost|Hydrogen,Green,Wind Onshore,2030,lower,1.95,USD/kgH2,,IEA NZE
+Production Cost|Hydrogen,Green,Wind Onshore,2030,upper,8.2,USD/kgH2,,IEA NZE
+Production Cost|Hydrogen,Green,Wind Offshore,2030,lower,2.1,USD/kgH2,,IEA NZE
+Production Cost|Hydrogen,Green,Wind Offshore,2030,upper,7.2,USD/kgH2,,IEA NZE
+Production Cost|Hydrogen,Blue,,2022,lower,1.75,USD/kgH2,,IEA global h2 review
+Production Cost|Hydrogen,Blue,,2022,upper,7.2,USD/kgH2,,IEA global h2 review
+Production Cost|Hydrogen,Green,Solar PV,2022,lower,3.75,USD/kgH2,,IEA global h2 review
+Production Cost|Hydrogen,Green,Solar PV,2022,upper,11.2,USD/kgH2,,IEA global h2 review
+Production Cost|Hydrogen,Green,Wind Onshore,2022,lower,3.4,USD/kgH2,,IEA global h2 review
+Production Cost|Hydrogen,Green,Wind Onshore,2022,upper,12,USD/kgH2,,IEA global h2 review
+Production Cost|Hydrogen,Green,Wind Offshore,2022,lower,4.6,USD/kgH2,,IEA global h2 review
+Production Cost|Hydrogen,Green,Wind Offshore,2022,upper,12,USD/kgH2,,IEA global h2 review

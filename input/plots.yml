@@ -2,6 +2,8 @@ plotCostAndEmiOverTime:
   fig1:
     - fig1a
     - fig1b
+  figS5:
+    - figS5
 plotOverTime:
   - fig3
   - figS2
