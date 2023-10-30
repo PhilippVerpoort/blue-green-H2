@@ -50,11 +50,11 @@ cases_dashed:
 
 sidelabels:
   top:
-    - High gas prices
-    - Low gas prices
+    - <b>High gas prices</b><br>60 EUR/MWh<sub>LHV</sub> in 2025, 40 EUR/MWh<sub>LHV</sub> from 2030 onward
+    - <b>Low gas prices</b><br>15 EUR/MWh<sub>LHV</sub> throughout
   left:
-    - Conservative assumptions
-    - Progressive assumptions
+    - <b>Conservative assumptions</b>
+    - <b>Progressive assumptions</b>
 
 annotationTexts:
   heading1: Fuel-switching points that capture the expanding competitiveness of low-carbon H<sub>2</sub> with fossil applications

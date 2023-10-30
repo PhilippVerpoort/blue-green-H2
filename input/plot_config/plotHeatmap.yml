@@ -22,8 +22,8 @@ labels:
     cost: Direct Cost (EUR/t<sub>LS</sub>)
 
 annotationLabels:
-  left: High gas prices
-  right: Low gas prices
+  left: <b>High gas prices</b><br>60 EUR/MWh<sub>LHV</sub> in 2025, 40 EUR/MWh<sub>LHV</sub> from 2030 onward
+  right: <b>Low gas prices</b><br>15 EUR/MWh<sub>LHV</sub> throughout
 
 baselineLabels:
   heating: Price of natural gas
