@@ -109,6 +109,7 @@ def __produceFigure(config: dict):
 
             # add vertical lines
             vlineid = f"{var}-{year}" if settings['vline'] == 'peryear' else f"{var}"
+            labelheight = 0.0 + (year-2035)/5 * 0.355 if settings['vline'] == 'peryear' else 0.0
             if vlineid not in has_vline:
                 fig.add_vline(
                     x=val*settings['scale'],
@@ -117,14 +118,15 @@ def __produceFigure(config: dict):
                     col=j+1
                 )
 
+                print(labelheight)
                 fig.add_annotation(go.layout.Annotation(
                     text=f"Default {year}" if settings['vline'] == 'peryear' else 'Default',
                     x=val*settings['scale'],
-                    xanchor='left',
-                    y=config['yrange'][1],
-                    yanchor='top',
+                    xanchor='right',
+                    y=config['yrange'][1]*labelheight,
+                    yanchor='bottom',
                     showarrow=False,
-                    textangle=90,
+                    textangle=270,
                 ), row=1, col=j+1)
 
                 has_vline.append(vlineid)
