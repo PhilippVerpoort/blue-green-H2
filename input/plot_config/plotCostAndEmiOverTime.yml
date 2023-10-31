@@ -17,10 +17,11 @@ cost:
         colour: '#4771b9'
         cases:
           BLUE-low-cons:
-            desc: Low gas price
+            desc: Low gas price,<br>conservative (low CAPEX)
             colour: '#589ace'
-          BLUE-high-cons:
-            desc: High gas price
+          BLUE-high-prog:
+            desc: High gas price,<br>progressive (high CAPEX)
+            colour: '#3647a3'
       GREEN:
         colour: '#519c0f'
         cases:

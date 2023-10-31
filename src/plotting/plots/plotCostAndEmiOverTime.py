@@ -207,7 +207,7 @@ def __produceFigure(plotData: pd.DataFrame, fuelSpecs: dict, subConfig: dict, ty
                 ),
                 legendgroup='iea',
                 legendgrouptitle_text='<b>IEA H<sub>2</sub></b>',
-                name=f"{tech} H<sub>2</sub>" if not isinstance(subtech, str) else f"{tech} H<sub>2</sub> ({subtech})",
+                name=f"{tech} H<sub>2</sub>" if not isinstance(subtech, str) else f"{tech} H<sub>2</sub><br>({subtech})",
             ))
 
         fig.update_layout(
