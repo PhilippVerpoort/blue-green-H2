@@ -12,7 +12,7 @@ from src.timeit import timeit
 def plotHeatmap(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_webapp: bool = False):
     ret = {}
     for application in ['heating', 'steel']:
-        for sub, type in [('a', 'left'), ('b', 'right')]:
+        for sub, type in [('A', 'left'), ('B', 'right')]:
             subfigName = f"fig4{sub}" if application=='heating' else f"figS4{sub}"
 
             # check if plotting is needed

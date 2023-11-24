@@ -16,7 +16,7 @@ def plotCostAndEmiOverTime(fuelData: pd.DataFrame, fullParams: pd.DataFrame, con
     ret = {}
 
     # produce figures
-    for sub, type in [('a', 'cost'), ('b', 'ghgi')]:
+    for sub, type in [('A', 'cost'), ('B', 'ghgi')]:
         subfigName = f"fig1{sub}"
 
         # check if plotting is needed

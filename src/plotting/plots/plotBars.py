@@ -12,7 +12,7 @@ def plotBars(fuelData: pd.DataFrame, config: dict, subfigs_needed: list, is_weba
 
     # produce figures
     ret = {}
-    for sub, type in [('a', 'cost'), ('b', 'ghgi')]:
+    for sub, type in [('A', 'cost'), ('B', 'ghgi')]:
         subfigName = f"figS1{sub}"
 
         # check if plotting is needed

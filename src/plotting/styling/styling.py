@@ -1,4 +1,4 @@
-from string import ascii_lowercase
+from string import ascii_uppercase
 
 import plotly.graph_objects as go
 
@@ -13,7 +13,7 @@ def adjustFontSizes(subfigName: str, plotlyFigure: go.Figure, fs_sm: float, fs_m
     if subfigName not in ['figS5']:
         numSubPlots = __countNumbSubplots(plotlyFigure)
         for i in range(numSubPlots):
-            subfigLabel = subfigName[-1] if subfigName[-1] in ascii_lowercase else ascii_lowercase[i]
+            subfigLabel = subfigName[-1] if subfigName[-1] in ascii_uppercase else ascii_uppercase[i]
             plotlyFigure.add_annotation(
                 showarrow=False,
                 text=f"<b>{subfigLabel}</b>",

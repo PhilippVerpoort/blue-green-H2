@@ -1,52 +1,52 @@
-fig1a:
+fig1A:
   size:
-    - 90.0
+    - 86.0
     - 61.0
-fig1b:
+fig1B:
   size:
-    - 90.0
+    - 86.0
     - 61.0
 fig3:
   size:
-    - 180.0
+    - 172.0
     - 122.0
-fig4a:
+fig4A:
   size:
-    - 90.0
+    - 86.0
     - 100.0
-fig4b:
+fig4B:
   size:
-    - 90.0
+    - 86.0
     - 100.0
 fig5:
   size:
-    - 180.0
+    - 172.0
     - 100.0
-figS1a:
+figS1A:
   size:
-    - 90.0
+    - 86.0
     - 61.0
-figS1b:
+figS1B:
   size:
-    - 90.0
+    - 86.0
     - 61.0
 figS2:
   size:
-    - 180.0
+    - 172.0
     - 100.0
 figS3:
   size:
-    - 180.0
+    - 172.0
     - 100.0
-figS4a:
+figS4A:
   size:
-    - 90.0
+    - 86.0
     - 100.0
-figS4b:
+figS4B:
   size:
-    - 90.0
+    - 86.0
     - 100.0
 figS5:
   size:
-    - 90.0
+    - 86.0
     - 61.0

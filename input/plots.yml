@@ -1,7 +1,7 @@
 plotCostAndEmiOverTime:
   fig1:
-    - fig1a
-    - fig1b
+    - fig1A
+    - fig1B
   figS5:
     - figS5
 plotOverTime:
@@ -9,16 +9,16 @@ plotOverTime:
   - figS2
 plotHeatmap:
   fig4:
-    - fig4a
-    - fig4b
+    - fig4A
+    - fig4B
   figS4:
-    - figS4a
-    - figS4b
+    - figS4A
+    - figS4B
 plotSensitivityFSCP:
   - fig5
 plotBars:
   figS1:
-    - figS1a
-    - figS1b
+    - figS1A
+    - figS1B
 plotBlueGreen:
   - figS3

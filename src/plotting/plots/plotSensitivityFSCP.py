@@ -118,7 +118,6 @@ def __produceFigure(config: dict):
                     col=j+1
                 )
 
-                print(labelheight)
                 fig.add_annotation(go.layout.Annotation(
                     text=f"Default {year}" if settings['vline'] == 'peryear' else 'Default',
                     x=val*settings['scale'],

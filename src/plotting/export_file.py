@@ -1,6 +1,11 @@
+import plotly.io as pio
+
 from src.config_load import figure_print
 from src.filepaths import getFilePathOutput
 from src.plotting.styling.print import getImageSize, addPrintSpecificStyling
+
+
+pio.kaleido.scope.mathjax = None
 
 
 def exportFigsToFiles(figs: dict):
