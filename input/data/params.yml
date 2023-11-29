@@ -13,6 +13,7 @@ params:
     value: 5.0
     uncertainty: 5%
     unit: EUR/MWh
+    source: "[1]"
 
   ghgi_ng_base:
     desc: Base Emissions of NG (per LHV; supply-chain and combustion)
@@ -42,10 +43,14 @@ params:
     uncertainty: 5%
     unit: gCO2eq/MJ
     source:
-      LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
-      outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section. Supply-chain CO2 emissions 
-      are reduced to 87.5% between 2035 and 2050. The uncertainty is assumed to be 5% throughout, except for the
-      uncertainty of supply-chain CO2 emissions in 2050, which are 50% +- 37.5% of those in 2035.
+      "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
+      Methods for details.
+      
+      Most contributions to the LCA emissions stay approximately constant, as outlined in Methods section. Supply-chain 
+      CO2 emissions are reduced to 87.5% between 2035 and 2050.
+      
+      The uncertainty is assumed to be 5% throughout, except for the uncertainty of supply-chain CO2 emissions in 2050, 
+      which are 50% ± 37.5% of those in 2035."
 
   ghgi_ng_methaneleakage:
     desc: Amount of methane leakage in production chain (relative to total amount used)
@@ -54,9 +59,6 @@ params:
     value: cases
     uncertainty: 5%
     unit: percent
-    source:
-      Based on today's range of leakage rates and the ambition of the industry to lower it significantly along with 
-      substantial uncertainty on achieving this reduction.
 
   ghgi_ng_methaneleakage_perrate:
     desc: GHG emissions due to methane leakage per CH4 emission rate (per LHV)
@@ -68,7 +70,8 @@ params:
       - gwp
     unit: gCO2eq/MJ
     source:
-      Part of the LCA data produced by Christian Bauer at PSI.
+      "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
+      Methods for details."
 
   # blue parameters
   cost_blue_capex:
@@ -88,8 +91,8 @@ params:
     uncertainty: 5%
     unit: EUR/kW
     source:
-      SMR data from IEAGHG report, Sec. 8.1.3, Table 2, Sheet 84. Assuming a 0.5% yearly learning rate, i.e.
-      0.995**25 = 88% of cost in 2050. ATR data provided by Simon Roussanaly at Sintef. Assuming uncertainty of 10%.
+      "SMR data from [4], Sec. 8.1.3, Table 2, Sheet 84. Assuming a 0.5% yearly learning rate, i.e. 0.995**25 = 88% of 
+      cost in 2050. ATR data based on own analysis."
 
   cost_blue_fixedonm:
     desc: Fixed Operation and Maintenance Cost
@@ -107,9 +110,7 @@ params:
       - blue_tech
     uncertainty: 5%
     unit: EUR/kW
-    source:
-      SMR data from IEAGHG report, p. 18, Table 4. ATR data provided by Simon Roussanaly at Sintef. Assuming 
-      uncertainty of 10%.
+    source: "SMR data from [4], p. 18, Table 4. ATR data based on own analysis."
 
   cost_blue_varonm:
     desc: Variable Operation and Maintenance Cost (w/o fuel cost)
@@ -126,17 +127,14 @@ params:
       - blue_tech
     uncertainty: 5%
     unit: EUR/MWh
-    source:
-      SMR data from IEAGHG report, p. 18, Table 4. ATR data provided by Simon Roussanaly at Sintef. Assuming 
-      uncertainty of 10%.
+    source: "SMR data from [4], p. 18, Table 4. ATR data based on own analysis."
 
   cost_blue_flh:
     desc: Full load hours of blue-hydrogen plant
     type: const
     value: 8322.0
     unit: h
-    source: IEAGHG
-      SMR data from IEAGHG report, p. 18, Table 4. Assuming same for ATR.
+    source: "SMR data from [4], p. 18, Table 4. Assuming same for ATR."
 
   cost_blue_emiForCTS:
     desc: Captured emissions for transport and storage
@@ -148,8 +146,8 @@ params:
       - blue_tech
     unit: kgCO2/Nm3_H2
     source:
-      SMR data from IEAGHG, p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured. ATR data estimated from 
-      NG consumption and capture-rate of facility.
+      "SMR data from [4], p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured. ATR data estimated 
+      from NG consumption and capture-rate of facility."
 
   cost_blue_cts:
     desc: Carbon transport and storage cost
@@ -161,7 +159,10 @@ params:
     uncertainty: 5%
     unit: EUR/tCO2
     source:
-      Own estimates.
+      "[5,6]
+
+      In countries where CCS acceptance is low or where limited geological storage opportunities exist, CO2 would have 
+      to be transported over substantial distances by pipeline or by ship."
 
   ghgi_blue_base:
     desc: Base emissions of blue hydrogen (per LHV)
@@ -232,10 +233,13 @@ params:
     uncertainty: 5%
     unit: gCO2eq/MJ
     source:
-      LCA data produced by Christian Bauer at PSI. Most contributions to the LCA emissions stay mostly constant, as 
-      outlined in subsection 'Life-cycle emissions of blue hydrogen' in the Methods section. Supply-chain CO2 emissions 
-      are reduced to 87.5% between 2035 and 2050. The uncertainty is assumed to be 5% throughout, except for the 
-      uncertainty of supply-chain CO2 emissions in 2050, which are 50% +- 37.5% of those in 2035.
+      "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
+      Methods for details.
+      
+      Most contributions to the LCA emissions stay approximately constant, as outlined in subsection 'Life-cycle 
+      emissions of blue hydrogen' in the Methods section. Supply-chain CO2 emissions are reduced to 87.5% between 2035 
+      and 2050. The uncertainty is assumed to be 5% throughout, except for the uncertainty of supply-chain CO2 
+      emissions in 2050, which are 50% ± 37.5% of those in 2035."
 
   ghgi_blue_capture_rate:
     desc: Capture rate of blue-hydrogen technologies
@@ -246,8 +250,7 @@ params:
     options:
       - blue_tech
     unit: percent
-    source:
-      Value given by assumed technology.
+    source: "Value given by assumed technology."
 
   ghgi_blue_capture_rate_default:
     desc: Same as above but to be kept constant as a reference parameter.
@@ -258,8 +261,7 @@ params:
     options:
       - blue_tech
     unit: percent
-    source:
-      Value given by assumed technology.
+    source: "Value given by assumed technology."
 
   ghgi_blue_methaneleakage_perrate:
     desc: Methane leakage emissions per CH4 emission rate (per LHV)
@@ -276,7 +278,8 @@ params:
       - gwp
     unit: gCO2eq/MJ
     source:
-      Part of the LCA data produced by Christian Bauer at PSI.
+      "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
+      Methods for details."
 
   blue_eff:
     desc: Fuel efficiency (natural gas)
@@ -289,8 +292,8 @@ params:
     uncertainty: 5%
     unit: percent
     source:
-      SMR data from IEAGHG report, p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. 
-      ATR data provided by Simon Roussanaly at Sintef.
+      "SMR data from [4], p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. ATR data 
+      based on own analysis."
 
   blue_eff_elec:
     desc: Fuel efficiency (grid electricity)
@@ -303,8 +306,8 @@ params:
     uncertainty: 5%
     unit: ~
     source:
-      SMR data from IEAGHG report, p.16, Table 4 (Plant Performance Summary), total energy of inlet & outlet stream. 
-      ATR data provided by Simon Roussanaly at Sintef.
+      "SMR data from [4], p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. ATR data 
+      based on own analysis."
 
   # green parameters
   cost_green_capex:
@@ -319,7 +322,7 @@ params:
     type: const
     value: 3
     unit: percent
-    source: AEMO Integrated System Plan assumptions.
+    source: "AEMO Integrated System Plan [7] assumptions."
 
   cost_green_varonm:
     desc: Variable Operation and Maintenance Cost (w/o fuel cost)
@@ -327,7 +330,7 @@ params:
     value: 0.4 +- 0.1
     unit: EUR/MWh
     uncertainty: 5%
-    source: Assuming USD 0.01-0.02/kg H2 from IEA for water consumption.
+    source: "Assuming USD 0.01-0.02/kg H2 from [8] for water consumption."
 
   cost_green_elec:
     desc: Electricity price
@@ -354,8 +357,7 @@ params:
       - gwp
     uncertainty: 5%
     unit: kgCO2eq/kgH2
-    source:
-      Based on LCA data provided by Christian Bauer at PSI.
+    source: "LCA data based on own analysis."
 
   ghgi_green_elec:
     desc: GHGI of electricity
@@ -381,8 +383,8 @@ params:
     uncertainty: 5%
     unit: kgCO2eq/kWh
     source:
-      Based on LCA data provided by Christian Bauer at PSI. Fossil is assuming natural gas as a source for power 
-      generation.
+      "LCA data based on own analysis. Renewable assumes an equal mix of solar PV and wind. Fossil assumes natural gas 
+      as a source for power generation."
 
   green_ocf:
     desc: Operational capacity factor
@@ -390,8 +392,6 @@ params:
     type: linear
     value: cases
     unit: percent
-    source:
-      Feasible OCF for RE-only operation mode.
 
   green_eff:
     desc: Elec. efficiency
@@ -402,8 +402,7 @@ params:
       2040: 70.0
       2050: 75.0
     unit: percent
-    source:
-      Own estimates based on various sources.
+    source: "Own estimates based on various sources."
 
   green_share:
     desc: Share of renewable and grey electricity. 100% means RE only.
@@ -411,8 +410,6 @@ params:
     type: linear
     value: cases
     unit: percent
-    source:
-      Assuming dedicated RE production.
 
   green_lifetime:
     desc: Lifetime of electrolysis plants.
@@ -424,24 +421,21 @@ params:
       2040: 20
       2050: 20
     unit: ~
-    source:
-      Stack lifetime is 95kh according to IEA Future of Hydrogen (2019) report. With 50% OCF that is ~21 years.
+    source: "Stack lifetime is 95kh according to [9]. With 50% OCF that is ~21 years."
 
   blue_lifetime:
     desc: Lifetime of blue-hydrogen plants.
     type: const
     value: 20
     unit: ~
-    source:
-      To be determined (IEAGHG report!?).
+    source: "Based on [4]."
 
   irate:
     desc: Interest rate
     type: const
     value: 8
     unit: percent
-    source:
-      Assuming a typical WACC value.
+    source: "Assuming a typical WACC value."
 
   cost_h2transp:
     desc: Transp. cost
@@ -451,8 +445,7 @@ params:
       2050: 15.0
     uncertainty: 5%
     unit: EUR/MWh
-    source:
-      Numbers encouraged by research results shared by Acatech.
+    source: "Based on [10]."
 
   ghgi_h2transp:
     desc: GHGI of energy used in H2 transportation
@@ -460,6 +453,5 @@ params:
     value: 3
     unit: percent
     source:
-      This article (doi:10.1016/B978-0-12-811197-0.00003-8) states <<Recompression every 100 km, 0.02 kWh(Strom)/kg 
-      hydrogen>>, which gives 0.4 kWh/kg H2. Using a compressor with 40% efficiency, this results in 1kWh_LHV-H2 per 
-      kg_H2. This means a 3% surplus on the GHGI.
+      "[12] state 'Recompression every 100 km, 0.02 kWh(Strom)/kg hydrogen', which gives 0.4 kWh/kg H2. Using a 
+      compressor with 40% efficiency, this results in 1kWh_LHV-H2 per kg_H2. This means a 3% surplus on the GHGI."

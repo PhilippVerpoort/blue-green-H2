@@ -28,6 +28,11 @@ fuels:
           ghgi_ng_methaneleakage:
             2025: 1.0
             2050: 0.1
+    source:
+      "High gas-price scenario derived based on TTF future natural gas prices. Low gas-price scenario derived based on
+      Henry Hub future natural gas prices.
+      
+      Methane leakage rate scenarios are derived based on IEA data [3]."
 
 
   BLUE:
@@ -68,6 +73,11 @@ fuels:
         lowscco2:
           desc: Low supply-chain CO<sub>2</sub>
           blue_tech: atr-ccs-93%-lowscco2
+    source:
+      "High gas-price scenario derived based on TTF future natural gas prices. Low gas-price scenario derived based on
+      Henry Hub future natural gas prices.
+      
+      Methane leakage rate scenarios are derived based on IEA data [3]."
 
 
   GREEN:
@@ -117,3 +127,16 @@ fuels:
             2030: 40
             2035: 50
             2050: 50
+    source:
+      "Conservative electriticy prices: A grid-connected electrolyser (conservative case) pays electricity prices and 
+      grid fees (~30 EUR/MWh) [13]. Flexible operation reduces their specific electricity price below average annual 
+      electricity prices (see the subsection cost data in methods and data). Progressive electricity prices: 
+      Electrolysers with a direct connection to renewable supply (progressive case) can operate at low renewable 
+      electricity costs [14] (with reduced full-load hours).
+      
+      CAPEX: Based on IRENA and IEA data [8,15].
+      
+      Share of RE in electricity mix based on own analysis.
+      
+      OCF either for RE-only operation mode [11] or for RE-only operation mode. Own assumption based on capacity factor 
+      of wind and solar PV power [14]."
