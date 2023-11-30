@@ -1,0 +1,56 @@
+co2price_traj:
+  years: [2020,2025,2030,2035,2040,2045,2050,2055]
+  values:
+    FF55-allETS: [30,134,201,268,335,402,469,536]
+    FF55-propSplit: [30,85,128,171,213,256,299,342]
+    FF55-Option3: [30,143,191,239,287,334,382,430]
+
+gwp_labels:
+  fig1B:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.15
+    yanchor: top
+  fig3:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: 0.33
+    yanchor: top
+  fig4B:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.2
+    yanchor: top
+  fig5:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.3
+    yanchor: top
+  figS1B:
+    align: left
+    x: 1.02
+    xanchor: left
+    y: 0.0
+    yanchor: bottom
+  figS2:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.1
+    yanchor: top
+  figS3:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.2
+    yanchor: top
+  figS4B:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.2
+    yanchor: top

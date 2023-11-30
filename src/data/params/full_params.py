@@ -3,12 +3,9 @@ from typing import Union
 
 import pandas as pd
 
-from src.config_load import units
-from src.timeit import timeit
-
 
 # Calculate parameters including uncertainty at different times, using linear interpolation if needed.
-def getFullParams(basicData: dict, times: list):
+def getFullParams(basicData: dict, units: dict, times: list):
     pars = []
 
     for parId, par in basicData.items():
@@ -30,7 +27,7 @@ def getFullParams(basicData: dict, times: list):
 
             # convert unit
             if 'unit' in par and par['unit'] is not None:
-                conversionFactor, newUnit = convert_unit(par['unit'])
+                conversionFactor, newUnit = convert_unit(par['unit'], units)
 
                 newPar['value'] = conversionFactor * newPar['value']
                 newPar['unc_upper'] = conversionFactor * newPar['unc_upper'] if newPar['unc_upper'] is not None else None
@@ -121,7 +118,7 @@ def __convertValue(value: Union[str, float, int]):
 
 
 # Convert all units to standard units for straightforward calculation later on.
-def convert_unit(unit: str, value: float = 1.0):
+def convert_unit(unit: str, units: dict, value: float = 1.0):
     for unitType, unitOptions in units['types'].items():
         if unit in unitOptions:
             newUnit = unitOptions[0]

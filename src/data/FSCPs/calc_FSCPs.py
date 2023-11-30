@@ -2,10 +2,7 @@ import re
 
 import pandas as pd
 
-from src.timeit import timeit
 
-
-@timeit
 def calcFSCPs(fuelData: pd.DataFrame, calc_unc: bool = True):
     fuelCrossData = fuelData.assign(code=lambda r: r.type.map({'NG': 0, 'BLUE': 1, 'GREEN': 2}))
 

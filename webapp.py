@@ -1,24 +1,63 @@
 #!/usr/bin/env python
-# run this script and navigate to http://127.0.0.1:8050/ in your web browser
+from pathlib import Path
+
+import plotly.io as pio
+from dash.dependencies import Input, State
+from piw import Webapp
+from piw.template import piw_template
+
+from src.ctrls import main_ctrl
+from src.load import load_params
+from src.plots.BarsPlot import BarsPlot
+from src.plots.BlueGreenPlot import BlueGreenPlot
+from src.plots.CostEmiOverTimePlot import CostEmiOverTimePlot
+from src.plots.FSCPOverTimePlot import FSCPOverTimePlot
+from src.plots.HeatmapPlot import HeatmapPlot
+from src.plots.SensitivityPlot import SensitivityPlot
+from src.proc import process_inputs
+from src.update import update_inputs
+from src.utils import load_yaml_config_file
 
 
-from src.app.app import dash_app as dash_app
-from src.app.layout.layout import getLayout
+# change font in template
+pio.templates['blue-green-H2'] = piw_template.update(layout=dict(font_family='Arial'))
 
 
-# define layout
-dash_app.layout = getLayout(dash_app.get_asset_url("logo.png"))
+# define webapp
+webapp = Webapp(
+    piw_id='blue-green-H2',
+    title='On the cost competitiveness of blue and green hydrogen',
+    pages={
+        '': 'Simple',
+        'advanced': 'Advanced',
+    },
+    desc='This webapp reproduces results presented in an accompanying manuscript on the cost competitiveness of blue and '
+         'green hydrogen.',
+    authors=['Philipp C. Verpoort', 'Falko Ueckerdt', 'Rahul Anantharaman', 'Christian Bauer', 'Fiona Beck',
+             'Thomas Longden', 'Simon Roussanaly'],
+    date='10/02/2022',
+    load=[load_params],
+    ctrls=[main_ctrl],
+    generate_args=[
+        Input('simple-update', 'n_clicks'),
+        State('simple-important-params', 'data'),
+        State('simple-gas-prices', 'data'),
+        State('simple-gwp', 'value'),
+    ],
+    update=[update_inputs],
+    proc=[process_inputs],
+    plots=[CostEmiOverTimePlot, FSCPOverTimePlot, HeatmapPlot, SensitivityPlot, BarsPlot, BlueGreenPlot],
+    sort_figs=['fig1', 'fig3', 'fig4', 'fig5', 'figS1', 'figS2', 'figS3', 'figS4', 'figS5'],
+    glob_cfg=load_yaml_config_file('global'),
+    styles=load_yaml_config_file('styles'),
+    output=Path(__file__).parent / 'print',
+    default_template='blue-green-H2',
+    debug=False,
+    input_caching=True,
+)
 
 
-# import and list callbacks (list so they don't get removed as unused imports)
-from src.app.callbacks.callbacks import callbackUpdate, callbackDownloadConfig, callbackDownloadExportdata
-callbackUpdate, callbackDownloadConfig, callbackDownloadExportdata
-
-
-# define flask_app for wsgi
-flask_app = dash_app.server
-
-
-# for running as Python script in standalone
+# this will allow running the webapp locally
 if __name__ == '__main__':
-    dash_app.run_server(debug=False)
+    webapp.start()
+    webapp.run()

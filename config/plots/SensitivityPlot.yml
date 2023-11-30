@@ -1,0 +1,107 @@
+figures:
+  fig5:
+    name: Figure 5
+    title: ' '
+    desc:
+      A sensitivity analysis varying five key parameter to evaluate their impact on blue-to-green fuel-switching carbon
+      prices. The analysis is conducted for GWP100 and centered around low natural gas prices, progressive technology
+      assumptions. For sensitivity analyses for GWP20 and centered around high natural gas prices see Extended Data
+      figures 3 and 4. The color bar on the left side indicates how low (or high) blue-to-green FSCPs would translate
+      into a competitiveness advantage for green (or blue) hydrogen given the CO2 price range shown on the right side.
+    display:
+    - ''
+    - 'advanced'
+    size:
+      print:
+        width: 172.0  # unit mm
+        height: 100.0  # unit mm
+      webapp:
+        width: 100.0  # unit %
+        height: 700.0  # unit px
+config:
+  n_samples: 51
+  yrange:
+    - -10.0
+    - +600.0
+  ylabel: Blue-to-green fuel-switching carbon price (EUR/tCO<sub>2</sub>)
+  lastxaxislabel: CO<sub>2</sub> price
+
+
+  sensitivity_params:
+    p_el:
+      range:
+        - 10.0
+        - 100.0
+      scale: 1.0
+      label: Electricity price<br>paid by electrolyser<br>(EUR/MWh)
+      mode: absolute
+      vline: peryear
+      textpos:
+        - bottom right
+        - top right
+    sh:
+      range:
+        - 0.90
+        - 1.00
+      scale: 100.0
+      label: Share of renewable<br>electricity used by electrolyser<br>(%)
+      mode: absolute
+      vline: once
+      textpos:
+        - bottom left
+        - top left
+    p_ng:
+      range:
+        - 10.0
+        - 70.0
+      scale: 1.0
+      label: Natural-gas price<br>paid by SMR/ATR plant<br>(EUR/MWh)
+      mode: absolute
+      vline: once
+      textpos:
+        - top right
+        - top right
+    mlr:
+      range:
+        - 0.00
+        - 0.05
+      scale: 100.0
+      label: Methane-leakage rate of<br>the blue H<sub>2</sub> supply chain<br>(%)
+      mode: absolute
+      vline: peryear
+      textpos:
+        - top right
+        - top right
+    cr:
+      range:
+        - 0.6
+        - 1.0
+      scale: 100.0
+      label: CO<sub>2</sub> capture rate of<br>the SMR/ATR plant<br>(%)
+      mode: absolute
+      vline: once
+      textpos:
+        - top left
+        - top left
+
+
+  colours:
+    fscp: '#fc4b32'
+    co2price: '#7c2089'
+  legend:
+    fscp: Blue-to-green fuel-switching CO<sub>2</sub> price
+    co2price: CO<sub>2</sub> price in years
+
+
+  show_co2price_unc: True
+
+
+  fuels:
+    - BLUE-low-prog to GREEN-prog
+  #  - BLUE-high-prog to GREEN-prog
+
+
+  years:
+    - 2035
+    - 2040
+    - 2045

@@ -1,0 +1,27 @@
+types:
+  emissions_per_energy: [tCO2eq/MWh, gCO2eq/kWh, gCO2eq/MJ, kgCO2eq/kgH2, kgCO2eq/kWh]
+  currency: [EUR, MEUR, USD]
+  currency_per_energy: [EUR/MWh, EUR/GJ, USD/MWh, USD/kgH2]
+  currency_per_power: [EUR/MW, EUR/kW, USD/kW]
+  currency_per_CO2: [EUR/tCO2]
+  capturedEmi_per_energy: [tCO2/MWh, kgCO2/Nm3_H2]
+  efficiency: [1, kWh/kgH2]
+  power: [MW, Nm3/h]
+  time: [h]
+  ratio: [1, percent]
+
+conversion:
+  gCO2eq/kWh__to__tCO2eq/MWh: 0.001               # 0.001*0.001 / 0.001
+  gCO2eq/MJ__to__tCO2eq/MWh: 0.0036               # 0.001*0.001 / (1/3600)
+  kgCO2eq/kgH2__to__tCO2eq/MWh: 0.03              # 0.001 / (33.33*0.001)
+  kgCO2eq/kWh__to__tCO2eq/MWh: 1                  # 1000 / 1000
+  EUR/GJ__to__EUR/MWh: 3.6                        # 1 / (1/3600) * 1000
+  EUR/kW__to__EUR/MW: 1000                        # 1000
+  USD/kW__to__EUR/MW: 860                         # EUR/USD (EZB) * 1000
+  USD/MWh__to__EUR/MWh: 0.86                      # EUR/USD (EZB) * 1000
+  kWh/kgH2__to__1: 0.03                           # 1 / 33.33
+  Nm3/h__to__MW: 0.003                            # 3 * 0.001
+  kgCO2/Nm3_H2__to__tCO2/MWh: 0.333               # 0.001 / (3.00*0.001)
+  MEUR__to__EUR: 1000000                          # 10^6
+  percent__to__1: 0.01                            # 1 / 100
+  USD/kgH2__to__EUR/MWh: 25.8                     # 0.86 / 33.33 * 1000

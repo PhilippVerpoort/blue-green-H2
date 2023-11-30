@@ -5,13 +5,12 @@ import pandas as pd
 
 from src.data.fuels.calc_cost import calcCost
 from src.data.fuels.calc_ghgi import calcGHGI
+from src.data.fuels.helper_funcs import ParameterHandler
 from src.data.params.full_params import getFullParams
-from src.timeit import timeit
 
 
 # calculate fuel data
-@timeit
-def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: dict, gwp: str):
+def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: dict, gwp: str, params_options: dict, units: dict):
     fuelEntries = []
     fuelSpecs = {}
 
@@ -22,7 +21,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
                 'gwp': gwp,
             }
 
-            fuelEntries.extend(__calcFuel(full_params, fuel_id, fuel_id, options, times))
+            fuelEntries.extend(calcFuel(full_params, fuel_id, fuel_id, options, times, params_options))
 
             fuelSpecs[fuel_id] = {
                 'name': fuel['name'],
@@ -33,7 +32,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
                 'options': options,
             }
         else:
-            cases = __getCases(fuel['cases'], params, times)
+            cases = __getCases(fuel['cases'], params, times, units)
             for cid, case in cases.items():
                 fuel_id_full = f"{fuel_id}-{cid}"
 
@@ -44,7 +43,7 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
 
                 overridden_names = case['params'].droplevel(level=1).index.unique().to_list()
                 this_params = pd.concat([full_params.query(f"name not in @overridden_names"), case['params']])
-                fuelEntries.extend(__calcFuel(this_params, fuel_id_full, fuel_id, options, times))
+                fuelEntries.extend(calcFuel(this_params, fuel_id_full, fuel_id, options, times, params_options))
 
                 fuelSpecs[fuel_id_full] = {
                     'name': f"{fuel['name']} ({case['desc']})",
@@ -58,17 +57,18 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
     return pd.DataFrame.from_records(fuelEntries), fuelSpecs
 
 
-def __calcFuel(full_params: pd.DataFrame, fuel_id_full: str, type: str, options: dict, times: list):
+def calcFuel(full_params: pd.DataFrame, fuel_id_full: str, type: str, options: dict, times: list, params_options: dict):
     r = []
 
     for t in times:
         currentParams = full_params.query(f"year=={t}").droplevel(level=1)
+        paramHandler = ParameterHandler(currentParams, params_options)
 
         newFuel = {'fuel': fuel_id_full, 'type': type, 'year': t}
 
-        levelisedCost = calcCost(currentParams, type, options)
+        levelisedCost = calcCost(paramHandler, type, options)
         newFuel |= __getComponents(levelisedCost, 'cost')
-        levelisedGHGI = calcGHGI(currentParams, type, options)
+        levelisedGHGI = calcGHGI(paramHandler, type, options)
         newFuel |= __getComponents(levelisedGHGI, 'ghgi')
 
         r.append(newFuel)
@@ -107,7 +107,7 @@ def __getComponents(levelised: dict, mode: str):
     return r
 
 
-def __getCases(cases: dict, params: dict, times: list):
+def __getCases(cases: dict, params: dict, times: list, units: dict):
     overridden = {}
 
     for dim in cases:
@@ -125,7 +125,7 @@ def __getCases(cases: dict, params: dict, times: list):
             for p in overridden_params:
                 overridden_params[p]['value'] = cases[dim][c][p]
 
-            overridden[dim][c]['params'] = getFullParams(overridden_params, times)
+            overridden[dim][c]['params'] = getFullParams(overridden_params, units, times)
 
     return __mergeCases(overridden)
 
@@ -147,4 +147,3 @@ def __mergeCases(overridden: dict):
             }
             for c2 in r for c1 in entry
         }
-

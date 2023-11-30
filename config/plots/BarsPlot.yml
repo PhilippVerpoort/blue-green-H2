@@ -1,0 +1,82 @@
+figures:
+  figS1:
+    name: Figure S1
+    title: ' '
+    desc:
+      a) Breakdown of levelised costs and b) breakdown of life-cycle GHG intensity of green (electrolytic) and blue
+      hydrogen as well as natural gas (NG) for 2025 and 2050. We distinguish progressive and conservative parameter
+      developments as well as low and high gas prices (see Table 1). See Figure 1 for the development of aggregated costs
+      and emissions in time.
+    display:
+    - 'advanced'
+    subfigs:
+      figS1A:
+        size:
+          print:
+            width: 86.0  # unit mm
+            height: 61.0  # unit mm
+          webapp:
+            width: 50.0  # unit %
+            height: 450.0  # unit px
+        config:
+          yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
+
+          ymax: 200.0
+
+          labels:
+            cost__cap: Capital cost
+            cost__fuel: Fuel cost (non-elec.)
+            cost__elec: Electricity cost
+            cost__fonm: Fixed operation<br>and maintenance cost
+            cost__vonm: Variable operation<br>and maintenance cost
+            cost__cts: CO<sub>2</sub> transport<br>and storage cost
+            cost__tnd: Transport and<br>distribution cost
+
+          colours:
+            cost__cap: '#f36f21'
+            cost__elec: '#e6af2e'
+            cost__fuel: '#3745a3'
+            cost__fonm: '#00813e'
+            cost__vonm: '#db2a1a'
+            cost__cts: '#589ace'
+            cost__tnd: '#7c1f8a'
+      figS1B:
+        size:
+          print:
+            width: 86.0  # unit mm
+            height: 61.0  # unit mm
+          webapp:
+            width: 50.0  # unit %
+            height: 450.0  # unit px
+        config:
+          yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+
+          ymax: 0.29
+
+          labels:
+            ghgi__direct: Direct emissions
+            ghgi__elec: Electricity
+            ghgi__scco2: NG supply-chain CO<sub>2</sub>
+            ghgi__scch4: NG supply-chain CH<sub>4</sub>
+            ghgi__other: Other
+
+          colours:
+            ghgi__direct: '#f36f21'
+            ghgi__elec: '#e6af2e'
+            ghgi__scco2: '#3745a3'
+            ghgi__scch4: '#589ace'
+            ghgi__other: '#00813e'
+config:
+  fuels:
+    - NG-high-prog
+    - NG-low-prog
+    - BLUE-high-cons
+    - BLUE-high-prog
+    - BLUE-low-cons
+    - BLUE-low-prog
+    - GREEN-cons
+    - GREEN-prog
+
+  years:
+    - 2025
+    - 2050

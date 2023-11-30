@@ -1,0 +1,124 @@
+figures:
+  fig1:
+    name: Figure 1
+    title: ' '
+    desc:
+      a) Levelised costs of (gaseous) hydrogen supply (production, transport and distribution) and natural gas prices
+      (including gas grid fees) and b) life-cycle GHG intensity of green (electrolytic) and blue hydrogen as well as
+      natural gas. The corridors illustrate the ranges for the main technology and additional sensitivity cases analysed
+      in this paper (see Table 1). See Extended Data Figure 1 for a breakdown of both costs and emissions.
+    display:
+    - ''
+    - 'advanced'
+    subfigs:
+      fig1A:
+        size:
+          print:
+            width: 86.0  # unit mm
+            height: 61.0  # unit mm
+          webapp:
+            width: 50.0  # unit %
+            height: 550.0  # unit px
+        config:
+          yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
+          ymax: 200.0
+          ymaxS5: 350.0
+          label: Direct cost
+          showLines: False
+          showCorridors:
+            NG:
+              colour: '#d66000'
+              cases:
+                NG-low-cons:
+                  desc: Low gas price
+                  colour: '#ef7500'
+                NG-high-cons:
+                  desc: High gas price
+            BLUE:
+              colour: '#4771b9'
+              cases:
+                BLUE-low-cons:
+                  desc: Low gas price,<br>conservative (low CAPEX)
+                  colour: '#589ace'
+                BLUE-high-prog:
+                  desc: High gas price,<br>progressive (high CAPEX)
+                  colour: '#3647a3'
+            GREEN:
+              colour: '#519c0f'
+              cases:
+                GREEN-prog:
+                  desc: Progressive
+                GREEN-cons:
+                  desc: Conservative
+      fig1B:
+        size:
+          print:
+            width: 86.0  # unit mm
+            height: 61.0  # unit mm
+          webapp:
+            width: 50.0  # unit %
+            height: 550.0  # unit px
+        config:
+          yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+          ymax: 0.28
+      #    ymax: 0.35
+          label: Emissions intensity
+          showLines: False
+          showCorridors:
+      #      NG-gwpOther:
+      #        cases:
+      #          NG-low-prog-gwpOther:
+      #            desc: Progressive, GWP20
+      #          NG-low-cons-gwpOther:
+      #            desc: Conservative, GWP20
+            NG:
+              colour: '#d66000'
+              cases:
+                NG-low-prog:
+                  desc: Progressive
+                NG-low-cons:
+                  desc: Conservative
+            BLUE-prog-gwpOther:
+              cases:
+                BLUE-low-prog-gwpOther:
+                  desc: Progressive, GWP20
+            BLUE-prog:
+              cases:
+                BLUE-low-prog:
+                  desc: Progressive
+      #      BLUE-cons-gwpOther:
+      #        cases:
+      #          BLUE-low-cons-gwpOther:
+      #            desc: Conservative, GWP20
+            BLUE-cons:
+              cases:
+                BLUE-low-cons:
+                  desc: Conservative
+            GREEN:
+              colour: '#519c0f'
+              cases:
+                GREEN-prog:
+                  desc: Progressive
+                GREEN-cons:
+                  desc: Conservative
+  figS5:
+    name: Figure S5
+    title: ' '
+    desc: Same as Fig. 1A but comparing it against IEA data.
+    display:
+    - 'advanced'
+    size:
+      print:
+        width: 86.0  # unit mm
+        height: 61.0  # unit mm
+      webapp:
+        width: 100.0  # unit %
+        height: 550.0  # unit px
+    config:
+      iea_colours:
+        Blue: '#bb3585'
+        Green:
+          Wind Onshore: '#bb7035'
+          Wind Offshore: '#ca7e42'
+          Solar PV: '#de955b'
+config: {}

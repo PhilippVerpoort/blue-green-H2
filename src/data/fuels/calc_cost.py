@@ -1,22 +1,21 @@
-import pandas as pd
+from src.data.fuels.helper_funcs import ParameterHandler, simpleRetValUnc
 
-from src.data.fuels.helper_funcs import getValAndUnc, getVal, simpleRetValUnc
 
 known_blue_techs = ['smr-ccs-56%', 'atr-ccs-93%', 'atr-ccs-93%-lowscco2']
 
 
-def calcCost(current_params: pd.DataFrame, type: str, options: dict):
-    p = paramsCost(current_params, type, options)
+def calcCost(param_handler: ParameterHandler, type: str, options: dict):
+    p = paramsCost(param_handler, type, options)
     return evalCost(p, type)
 
 
-def paramsCost(current_params: pd.DataFrame, type: str, options: dict):
+def paramsCost(param_handler: ParameterHandler, type: str, options: dict):
     if type == 'NG':
-        return getCostParamsNG(current_params, options)
+        return getCostParamsNG(param_handler, options)
     elif type == 'BLUE':
-        return getCostParamsBlue(current_params, options)
+        return getCostParamsBlue(param_handler, options)
     elif type == 'GREEN':
-        return getCostParamsGreen(current_params, options)
+        return getCostParamsGreen(param_handler, options)
     else:
         raise Exception(f"Unknown fuel: {type}")
 
@@ -32,10 +31,10 @@ def evalCost(p, type: str):
         raise Exception(f"Unknown fuel: {type}")
 
 
-def getCostParamsNG(pars: pd.DataFrame, options: dict):
+def getCostParamsNG(pm: ParameterHandler, options: dict):
     return dict(
-        p_ng=getValAndUnc(pars, 'cost_ng_price', options),
-        c_tnd=getValAndUnc(pars, 'cost_ng_grid', options),
+        p_ng=pm.getValAndUnc('cost_ng_price', options),
+        c_tnd=pm.getValAndUnc('cost_ng_grid', options),
     )
 
 
@@ -49,7 +48,7 @@ def getCostNG(p_ng, c_tnd, calc_unc: bool = True):
     }
 
 
-def getCostParamsBlue(pars: pd.DataFrame, options: dict):
+def getCostParamsBlue(pm: ParameterHandler, options: dict):
     if options['blue_tech'] not in known_blue_techs:
         raise Exception(f"Unknown blue technology type: {options['blue_tech']}")
 
@@ -58,24 +57,24 @@ def getCostParamsBlue(pars: pd.DataFrame, options: dict):
         options = options.copy()
         options['blue_tech'] = options['blue_tech'].rstrip('-lowscco2')
 
-    i = getVal(pars, 'irate', options)
-    n = getVal(pars, 'blue_lifetime', options)
+    i = pm.getVal('irate', options)
+    n = pm.getVal('blue_lifetime', options)
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        c_pl=getValAndUnc(pars, 'cost_blue_capex', options),
-        c_fonm=getValAndUnc(pars, 'cost_blue_fixedonm', options),
-        c_vonm=getValAndUnc(pars, 'cost_blue_varonm', options),
-        flh=getVal(pars, 'cost_blue_flh', options),
-        p_ng=getValAndUnc(pars, 'cost_ng_price', options),
-        eff=getValAndUnc(pars, 'blue_eff', options),
-        p_el=getValAndUnc(pars, 'cost_green_elec', options),
-        eff_el=getValAndUnc(pars, 'blue_eff_elec', options),
-        c_CTS=getValAndUnc(pars, 'cost_blue_cts', options),
-        emi=getVal(pars, 'cost_blue_emiForCTS', options),
-        transp=getValAndUnc(pars, 'cost_h2transp', options),
-        cr=getValAndUnc(pars, 'ghgi_blue_capture_rate', options),
-        crd=getVal(pars, 'ghgi_blue_capture_rate_default', options),
+        c_pl=pm.getValAndUnc('cost_blue_capex', options),
+        c_fonm=pm.getValAndUnc('cost_blue_fixedonm', options),
+        c_vonm=pm.getValAndUnc('cost_blue_varonm', options),
+        flh=pm.getVal('cost_blue_flh', options),
+        p_ng=pm.getValAndUnc('cost_ng_price', options),
+        eff=pm.getValAndUnc('blue_eff', options),
+        p_el=pm.getValAndUnc('cost_green_elec', options),
+        eff_el=pm.getValAndUnc('blue_eff_elec', options),
+        c_CTS=pm.getValAndUnc('cost_blue_cts', options),
+        emi=pm.getVal('cost_blue_emiForCTS', options),
+        transp=pm.getValAndUnc('cost_h2transp', options),
+        cr=pm.getValAndUnc('ghgi_blue_capture_rate', options),
+        crd=pm.getVal('ghgi_blue_capture_rate_default', options),
     )
 
 
@@ -137,19 +136,19 @@ def getCostBlue(FCR, c_pl, c_fonm, c_vonm, flh, p_ng, eff, p_el, eff_el, c_CTS, 
     }
 
 
-def getCostParamsGreen(pars: pd.DataFrame, options: dict):
-    i = getVal(pars, 'irate', options)
-    n = getVal(pars, 'green_lifetime', options)
+def getCostParamsGreen(pm: ParameterHandler, options: dict):
+    i = pm.getVal('irate', options)
+    n = pm.getVal('green_lifetime', options)
 
     return dict(
         FCR=i * (1 + i) ** n / ((1 + i) ** n - 1),
-        c_pl=getValAndUnc(pars, 'cost_green_capex', options),
-        c_fonm=getVal(pars, 'cost_green_fixedonm', options),
-        c_vonm=getValAndUnc(pars, 'cost_green_varonm', options),
-        ocf=getVal(pars, 'green_ocf', options),
-        p_el=getValAndUnc(pars, 'cost_green_elec', options),
-        eff=getVal(pars, 'green_eff', options),
-        transp=getValAndUnc(pars, 'cost_h2transp', options),
+        c_pl=pm.getValAndUnc('cost_green_capex', options),
+        c_fonm=pm.getVal('cost_green_fixedonm', options),
+        c_vonm=pm.getValAndUnc('cost_green_varonm', options),
+        ocf=pm.getVal('green_ocf', options),
+        p_el=pm.getValAndUnc('cost_green_elec', options),
+        eff=pm.getVal('green_eff', options),
+        transp=pm.getValAndUnc('cost_h2transp', options),
     )
 
 

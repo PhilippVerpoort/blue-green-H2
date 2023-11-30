@@ -1,6 +1,7 @@
 .idea/
 .venv/
-output/*
+print/*
+*.pkl
 
 
 

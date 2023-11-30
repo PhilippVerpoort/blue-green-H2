@@ -1,0 +1,141 @@
+NG:
+  name: Natural gas
+  cases:
+    gas_prices:
+      high:
+        desc: High gas prices
+        cost_ng_price:
+          2025: 60.0
+          2030: 40.0
+          2050: 40.0
+      low:
+        desc: Low gas prices
+        cost_ng_price:
+          2025: 15.0
+          2030: 15.0
+          2050: 15.0
+    cons_vs_prog:
+      cons:
+        desc: Conservative
+        colour: '#bd4b00'
+        ghgi_ng_methaneleakage:
+          2025: 1.5
+          2050: 1.5
+      prog:
+        desc: Progressive
+        colour: '#ef7500'
+        ghgi_ng_methaneleakage:
+          2025: 1.0
+          2050: 0.1
+  source:
+    "High gas-price scenario derived based on TTF future natural gas prices. Low gas-price scenario derived based on
+    Henry Hub future natural gas prices.
+    
+    Methane leakage rate scenarios are derived based on IEA data [3]."
+
+
+BLUE:
+  name: Blue H<sub>2</sub>
+  colour: '#589ace'
+  cases:
+    gas_prices:
+      high:
+        desc: High gas prices
+        cost_ng_price:
+          2025: 60.0
+          2030: 40.0
+          2050: 40.0
+      low:
+        desc: Low gas prices
+        cost_ng_price:
+          2025: 15.0
+          2030: 15.0
+          2050: 15.0
+    cons_vs_prog:
+      cons:
+        desc: Conservative
+        colour: '#3647a3'
+        blue_tech: smr-ccs-56%
+        ghgi_ng_methaneleakage:
+          2025: 1.5
+          2050: 1.5
+      prog:
+        desc: Progressive
+        colour: '#589ace'
+        blue_tech: atr-ccs-93%
+        ghgi_ng_methaneleakage:
+          2025: 1.0
+          2050: 0.1
+    scco2:
+      none:
+        desc: ''
+      lowscco2:
+        desc: Low supply-chain CO<sub>2</sub>
+        blue_tech: atr-ccs-93%-lowscco2
+  source:
+    "High gas-price scenario derived based on TTF future natural gas prices. Low gas-price scenario derived based on
+    Henry Hub future natural gas prices.
+    
+    Methane leakage rate scenarios are derived based on IEA data [3]."
+
+
+GREEN:
+  name: Green H<sub>2</sub>
+  colour: '#38761d'
+  cases:
+    cons_vs_prog:
+      cons:
+        desc: Conservative
+        colour: '#38761d'
+        cost_green_elec:
+          2025: 100.0
+          2030: 80
+          2050: 50
+        cost_green_capex:
+          2025: 700
+          2030: 500
+          2040: 400
+          2050: 300
+        green_share:
+          2025: 75.0 +- 5.0
+          2030: 90.0 +- 2.5
+          2035: 100.0 + 0.0 - 2.5
+          2050: 100.0 + 0.0 - 2.5
+        green_ocf:
+          2025: 50
+          2050: 50
+        cost_h2transp:
+          2025: 10
+          2050: 5
+      prog:
+        desc: Progressive
+        colour: '#6ac100'
+        cost_green_elec:
+          2025: 50
+          2050: 20
+        cost_green_capex:
+          2025: 500
+          2030: 400
+          2040: 200
+          2050: 100
+        green_share:
+          2025: 100.0 + 0.0 - 5.0
+          2050: 100.0 + 0.0 - 2.5
+        green_ocf:
+          2025: 35
+          2030: 40
+          2035: 50
+          2050: 50
+  source:
+    "Conservative electriticy prices: A grid-connected electrolyser (conservative case) pays electricity prices and 
+    grid fees (~30 EUR/MWh) [13]. Flexible operation reduces their specific electricity price below average annual 
+    electricity prices (see the subsection cost data in methods and data). Progressive electricity prices: 
+    Electrolysers with a direct connection to renewable supply (progressive case) can operate at low renewable 
+    electricity costs [14] (with reduced full-load hours).
+    
+    CAPEX: Based on IRENA and IEA data [8,15].
+    
+    Share of RE in electricity mix based on own analysis.
+    
+    OCF either for RE-only operation mode [11] or for RE-only operation mode. Own assumption based on capacity factor 
+    of wind and solar PV power [14]."
