@@ -414,7 +414,7 @@ green_lifetime:
   desc: Lifetime of electrolysis plants.
   type: linear
   value:
-    2025: 10
+    2025: 12.5
     2030: 15
     2035: 20
     2040: 20

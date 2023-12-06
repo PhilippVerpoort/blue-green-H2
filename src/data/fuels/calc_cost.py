@@ -155,7 +155,7 @@ def getCostParamsGreen(pm: ParameterHandler, options: dict):
 def getCostGreen(FCR, c_pl, c_fonm, c_vonm, ocf, p_el, eff, transp, calc_unc: bool = True):
     return {
         # capital cost = fixed-charge rate * CAPEX / (operational-capacity factor * 8760 h/a)
-        'cap': simpleRetValUnc(*[FCR * c / (ocf*8760) for c in c_pl], 'green_capex', calc_unc),
+        'cap': simpleRetValUnc(*[FCR * c / eff / (ocf*8760) for c in c_pl], 'green_capex', calc_unc),
 
         # elec cost = elec price / efficiency
         'elec': simpleRetValUnc(*[p / eff for p in p_el], 'green_capex', calc_unc),
