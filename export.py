@@ -11,7 +11,7 @@ def export():
     else:
         fig_names = None
 
-    webapp.export(fig_names, export_formats=['png'])
+    webapp.export(fig_names, export_formats=['png', 'svg', 'pdf'])
 
 
 # call export function when running as script
