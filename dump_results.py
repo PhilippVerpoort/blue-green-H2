@@ -6,6 +6,9 @@ from src.load import load_inputs
 from src.proc import process_inputs
 
 
+DUMPDIR = Path(__file__).parent / 'dump'
+
+
 # load required data and dump into Excel spreadsheet
 def dump():
     # load inputs and outputs
@@ -15,7 +18,8 @@ def dump():
     process_inputs(inputs, outputs)
 
     # set file path for dumping
-    file_path = Path(__file__).parent / 'dump' / 'results.xlsx'
+    DUMPDIR.mkdir(parents=True, exist_ok=True)
+    file_path = DUMPDIR / 'results.xlsx'
 
     # call dump function
     print('Exporting results to spreadsheet...')

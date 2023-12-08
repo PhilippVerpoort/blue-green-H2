@@ -5,6 +5,9 @@ from src.dump_params import dump_params
 from src.load import load_inputs
 
 
+DUMPDIR = Path(__file__).parent / 'dump'
+
+
 # load required data and dump into Excel spreadsheet
 def dump():
     # load inputs and outputs
@@ -12,6 +15,7 @@ def dump():
     load_inputs(inputs)
 
     # set file path for dumping
+    DUMPDIR.mkdir(parents=True, exist_ok=True)
     file_path = Path(__file__).parent / 'dump' / 'parameters.xlsx'
 
     # call dump function
