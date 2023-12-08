@@ -19,7 +19,6 @@ gas_prices_params = {
 edit_tables_modal = {
     'simple-important-params': ['cons', 'prog'],
     'simple-gas-prices': ['high', 'low'],
-    'advanced-params': ['value'],
 }
 
 

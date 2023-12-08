@@ -585,8 +585,8 @@ pyyaml = "^6.0.1"
 [package.source]
 type = "git"
 url = "https://github.com/PhilippVerpoort/piw.git"
-reference = "v0.3.1"
-resolved_reference = "660318810c0af611a1c595b34ea46f188c803577"
+reference = "v0.4.0"
+resolved_reference = "6f9ff65a537abd8988d4f044ebc527a347ce10bb"
 
 [[package]]
 name = "plotly"
@@ -836,4 +836,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "f19859eb907fda31cee497b68448df606fd1fc2a3201a792fcb29503b743f9e3"
+content-hash = "07d303b1797b1ce61a5cb8083e1075f199bc31b241207c0df7a40c9ba065f491"

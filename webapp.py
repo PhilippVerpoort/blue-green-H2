@@ -6,7 +6,7 @@ from dash.dependencies import Input, State
 from piw import Webapp
 from piw.template import piw_template
 
-from src.ctrls import main_ctrl
+from src.ctrls import main_ctrl, edit_tables_modal
 from src.load import load_inputs
 from src.plots.BarsPlot import BarsPlot
 from src.plots.BlueGreenPlot import BlueGreenPlot
@@ -45,6 +45,7 @@ webapp = Webapp(
         State('simple-gwp', 'value'),
     ],
     update=[update_inputs],
+    ctrls_tables_modal=edit_tables_modal,
     proc=[process_inputs],
     plots=[CostEmiOverTimePlot, FSCPOverTimePlot, HeatmapPlot, SensitivityPlot, BarsPlot, BlueGreenPlot],
     sort_figs=['fig1', 'fig3', 'fig4', 'fig5', 'figS1', 'figS2', 'figS3', 'figS4', 'figS5'],
