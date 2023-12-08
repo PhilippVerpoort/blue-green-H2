@@ -3,16 +3,17 @@ import copy
 import numpy as np
 import pandas as pd
 
-from src.data.fuels.calc_cost import calcCost
-from src.data.fuels.calc_ghgi import calcGHGI
-from src.data.fuels.helper_funcs import ParameterHandler
-from src.data.params.full_params import getFullParams
+from src.proc_func.cost import calc_cost
+from src.proc_func.ghgi import calc_ghgi
+from src.proc_func.helper import ParameterHandler
+from src.proc_func.params import get_full_params
 
 
 # calculate fuel data
-def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: dict, gwp: str, params_options: dict, units: dict):
-    fuelEntries = []
-    fuelSpecs = {}
+def calc_fuel_data(times: list, full_params: pd.DataFrame, fuels: dict,
+                   params: dict, gwp: str, params_options: dict, units: dict):
+    fuel_entries = []
+    fuel_specs = {}
 
     for fuel_id, fuel in fuels.items():
         if 'cases' not in fuel:
@@ -21,9 +22,9 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
                 'gwp': gwp,
             }
 
-            fuelEntries.extend(calcFuel(full_params, fuel_id, fuel_id, options, times, params_options))
+            fuel_entries.extend(calc_fuel(full_params, fuel_id, fuel_id, options, times, params_options))
 
-            fuelSpecs[fuel_id] = {
+            fuel_specs[fuel_id] = {
                 'name': fuel['name'],
                 'type': fuel_id,
                 'shortname': fuel['name'],
@@ -32,20 +33,24 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
                 'options': options,
             }
         else:
-            cases = __getCases(fuel['cases'], params, times, units)
+            cases = _get_cases(fuel['cases'], params, times, units)
             for cid, case in cases.items():
                 fuel_id_full = f"{fuel_id}-{cid}"
 
                 options = {
-                    'blue_tech': case['blue_tech'] if 'blue_tech' in case else fuel['blue_tech'] if 'blue_tech' in fuel else None,
+                    'blue_tech': (case['blue_tech']
+                                  if 'blue_tech' in case else
+                                  fuel['blue_tech']
+                                  if 'blue_tech' in fuel else
+                                  None),
                     'gwp': gwp,
                 }
 
                 overridden_names = case['params'].droplevel(level=1).index.unique().to_list()
                 this_params = pd.concat([full_params.query(f"name not in @overridden_names"), case['params']])
-                fuelEntries.extend(calcFuel(this_params, fuel_id_full, fuel_id, options, times, params_options))
+                fuel_entries.extend(calc_fuel(this_params, fuel_id_full, fuel_id, options, times, params_options))
 
-                fuelSpecs[fuel_id_full] = {
+                fuel_specs[fuel_id_full] = {
                     'name': f"{fuel['name']} ({case['desc']})",
                     'type': fuel_id,
                     'shortname': fuel['name'],
@@ -54,29 +59,30 @@ def calcFuelData(times: list, full_params: pd.DataFrame, fuels: dict, params: di
                     'options': options,
                 }
 
-    return pd.DataFrame.from_records(fuelEntries), fuelSpecs
+    return pd.DataFrame.from_records(fuel_entries), fuel_specs
 
 
-def calcFuel(full_params: pd.DataFrame, fuel_id_full: str, type: str, options: dict, times: list, params_options: dict):
+def calc_fuel(full_params: pd.DataFrame, fuel_id_full: str, fuel_type: str,
+              options: dict, times: list, params_options: dict):
     r = []
 
     for t in times:
-        currentParams = full_params.query(f"year=={t}").droplevel(level=1)
-        paramHandler = ParameterHandler(currentParams, params_options)
+        current_params = full_params.query(f"year=={t}").droplevel(level=1)
+        param_handler = ParameterHandler(current_params, params_options)
 
-        newFuel = {'fuel': fuel_id_full, 'type': type, 'year': t}
+        new_fuel = {'fuel': fuel_id_full, 'type': fuel_type, 'year': t}
 
-        levelisedCost = calcCost(paramHandler, type, options)
-        newFuel |= __getComponents(levelisedCost, 'cost')
-        levelisedGHGI = calcGHGI(paramHandler, type, options)
-        newFuel |= __getComponents(levelisedGHGI, 'ghgi')
+        levelised_cost = calc_cost(param_handler, fuel_type, options)
+        new_fuel |= _get_components(levelised_cost, 'cost')
+        levelised_ghgi = calc_ghgi(param_handler, fuel_type, options)
+        new_fuel |= _get_components(levelised_ghgi, 'ghgi')
 
-        r.append(newFuel)
+        r.append(new_fuel)
 
     return r
 
 
-def __getComponents(levelised: dict, mode: str):
+def _get_components(levelised: dict, mode: str):
     r = {}
 
     # value components
@@ -107,7 +113,7 @@ def __getComponents(levelised: dict, mode: str):
     return r
 
 
-def __getCases(cases: dict, params: dict, times: list, units: dict):
+def _get_cases(cases: dict, params: dict, times: list, units: dict):
     overridden = {}
 
     for dim in cases:
@@ -125,25 +131,27 @@ def __getCases(cases: dict, params: dict, times: list, units: dict):
             for p in overridden_params:
                 overridden_params[p]['value'] = cases[dim][c][p]
 
-            overridden[dim][c]['params'] = getFullParams(overridden_params, units, times)
+            overridden[dim][c]['params'] = get_full_params(overridden_params, units, times)
 
-    return __mergeCases(overridden)
+    return _merge_cases(overridden)
 
 
-def __mergeCases(overridden: dict):
+def _merge_cases(overridden: dict):
     key = next(iter(overridden))
     entry = overridden[key]
     if len(overridden) == 1:
         return entry
     else:
         del overridden[key]
-        r = __mergeCases(overridden)
+        r = _merge_cases(overridden)
         return {
             '-'.join([c for c in [c1, c2] if not c == 'none']): {
                 'desc': f"{entry[c1]['desc']}, {r[c2]['desc']}",
                 'colour': entry[c1]['colour'] if entry[c1]['colour'] else r[c2]['colour'],
-                'blue_tech': r[c2]['blue_tech'] if 'blue_tech' in r[c2] and r[c2]['blue_tech'] else entry[c1]['blue_tech'],
                 'params': pd.concat([entry[c1]['params'], r[c2]['params']]),
+                'blue_tech': (r[c2]['blue_tech']
+                              if 'blue_tech' in r[c2] and r[c2]['blue_tech'] else
+                              entry[c1]['blue_tech']),
             }
             for c2 in r for c1 in entry
         }

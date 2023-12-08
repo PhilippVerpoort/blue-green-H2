@@ -1,16 +1,16 @@
-from src.data.params.full_params import convert_unit
+from src.proc_func.params import convert_unit
 from src.utils import load_yaml_data_file, load_csv_data_file
 
 
-def load_params(inputs: dict):
+def load_inputs(inputs: dict):
     # load input data from yaml files
     for key in ('options', 'params', 'fuels', 'units'):
         inputs[key] = load_yaml_data_file(key)
 
     # get options for each parameter
     inputs['params_options'] = {
-        pkey: pval['options'] if 'options' in pval else []
-        for pkey, pval in inputs['params'].items()
+        par_key: par_specs['options'] if 'options' in par_specs else []
+        for par_key, par_specs in inputs['params'].items()
     }
 
     # load IEA CSV data into dataframe

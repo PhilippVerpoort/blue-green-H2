@@ -5,16 +5,17 @@ import pandas as pd
 
 
 # Calculate parameters including uncertainty at different times, using linear interpolation if needed.
-def getFullParams(basicData: dict, units: dict, times: list):
+def get_full_params(basic_data: dict, units: dict, times: list):
     pars = []
 
-    for parId, par in basicData.items():
-        if par['value'] == 'cases': continue
+    for par_id, par in basic_data.items():
+        if par['value'] == 'cases':
+            continue
 
-        newPars = __calcValues(parId, par['value'], par['type'], times)
-        for newPar in newPars:
+        new_pars = _calc_values(par_id, par['type'], par['value'], times)
+        for new_par in new_pars:
             # set relative uncertainty if not provided explicitly
-            if newPar['unc_upper'] is None or newPar['unc_lower'] is None:
+            if new_par['unc_upper'] is None or new_par['unc_lower'] is None:
                 if 'uncertainty' in par and par['uncertainty']:
                     if isinstance(par['uncertainty'], float):
                         unc_rel = par['uncertainty']
@@ -22,20 +23,24 @@ def getFullParams(basicData: dict, units: dict, times: list):
                         unc_rel = float(par['uncertainty'].rstrip('%'))/100.0
                     else:
                         raise Exception(f"Unknown relative uncertainty format: {par['uncertainty']}")
-                    newPar['unc_upper'] = unc_rel * newPar['value']
-                    newPar['unc_lower'] = unc_rel * newPar['value']
+                    new_par['unc_upper'] = unc_rel * new_par['value']
+                    new_par['unc_lower'] = unc_rel * new_par['value']
 
             # convert unit
             if 'unit' in par and par['unit'] is not None:
-                conversionFactor, newUnit = convert_unit(par['unit'], units)
+                conversion_factor, new_unit = convert_unit(par['unit'], units)
 
-                newPar['value'] = conversionFactor * newPar['value']
-                newPar['unc_upper'] = conversionFactor * newPar['unc_upper'] if newPar['unc_upper'] is not None else None
-                newPar['unc_lower'] = conversionFactor * newPar['unc_lower'] if newPar['unc_lower'] is not None else None
+                new_par['value'] = conversion_factor * new_par['value']
+                new_par['unc_upper'] = (conversion_factor * new_par['unc_upper']
+                                        if new_par['unc_upper'] is not None else
+                                        None)
+                new_par['unc_lower'] = (conversion_factor * new_par['unc_lower']
+                                        if new_par['unc_lower'] is not None else
+                                        None)
 
-                newPar['unit'] = newUnit
+                new_par['unit'] = new_unit
 
-            pars.append(newPar)
+            pars.append(new_par)
 
     r = pd.DataFrame.from_records(pars, columns=['name', 'year', 'unit', 'value', 'unc_upper', 'unc_lower'])\
                     .set_index(['name', 'year'])\
@@ -45,46 +50,46 @@ def getFullParams(basicData: dict, units: dict, times: list):
 
 
 # Iteratively calculate values for 1) keys (smr/atr, gwp100/gwp20, etc) and 2) different times (2025, 2030, 2035, etc).
-def __calcValues(id:str, value: Union[dict, str, float], type: str, times: list):
+def _calc_values(par_id: str, par_type: str, value: Union[dict, str, float], times: list):
     rs = []
 
     if isinstance(value, dict) and isinstance(list(value.keys())[0], str) and '+' not in list(value.keys())[0]:
         for key, val in value.items():
-            rs.extend(__calcValues(id+'_'+key, val, type, times))
+            rs.extend(_calc_values(par_id + '_' + key, par_type, val, times))
         return rs
 
-    if type == 'const' or isinstance(value, float) or isinstance(value, int) or isinstance(value, str):
+    if par_type == 'const' or isinstance(value, float) or isinstance(value, int) or isinstance(value, str):
         if not (isinstance(value, float) or isinstance(value, int) or isinstance(value, str)):
             raise Exception('Unknown type of value variable. Must be string (including uncertainty) or float.')
 
-        value, unc_upper, unc_lower = __convertValue(value)
+        value, unc_upper, unc_lower = _convert_value(value)
 
         for t in times:
-            r = {'name': id, 'year': t, 'value': value, 'unc_upper': unc_upper, 'unc_lower': unc_lower}
+            r = {'name': par_id, 'year': t, 'value': value, 'unc_upper': unc_upper, 'unc_lower': unc_lower}
             rs.append(r)
 
-    elif type == 'linear' and isinstance(value, dict):
+    elif par_type == 'linear' and isinstance(value, dict):
         if not all(isinstance(v, float) or isinstance(v, int) or isinstance(v, str) for v in value.values()):
             raise Exception('Unknown type of value variable. Must be string (including uncertainty) or float.')
 
         points = []
         for key, val in value.items():
-            value, unc_upper, unc_lower = __convertValue(val)
+            value, unc_upper, unc_lower = _convert_value(val)
             points.append((key, value, unc_upper, unc_lower))
 
         for t in times:
-            value, unc_upper, unc_lower = __linearInterpolate(t, points)
-            r = {'name': id, 'year': t, 'value': value, 'unc_upper': unc_upper, 'unc_lower': unc_lower}
+            value, unc_upper, unc_lower = _linear_interpolate(t, points)
+            r = {'name': par_id, 'year': t, 'value': value, 'unc_upper': unc_upper, 'unc_lower': unc_lower}
             rs.append(r)
 
     else:
-        raise Exception(f"Unknown data type {format(type)}.")
+        raise Exception(f"Unknown data type {format(par_type)}.")
 
     return rs
 
 
 # Convert strings to floats with uncertainty, e.g. string '1.0 +- 0.1' becomes tuple (1.0, 0.1, 0.1).
-def __convertValue(value: Union[str, float, int]):
+def _convert_value(value: Union[str, float, int]):
     if isinstance(value, float) or isinstance(value, int):
         return value, None, None
     elif isinstance(value, str):
@@ -121,17 +126,17 @@ def __convertValue(value: Union[str, float, int]):
 def convert_unit(unit: str, units: dict, value: float = 1.0):
     for unitType, unitOptions in units['types'].items():
         if unit in unitOptions:
-            newUnit = unitOptions[0]
-            if unit == newUnit:
+            new_unit = unitOptions[0]
+            if unit == new_unit:
                 return value, unit
             else:
-                return units['conversion'][f"{unit}__to__{newUnit}"] * value, newUnit
+                return units['conversion'][f"{unit}__to__{new_unit}"] * value, new_unit
 
     raise Exception(f"Unit not found: {unit}")
 
 
 # Select value provided for time t. Alternatively, if not existent, interpolate to time t from adjacent points.
-def __linearInterpolate(t: int, points: list):
+def _linear_interpolate(t: int, points: list):
     if len(points) == 1:
         t, val, unc, uncl = points[0]
         return val, unc, uncl
@@ -151,9 +156,12 @@ def __linearInterpolate(t: int, points: list):
         else:
             raise ValueError()
 
-    if p_min is None: return p_max[2:4]
-    if p_max is None: return p_min[2:4]
-    if p_min is None and p_max is None: raise Exception("Not enough interpolation points!")
+    if p_min is None:
+        return p_max[2:4]
+    if p_max is None:
+        return p_min[2:4]
+    if p_min is None and p_max is None:
+        raise Exception("Not enough interpolation points!")
 
     (t1, val1, unc1, uncl1) = p_min
     (t2, val2, unc2, uncl2) = p_max

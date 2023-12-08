@@ -16,7 +16,7 @@ gas_prices_params = {
     'cost_ng_price': ['NG', 'BLUE'],
 }
 
-editTablesModal = {
+edit_tables_modal = {
     'simple-important-params': ['cons', 'prog'],
     'simple-gas-prices': ['high', 'low'],
     'advanced-params': ['value'],
@@ -43,7 +43,9 @@ def main_ctrl(default_inputs: dict):
                             {'id': 'cons', 'name': 'Conservative cases'},
                             {'id': 'prog', 'name': 'Progressive cases'},
                         ],
-                        data=getSimpleParamsTable(default_inputs, cons_vs_prog_params, ['cons', 'prog'], 'cons_vs_prog'),
+                        data=get_simple_params_table(
+                            default_inputs, cons_vs_prog_params, ['cons', 'prog'], 'cons_vs_prog',
+                        ),
                         editable=False,
                         style_cell={'whiteSpace': 'pre-line'},
                         style_cell_conditional=[
@@ -87,7 +89,7 @@ def main_ctrl(default_inputs: dict):
                             {'id': 'high', 'name': 'High price'},
                             {'id': 'low', 'name': 'Low price'},
                         ],
-                        data=getSimpleParamsTable(default_inputs, gas_prices_params, ['high', 'low'], 'gas_prices'),
+                        data=get_simple_params_table(default_inputs, gas_prices_params, ['high', 'low'], 'gas_prices'),
                         editable=False,
                         style_cell={'whiteSpace': 'pre-line'},
                         style_cell_conditional=[
@@ -143,24 +145,25 @@ def main_ctrl(default_inputs: dict):
         className='side-card',
     )]
 
-def getSimpleParamsTable(inputs: dict, paramList: dict, casesNames: list, casesType: str):
+
+def get_simple_params_table(inputs: dict, param_list: dict, cases_names: list, cases_type: str):
     r = []
 
-    paramData = inputs['params']
-    fuelData = inputs['fuels']
+    param_data = inputs['params']
+    fuel_data = inputs['fuels']
 
-    for parName in paramList:
-        fuel = paramList[parName][0]
+    for parName in param_list:
+        fuel = param_list[parName][0]
         r.append({
             'name': parName,
-            'desc': paramData[parName]['short'] if 'short' in paramData[parName] else paramData[parName]['desc'],
-            'unit': paramData[parName]['unit'],
+            'desc': param_data[parName]['short'] if 'short' in param_data[parName] else param_data[parName]['desc'],
+            'unit': param_data[parName]['unit'],
             **{
                 case: yaml.dump(
-                    fuelData[fuel]['cases'][casesType][case][parName]
-                    if parName in fuelData[fuel]['cases'][casesType][case] else
-                    paramData[parName]['value']
-                ) for case in casesNames
+                    fuel_data[fuel]['cases'][cases_type][case][parName]
+                    if parName in fuel_data[fuel]['cases'][cases_type][case] else
+                    param_data[parName]['value']
+                ) for case in cases_names
             },
         })
 

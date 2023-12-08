@@ -7,7 +7,7 @@ from piw import Webapp
 from piw.template import piw_template
 
 from src.ctrls import main_ctrl
-from src.load import load_params
+from src.load import load_inputs
 from src.plots.BarsPlot import BarsPlot
 from src.plots.BlueGreenPlot import BlueGreenPlot
 from src.plots.CostEmiOverTimePlot import CostEmiOverTimePlot
@@ -31,12 +31,12 @@ webapp = Webapp(
         '': 'Simple',
         'advanced': 'Advanced',
     },
-    desc='This webapp reproduces results presented in an accompanying manuscript on the cost competitiveness of blue and '
-         'green hydrogen.',
+    desc='This webapp reproduces results presented in an accompanying manuscript on the cost competitiveness of blue'
+         'and green hydrogen.',
     authors=['Philipp C. Verpoort', 'Falko Ueckerdt', 'Rahul Anantharaman', 'Christian Bauer', 'Fiona Beck',
              'Thomas Longden', 'Simon Roussanaly'],
     date='10/02/2022',
-    load=[load_params],
+    load=[load_inputs],
     ctrls=[main_ctrl],
     generate_args=[
         Input('simple-update', 'n_clicks'),

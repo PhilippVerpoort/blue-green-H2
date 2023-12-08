@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from plotly.colors import hex_to_rgb
 from plotly.subplots import make_subplots
 
-from src.data.FSCPs.calc_FSCPs import calcFSCPs
+from src.proc_func.fscps import calc_fscps
 from src.utils import load_yaml_plot_config_file
 from src.plots.BasePlot import BasePlot
 
@@ -13,31 +13,44 @@ class FSCPOverTimePlot(BasePlot):
     figs, cfg = load_yaml_plot_config_file('FSCPOverTimePlot')
 
     def plot(self, inputs: dict, outputs: dict, subfig_names: list) -> dict:
+        if 'fig3' not in subfig_names and 'figS2' not in subfig_names:
+            return {}
         ret = {}
 
         # select which lines to plot based on function argument
-        plotScatter, plotLines = self._selectPlotFSCPs(outputs['fuelData'], self.cfg['selected_cases'],
-                                                  calc_unc=('figS2' in subfig_names))
+        plot_scatter, plot_lines = self._select_plot_fscps(
+            outputs['fuelData'], self.cfg['selected_cases'], calc_unc=('figS2' in subfig_names),
+        )
+
+        # get carbon price trajectory data
+        cp_traj_data = self._compute_cp_traj()
 
         # produce figure 3
-        ret['fig3'] = self._produceFigure(plotScatter, plotLines, outputs['fuelSpecs'], self.cfg) if 'fig3' in subfig_names else None
+        ret['fig3'] = (
+            self._produce_figure(plot_scatter, plot_lines, outputs['fuelSpecs'], cp_traj_data)
+            if 'fig3' in subfig_names else None
+        )
 
         # produce figure S2
-        ret['figS2'] = self._produceFigure(plotScatter, plotLines, outputs['fuelSpecs'], self.cfg, is_uncertainty=True) if 'figS2' in subfig_names else None
+        ret['figS2'] = (
+            self._produce_figure(plot_scatter, plot_lines, outputs['fuelSpecs'], cp_traj_data, is_uncertainty=True)
+            if 'figS2' in subfig_names else None
+        )
 
         return self.add_gwp_label(inputs['options']['gwp'], ret)
 
-    def _selectPlotFSCPs(self, fuelData: pd.DataFrame, selected_cases: dict, calc_unc: bool = True):
-        plotScatter = {}
-        plotInterpolation = {}
+    def _select_plot_fscps(self, fuel_data: pd.DataFrame, selected_cases: dict,
+                           calc_unc: bool = True) -> tuple[dict[str, pd.DataFrame], dict[str, pd.DataFrame]]:
+        plot_scatter = {}
+        plot_interpolation = {}
 
         for scid, fuels in selected_cases.items():
             # insert interpolation points
-            t = np.linspace(fuelData['year'].min(), fuelData['year'].max(), self.cfg['n_samples'])
+            t = np.linspace(fuel_data['year'].min(), fuel_data['year'].max(), self.cfg['n_samples'])
 
             tmp = []
             for f in fuels:
-                support = fuelData \
+                support = fuel_data \
                     .query(f"fuel=='{f}'") \
                     .reset_index(drop=True) \
                     .astype({'year': float})
@@ -55,24 +68,25 @@ class FSCPOverTimePlot(BasePlot):
                         on=['year', 'fuel', 'type'],
                         how='outer',
                         suffixes=('', '_drop'),
-                    ) \
-                        .sort_values(by=['year']) \
-                        .reset_index(drop=True) \
-                        .interpolate() \
-                        .dropna(axis='columns')
+                    )
+                    .sort_values(by=['year'])
+                    .reset_index(drop=True)
+                    .interpolate()
+                    .dropna(axis='columns')
                 )
 
-            fuelDataInterpolated = pd.concat(tmp)
+            fuel_data_interpolated = pd.concat(tmp)
 
             # compute FSCPs
-            plotInterpolation[scid] = calcFSCPs(fuelDataInterpolated, calc_unc).assign(
+            plot_interpolation[scid] = calc_fscps(fuel_data_interpolated, calc_unc).assign(
                 tid=lambda r: r.fuel_y + ' to ' + r.fuel_x)
-            years = fuelData.year.unique()
-            plotScatter[scid] = plotInterpolation[scid].query(f"year in @years")
+            years = fuel_data.year.unique()
+            plot_scatter[scid] = plot_interpolation[scid].query(f"year in @years")
 
-        return plotScatter, plotInterpolation
+        return plot_scatter, plot_interpolation
 
-    def _produceFigure(self, plotScatter: pd.DataFrame, plotLines: pd.DataFrame, fuelSpecs: dict, config: dict, is_uncertainty: bool = False):
+    def _produce_figure(self, plot_scatter: dict, plot_lines: dict, fuel_specs: dict, cp_traj_data: pd.DataFrame,
+                        is_uncertainty: bool = False):
         # plot
         fig = make_subplots(
             rows=2,
@@ -86,31 +100,32 @@ class FSCPOverTimePlot(BasePlot):
         subfigs = [(k // 2 + 1, k % 2 + 1, scid) for k, scid in enumerate(self.cfg['selected_cases'])]
 
         # whether to show the box with a legend explaining the cricle annotations
-        showAnnotationLegend = self._target != 'webapp' and not is_uncertainty
+        show_annotation_legend = self._target != 'webapp' and not is_uncertainty
 
         # add FSCP traces
-        hasLegend = []
+        has_legend = []
         for i, j, scid in subfigs:
-            all_traces = self._addFSCPTraces(plotScatter[scid], plotLines[scid], fuelSpecs, config, uncertainity=is_uncertainty)
+            all_traces = self._add_fscp_traces(plot_scatter[scid], plot_lines[scid], fuel_specs,
+                                               uncertainity=is_uncertainty)
             for tid, traces in all_traces.items():
-                if is_uncertainty and (not config['bgfscp_unc'] and 'NG' not in tid): continue
+                if is_uncertainty and (not self.cfg['bgfscp_unc'] and 'NG' not in tid):
+                    continue
                 tid_techs = '-'.join([fuel.split('-')[0] + '-' + fuel.split('-')[-1] for fuel in tid.split(' to ')])
-                if all(fuel in config['selected_cases'][scid] for fuel in tid.split(' to ')):
+                if all(fuel in self.cfg['selected_cases'][scid] for fuel in tid.split(' to ')):
                     for trace in traces:
-                        if tid_techs in hasLegend:
+                        if tid_techs in has_legend:
                             trace.showlegend = False
                         fig.add_trace(trace, row=i, col=j)
-                    if tid_techs not in hasLegend:
-                        hasLegend.append(tid_techs)
+                    if tid_techs not in has_legend:
+                        has_legend.append(tid_techs)
 
-        # compute and plot carbon price tracjetory
-        if not is_uncertainty or config['show_cp_unc']:
-            cpTrajData = self._computeCPTraj(self._glob_cfg['co2price_traj']['years'], self._glob_cfg['co2price_traj']['values'],
-                                             config['n_samples'])
-            traces = self._addCPTraces(cpTrajData, config)
+        # compute and plot carbon price trajectory
+        if not is_uncertainty or self.cfg['show_cp_unc']:
+            traces = self._add_cp_traces(cp_traj_data)
             for trace in traces:
                 for i, j, scid in subfigs:
-                    if i > 1 or j > 1: trace.showlegend = False
+                    if i > 1 or j > 1:
+                        trace.showlegend = False
                     fig.add_trace(trace, row=i, col=j)
 
         # zero y line
@@ -119,10 +134,10 @@ class FSCPOverTimePlot(BasePlot):
 
         # add circles on intersects
         if not is_uncertainty:
-            self._addAnnotations(fig, cpTrajData, fuelSpecs, plotLines, config)
+            self._add_annotations(fig, cp_traj_data, fuel_specs, plot_lines)
 
         # add top and left annotation
-        annotationStyling = dict(
+        annotation_styling = dict(
             xanchor='center', yanchor='middle', showarrow=False,
             bordercolor='black', borderwidth=2, borderpad=3, bgcolor='white'
         )
@@ -134,8 +149,8 @@ class FSCPOverTimePlot(BasePlot):
                 y=1.0,
                 yref='y domain',
                 yshift=40,
-                text=config['sidelabels']['top'][i],
-                **annotationStyling
+                text=self.cfg['sidelabels']['top'][i],
+                **annotation_styling
             )
 
             fig.add_annotation(
@@ -144,20 +159,20 @@ class FSCPOverTimePlot(BasePlot):
                 xshift=-150.0 if self._target != 'webapp' else -100.0,
                 y=0.5,
                 yref=f"y{str(i + 2) if i else ''} domain",
-                text=config['sidelabels']['left'][i],
+                text=self.cfg['sidelabels']['left'][i],
                 textangle=-90,
-                **annotationStyling
+                **annotation_styling
             )
 
         # update axes titles and ranges
         fig.update_layout(
             **{f"xaxis{i + 1 if i else ''}": dict(
-                title=config['labels']['time'],
-                range=[config['plotting']['t_min'], config['plotting']['t_max']],
+                title=self.cfg['labels']['time'],
+                range=[self.cfg['plotting']['t_min'], self.cfg['plotting']['t_max']],
             ) for i in range(4)},
             **{f"yaxis{i + 1 if i else ''}": dict(
-                title=config['labels']['fscp'] if (i + 1) % 2 else '',
-                range=[config['plotting']['fscp_min'], config['plotting']['fscp_max']],
+                title=self.cfg['labels']['fscp'] if (i + 1) % 2 else '',
+                range=[self.cfg['plotting']['fscp_min'], self.cfg['plotting']['fscp_max']],
             ) for i in range(4)},
             margin_l=180.0,
         )
@@ -169,33 +184,33 @@ class FSCPOverTimePlot(BasePlot):
                 xanchor='left',
                 x=0.0,
                 yanchor='top',
-                y=config['spacings']['legendPosY'] if showAnnotationLegend else -0.1,
+                y=self.cfg['spacings']['legendPosY'] if show_annotation_legend else -0.1,
             ),
         )
 
         # add legend for annotations
-        if showAnnotationLegend:
-            self._addAnnotationsLegend(fig, config)
+        if show_annotation_legend:
+            self._add_annotations_legend(fig)
 
             fig.update_layout(
                 **{f"yaxis{i + 1 if i else ''}": dict(
                     domain=[
-                        1.0 - config['spacings']['yShareTop'] if i >= 2 else 1.0 - (
-                                    config['spacings']['yShareTop'] - config['spacings']['spacingTop']) / 2,
-                        1.0 - (config['spacings']['yShareTop'] - config['spacings']['spacingTop']) / 2 -
-                        config['spacings']['spacingTop'] if i >= 2 else 1.0,
+                        1.0 - self.cfg['spacings']['yShareTop'] if i >= 2 else 1.0 - (
+                                    self.cfg['spacings']['yShareTop'] - self.cfg['spacings']['spacingTop']) / 2,
+                        1.0 - (self.cfg['spacings']['yShareTop'] - self.cfg['spacings']['spacingTop']) / 2 -
+                        self.cfg['spacings']['spacingTop'] if i >= 2 else 1.0,
                     ],
                 ) for i in range(4)},
                 xaxis5=dict(
                     range=[0, 1],
-                    domain=[0.0, config['spacings']['annotationsLegendWidth']],
+                    domain=[0.0, self.cfg['spacings']['annotationsLegendWidth']],
                     anchor='y5',
                     showticklabels=False,
                     ticks='',
                 ),
                 yaxis5=dict(
                     range=[0, 1],
-                    domain=[0.0, config['spacings']['annotationsLegendHeight']],
+                    domain=[0.0, self.cfg['spacings']['annotationsLegendHeight']],
                     anchor='x5',
                     showticklabels=False,
                     ticks='',
@@ -205,36 +220,38 @@ class FSCPOverTimePlot(BasePlot):
         return fig
 
     # add FSCP traces
-    def _addFSCPTraces(self, plotScatter: pd.DataFrame, plotLines: pd.DataFrame, fuelSpecs: dict, config: dict, uncertainity: bool = False):
+    def _add_fscp_traces(self, plot_scatter: pd.DataFrame, plot_lines: pd.DataFrame, fuel_specs: dict,
+                         uncertainity: bool = False) -> dict:
         traces = {}
 
-        for tid in plotScatter.tid.unique():
-            thisTraces = []
+        for tid in plot_scatter.tid.unique():
+            this_traces = []
 
-            thisScatter = plotScatter.query(f"tid=='{tid}'").reset_index(drop=True)
-            thisLine = plotLines.query(f"tid=='{tid}'").reset_index(drop=True)
+            this_scatter = plot_scatter.query(f"tid=='{tid}'").reset_index(drop=True)
+            this_line = plot_lines.query(f"tid=='{tid}'").reset_index(drop=True)
 
             # line properties
-            fuel_x = thisScatter.fuel_x.iloc[0]
-            fuel_y = thisScatter.fuel_y.iloc[0]
-            name_x = fuelSpecs[fuel_x]['shortname']
-            name_y = 'NG' if fuel_y.startswith('NG') else fuelSpecs[fuel_y]['shortname']
+            fuel_x = this_scatter.fuel_x.iloc[0]
+            fuel_y = this_scatter.fuel_y.iloc[0]
+            name_x = fuel_specs[fuel_x]['shortname']
+            name_y = 'NG' if fuel_y.startswith('NG') else fuel_specs[fuel_y]['shortname']
             name_case = 'progressive' if fuel_x.endswith('prog') else 'conservative'
             name = f"{name_y}→{name_x} ({name_case})"
-            col = config['fscp_colour'][fuel_y.split('-')[-1] + '-' + fuel_x.split('-')[-1]] if 'NG' not in tid else \
-            fuelSpecs[fuel_x]['colour']
+            col = (self.cfg['fscp_colour'][fuel_y.split('-')[-1] + '-' + fuel_x.split('-')[-1]]
+                   if 'NG' not in tid else
+                   fuel_specs[fuel_x]['colour'])
             isbluegreen = 'NG' not in fuel_y
 
-            if isbluegreen and thisLine.fscp.max() > 2000.0:
-                y = thisLine.loc[thisLine.fscp.idxmax(), 'year']
+            if isbluegreen and this_line.fscp.max() > 2000.0:
+                y = this_line.loc[this_line.fscp.idxmax(), 'year']
                 q = f"year>={y}"
-                thisLine = thisLine.query(q)
-                thisScatter = thisScatter.query(q)
+                this_line = this_line.query(q)
+                this_scatter = this_scatter.query(q)
 
             # scatter plot
-            thisTraces.append(go.Scatter(
-                x=thisScatter['year'],
-                y=thisScatter['fscp'],
+            this_traces.append(go.Scatter(
+                x=this_scatter['year'],
+                y=this_scatter['fscp'],
                 name=name,
                 legendgroup=0 if isbluegreen else 1,
                 showlegend=False,
@@ -242,49 +259,62 @@ class FSCPOverTimePlot(BasePlot):
                 line=dict(color=col, width=self._styles['lw_default']),
                 marker=dict(symbol='x-thin', size=self._styles['highlight_marker_sm'],
                             line={'width': self._styles['lw_thin'], 'color': col}, ),
-                hoverinfo='none',
+                hoverinfo='skip',
             ))
 
             # line plot
-            thisTraces.append(go.Scatter(
-                x=thisLine['year'],
-                y=thisLine['fscp'],
+            this_traces.append(go.Scatter(
+                x=this_line['year'],
+                y=this_line['fscp'],
                 legendgroup=0 if isbluegreen else 1,
                 legendgrouptitle=dict(
-                    text=f"<b>{config['legendlabels'][1]}:</b>" if isbluegreen else f"<b>{config['legendlabels'][0]}:</b>"),
+                    text=f"<b>{self.cfg['legendlabels'][1]}:</b>"
+                         if isbluegreen else
+                         f"<b>{self.cfg['legendlabels'][0]}:</b>",
+                ),
                 name=name,
                 mode='lines',
-                line=dict(color=col, width=self._styles['lw_default'],
-                          dash='dot' if fuel_x in config['cases_dashed'] or fuel_y in config[
-                              'cases_dashed'] else 'solid'),
-                hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+                line=dict(
+                    color=col,
+                    width=self._styles['lw_default'],
+                    dash='dot'
+                         if fuel_x in self.cfg['cases_dashed'] or fuel_y in self.cfg['cases_dashed'] else
+                         'solid'
+                ),
+                hovertemplate=f"<b>{name}</b><br>Year: %{{x:d}}<br>"
+                              f"FSCP: %{{y:.2f}}"
+                              f"<extra></extra>",
             ))
 
             # uncertainity envelope
             if uncertainity:
-                x = np.concatenate((thisLine['year'], thisLine['year'][::-1]))
+                x = np.concatenate((this_line['year'], this_line['year'][::-1]))
                 y = np.concatenate(
-                    (thisLine['fscp'] + thisLine['fscp_uu'], (thisLine['fscp'] - thisLine['fscp_ul'])[::-1]))
+                    (this_line['fscp'] + this_line['fscp_uu'], (this_line['fscp'] - this_line['fscp_ul'])[::-1]))
 
-                thisTraces.append(go.Scatter(
+                this_traces.append(go.Scatter(
                     x=x,
                     y=y,
                     mode='lines',
                     fillcolor=("rgba({}, {}, {}, {})".format(*hex_to_rgb(col), .2)),
                     fill='toself',
-                    line=dict(width=self._styles['lw_ultrathin'], color=col),
+                    line=dict(
+                        width=self._styles['lw_ultrathin'],
+                        color=col,
+                    ),
                     showlegend=False,
                     hoverinfo="none",
                 ))
 
-            traces[tid] = thisTraces
+            traces[tid] = this_traces
 
         return traces
 
     # add annotations explaining intersections of lines with markers
-    def _addAnnotations(self, fig: go.Figure, cpTrajData: pd.DataFrame, fuelSpecs: dict, plotLines: pd.DataFrame, config: dict):
-        for i, j, scid in [(k // 2 + 1, k % 2 + 1, scid) for k, scid in enumerate(config['selected_cases'])]:
-            points = self._calcPoints(cpTrajData, plotLines[scid], fuelSpecs, config['selected_cases'][scid], config)
+    def _add_annotations(self, fig: go.Figure, cp_traj_data: pd.DataFrame, fuel_specs: dict,
+                         plot_lines: dict[str, pd.DataFrame]):
+        for i, j, scid in [(k // 2 + 1, k % 2 + 1, scid) for k, scid in enumerate(self.cfg['selected_cases'])]:
+            points = self._calc_points(cp_traj_data, plot_lines[scid], fuel_specs, self.cfg['selected_cases'][scid])
             data = points.query(f"delta < 5.0")
 
             for _, row in data.iterrows():
@@ -299,69 +329,86 @@ class FSCPOverTimePlot(BasePlot):
                         textfont_color=row.colour,
                         textposition='bottom center',
                         showlegend=False,
-                        hovertemplate=f"<b>Milestone {int(row.label)}:</b> {config['annotationTexts'][f'point{int(row.label)}']}<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}<extra></extra>",
+                        hovertemplate=f"<b>Milestone {int(row.label)}:</b> "
+                                      f"{self.cfg['annotationTexts'][f'point{int(row.label)}']}"
+                                      f"<br>Time: %{{x:.2f}}<br>FSCP: %{{y:.2f}}"
+                                      f"<extra></extra>",
                     ),
                     row=i,
                     col=j,
                 )
 
     # compute where annotations should be added
-    def _calcPoints(self, cpTrajData: pd.DataFrame, plotLines: pd.DataFrame, fuelSpecs: dict, fuels: list, config: dict) -> dict:
+    def _calc_points(self, cp_traj_data: pd.DataFrame, plot_lines: pd.DataFrame, fuel_specs: dict,
+                     fuels: list) -> pd.DataFrame:
         points = []
 
         types = ['NG', 'BLUE', 'GREEN']
-        groupedFuels = {t: [f for f in fuels if not plotLines.query(
+        grouped_fuels = {t: [f for f in fuels if not plot_lines.query(
             f"(fuel_x=='{f}' and type_x=='{t}') or (fuel_y=='{f}' and type_y=='{t}')").empty] for t in types}
 
-        for fuelRef, fuelBlue, fuelGreen in [(r, b, g) for r in groupedFuels['NG'] for b in groupedFuels['BLUE'] for g
-                                             in groupedFuels['GREEN']]:
-            dropCols = ['tid', 'type_x', 'type_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
-            greenLine = plotLines.query(f"fuel_y=='{fuelRef}' & fuel_x=='{fuelGreen}'").drop(
-                columns=dropCols).reset_index(drop=True)
-            blueLine = plotLines.query(f"fuel_y=='{fuelRef}' & fuel_x=='{fuelBlue}'").drop(
-                columns=dropCols).reset_index(drop=True)
-            redLine = plotLines.query(f"fuel_y=='{fuelBlue}' & fuel_x=='{fuelGreen}'").drop(
-                columns=dropCols).reset_index(drop=True)
+        for fuel_ref, fuel_blue, fuel_green in [(r, b, g)
+                                                for r in grouped_fuels['NG']
+                                                for b in grouped_fuels['BLUE']
+                                                for g in grouped_fuels['GREEN']]:
+            drop_cols = ['tid', 'type_x', 'type_y', 'cost_x', 'cost_y', 'ghgi_x', 'ghgi_y']
+            green_line = plot_lines \
+                .query(f"fuel_y=='{fuel_ref}' & fuel_x=='{fuel_green}'") \
+                .drop(columns=drop_cols) \
+                .reset_index(drop=True)
+            blue_line = plot_lines \
+                .query(f"fuel_y=='{fuel_ref}' & fuel_x=='{fuel_blue}'") \
+                .drop(columns=drop_cols) \
+                .reset_index(drop=True)
+            red_line = plot_lines \
+                .query(f"fuel_y=='{fuel_blue}' & fuel_x=='{fuel_green}'") \
+                .drop(columns=drop_cols) \
+                .reset_index(drop=True)
 
-            purpleLine = cpTrajData.drop(columns=['name', 'CP_u', 'CP_l'])
+            purple_line = cp_traj_data.drop(columns=['name', 'CP_u', 'CP_l'])
 
             # marker 4
-            diffLines = pd.merge(blueLine, greenLine, on=['year'], suffixes=('', '_right'))
-            diffLines['delta'] = (diffLines['fscp'] - diffLines['fscp_right']).abs()
+            diff_lines = pd.merge(blue_line, green_line, on=['year'], suffixes=('', '_right'))
+            diff_lines['delta'] = (diff_lines['fscp'] - diff_lines['fscp_right']).abs()
             points.append(
-                diffLines.nsmallest(1, 'delta').drop(columns=['fscp_right']).head(1).assign(label=4, colour='black'))
+                diff_lines
+                .nsmallest(1, 'delta')
+                .drop(columns=['fscp_right'])
+                .head(1)
+                .assign(label=4, colour='black')
+            )
 
-            if fuelGreen in config['cases_dashed'] or fuelBlue in config['cases_dashed']:
+            if fuel_green in self.cfg['cases_dashed'] or fuel_blue in self.cfg['cases_dashed']:
                 continue
 
             # markers 1-3
-            for i, line in enumerate([blueLine, greenLine, redLine]):
+            for i, line in enumerate([blue_line, green_line, red_line]):
                 fuel_x = line.fuel_x.iloc[0]
                 fuel_y = line.fuel_y.iloc[0]
-                col = config['fscp_colour'][
-                    fuel_y.split('-')[-1] + '-' + fuel_x.split('-')[-1]] if 'NG' not in fuel_y else \
-                fuelSpecs[fuel_x]['colour']
-                diffLines = pd.merge(line, purpleLine, on=['year'])
-                diffLines['delta'] = (diffLines['fscp'] - diffLines['CP']).abs()
+                col = (self.cfg['fscp_colour'][fuel_y.split('-')[-1] + '-' + fuel_x.split('-')[-1]]
+                       if 'NG' not in fuel_y else
+                       fuel_specs[fuel_x]['colour'])
+                diff_lines = pd.merge(line, purple_line, on=['year'])
+                diff_lines['delta'] = (diff_lines['fscp'] - diff_lines['CP']).abs()
                 points.append(
-                    diffLines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i + 1, colour=col))
+                    diff_lines.nsmallest(1, 'delta').drop(columns=['CP']).head(1).assign(label=i + 1, colour=col))
 
             # marker 5
-            redLine['abs'] = redLine['fscp'].abs()
+            red_line['abs'] = red_line['fscp'].abs()
             points.append(
-                redLine.nsmallest(1, 'abs').assign(delta=lambda r: r.fscp).head(1).assign(label=5, colour='black'))
+                red_line.nsmallest(1, 'abs').assign(delta=lambda r: r.fscp).head(1).assign(label=5, colour='black'))
 
         return pd.concat(points)
 
     # plot legend for annotations explaining intersections of lines with markers
-    def _addAnnotationsLegend(self, fig: go.Figure, config: dict):
+    def _add_annotations_legend(self, fig: go.Figure):
         xmargin = 0.01
         ymargin = 0.05
         lineheight = 0.2
         spacing = 0.02
 
         for i in range(2):
-            t = config['annotationTexts'][f"heading{i + 1}"]
+            t = self.cfg['annotationTexts'][f"heading{i + 1}"]
             fig.add_annotation(
                 text=f"<b>{t}:</b>",
                 align='left',
@@ -401,7 +448,7 @@ class FSCPOverTimePlot(BasePlot):
         )
 
         for i, x, y in labels:
-            t = config['annotationTexts'][f"point{i}"]
+            t = self.cfg['annotationTexts'][f"point{i}"]
             fig.add_annotation(
                 text=f"{t}",
                 align='left',
@@ -415,7 +462,11 @@ class FSCPOverTimePlot(BasePlot):
             )
 
     # compute carbon price trajectories
-    def _computeCPTraj(self, years: list, values: dict, n_samples: int):
+    def _compute_cp_traj(self) -> pd.DataFrame:
+        years: list = self._glob_cfg['co2price_traj']['years']
+        values: dict = self._glob_cfg['co2price_traj']['values']
+        n_samples: int = self.cfg['n_samples']
+
         v_mean = []
         v_upper = []
         v_lower = []
@@ -428,7 +479,7 @@ class FSCPOverTimePlot(BasePlot):
             v_lower.append(mean - min(vals))
 
         # create data frame with time and cp values
-        cpData = pd.DataFrame({
+        cp_data = pd.DataFrame({
             'year': [float(y) for y in years],
             'CP': v_mean,
             'CP_u': v_upper,
@@ -438,39 +489,39 @@ class FSCPOverTimePlot(BasePlot):
         # interpolate in between
         samples = pd.DataFrame({'year': np.linspace(years[0], years[-1], n_samples)})
         dtypes = {'year': float, 'CP': float, 'CP_u': float, 'CP_l': float}
-        cpData = cpData.merge(samples, how='outer').sort_values(by=['year']).astype(dtypes).interpolate()
+        cp_data = cp_data.merge(samples, how='outer').sort_values(by=['year']).astype(dtypes).interpolate()
 
         # add name to dataframe
-        cpData['name'] = 'cp'
+        cp_data['name'] = 'cp'
 
-        return cpData
+        return cp_data
 
     # plot carbon-price traces
-    def _addCPTraces(self, cpTrajData: pd.DataFrame, config: dict):
+    def _add_cp_traces(self, cp_traj_data: pd.DataFrame) -> list:
         traces = []
 
-        name = config['carbon_price_config']['name']
-        colour = config['carbon_price_config']['colour']
+        name = self.cfg['carbon_price_config']['name']
+        colour = self.cfg['carbon_price_config']['colour']
 
         # add main graphs (FSCP and CP)
         traces.append(go.Scatter(
             name=name,
             legendgroup=3,
-            legendgrouptitle=dict(text=f"<b>{config['legendlabels'][2]}</b>:"),
+            legendgrouptitle=dict(text=f"<b>{self.cfg['legendlabels'][2]}</b>:"),
             mode='lines',
-            x=cpTrajData['year'],
-            y=cpTrajData['CP'],
+            x=cp_traj_data['year'],
+            y=cp_traj_data['CP'],
             line_color=colour,
             line_width=self._styles['lw_thin'],
             showlegend=True,
             hovertemplate=f"<b>{name}</b><br>Time: %{{x:.2f}}<br>Carbon price: %{{y:.2f}}<extra></extra>",
         ))
 
-        data_x = cpTrajData['year']
-        data_yu = cpTrajData['CP'] + cpTrajData['CP_u']
-        data_yl = cpTrajData['CP'] - cpTrajData['CP_l']
+        data_x = cp_traj_data['year']
+        data_yu = cp_traj_data['CP'] + cp_traj_data['CP_u']
+        data_yl = cp_traj_data['CP'] - cp_traj_data['CP_l']
 
-        errorBand = go.Scatter(
+        error_band = go.Scatter(
             name='Uncertainty Range',
             legendgroup=3,
             x=pd.concat([data_x, data_x[::-1]], ignore_index=True),
@@ -481,8 +532,8 @@ class FSCPOverTimePlot(BasePlot):
             fill='toself',
             line=dict(width=self._styles['lw_ultrathin']),
             showlegend=False,
-            hoverinfo='none'
+            hoverinfo='skip'
         )
-        traces.append(errorBand)
+        traces.append(error_band)
 
         return traces
