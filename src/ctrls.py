@@ -123,7 +123,7 @@ def main_ctrl(default_inputs: dict):
                         'Global Warming Potential (GWP) reference time scale:',
                         html_for='simple-gwp',
                     ),
-                    dcc.RadioItems(
+                    dbc.RadioItems(
                         id='simple-gwp',
                         options=[
                             dict(value='gwp100', label='GWP100'),
@@ -136,7 +136,7 @@ def main_ctrl(default_inputs: dict):
             ),
             html.Div(
                 children=[
-                    html.Button(id='simple-update', n_clicks=0, children='GENERATE', className='scenario-buttons'),
+                    html.Button(id='simple-update', n_clicks=0, children='GENERATE', className='btn btn-primary'),
                 ],
                 className='card-element',
             ),
