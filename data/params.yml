@@ -12,7 +12,7 @@ cost_ng_grid:
   value: 5.0
   uncertainty: 5%
   unit: EUR/MWh
-  source: "[1]"
+  source: "AEMO (2022)."
 
 ghgi_ng_base:
   desc: Base Emissions of NG (per LHV; supply-chain and combustion)
@@ -42,8 +42,8 @@ ghgi_ng_base:
   uncertainty: 5%
   unit: gCO2eq/MJ
   source:
-    "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
-    Methods for details.
+    "LCA data mostly based on a previous publication (Bauer et al., 2021). See subsection 'Life-cycle emissions of blue 
+    hydrogen' in Methods for details.
     
     Most contributions to the LCA emissions stay approximately constant, as outlined in Methods section. Supply-chain 
     CO2 emissions are reduced to 87.5% between 2035 and 2050.
@@ -69,8 +69,8 @@ ghgi_ng_methaneleakage_perrate:
     - gwp
   unit: gCO2eq/MJ
   source:
-    "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
-    Methods for details."
+    "LCA data mostly based on a previous publication (Bauer et al., 2021). See subsection 'Life-cycle emissions of blue 
+    hydrogen' in Methods for details."
 
 # blue parameters
 cost_blue_capex:
@@ -90,8 +90,8 @@ cost_blue_capex:
   uncertainty: 5%
   unit: EUR/kW
   source:
-    "SMR data from [4], Sec. 8.1.3, Table 2, Sheet 84. Assuming a 0.5% yearly learning rate, i.e. 0.995**25 = 88% of 
-    cost in 2050. ATR data based on own analysis."
+    "SMR data from IEAGHG (2017), Sec. 8.1.3, Table 2, Sheet 84. Assuming a 0.5% yearly learning rate, i.e. 0.995**25 = 
+    88% of cost in 2050. ATR data based on own analysis."
 
 cost_blue_fixedonm:
   desc: Fixed Operation and Maintenance Cost
@@ -109,7 +109,7 @@ cost_blue_fixedonm:
     - blue_tech
   uncertainty: 5%
   unit: EUR/kW
-  source: "SMR data from [4], p. 18, Table 4. ATR data based on own analysis."
+  source: "SMR data from IEAGHG (2017), p. 18, Table 4. ATR data based on own analysis."
 
 cost_blue_varonm:
   desc: Variable Operation and Maintenance Cost (w/o fuel cost)
@@ -126,14 +126,14 @@ cost_blue_varonm:
     - blue_tech
   uncertainty: 5%
   unit: EUR/MWh
-  source: "SMR data from [4], p. 18, Table 4. ATR data based on own analysis."
+  source: "SMR data from IEAGHG (2017), p. 18, Table 4. ATR data based on own analysis."
 
 cost_blue_flh:
   desc: Full load hours of blue-hydrogen plant
   type: const
   value: 8322.0
   unit: h
-  source: "SMR data from [4], p. 18, Table 4. Assuming same for ATR."
+  source: "SMR data from IEAGHG (2017), p. 18, Table 4. Assuming same for ATR."
 
 cost_blue_emiForCTS:
   desc: Captured emissions for transport and storage
@@ -145,7 +145,7 @@ cost_blue_emiForCTS:
     - blue_tech
   unit: kgCO2/Nm3_H2
   source:
-    "SMR data from [4], p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured. ATR data estimated 
+    "SMR data from IEAGHG (2017), p. 16, Table 2 (Plant Performance Summary), Specific CO2 Captured. ATR data estimated 
     from NG consumption and capture-rate of facility."
 
 cost_blue_cts:
@@ -158,7 +158,7 @@ cost_blue_cts:
   uncertainty: 5%
   unit: EUR/tCO2
   source:
-    "[5,6]
+    "Based on Budinis et al. (2018) and Smith et al. (2021).
 
     In countries where CCS acceptance is low or where limited geological storage opportunities exist, CO2 would have 
     to be transported over substantial distances by pipeline or by ship."
@@ -232,8 +232,8 @@ ghgi_blue_base:
   uncertainty: 5%
   unit: gCO2eq/MJ
   source:
-    "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
-    Methods for details.
+    "LCA data mostly based on a previous publication (Bauer et al., 2021). See subsection 'Life-cycle emissions of blue 
+    hydrogen' in Methods for details.
     
     Most contributions to the LCA emissions stay approximately constant, as outlined in subsection 'Life-cycle 
     emissions of blue hydrogen' in the Methods section. Supply-chain CO2 emissions are reduced to 87.5% between 2035 
@@ -277,8 +277,8 @@ ghgi_blue_methaneleakage_perrate:
     - gwp
   unit: gCO2eq/MJ
   source:
-    "LCA data mostly based on a previous publication [2]. See subsection 'Life-cycle emissions of blue hydrogen' in 
-    Methods for details."
+    "LCA data mostly based on a previous publication (Bauer et al., 2021). See subsection 'Life-cycle emissions of blue 
+    hydrogen' in Methods for details."
 
 blue_eff:
   desc: Fuel efficiency (natural gas)
@@ -291,8 +291,8 @@ blue_eff:
   uncertainty: 5%
   unit: percent
   source:
-    "SMR data from [4], p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. ATR data 
-    based on own analysis."
+    "SMR data from IEAGHG (2017), p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. ATR 
+    data based on own analysis."
 
 blue_eff_elec:
   desc: Fuel efficiency (grid electricity)
@@ -305,8 +305,8 @@ blue_eff_elec:
   uncertainty: 5%
   unit: ~
   source:
-    "SMR data from [4], p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. ATR data 
-    based on own analysis."
+    "SMR data from IEAGHG (2017), p.16, Table 2 (Plant Performance Summary), total energy of inlet & outlet stream. ATR 
+    data based on own analysis."
 
 # green parameters
 cost_green_capex:
@@ -321,7 +321,7 @@ cost_green_fixedonm:
   type: const
   value: 3
   unit: percent
-  source: "AEMO Integrated System Plan [7] assumptions."
+  source: "AEMO Integrated System Plan (AEMO, 2022) assumptions."
 
 cost_green_varonm:
   desc: Variable Operation and Maintenance Cost (w/o fuel cost)
@@ -329,7 +329,7 @@ cost_green_varonm:
   value: 0.4 +- 0.1
   unit: EUR/MWh
   uncertainty: 5%
-  source: "Assuming USD 0.01-0.02/kg H2 from [8] for water consumption."
+  source: "Assuming USD 0.01-0.02/kg H2 from (IEA, 2022a) for water consumption."
 
 cost_green_elec:
   desc: Electricity price
@@ -420,14 +420,14 @@ green_lifetime:
     2040: 20
     2050: 20
   unit: ~
-  source: "Stack lifetime is 95kh according to [9]. With 50% OCF that is ~21 years."
+  source: "Stack lifetime is 95kh according to (IEA, 2019). With 50% OCF that is ~21 years."
 
 blue_lifetime:
   desc: Lifetime of blue-hydrogen plants.
   type: const
   value: 20
   unit: ~
-  source: "Based on [4]."
+  source: "Based on IEAGHG (2017)."
 
 irate:
   desc: Interest rate
@@ -444,7 +444,7 @@ cost_h2transp:
     2050: 15.0
   uncertainty: 5%
   unit: EUR/MWh
-  source: "Based on [10]."
+  source: "Based on Staiß (2018)."
 
 ghgi_h2transp:
   desc: GHGI of energy used in H2 transportation
@@ -452,5 +452,5 @@ ghgi_h2transp:
   value: 3
   unit: percent
   source:
-    "[12] state 'Recompression every 100 km, 0.02 kWh(Strom)/kg hydrogen', which gives 0.4 kWh/kg H2. Using a 
-    compressor with 40% efficiency, this results in 1kWh_LHV-H2 per kg_H2. This means a 3% surplus on the GHGI."
+    "Rödl et al. (2018) state 'Recompression every 100 km, 0.02 kWh(Strom)/kg hydrogen', which gives 0.4 kWh/kg H2. 
+    Using a compressor with 40% efficiency, this results in 1kWh_LHV-H2 per kg_H2. This means a 3% surplus on the GHGI."
