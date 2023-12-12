@@ -16,7 +16,7 @@ def dump():
 
     # set file path for dumping
     DUMPDIR.mkdir(parents=True, exist_ok=True)
-    file_path = Path(__file__).parent / 'dump' / 'parameters.xlsx'
+    file_path = DUMPDIR / 'parameters.xlsx'
 
     # call dump function
     dump_params(inputs, file_path)
