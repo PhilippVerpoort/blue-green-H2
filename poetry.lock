@@ -570,7 +570,7 @@ xml = ["lxml (>=4.8.0)"]
 
 [[package]]
 name = "piw"
-version = "0.7.1"
+version = "0.7.2"
 description = "PIK Interactive Webapp Library"
 optional = false
 python-versions = ">=3.10,<3.12"
@@ -585,8 +585,8 @@ pyyaml = "^6.0.1"
 [package.source]
 type = "git"
 url = "https://github.com/PhilippVerpoort/piw.git"
-reference = "v0.7.1"
-resolved_reference = "5e89ccaec8ef6bc1b4bf38fab04ea77e0144bc76"
+reference = "v0.7.2"
+resolved_reference = "099ba2f0e2c6ce2f99eb4a31a6f70cf0a74d103f"
 
 [[package]]
 name = "plotly"
@@ -836,4 +836,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "90daa036f9f0a17dcaf8121714f0abc5afcdb90a8053f273deaf88d5f5d201d3"
+content-hash = "f487ad240053f67d8c9c594b9d2cddef89a6a07f7310a48fd9eb1f70182c11a7"
