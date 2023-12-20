@@ -11,7 +11,6 @@ figures:
       For a sensitivity case with GWP 20, see Figure S6.
     display:
     - ''
-    - 'advanced'
     subfigs:
       fig4A:
         size:

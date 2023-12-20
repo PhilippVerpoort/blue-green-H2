@@ -9,7 +9,6 @@ figures:
       fossil fuels as well as the increasing competitiveness of green hydrogen with blue hydrogen.'
     display:
     - ''
-    - 'advanced'
     size:
       print:
         width: 172.0  # unit mm
@@ -25,7 +24,7 @@ figures:
       uncertainty ranges from parameter variations of 5%. The four cases are derived by combining technology cases 
       (top: conservative, bottom: progressive) with natural gas prices (left: high, right: low).'
     display:
-    - 'advanced'
+    - 'supplementary'
     size:
       print:
         width: 172.0  # unit mm

@@ -9,7 +9,6 @@ figures:
       cases analysed in this paper (see Table 1). See Figure S1 for a breakdown of both costs and emissions.
     display:
     - ''
-    - 'advanced'
     subfigs:
       fig1A:
         size:
@@ -110,7 +109,7 @@ figures:
       transport and distribution cost data used in this paper to be comparable with our hydrogen supply costs (which 
       include transport and distribution costs).
     display:
-    - 'advanced'
+    - 'supplementary'
     size:
       print:
         width: 86.0  # unit mm

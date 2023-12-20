@@ -8,7 +8,7 @@ figures:
       developments as well as low and high gas prices (see Table 1). See Figure 1 and Figure S2 for the development of 
       costs and GHG emissions in time.
     display:
-    - 'advanced'
+    - 'supplementary'
     subfigs:
       figS1A:
         size:

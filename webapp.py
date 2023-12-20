@@ -118,8 +118,8 @@ webapp = Webapp(
     piw_id='blue-green-H2',
     metadata=metadata,
     pages={
-        '': 'Simple',
-        'advanced': 'Advanced',
+        '': 'Main',
+        'supplementary': 'Supplementary',
     },
     load=[load_inputs],
     ctrls=[main_ctrl],

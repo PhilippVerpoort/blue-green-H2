@@ -11,7 +11,6 @@ figures:
       side.
     display:
     - ''
-    - 'advanced'
     size:
       print:
         width: 172.0  # unit mm
@@ -32,7 +31,7 @@ figures:
       left side applies for all panels and indicates how low (or high) blue-to-green FSCPs would translate into a 
       competitiveness advantage for green (or blue) hydrogen given the CO2 price range shown on the right side.
     display:
-    - 'advanced'
+    - 'supplementary'
     size:
       print:
         width: 172.0  # unit mm
