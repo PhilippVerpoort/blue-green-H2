@@ -1,12 +1,12 @@
 figures:
   figS1:
     name: Figure S1
-    title: ' '
+    title: Breakdown of levelized costs and life-cycle GHG intensity
     desc:
-      a) Breakdown of levelised costs and b) breakdown of life-cycle GHG intensity of green (electrolytic) and blue
-      hydrogen as well as natural gas (NG) for 2025 and 2050. We distinguish progressive and conservative parameter
-      developments as well as low and high gas prices (see Table 1). See Figure 1 for the development of aggregated costs
-      and emissions in time.
+      a) Breakdown of levelised costs and b) breakdown of life-cycle GHG intensity of green (electrolytic) and blue 
+      hydrogen as well as natural gas (NG) for 2025 and 2050. We distinguish progressive and conservative parameter 
+      developments as well as low and high gas prices (see Table 1). See Figure 1 and Figure S2 for the development of 
+      costs and GHG emissions in time.
     display:
     - 'advanced'
     subfigs:

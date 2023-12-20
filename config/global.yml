@@ -30,27 +30,39 @@ gwp_labels:
     xanchor: right
     y: -0.3
     yanchor: top
+  figED1:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.2
+    yanchor: top
+  figED2B:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.2
+    yanchor: top
   figS1B:
     align: left
     x: 1.02
     xanchor: left
     y: 0.0
     yanchor: bottom
-  figS2:
-    align: right
-    x: 1.0
-    xanchor: right
-    y: -0.1
-    yanchor: top
   figS3:
     align: right
     x: 1.0
     xanchor: right
     y: -0.2
     yanchor: top
-  figS4B:
+  figS5:
     align: right
     x: 1.0
     xanchor: right
-    y: -0.2
+    y: -0.1
+    yanchor: top
+  figS7:
+    align: right
+    x: 1.0
+    xanchor: right
+    y: -0.3
     yanchor: top

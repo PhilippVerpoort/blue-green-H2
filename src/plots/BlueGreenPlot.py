@@ -15,8 +15,8 @@ class BlueGreenPlot(BasePlot):
 
     def plot(self, inputs: dict, outputs: dict, subfig_names: list) -> dict:
         ret = {
-            'figS3': self._produce_figure_full(outputs['fuelSpecs'], outputs['fuelData'], inputs['params_options'])
-            if 'figS3' in subfig_names else None
+            'figED1': self._produce_figure_full(outputs['fuelSpecs'], outputs['fuelData'], inputs['params_options'])
+            if 'figED1' in subfig_names else None
         }
 
         return self.add_gwp_label(inputs['options']['gwp'], ret)

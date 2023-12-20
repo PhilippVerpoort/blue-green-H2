@@ -15,7 +15,7 @@ class HeatmapPlot(BasePlot):
         ret = {}
         for application in ['heating', 'steel']:
             for sub, plot_type in [('A', 'left'), ('B', 'right')]:
-                subfig_name = f"fig4{sub}" if application == 'heating' else f"figS4{sub}"
+                subfig_name = f"fig4{sub}" if application == 'heating' else f"figED2{sub}"
 
                 # check if plotting is needed
                 if subfig_name not in subfig_names:

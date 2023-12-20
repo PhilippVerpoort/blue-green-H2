@@ -1,10 +1,10 @@
 figures:
   fig3:
     name: Figure 3
-    title: ' '
+    title: Estimating fuel-switching points in time based on fuel-switching CO2 prices
     desc:
-      'Same as conceptual Figure 2c, now estimated for four cases derived by combining technology cases (top: 
-      conservative, bottom: progressive) with natural gas prices (left: high, right: low). From the intersections of 
+      'Same as conceptual Figure 2C, now estimated for four cases derived by combining technology cases (top,
+       conservative; bottom, progressive) with natural gas prices (left, high; right, low). From the intersections of 
       FSCPs in time, fuel-switching points can be derived that determine the improving competitiveness of hydrogen with 
       fossil fuels as well as the increasing competitiveness of green hydrogen with blue hydrogen.'
     display:
@@ -17,13 +17,13 @@ figures:
       webapp:
         width: 100.0  # unit %
         height: 900.0  # unit px
-  figS2:
-    name: Figure S2
-    title: ' '
+  figS5:
+    name: Figure S5
+    title: Fuel-switching CO2 prices (FSCP) in time
     desc:
-      'Same as Figure 3 but reduced to only FSCP of green and blue hydrogen (with natural gas) also including uncertainty 
-      ranges from parameter variations of 5%. The four cases are derived by combining technology cases (top: 
-      conservative, bottom: progressive) with natural gas prices (left: high, right: low).'
+      'Same as Figure 3 but reduced to only FSCP of green and blue hydrogen (with natural gas) also including 
+      uncertainty ranges from parameter variations of 5%. The four cases are derived by combining technology cases 
+      (top: conservative, bottom: progressive) with natural gas prices (left: high, right: low).'
     display:
     - 'advanced'
     size:

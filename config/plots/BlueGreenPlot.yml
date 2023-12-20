@@ -1,8 +1,8 @@
 figures:
-  figS3:
-    name: Figure S3
-    title: ' '
-    desc: 'Extended data figure not included in manuscript.'
+  figED1:
+    name: Figure ED1
+    title: Blue-green FSCPs plotted for a range of parameters.
+    desc: Extended data figure not included in manuscript.
     size:
       print:
         width: 172.0  # unit mm

@@ -31,10 +31,10 @@ class CostEmiOverTimePlot(BasePlot):
 
             ret.update({subfig_name: subfig})
 
-        if 'figS5' in subfig_names:
+        if 'figS2' in subfig_names:
             plot_type = 'cost'
-            subcfg = self._subfig_cfgs['fig1A'] | self._subfig_cfgs['figS5']
-            ret['figS5'] = self._produce_figure(outputs['fuelData'], outputs['fuelSpecs'], subcfg, plot_type,
+            subcfg = self._subfig_cfgs['fig1A'] | self._subfig_cfgs['figS2']
+            ret['figS2'] = self._produce_figure(outputs['fuelData'], outputs['fuelSpecs'], subcfg, plot_type,
                                                 inputs['params_options'], with_iea=True, iea_data=inputs['iea_data'],
                                                 cost_h2transp=outputs['fullParams'].loc['cost_h2transp'])
 

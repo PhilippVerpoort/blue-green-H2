@@ -1,12 +1,12 @@
 figures:
   fig1:
     name: Figure 1
-    title: ' '
+    title: Levelized costs and life-cycle GHG emission intensity for hydrogen and natural gas
     desc:
-      a) Levelised costs of (gaseous) hydrogen supply (production, transport and distribution) and natural gas prices
-      (including gas grid fees) and b) life-cycle GHG intensity of green (electrolytic) and blue hydrogen as well as
-      natural gas. The corridors illustrate the ranges for the main technology and additional sensitivity cases analysed
-      in this paper (see Table 1). See Extended Data Figure 1 for a breakdown of both costs and emissions.
+      (A and B) (A) Levelised costs of (gaseous) hydrogen supply (production, transport and distribution) and natural 
+      gas prices (including gas grid fees) and (B) life-cycle GHG intensity of green (electrolytic) and blue hydrogen 
+      as well as natural gas. The corridors illustrate the ranges for the main technology and additional sensitivity 
+      cases analysed in this paper (see Table 1). See Figure S1 for a breakdown of both costs and emissions.
     display:
     - ''
     - 'advanced'
@@ -101,10 +101,14 @@ figures:
                   desc: Progressive
                 GREEN-cons:
                   desc: Conservative
-  figS5:
-    name: Figure S5
-    title: ' '
-    desc: Same as Fig. 1A but comparing it against IEA data.
+  figS2:
+    name: Figure S2
+    title: Levelised costs and GHG emissions of hydrogen and natural gas in time
+    desc:
+      The cost data used in this paper (same as in Figure 1a) in comparison to 2023 data from the IEA (2023a, 2023b) 
+      (dots and ranges for 2022 and 2030). The IEA hydrogen production cost data was combined with additional hydrogen 
+      transport and distribution cost data used in this paper to be comparable with our hydrogen supply costs (which 
+      include transport and distribution costs).
     display:
     - 'advanced'
     size:

@@ -13,13 +13,13 @@ class FSCPOverTimePlot(BasePlot):
     figs, cfg = load_yaml_plot_config_file('FSCPOverTimePlot')
 
     def plot(self, inputs: dict, outputs: dict, subfig_names: list) -> dict:
-        if 'fig3' not in subfig_names and 'figS2' not in subfig_names:
+        if 'fig3' not in subfig_names and 'figS5' not in subfig_names:
             return {}
         ret = {}
 
         # select which lines to plot based on function argument
         plot_scatter, plot_lines = self._select_plot_fscps(
-            outputs['fuelData'], self.cfg['selected_cases'], calc_unc=('figS2' in subfig_names),
+            outputs['fuelData'], self.cfg['selected_cases'], calc_unc=('figS5' in subfig_names),
         )
 
         # get carbon price trajectory data
@@ -32,9 +32,9 @@ class FSCPOverTimePlot(BasePlot):
         )
 
         # produce figure S2
-        ret['figS2'] = (
+        ret['figS5'] = (
             self._produce_figure(plot_scatter, plot_lines, outputs['fuelSpecs'], cp_traj_data, is_uncertainty=True)
-            if 'figS2' in subfig_names else None
+            if 'figS5' in subfig_names else None
         )
 
         return self.add_gwp_label(inputs['options']['gwp'], ret)

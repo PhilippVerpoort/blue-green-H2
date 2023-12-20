@@ -15,13 +15,25 @@ class SensitivityPlot(BasePlot):
     figs, cfg = load_yaml_plot_config_file('SensitivityPlot')
 
     def plot(self, inputs: dict, outputs: dict, subfig_names: list) -> dict:
-        if 'fig5' not in subfig_names:
+        if 'fig5' not in subfig_names and 'figS7' not in subfig_names:
             return {}
+        ret = {}
 
-        ret = {'fig5': self._produce_figure(inputs, outputs)}
+        # produce fig5
+        ret['fig5'] = (
+            self._produce_figure(inputs, outputs, self._subfig_cfgs['fig5']['fuels'])
+            if 'fig5' in subfig_names else None
+        )
+
+        # produce figS7
+        ret['figS7'] = (
+            self._produce_figure(inputs, outputs, self._subfig_cfgs['figS7']['fuels'])
+            if 'figS7' in subfig_names else None
+        )
+
         return self.add_gwp_label(inputs['options']['gwp'], ret)
 
-    def _produce_figure(self, inputs: dict, outputs: dict):
+    def _produce_figure(self, inputs: dict, outputs: dict, fuels: list[str]):
         # plot
         last_col_width = 0.04
         num_sensitivity_plots = len(self.cfg['sensitivity_params'])
@@ -40,7 +52,7 @@ class SensitivityPlot(BasePlot):
         add_to_legend = True
 
         for fid, fuel_a, fuel_b, year in [(fid, *f.split(' to '), y)
-                                          for fid, f in enumerate(self.cfg['fuels'])
+                                          for fid, f in enumerate(fuels)
                                           for y in self.cfg['years']]:
             type_a = outputs['fuelSpecs'][fuel_a]['type']
             type_b = outputs['fuelSpecs'][fuel_b]['type']
