@@ -19,7 +19,7 @@ figures:
             width: 50.0  # unit %
             height: 550.0  # unit px
         config:
-          yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
+          yaxislabel: Levelized costs of energy (EUR/MWh<sub>LHV</sub>)
           ymax: 200.0
           ymaxS5: 350.0
           label: Direct cost
@@ -58,10 +58,10 @@ figures:
             width: 50.0  # unit %
             height: 550.0  # unit px
         config:
-          yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+          yaxislabel: GHG emission intensity of energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
           ymax: 0.28
       #    ymax: 0.35
-          label: Emissions intensity
+          label: GHG emission intensity
           showLines: False
           showCorridors:
       #      NG-gwpOther:

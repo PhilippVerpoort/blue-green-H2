@@ -67,11 +67,11 @@ config:
 
   labels:
     heating:
-      ghgi: GHG Intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
-      cost: Direct Cost (EUR/MWh<sub>LHV</sub>)
+      ghgi: GHG emission intensity (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+      cost: Direct costs (EUR/MWh<sub>LHV</sub>)
     steel:
-      ghgi: GHG Intensity (t<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
-      cost: Direct Cost (EUR/t<sub>LS</sub>)
+      ghgi: GHG emission intensity (t<sub>CO<sub>2</sub>eq</sub>/t<sub>LS</sub>)
+      cost: Direct costs (EUR/t<sub>LS</sub>)
 
   annotationLabels:
     left: <b>High gas prices</b><br>60 EUR/MWh<sub>LHV</sub> in 2025, 40 EUR/MWh<sub>LHV</sub> from 2030 onward
@@ -79,7 +79,7 @@ config:
 
   baselineLabels:
     heating: Price of natural gas
-    steel: Cost of BF/BOF-Steel
+    steel: Costs of BF-BOF steel
 
   steelAssumptions:
     idreaf_demand_h2: 1.91 # H2 demand of H-DR in MWh_H2LHV / t_LS

@@ -47,7 +47,7 @@ config:
   yrange:
     - -10.0
     - +600.0
-  ylabel: Blue-to-green fuel-switching carbon price (EUR/tCO<sub>2</sub>)
+  ylabel: Blue-to-green fuel-switching CO<sub>2</sub> price (EUR/tCO<sub>2</sub>)
   lastxaxislabel: CO<sub>2</sub> price
 
 
@@ -57,7 +57,7 @@ config:
         - 10.0
         - 100.0
       scale: 1.0
-      label: Electricity price<br>paid by electrolyser<br>(EUR/MWh)
+      label: Electricity price<br>paid by electrolyzer<br>(EUR/MWh)
       mode: absolute
       vline: peryear
       textpos:
@@ -68,7 +68,7 @@ config:
         - 0.90
         - 1.00
       scale: 100.0
-      label: Share of renewable<br>electricity used by electrolyser<br>(%)
+      label: Share of renewable<br>electricity used by electrolyzer<br>(%)
       mode: absolute
       vline: once
       textpos:

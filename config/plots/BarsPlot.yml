@@ -19,18 +19,18 @@ figures:
             width: 50.0  # unit %
             height: 450.0  # unit px
         config:
-          yaxislabel: Levelised Cost of Energy (EUR/MWh<sub>LHV</sub>)
+          yaxislabel: Levelized costs of energy (EUR/MWh<sub>LHV</sub>)
 
           ymax: 200.0
 
           labels:
-            cost__cap: Capital cost
-            cost__fuel: Fuel cost (non-elec.)
-            cost__elec: Electricity cost
-            cost__fonm: Fixed operation<br>and maintenance cost
-            cost__vonm: Variable operation<br>and maintenance cost
-            cost__cts: CO<sub>2</sub> transport<br>and storage cost
-            cost__tnd: Transport and<br>distribution cost
+            cost__cap: Annualized CAPEX
+            cost__fuel: Fuel costs (non-elec.)
+            cost__elec: Electricity costs
+            cost__fonm: Fixed operation<br>and maintenance costs
+            cost__vonm: Variable operation<br>and maintenance costs
+            cost__cts: CO<sub>2</sub> transport<br>and storage costs
+            cost__tnd: Transport and<br>distribution costs
 
           colours:
             cost__cap: '#f36f21'
@@ -49,7 +49,7 @@ figures:
             width: 50.0  # unit %
             height: 450.0  # unit px
         config:
-          yaxislabel: Life-cycle GHGI of Energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
+          yaxislabel: GHG emission intensity of energy (g<sub>CO<sub>2</sub>eq</sub>/kWh<sub>LHV</sub>)
 
           ymax: 0.29
 
