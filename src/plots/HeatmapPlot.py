@@ -304,7 +304,7 @@ class HeatmapPlot(BasePlot):
                                  contours=dict(
                                      showlabels=False,
                                      start=0,
-                                     end=3000,
+                                     end=1500,
                                      size=fscp_conf['zdeltalines'],
                                  )))
 
