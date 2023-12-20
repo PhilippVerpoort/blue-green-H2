@@ -254,11 +254,21 @@ class SensitivityPlot(BasePlot):
         fig.update_layout(
             **{f"xaxis{num_sensitivity_plots + 1}": dict(
                 showticklabels=False,
-                title=self.cfg['lastxaxislabel'],
+                title=None,
                 tickmode='array',
                 tickvals=[],
                 range=[1.0, 2.0],
             ), }
+        )
+        fig.add_annotation(
+            x=2.0,
+            xref=f"x{num_sensitivity_plots + 1}",
+            xanchor='right',
+            y=-0.185,
+            yref='paper',
+            yanchor='middle',
+            showarrow=False,
+            text=self.cfg['lastxaxislabel'],
         )
 
         # set y axis range and label
