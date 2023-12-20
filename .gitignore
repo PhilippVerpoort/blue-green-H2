@@ -1,8 +1,9 @@
 .idea/
 .jupyter/
 .venv/
-print/*
-dump/*
+print/
+dump/
+production/
 *.pkl
 
 
