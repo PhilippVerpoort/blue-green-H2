@@ -101,11 +101,13 @@ metadata = {
     'date': '2023-12-09',
     'version': 'v3.0.0',
     'doi': '10.5880/pik.2023.006',
-    'license': {'name': 'CC BY 4.0', 'link': 'https://creativecommons.org/licenses/by/4.0/'},
+    'licence': {'name': 'CC BY 4.0', 'link': 'https://creativecommons.org/licenses/by/4.0/'},
     'citeas': 'Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Beck, Fiona; Longden, '
              'Thomas; Roussanaly, Simon (2023): Interactive webapp for techno-economic analysis of the cost '
              'competitiveness of blue and green hydrogen. V. 3.0.0. GFZ Data Services. '
              'https://doi.org/10.5880/pik.2023.006',
+    'reference_citeas': 'Ueckerdt et al., On the cost competitiveness of blue and green hydrogen, Joule (2024).',
+    'reference_doi': '10.1016/j.joule.2023.12.004',
 }
 
 
