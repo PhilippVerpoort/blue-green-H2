@@ -1,14 +1,13 @@
 figures:
   fig5:
     name: Figure 5
-    title: Sensitivity analysis for blue-to-green hydrogen fuel-switching CO<sub>2</sub> prices
+    title: Sensitivity analysis for blue-to-green hydrogen fuel-switching CO₂ prices
     desc:
       A sensitivity analysis varying five key parameter to evaluate their impact on blue-to-green fuel-switching carbon
       prices. The analysis is conducted for GWP100 and centered around low natural gas prices, progressive technology
       assumptions. For sensitivity analyses for GWP20 and centered around high natural gas prices see Figures S7 and 
       S8. The color bar on the left side indicates how low (or high) blue-to-green FSCPs would translate into a 
-      competitiveness advantage for green (or blue) hydrogen given the CO<sub>2</sub> price range shown on the right 
-      side.
+      competitiveness advantage for green (or blue) hydrogen given the CO₂ price range shown on the right side.
     display:
     - ''
     size:
@@ -23,13 +22,13 @@ figures:
         - BLUE-low-prog to GREEN-prog
   figS7:
     name: Figure S7
-    title: Sensitivity analysis for blue-to-green hydrogen fuel-switching CO<sub>2</sub> prices
+    title: Sensitivity analysis for blue-to-green hydrogen fuel-switching CO₂ prices
     desc:
       Same as Figure 5, but with high natural gas prices (compare Table 1). A sensitivity analysis varying five key 
       parameters to evaluate their impact on blue-to-green fuel-switching carbon prices. The analysis is conducted for 
       GWP100 and centered around high natural gas prices and progressive technology assumptions. The color bar on the 
       left side applies for all panels and indicates how low (or high) blue-to-green FSCPs would translate into a 
-      competitiveness advantage for green (or blue) hydrogen given the CO2 price range shown on the right side.
+      competitiveness advantage for green (or blue) hydrogen given the CO₂ price range shown on the right side.
     display:
     - 'supplementary'
     size:

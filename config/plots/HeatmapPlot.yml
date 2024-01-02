@@ -1,12 +1,12 @@
 figures:
   fig4:
     name: Figure 4
-    title: Fuel-switching CO<sub>2</sub> prices as a function of costs and residual emissions
+    title: Fuel-switching CO₂ prices as a function of costs and residual emissions
     desc:
       (A and B) Emission intensities (x axis) and direct costs (y axis) of different hydrogen fuel options (scatter 
       plot for several years), along with FSCP estimates (contour plot) required to make hydrogen competitive with 
       natural gas for (A) high natural gas prices and (B) low natural gas prices. In addition to the progressive and 
-      conservative technology cases, we here include a sensitivity case with very high upstream CO2 emission 
+      conservative technology cases, we here include a sensitivity case with very high upstream CO₂ emission 
       reductions, which reflects the high ambitions of the oil and gas industry in Norway, dotted). We use GWP100 here. 
       For a sensitivity case with GWP 20, see Figure S6.
     display:
@@ -30,7 +30,7 @@ figures:
             height: 700.0  # unit px
   figED2:
     name: Figure ED2
-    title: Fuel-switching CO<sub>2</sub> prices as a function of costs and residual emissions for steel
+    title: Fuel-switching CO₂ prices as a function of costs and residual emissions for steel
     desc: Extended data figure not included in manuscript. Same as Figure 4, but with steel as an application.
     subfigs:
       figED2A:
