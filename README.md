@@ -12,7 +12,7 @@ Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Be
 Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Beck, Fiona; Longden, Thomas; Roussanaly, Simon (2023): Interactive webapp for techno-economic analysis of the cost competitiveness of blue and green hydrogen. V. 3.0.0. GFZ Data Services. https://doi.org/10.5880/pik.2023.006
 
 **The accompanying peer-reviewed article:**
-Ueckerdt et al. (2023). In preparation.
+Ueckerdt et al., On the cost competitiveness of blue and green hydrogen, Joule (2024). https://doi.org/10.1016/j.joule.2023.12.004
 
 ## How to use this software
 
