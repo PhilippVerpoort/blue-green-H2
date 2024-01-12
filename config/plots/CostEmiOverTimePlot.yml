@@ -80,7 +80,7 @@ figures:
             BLUE-prog-gwpOther:
               cases:
                 BLUE-low-prog-gwpOther:
-                  desc: Progressive, GWP20
+                  desc: Progressive, GWPOTHER
             BLUE-prog:
               cases:
                 BLUE-low-prog:

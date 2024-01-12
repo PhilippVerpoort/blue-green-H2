@@ -27,7 +27,7 @@ class CostEmiOverTimePlot(BasePlot):
             # plot subfigure
             subcfg = self._subfig_cfgs[subfig_name]
             subfig = self._produce_figure(outputs['fuelData'], outputs['fuelSpecs'], subcfg, plot_type,
-                                          inputs['params_options'])
+                                          inputs['options']['gwp'], inputs['params_options'])
 
             ret.update({subfig_name: subfig})
 
@@ -35,12 +35,13 @@ class CostEmiOverTimePlot(BasePlot):
             plot_type = 'cost'
             subcfg = self._subfig_cfgs['fig1A'] | self._subfig_cfgs['figS2']
             ret['figS2'] = self._produce_figure(outputs['fuelData'], outputs['fuelSpecs'], subcfg, plot_type,
-                                                inputs['params_options'], with_iea=True, iea_data=inputs['iea_data'],
+                                                inputs['options']['gwp'], inputs['params_options'], with_iea=True,
+                                                iea_data=inputs['iea_data'],
                                                 cost_h2transp=outputs['fullParams'].loc['cost_h2transp'])
 
         return self.add_gwp_label(inputs['options']['gwp'], ret)
 
-    def _produce_figure(self, plot_data: pd.DataFrame, fuel_specs: dict, sub_config: dict, plot_type: str,
+    def _produce_figure(self, plot_data: pd.DataFrame, fuel_specs: dict, sub_config: dict, plot_type: str, gwp: str,
                         params_options: dict, with_iea: bool = False, iea_data: Optional[pd.DataFrame] = None,
                         cost_h2transp: Optional[pd.DataFrame] = None):
         scale = 1.0 if plot_type == 'cost' else 1000.0
@@ -67,7 +68,7 @@ class CostEmiOverTimePlot(BasePlot):
             }
             case_group_label = fuel_specs[all_cases[0].replace('-gwpOther', '')]['shortname']
             cases_labels = {
-                c: corr_cases[c]['desc']
+                c: corr_cases[c]['desc'].replace('GWPOTHER', ('gwp20' if gwp == 'gwp100' else 'gwp100').upper())
                 if 'desc' in corr_cases[c] else
                 fuel_specs[c.replace('-gwpOther', '')]['name']
                 for c in all_cases
