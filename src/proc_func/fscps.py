@@ -1,6 +1,54 @@
 import re
 
+import numpy as np
 import pandas as pd
+
+
+def calc_interpolate_selected_fscps(fuel_data: pd.DataFrame, selected_cases: dict, n_samples: int,
+                                    calc_unc: bool = True) -> tuple[dict[str, pd.DataFrame], dict[str, pd.DataFrame]]:
+    plot_scatter = {}
+    plot_interpolation = {}
+
+    for scid, fuels in selected_cases.items():
+        # insert interpolation points
+        t = np.linspace(fuel_data['year'].min(), fuel_data['year'].max(), n_samples)
+
+        tmp = []
+        for f in fuels:
+            support = fuel_data \
+                .query(f"fuel=='{f}'") \
+                .reset_index(drop=True) \
+                .astype({'year': float})
+
+            interpolation = dict(
+                year=t,
+                fuel=n_samples * [f],
+                type=n_samples * [support.type.iloc[0]],
+            )
+
+            tmp.append(
+                pd.merge(
+                    support,
+                    pd.DataFrame(interpolation, columns=support.keys()),
+                    on=['year', 'fuel', 'type'],
+                    how='outer',
+                    suffixes=('', '_drop'),
+                )
+                .sort_values(by=['year'])
+                .reset_index(drop=True)
+                .interpolate()
+                .dropna(axis='columns')
+            )
+
+        fuel_data_interpolated = pd.concat(tmp)
+
+        # compute FSCPs
+        plot_interpolation[scid] = calc_fscps(fuel_data_interpolated, calc_unc) \
+            .assign(tid=lambda r: r.fuel_y + ' to ' + r.fuel_x)
+        years = fuel_data.year.unique()
+        plot_scatter[scid] = plot_interpolation[scid].query(f"year in @years")
+
+    return plot_scatter, plot_interpolation
 
 
 def calc_fscps(fuel_data: pd.DataFrame, calc_unc: bool = True):

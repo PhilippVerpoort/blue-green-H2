@@ -5,6 +5,12 @@ mkdir -p ./production/
 # requires pdfjam (via texlive-extra-utils)
 # documentation: https://github.com/rrthomas/pdfjam / https://ctan.mirror.garr.it/mirrors/ctan/macros/latex/contrib/pdfpages/pdfpages.pdf
 
+# Fig. ED3
+pdfjam --papersize '{86mm,61mm}' ./print/figED3A.pdf -o ./production/figED3A.pdf
+pdfjam --papersize '{86mm,61mm}' ./print/figED3B.pdf -o ./production/figED3B.pdf
+pdfjam ./print/figED3{A,B}.pdf --nup 2x1 --papersize '{172mm,61mm}' --outfile ./production/figED3.pdf
+rm ./production/figED3{A,B}.pdf
+
 # Fig. 1
 pdfjam --papersize '{86mm,61mm}' ./print/fig1A.pdf -o ./production/fig1A.pdf
 pdfjam --papersize '{86mm,61mm}' ./print/fig1B.pdf -o ./production/fig1B.pdf

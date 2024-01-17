@@ -12,6 +12,7 @@ from src.load import load_inputs
 from src.plots.BarsPlot import BarsPlot
 from src.plots.BlueGreenPlot import BlueGreenPlot
 from src.plots.CostEmiOverTimePlot import CostEmiOverTimePlot
+from src.plots.FSCPCorridors import FSCPCorridors
 from src.plots.FSCPOverTimePlot import FSCPOverTimePlot
 from src.plots.HeatmapPlot import HeatmapPlot
 from src.plots.SensitivityPlot import SensitivityPlot
@@ -134,7 +135,7 @@ webapp = Webapp(
     update=[update_inputs],
     ctrls_tables_modal=edit_tables_modal,
     proc=[process_inputs],
-    plots=[CostEmiOverTimePlot, FSCPOverTimePlot, HeatmapPlot, SensitivityPlot, BarsPlot, BlueGreenPlot],
+    plots=[CostEmiOverTimePlot, FSCPOverTimePlot, HeatmapPlot, SensitivityPlot, BarsPlot, BlueGreenPlot, FSCPCorridors],
     sort_figs=['fig1', 'fig3', 'fig4', 'fig5', 'figS1', 'figS2', 'figS5', 'figS7'],
     glob_cfg=load_yaml_config_file('global'),
     styles=load_yaml_config_file('styles'),

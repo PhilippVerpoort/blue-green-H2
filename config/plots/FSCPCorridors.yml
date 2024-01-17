@@ -1,0 +1,90 @@
+figures:
+  figED3:
+    name: Figure ED3
+    title: Fuel-switching CO₂ prices shown as corridors over time
+    desc: Extended data figure not included in manuscript.
+    subfigs:
+      figED3A:
+        size:
+          print:
+            width: 86.0  # unit mm
+            height: 61.0  # unit mm
+          webapp:
+            width: 50.0  # unit %
+            height: 550.0  # unit px
+        config:
+          label: <b>Low gas prices</b><br>15 EUR/MWh<sub>LHV</sub> throughout
+          showCorridors:
+            BLUE:
+              colour: '#4771b9'
+              cases:
+                BLUE-low-prog:
+                  desc: Low gas price,<br>progressive
+                  colour: '#589ace'
+                  fuels:
+                    - NG-low-prog
+                    - BLUE-low-prog
+                BLUE-low-cons:
+                  desc: Low gas price,<br>conservative
+                  colour: '#3647a3'
+                  fuels:
+                    - NG-low-cons
+                    - BLUE-low-cons
+            GREEN:
+              colour: '#519c0f'
+              cases:
+                GREEN-prog:
+                  desc: Progressive
+                  fuels:
+                    - NG-low-cons
+                    - GREEN-prog
+                GREEN-cons:
+                  desc: Conservative
+                  fuels:
+                    - NG-low-cons
+                    - GREEN-cons
+      figED3B:
+        size:
+          print:
+            width: 86.0  # unit mm
+            height: 61.0  # unit mm
+          webapp:
+            width: 50.0  # unit %
+            height: 550.0  # unit px
+        config:
+          label: <b>High gas prices</b><br>60 EUR/MWh<sub>LHV</sub> in 2025, 40 EUR/MWh<sub>LHV</sub> from 2030 onward
+          showCorridors:
+            BLUE:
+              colour: '#4771b9'
+              cases:
+                BLUE-high-prog:
+                  desc: High gas price,<br>progressive
+                  colour: '#589ace'
+                  fuels:
+                    - NG-high-prog
+                    - BLUE-high-prog
+                BLUE-high-cons:
+                  desc: High gas price,<br>conservative
+                  colour: '#3647a3'
+                  fuels:
+                    - NG-high-cons
+                    - BLUE-high-cons
+            GREEN:
+              colour: '#519c0f'
+              cases:
+                GREEN-prog:
+                  desc: Progressive
+                  fuels:
+                    - NG-high-cons
+                    - GREEN-prog
+                GREEN-cons:
+                  desc: Conservative
+                  fuels:
+                    - NG-high-cons
+                    - GREEN-cons
+config:
+  yaxislabel: Fuel-switching CO<sub>2</sub> price (EUR/t<sub>CO<sub>2</sub>eq</sub>)
+  ymax: 1500.0
+  showUnc: False
+  showLines: False
+  n_samples: 1000

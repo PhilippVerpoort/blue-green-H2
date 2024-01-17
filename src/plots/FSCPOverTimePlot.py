@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from plotly.colors import hex_to_rgb
 from plotly.subplots import make_subplots
 
-from src.proc_func.fscps import calc_fscps
+from src.proc_func.fscps import calc_interpolate_selected_fscps
 from src.utils import load_yaml_plot_config_file
 from src.plots.BasePlot import BasePlot
 
@@ -18,8 +18,8 @@ class FSCPOverTimePlot(BasePlot):
         ret = {}
 
         # select which lines to plot based on function argument
-        plot_scatter, plot_lines = self._select_plot_fscps(
-            outputs['fuelData'], self.cfg['selected_cases'], calc_unc=('figS5' in subfig_names),
+        plot_scatter, plot_lines = calc_interpolate_selected_fscps(
+            outputs['fuelData'], self.cfg['selected_cases'], self.cfg['n_samples'], calc_unc=('figS5' in subfig_names),
         )
 
         # get carbon price trajectory data
@@ -38,52 +38,6 @@ class FSCPOverTimePlot(BasePlot):
         )
 
         return self.add_gwp_label(inputs['options']['gwp'], ret)
-
-    def _select_plot_fscps(self, fuel_data: pd.DataFrame, selected_cases: dict,
-                           calc_unc: bool = True) -> tuple[dict[str, pd.DataFrame], dict[str, pd.DataFrame]]:
-        plot_scatter = {}
-        plot_interpolation = {}
-
-        for scid, fuels in selected_cases.items():
-            # insert interpolation points
-            t = np.linspace(fuel_data['year'].min(), fuel_data['year'].max(), self.cfg['n_samples'])
-
-            tmp = []
-            for f in fuels:
-                support = fuel_data \
-                    .query(f"fuel=='{f}'") \
-                    .reset_index(drop=True) \
-                    .astype({'year': float})
-
-                interpolation = dict(
-                    year=t,
-                    fuel=self.cfg['n_samples'] * [f],
-                    type=self.cfg['n_samples'] * [support.type.iloc[0]],
-                )
-
-                tmp.append(
-                    pd.merge(
-                        support,
-                        pd.DataFrame(interpolation, columns=support.keys()),
-                        on=['year', 'fuel', 'type'],
-                        how='outer',
-                        suffixes=('', '_drop'),
-                    )
-                    .sort_values(by=['year'])
-                    .reset_index(drop=True)
-                    .interpolate()
-                    .dropna(axis='columns')
-                )
-
-            fuel_data_interpolated = pd.concat(tmp)
-
-            # compute FSCPs
-            plot_interpolation[scid] = calc_fscps(fuel_data_interpolated, calc_unc).assign(
-                tid=lambda r: r.fuel_y + ' to ' + r.fuel_x)
-            years = fuel_data.year.unique()
-            plot_scatter[scid] = plot_interpolation[scid].query(f"year in @years")
-
-        return plot_scatter, plot_interpolation
 
     def _produce_figure(self, plot_scatter: dict, plot_lines: dict, fuel_specs: dict, cp_traj_data: pd.DataFrame,
                         is_uncertainty: bool = False):
