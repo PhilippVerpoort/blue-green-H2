@@ -99,7 +99,7 @@ metadata = {
         },
     ],
     'date': '2023-12-09',
-    'version': 'v3.0.1',
+    'version': 'v3.0.2',
     'doi': '10.5880/pik.2023.006',
     'licence': {'name': 'CC BY 4.0', 'link': 'https://creativecommons.org/licenses/by/4.0/'},
     'citeas': 'Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Beck, Fiona; Longden, '
