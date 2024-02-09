@@ -30,7 +30,7 @@ poetry install
 Alternatively, you can install the required packages using `pip` (potentially following the creation of a virtual environment):
 
 ```commandline
-pip install git+https://github.com/PhilippVerpoort/piw.git@v0.6.0
+pip install git+https://github.com/PhilippVerpoort/piw.git@v0.8.1
 pip install pandas openpyxl kaleido pyyaml
 ```
 
