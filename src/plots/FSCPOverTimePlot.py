@@ -143,13 +143,16 @@ class FSCPOverTimePlot(BasePlot):
         )
 
         for i in range(2):
+            top_label = self.cfg['sidelabels']['top'][i]
+            if self._target == 'webapp':
+                top_label = top_label.split('<br>')[0]
             fig.add_annotation(
                 x=0.50,
                 xref=f"x{str(i + 1) if i else ''} domain",
                 y=1.0,
                 yref='y domain',
                 yshift=40,
-                text=self.cfg['sidelabels']['top'][i],
+                text=top_label,
                 **annotation_styling
             )
 

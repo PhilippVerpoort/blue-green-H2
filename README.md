@@ -6,10 +6,10 @@ This repository make source codes and input data publicly available that were us
 ## How to cite this work
 
 **This software (source code and input data):**
-Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Beck, Fiona; Longden, Thomas; Roussanaly, Simon (2023): Research software used for the techno-economic analysis of the cost competitiveness of blue and green hydrogen. V. 3.0.0. GFZ Data Services. https://doi.org/10.5880/pik.2023.007
+Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Beck, Fiona; Longden, Thomas; Roussanaly, Simon (2023): Research software used for the techno-economic analysis of the cost competitiveness of blue and green hydrogen. V. 3.0.3. GFZ Data Services. https://doi.org/10.5880/pik.2023.007
 
 **The accompanying interactive webapp:**
-Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Beck, Fiona; Longden, Thomas; Roussanaly, Simon (2023): Interactive webapp for techno-economic analysis of the cost competitiveness of blue and green hydrogen. V. 3.0.0. GFZ Data Services. https://doi.org/10.5880/pik.2023.006
+Verpoort, Philipp C.; Ueckerdt, Falko; Anantharaman, Rahul; Bauer, Christian; Beck, Fiona; Longden, Thomas; Roussanaly, Simon (2023): Interactive webapp for techno-economic analysis of the cost competitiveness of blue and green hydrogen. V. 3.0.3. GFZ Data Services. https://doi.org/10.5880/pik.2023.006
 
 **The accompanying peer-reviewed article:**
 Ueckerdt et al., On the cost competitiveness of blue and green hydrogen, Joule (2024). https://doi.org/10.1016/j.joule.2023.12.004
